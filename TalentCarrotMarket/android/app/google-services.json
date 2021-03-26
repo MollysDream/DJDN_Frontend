@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "802274360449",
+    "firebase_url": "https://talentmarket-1ffe4-default-rtdb.firebaseio.com",
+    "project_id": "talentmarket-1ffe4",
+    "storage_bucket": "talentmarket-1ffe4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:802274360449:android:6ed17904d895d2ecfae180",
+        "android_client_info": {
+          "package_name": "com.talentcarrotmarket"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "802274360449-798tp4c3ph9955dng3cp9q50vlpansct.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD30E-9pYxNlnBOyFg7ncrVbtwZ_JSVeos"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "802274360449-798tp4c3ph9955dng3cp9q50vlpansct.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -111,7 +111,7 @@ const MainTabScreen =({navigation, route}) => {
         name="TabFirst"
         component={HomeStackScreen}
         options={{
-          tabBarLabel: '홈',
+          tabBarLabel: 'HOOOOOOOOOOOOOOOOOOOOOOOOOMMMMMEEEEEEEEEE',
           tabBarIcon: ({color}) => <Icon2 name="home" color={color} size={26} />,
         }}
       />
