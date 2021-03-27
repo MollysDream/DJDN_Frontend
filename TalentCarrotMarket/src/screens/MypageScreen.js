@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 
 
-export default class HomeScreen extends Component{
+export default class MypageScreen extends Component{
     render(){
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
