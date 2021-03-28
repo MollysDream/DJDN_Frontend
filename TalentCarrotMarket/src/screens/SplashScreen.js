@@ -19,7 +19,7 @@ const SplashScreen = ({navigation}) => {
       //If not then send for Authentication
       //else send to Home Screen
       AsyncStorage.getItem('user_id').then((value) =>
-        navigation.replace(value === null ? 'Auth' : 'MainTab'),
+        navigation.replace(value === null ? 'MainTab' : 'Auth'),
       );
     }, 3000);
   }, []);
@@ -27,7 +27,7 @@ const SplashScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
       <Image
-        source={require('../molly.jpg')}
+        source={require('../splash.png')}
         style={{width: wp(55), resizeMode: 'contain', margin: 30}}
       />
       <ActivityIndicator

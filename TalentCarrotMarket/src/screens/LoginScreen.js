@@ -18,9 +18,17 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 
+import { GoogleSignin,GoogleSigninButton } from '@react-native-community/google-signin';
+
+GoogleSignin.configure({
+  webClientId: "802274360449-798tp4c3ph9955dng3cp9q50vlpansct.apps.googleusercontent.com",
+  offlineAccess: true,
+});
+
 import AsyncStorage from '@react-native-community/async-storage';
 
 const LoginScreen = ({navigation}) => {
+  
   const preURL = require('../../preURL/preURL');
   const [userId, setUserId] = useState('');
   const [userPassword, setUserPassword] = useState('');
@@ -28,6 +36,15 @@ const LoginScreen = ({navigation}) => {
   const [errortext, setErrortext] = useState('');
 
   const passwordInputRef = createRef();
+
+  // const setUseridStorage = async (stu_id) => {
+  //   try {
+  //     await AsyncStorage.setItem('user_id', stu_id);
+  //   } catch (e) {
+  //     // read error
+  //   }
+  //   console.log('Done.');
+  // };
 
   async function setUseridStorage(stu_id) {
     await AsyncStorage.setItem('user_id', stu_id);
@@ -88,67 +105,79 @@ const LoginScreen = ({navigation}) => {
         console.error(error);
       });
   };
+
+    return (
+      <View style={styles.container}>
+        <View style={styles.topArea}>
+          <View style={styles.titleArea}>
+            <Image
+              source={require('../login.png')}
+              style={{width: wp(30), resizeMode: 'contain'}}
+            />
+          </View>
+          <View style={styles.TextArea}>
+            <Text style={styles.Text}>로그인하여 당신 주변 재능을 거래하는</Text>
+            <Text style={styles.Text}>다재다능을 사용해보세요</Text>
+          </View>
+        </View>
   
-  return (
-    <View style={styles.container}>
-      <View style={styles.topArea}>
-        <View style={styles.titleArea}>
-          <Image
-            source={require('../molly.jpg')}
-            style={{width: wp(30), resizeMode: 'contain'}}
+         <View Style={styles.formArea}>
+          <TextInput
+            style={styles.textFormTop}
+            placeholder={'아이디'}
+            onChangeText={(userId) => setUserId(userId)}
+            autoCapitalize="none"
+            returnKeyType="next"
+            onSubmitEditing={() =>
+              passwordInputRef.current && passwordInputRef.current.focus()
+            }
+            underlineColorAndroid="#f000"
+            blurOnSubmit={false}
           />
+          <TextInput
+            style={styles.textFormBottom}
+            onChangeText={(userPassword) => setUserPassword(userPassword)}
+            secureTextEntry={true}
+            placeholder={'비밀번호'}
+            returnKeyType="next"
+            keyboardType="default"
+            ref={passwordInputRef}
+            onSubmitEditing={Keyboard.dismiss}
+            blurOnSubmit={false}
+          />
+          {errortext != '' ? (
+            <Text style={styles.TextValidation}> {errortext}</Text>
+          ) : null}
         </View>
-        <View style={styles.TextArea}>
-          <Text style={styles.Text}>로그인하여 당신 주변 재능을 알라</Text>
-          <Text style={styles.Text}>당주알을 사용해보세요</Text>
+  
+        <View style={{flex: 0.75, paddingTop:30}}>
+          <View style={styles.btnArea}>
+            <TouchableOpacity style={styles.btn}>
+              <Text style={(styles.Text, {color: 'white'})}>로그인</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.rowbtnArea}>
+            <View style={styles.btnArea2} >
+              <TouchableOpacity style={styles.btn2} onPress={() => navigation.navigate('Register')}>
+                <Text style={(styles.Text, {color: 'white'})}>회원가입</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.btnArea2} >
+              <GoogleSigninButton
+              style={{ width: 220, height: 50 }}
+              size={GoogleSigninButton.Size.Wide}
+              color={GoogleSigninButton.Color.Dark}
+              />
+            </View>
+          </View>
+          
         </View>
+        <View style={{flex: 3}}></View>
       </View>
+    );
+  }
 
-       <View style={styles.formArea}>
-        <TextInput
-          style={styles.textFormTop}
-          placeholder={'아이디'}
-          onChangeText={(userId) => setUserId(userId)}
-          autoCapitalize="none"
-          returnKeyType="next"
-          onSubmitEditing={() =>
-            passwordInputRef.current && passwordInputRef.current.focus()
-          }
-          underlineColorAndroid="#f000"
-          blurOnSubmit={false}
-        />
-        <TextInput
-          style={styles.textFormBottom}
-          onChangeText={(userPassword) => setUserPassword(userPassword)}
-          secureTextEntry={true}
-          placeholder={'비밀번호'}
-          returnKeyType="next"
-          keyboardType="default"
-          ref={passwordInputRef}
-          onSubmitEditing={Keyboard.dismiss}
-          blurOnSubmit={false}
-        />
-        {errortext != '' ? (
-          <Text style={styles.TextValidation}> {errortext}</Text>
-        ) : null}
-      </View>
-
-      <View style={{flex: 0.75}}>
-        <View style={styles.btnArea}>
-          <TouchableOpacity style={styles.btn}>
-            <Text style={(styles.Text, {color: 'white'})}>로그인</Text>
-          </TouchableOpacity>
-        </View>
-        <Text
-          style={styles.TextRegister}
-          onPress={() => navigation.navigate('Register')}>
-          당주알이 처음이시라면, 회원가입이 필요해요 :)
-        </Text>
-      </View>
-      <View style={{flex: 3}} />
-    </View>
-  );
-}
+  
 
 const styles = StyleSheet.create({
   container: {
@@ -159,18 +188,22 @@ const styles = StyleSheet.create({
     paddingRight: wp(7),
   },
   topArea: {
-    flex: 1,
+    flex: 3,
     paddingTop: wp(2),
+    alignItems: 'center',
   },
   titleArea: {
-    flex: 0.7,
+    flex: 1,
     justifyContent: 'center',
-    paddingTop: wp(3),
+    paddingTop: 60,
+    paddingBottom :30,
   },
   TextArea: {
-    flex: 0.3,
+    flex: 1,
     justifyContent: 'center',
     backgroundColor: 'white',
+    paddingTop: 15,
+    paddingBottom: 15,
   },
   Text: {
     fontSize: wp('4%'),
@@ -183,7 +216,8 @@ const styles = StyleSheet.create({
 
   formArea: {
     justifyContent: 'center',
-    // paddingTop: wp(10),
+    paddingTop: wp(10),
+    // paddingBottom: 30,
     flex: 1.5,
   },
   textFormTop: {
@@ -213,6 +247,15 @@ const styles = StyleSheet.create({
     // backgroundColor: 'orange',
     justifyContent: 'center',
     alignItems: 'center',
+    paddingBottom: 15,
+  },
+  rowbtnArea:{
+    flexDirection: "row",
+    justifyContent: 'center',
+  },
+  btnArea2: {
+    height: hp(8),
+    // backgroundColor: 'orange',
     paddingBottom: hp(1.5),
   },
   btn: {
@@ -222,6 +265,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'black',
+  },
+  btn2: {
+    flex: 1,
+    width: 150,
+    height: 50,
+    borderRadius: 7,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#4672B8',
   },
 });
 export default LoginScreen;

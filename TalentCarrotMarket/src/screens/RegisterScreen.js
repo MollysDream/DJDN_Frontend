@@ -8,6 +8,7 @@ import {
 import 'react-native-gesture-handler';
 import Loader from './Loader';
 
+
 import {
   StyleSheet,
   View,
@@ -119,7 +120,7 @@ const RegisterScreen = (props) => {
               alignItems: 'center',
             }}>
             <Image
-              source={require('../molly.jpg')}
+              source={require('../check.png')}
               style={{
                 height: wp(20),
                 resizeMode: 'contain',
@@ -161,17 +162,17 @@ const RegisterScreen = (props) => {
       <View style={styles.topArea}>
         <View style={styles.titleArea}>
           <Image
-            source={require('../molly.jpg')}
+            source={require('../login.png')}
             style={{width: wp(40), resizeMode: 'contain'}}
           />
         </View>
         <View style={styles.TextArea}>
-          <Text style={styles.Text}>회원가입하여 나만의 공부 도우미</Text>
-          <Text style={styles.Text}>viva를 사용해보세요 ‍📘</Text>
+          <Text style={styles.Text}>회원가입하여 당신 주변 재능을 거래하는</Text>
+          <Text style={styles.Text}>다재다능을 사용해보세요 ‍</Text>
         </View>
       </View>
 
-      <View style={styles.formArea}>
+      <View Style={styles.formArea}>
         <TextInput
           style={styles.textFormTop}
           placeholder={'아이디(5자 이상, 영문, 숫자)'}
@@ -219,7 +220,7 @@ const RegisterScreen = (props) => {
         ) : null}
       </View>
 
-      <View style={styles.formArea2}>
+      <View Style={styles.formArea2}>
         <TextInput
           style={styles.textFormTop}
           placeholder={'닉네임'}
@@ -267,18 +268,22 @@ const styles = StyleSheet.create({
     paddingRight: wp(7),
   },
   topArea: {
-    flex: 1.5,
+    flex: 5,
     paddingTop: wp(2),
+    alignItems: 'center',
   },
   titleArea: {
-    flex: 0.7,
+    flex: 1,
     justifyContent: 'center',
-    paddingTop: wp(3),
+    paddingTop: 50,
+    paddingBottom :40,
   },
   TextArea: {
-    flex: 0.3,
+    flex: 1,
+    paddingTop:15,
+    paddingBottom :25,
     justifyContent: 'center',
-    paddingTop: hp(3),
+    backgroundColor: 'white',
   },
   alertArea: {
     height: wp(150),
@@ -293,9 +298,9 @@ const styles = StyleSheet.create({
   },
 
   formArea: {
-    flex: 4,
+    flex: 4.5,
     justifyContent: 'center',
-    // paddingTop: wp(10)
+    // paddingTop: 10,
     // backgroundColor: 'red',
     marginBottom: hp(-5),
   },
@@ -355,21 +360,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'black',
-  },
-  inputIOS: {
-    borderWidth: 2,
-    borderTopWidth: 1,
-    borderColor: 'black',
-    borderBottomRightRadius: 7,
-    borderBottomLeftRadius: 7,
-    width: '100%',
-    height: hp(6),
-    paddingLeft: 10,
-    paddingRight: 10,
-  },
-  scrollContainer: {
-    flex: 1,
-    paddingHorizontal: 15,
   },
 });
 
