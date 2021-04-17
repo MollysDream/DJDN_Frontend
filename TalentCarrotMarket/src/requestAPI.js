@@ -9,15 +9,25 @@ export async function userTest(){
     return info.data;
 }
 
-export async function postInfo({title,content}){
+export async function postInfo({title, content, category, tag, view, date}){
     console.log("request")
     console.log({title,content});
-    const info = await axi.post("/user/write", {title, content});
+    const info = await axi.post("/user/write", {title, content, category, tag, view, date});
     console.log(info);
-    //return info.data;
+    return info.data;
+}
+
+//HomeScreen 컴포넌트로 게시물 데이터 GET
+export async function getPost(){
+    console.log("getPost함수 호출됨");
+    const postData = await axi.get("/data/getPost");
+    //console.log(postData.data);
+
+    return postData.data;
 }
 
 export default{
     userTest,
-    postInfo
+    postInfo,
+    getPost
 }

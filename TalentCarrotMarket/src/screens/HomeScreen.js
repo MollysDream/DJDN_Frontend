@@ -17,6 +17,8 @@ import {
 import { SafeAreaInsetsContext } from 'react-native-safe-area-context';
 import {SearchBar} from 'react-native-elements';
 
+import request from '../requestAPI';
+
 class ListItem extends Component{
 
     render(){
@@ -37,11 +39,7 @@ class ListItem extends Component{
 
 
 export default class HomeScreen extends Component{
-    state = {
-        search:'',
-        data :[],
-        page : 1
-    };
+
     getData = async () => {
         const url = 'https://jsonplaceholder.typicode.com/photos?_limit=10';
         fetch(url)
@@ -54,8 +52,23 @@ export default class HomeScreen extends Component{
           });
       }
 
-      componentDidMount() {
-        this.getData();
+      constructor(props) {
+        super(props);
+        this.state = {
+            search:'',
+            data:[],
+            page:1
+        }
+      }
+
+      async componentDidMount() {
+        console.log("홈스크린 componentDidMount");
+        const postData = await request.getPost();
+        console.log(postData)
+        this.setState({
+            data: this.state.data.concat(postData),
+            page : this.state.page + 1
+        });
       }
 
       morePage = () => {
@@ -68,7 +81,7 @@ export default class HomeScreen extends Component{
     returnFlatListItem(item,index){
         return(
             <View style={styles.post}>
-             <Image style={{width: wp(30), height: hp(30),resizeMode: 'contain'}} source={{ uri: item.url }} />
+             <Image style={{width: wp(30), height: hp(30),resizeMode: 'contain'}} source={{ uri: item.content.image}} />
              <Text  style={styles.postTitle}>{item.title}</Text>
             </View>
 
