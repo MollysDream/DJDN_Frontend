@@ -41,7 +41,7 @@ class ListItem extends Component{
 export default class HomeScreen extends Component{
 
     getData = async () => {
-        const url = 'https://jsonplaceholder.typicode.com/photos?_limit=10';
+        /*const url = 'https://jsonplaceholder.typicode.com/photos?_limit=10';
         fetch(url)
           .then(res => res.json())
           .then(data => {
@@ -49,7 +49,18 @@ export default class HomeScreen extends Component{
               data: this.state.data.concat(data),
               page : this.state.page +1
             });
-          });
+          });*/
+
+        /*const url = 'http://10.0.2.2:3000/data/getPost';
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                this.setState({
+                    data: this.state.data.concat(data),
+                    page : this.state.page +1
+                });
+            });*/
+
       }
 
       constructor(props) {
@@ -57,22 +68,22 @@ export default class HomeScreen extends Component{
         this.state = {
             search:'',
             data:[],
-            page:1
+            page:0
         }
       }
 
       async componentDidMount() {
-        console.log("홈스크린 componentDidMount");
+        //console.log("홈스크린 componentDidMount");
         const postData = await request.getPost();
-        console.log(postData)
+        //console.log(postData)
         this.setState({
             data: this.state.data.concat(postData),
             page : this.state.page + 1
         });
       }
 
-      morePage = () => {
-        this.getData();
+      async morePage() {
+        console.log("더 불러와 시발!");
       }
 
     updateSearch = (search) =>{
@@ -100,7 +111,7 @@ export default class HomeScreen extends Component{
                     />
                 <FlatList
                     data={this.state.data}
-                    keyExtractor={(item,index) => item.key}
+                    keyExtractor={(item,index) => String(item._id)}
                     renderItem={({item,index})=>this.returnFlatListItem(item,index)}
                     onEndReached={this.morePage}
                     onEndReachedThreshold={1}

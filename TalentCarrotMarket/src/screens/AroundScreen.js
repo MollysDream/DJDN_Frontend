@@ -27,13 +27,13 @@ export default class AroundScreen extends Component{
         }*/
 
         const data={
-            title:"몰리 산책",
+            title:"턱걸이 보조해주실분 구합니다",
             content:{
-                image:"https://mollysdreampostdata.s3.ap-northeast-2.amazonaws.com/20190308_173803(0).jpg",
+                image:"https://mollysdreampostdata.s3.ap-northeast-2.amazonaws.com/IMG_20191112_212153.jpg",
                 text:"귀여운 몰리 산책시켜 줄사람!!!"
             },
-            category:["애견","산책"],
-            tag:["산책"],
+            category:["운동","턱걸이"],
+            tag:["운동"],
             view:0,
             date:Date.now()
         }
