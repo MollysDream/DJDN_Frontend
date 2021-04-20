@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "537122353222",
+    "project_id": "login-1-db7a8",
+    "storage_bucket": "login-1-db7a8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:537122353222:android:61035d7747324c54ef9a47",
+        "android_client_info": {
+          "package_name": "com.talentcarrotmarket"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "537122353222-ksjqr23umplqlhm13nd5u6aaso706uhf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.talentcarrotmarket",
+            "certificate_hash": "73029bdd20129fd7c68e3dd68c9ca707aee91378"
+          }
+        },
+        {
+          "client_id": "537122353222-043ifccqh4l5itmeiom3rubaf7vdnvp4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6AQIW01LFuqFvMuCz3EC7R5SBVKZUSg8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "537122353222-043ifccqh4l5itmeiom3rubaf7vdnvp4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -6,9 +6,8 @@ import {
 } from 'react-native-responsive-screen';
 
 import 'react-native-gesture-handler';
-import Loader from './Loader';
 
-
+import axios from "axios";
 import {
   StyleSheet,
   View,
@@ -16,30 +15,27 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
-  Keyboard,
-  Modal,
-  ScrollView,
 } from 'react-native';
+
 
 const RegisterScreen = (props) => {
   const [userName, setUserName] = useState('');
   const [userId, setUserId] = useState('');
-  const [userLocate, setUserLocate] = useState('');
+  const [userNickName, setUserNickName] = useState('');
   const [userPassword, setUserPassword] = useState('');
   const [userPasswordchk, setUserPasswordchk] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [errortext, setErrortext] = useState('');
   const [errortext2, setErrortext2] = useState('');
   const [isRegistraionSuccess, setIsRegistraionSuccess] = useState(false);
 
-  const idInputRef = createRef();
-  const gradeInputRef = createRef();
-  const passwordInputRef = createRef();
-  const passwordchkInputRef = createRef();
-  const nameInputRef = createRef();
+  // const idInputRef = createRef();
+  // const passwordInputRef = createRef();
+  // const passwordchkInputRef = createRef();
+  // const nameInputRef = createRef();
+  // const nicknameInputRef = createRef();
 
   const handleSubmitButton = () => {
-    setErrortext('');
+    const regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
+    const regExp2 = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,16}$/;
 
     if (!userName) {
       alert('이름을 입력해주세요');
@@ -49,8 +45,11 @@ const RegisterScreen = (props) => {
       alert('id를 입력해주세요');
       return;
     }
-    if (!userLocate) {
-      alert('학년을 선택해주세요');
+    if(userId.match(regExp) === null || userId.match(regExp) === undefined){
+      alert("이메일 형식에 맞게 입력해주세요.");
+    }
+    if (!userNickName) {
+      alert('닉네임을 선택해주세요');
       return;
     }
 
@@ -58,53 +57,42 @@ const RegisterScreen = (props) => {
       alert('비밀번호를 입력해주세요');
       return;
     }
+    if (userPassword.match(regExp2) === null || userPassword.match(regExp2) === undefined){
+      alert("비밀번호를 숫자와 문자, 특수문자 포함 8~16자리로 입력해주세요.");
+      return;
+    }
     if (userPasswordchk != userPassword) {
       alert('비밀번호가 일치하지 않습니다');
       return;
     }
-    //Show Loader
-    setLoading(true);
 
-    var dataToSend = {
-      stu_nick: userName,
-      stu_id: userId,
-      stu_location: userLocate,
+    const send_param = {
+      email: userId,
       password: userPassword,
+      name: userName,
+      nickname: userNickName
     };
-    var formBody = [];
-    for (var key in dataToSend) {
-      var encodedKey = encodeURIComponent(key);
-      var encodedValue = encodeURIComponent(dataToSend[key]);
-      formBody.push(encodedKey + '=' + encodedValue);
-    }
-    formBody = formBody.join('&');
-
-    fetch('http://localhost:3001/api/user/register', {
-      method: 'POST',
-      body: formBody,
-      headers: {
-        //Header Defination
-        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-      },
-    })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        //Hide Loader
-        setLoading(false);
+    axios
+      .post("http://10.0.2.2:3001/member/join", send_param)
+      //정상 수행
+      .then(returnData => {
         setErrortext2('');
-        console.log(responseJson);
-        // If server response message same as Data Matched
-        if (responseJson.status === 'success') {
-          setIsRegistraionSuccess(true);
-          console.log('Registration Successful. Please Login to proceed');
-        } else if (responseJson.status === 'duplicate') {
-          setErrortext2('이미 존재하는 아이디입니다.');
+        if (returnData.data.message) {
+          alert(returnData.data.message);
+          //이메일 중복 체크
+          if (returnData.data.dupYn === "1") {
+            setErrortext2('이미 존재하는 아이디입니다.');
+          } else {
+            setIsRegistraionSuccess(true);
+            console.log('Registration Successful. Please Login to proceed');
+          }
+        } else {
+          alert("회원가입 실패");
         }
       })
-      .catch((error) => {
-        //Hide Loader
-        setLoading(false);
-        console.error(error);
+      //에러
+      .catch(err => {
+        console.log(err);
       });
   };
 
@@ -158,7 +146,6 @@ const RegisterScreen = (props) => {
 
   return (
     <View style={styles.container}>
-      <Loader loading={loading} />
       <View style={styles.topArea}>
         <View style={styles.titleArea}>
           <Image
@@ -175,26 +162,14 @@ const RegisterScreen = (props) => {
       <View Style={styles.formArea}>
         <TextInput
           style={styles.textFormTop}
-          placeholder={'아이디(5자 이상, 영문, 숫자)'}
+          placeholder={'이메일'}
           onChangeText={(userId) => setUserId(userId)}
-          ref={idInputRef}
-          returnKeyType="next"
-          onSubmitEditing={() =>
-            passwordInputRef.current && passwordInputRef.current.focus()
-          }
-          blurOnSubmit={false}
         />
         <TextInput
           style={styles.textFormMiddle}
           secureTextEntry={true}
           placeholder={'비밀번호(8자 이상)'}
           onChangeText={(UserPassword) => setUserPassword(UserPassword)}
-          ref={passwordInputRef}
-          returnKeyType="next"
-          onSubmitEditing={() =>
-            passwordchkInputRef.current && passwordchkInputRef.current.focus()
-          }
-          blurOnSubmit={false}
         />
         <TextInput
           style={styles.textFormBottom}
@@ -203,16 +178,10 @@ const RegisterScreen = (props) => {
           onChangeText={(UserPasswordchk) =>
             setUserPasswordchk(UserPasswordchk)
           }
-          ref={passwordchkInputRef}
-          returnKeyType="next"
-          onSubmitEditing={() =>
-            nameInputRef.current && nameInputRef.current.focus()
-          }
-          blurOnSubmit={false}
         />
       </View>
 
-      <View style={{flex: 0.5, justifyContent: 'center'}}>
+      <View style={{paddingBottom: 20, justifyContent: 'center'}}>
         {userPassword !== userPasswordchk ? (
           <Text style={styles.TextValidation}>
             비밀번호가 일치하지 않습니다.
@@ -223,25 +192,17 @@ const RegisterScreen = (props) => {
       <View Style={styles.formArea2}>
         <TextInput
           style={styles.textFormTop}
-          placeholder={'닉네임'}
+          placeholder={'이름을 입력해주세요'}
           onChangeText={(UserName) => setUserName(UserName)}
-          ref={nameInputRef}
-          returnKeyType="next"
-          onSubmitEditing={() =>
-            gradeInputRef.current && gradeInputRef.current.focus()
-          }
-          blurOnSubmit={false}
         />
         <TextInput
           style={styles.textFormBottom}
-          onChangeText={(userLocate) => setUserLocate(userLocate)}
-          placeholder={'지역을 입력해주세요'}
-          ref={nameInputRef}
-          blurOnSubmit={false}
+          onChangeText={(userNickName) => setUserNickName(userNickName)}
+          placeholder={'닉네임을 입력해주세요'}
         />
       </View>
 
-      <View style={{flex: 0.7, justifyContent: 'center'}}>
+      <View style={{paddingBottom: 20, justifyContent: 'center'}}>
         {errortext2 !== '' ? (
           <Text style={styles.TextValidation}>{errortext2}</Text>
         ) : null}
@@ -261,7 +222,7 @@ const RegisterScreen = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, //전체의 공간을 차지한다는 의미
+    flex: 1,
     flexDirection: 'column',
     backgroundColor: 'white',
     paddingLeft: wp(7),
@@ -284,9 +245,6 @@ const styles = StyleSheet.create({
     paddingBottom :25,
     justifyContent: 'center',
     backgroundColor: 'white',
-  },
-  alertArea: {
-    height: wp(150),
   },
   Text: {
     fontSize: wp(4),

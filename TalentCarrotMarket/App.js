@@ -1,21 +1,7 @@
 import React from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
   StyleSheet,
-  Text,
-  useColorScheme,
-  View,
 } from 'react-native';
-
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
 
 import { NavigationContainer } from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -29,10 +15,17 @@ import SplashScreen from './src/screens/SplashScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import RegisterScreen from './src/screens/RegisterScreen';
 import homeScreen from './src/screens/HomeScreen';
-import aroundScreen from './src/screens/AroundScreen';
-import chattingScreen from './src/screens/ChattingScreen';
 import mypageScreen from './src/screens/MypageScreen';
 import talentScreen from './src/screens/TalentScreen';
+
+//ChatStack
+import chatchScreen from './src/screens/ChatChScreen';
+import chatScreen from './src/screens/ChatScreen';
+
+//aroundStack
+import aroundScreen from './src/screens/AroundScreen';
+import aroundSetScreen from './src/screens/AroundSetScreen';
+import aroundCertifyScreen from './src/screens/AroundCertifyScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -81,6 +74,8 @@ const AroundStackScreen = () => {
   return (
     <Stack.Navigator>
       <AroundStack.Screen name="around" component={aroundScreen} />
+      <AroundStack.Screen name="aroundSet" component={aroundSetScreen} />
+      <AroundStack.Screen name="aroundCertify" component={aroundCertifyScreen} />
     </Stack.Navigator>
   );
 };
@@ -89,7 +84,8 @@ const AroundStackScreen = () => {
 const ChatStackScreen = () => {
   return (
     <Stack.Navigator>
-      <ChatStack.Screen name="chat" component={chattingScreen} />
+      <ChatStack.Screen name="chatch" component={chatchScreen} />
+      <ChatStack.Screen name="chat" component={chatScreen} />
     </Stack.Navigator>
   );
 };
@@ -103,7 +99,7 @@ const SettingStackScreen = () => {
   );
 };
 
-const MainTabScreen =({navigation, route}) => {
+const MainTabScreen =({}) => {
   return(
     <Tab.Navigator>
       <Tab.Screen
@@ -166,7 +162,7 @@ const App=()=> {
     {/* Stack Navigator for Login+Logout  */}
     <Stack.Navigator initialRouteName="SplashScreen">
       <Stack.Screen
-       name="SplashScreen"
+       name="다재다능"
        component={SplashScreen}
       />
       <Stack.Screen

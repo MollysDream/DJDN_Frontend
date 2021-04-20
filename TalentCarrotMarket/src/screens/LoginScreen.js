@@ -1,11 +1,10 @@
-import React, {useState, createRef} from 'react';
+import React, {useState, useEffect, createRef} from 'react';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
 import 'react-native-gesture-handler';
-import Loader from './Loader';
 import {
   StyleSheet,
   View,
@@ -13,96 +12,103 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
-  ScrollView,
-  Keyboard,
-  KeyboardAvoidingView,
 } from 'react-native';
 
-import { GoogleSignin,GoogleSigninButton } from '@react-native-community/google-signin';
-
-GoogleSignin.configure({
-  webClientId: "802274360449-798tp4c3ph9955dng3cp9q50vlpansct.apps.googleusercontent.com",
-  offlineAccess: true,
-});
-
+import { GoogleSignin,GoogleSigninButton,statusCodes } from '@react-native-community/google-signin';
+import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
+// import auth from "@react-native-firebase/auth";
+
+//글자 강조
+const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{props.children}</Text>
 
 const LoginScreen = ({navigation}) => {
-  
-  const preURL = require('../../preURL/preURL');
   const [userId, setUserId] = useState('');
   const [userPassword, setUserPassword] = useState('');
-  const [loading, setLoading] = useState(false);
   const [errortext, setErrortext] = useState('');
-
+  const [userInfo, setUserInfo] = useState(null);
+  const [gettingLoginStatus, setGettingLoginStatus] = useState(true);
+  const idInputRef = createRef();
   const passwordInputRef = createRef();
+  
+  //구글 로그인
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId: '537122353222-043ifccqh4l5itmeiom3rubaf7vdnvp4.apps.googleusercontent.com',
+    });
+    // _isSignedIn();
+  }, []);
 
-  // const setUseridStorage = async (stu_id) => {
-  //   try {
-  //     await AsyncStorage.setItem('user_id', stu_id);
-  //   } catch (e) {
-  //     // read error
+  // const _isSignedIn = async () => {
+  //   const isSignedIn = await GoogleSignin.isSignedIn();
+  //   if (isSignedIn) {
+  //     navigation.replace('MainTab')
+  //     AsyncStorage.setItem('user_id', 'googlelogin');
+  //   } else {
+  //     console.log('Please Login');
   //   }
-  //   console.log('Done.');
+  //   setGettingLoginStatus(false);
   // };
 
-  async function setUseridStorage(stu_id) {
-    await AsyncStorage.setItem('user_id', stu_id);
-    console.log('Done.');
-  }
 
-  const handleSubmitPress = () => {
+  const _signIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices({
+        showPlayServicesUpdateDialog: true,
+      });
+      const userInfo = await GoogleSignin.signIn();
+      console.log('User Info --> ', userInfo);
+      setUserInfo(userInfo);
+    } catch (error) {
+      console.log('Message', JSON.stringify(error));
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        alert('User Cancelled the Login Flow');
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        alert('Signing In');
+      } else if (
+          error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE
+        ) {
+        alert('Play Services Not Available or Outdated');
+      } else {
+        alert(error.message);
+      }
+    }
+  };
+
+
+  //일반 로그인
+  const handleLoginButton = () => {
     setErrortext('');
     if (!userId) {
-      alert('아이디를 입력해주세요');
+      alert('이메일 주소를 입력해주세요');
       return;
     }
     if (!userPassword) {
       alert('비밀번호를 입력해주세요');
       return;
     }
-    setLoading(true);
-    let dataToSend = {stu_id: userId, stu_pw: userPassword};
-    let formBody = [];
-    for (let key in dataToSend) {
-      let encodedKey = encodeURIComponent(key);
-      let encodedValue = encodeURIComponent(dataToSend[key]);
-      formBody.push(encodedKey + '=' + encodedValue);
-    }
-    formBody = formBody.join('&');
-    // console.log(formBody);
 
-    fetch(preURL.preURL + '/api/user/login', {
-      method: 'POST',
-      body: formBody,
-      headers: {
-        //Header Defination
-        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-      },
-    })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        //Hide Loader
-        // console.log(responseJson);
-        // If server response message same as Data Matched
-        if (responseJson.status === 'success') {
-          // const saveUserid = async () => {
-          //   await AsyncStorage.setItem('user_id', responseJson.data.stu_id);
-          //   console.log('done save user_id' + AsyncStorage.getItem('user_id'));
-          // };
-          // saveUserid();
-          AsyncStorage.setItem('user_id', responseJson.data.stu_id);
-          setLoading(false);
-          navigation.replace('MainTab');
+    const send_param = {
+      email: userId,
+      password: userPassword
+    };
+
+    axios
+    .post("http://10.0.2.2:3001/member/login", send_param)
+      //정상 수행
+      .then(returnData => {
+        if (returnData.data.message && returnData.data.login === "1") {
+          AsyncStorage.setItem('user_id', returnData.data.email);
+          console.log(returnData.data.message);
+          navigation.replace('MainTab')
         } else {
           setErrortext('아이디와 비밀번호를 다시 확인해주세요');
           console.log('Please check your id or password');
         }
       })
-      .catch((error) => {
-        //Hide Loader
-        setLoading(false);
-        console.error(error);
+      //에러
+      .catch(err => {
+        console.log(err);
       });
   };
 
@@ -116,8 +122,8 @@ const LoginScreen = ({navigation}) => {
             />
           </View>
           <View style={styles.TextArea}>
-            <Text style={styles.Text}>로그인하여 당신 주변 재능을 거래하는</Text>
-            <Text style={styles.Text}>다재다능을 사용해보세요</Text>
+            <Text style={styles.Text,{paddingBottom:5}}>로그인하여 당신 주변 재능을 거래하는</Text>
+            <Text style={{paddingLeft:20}}><B>다재다능</B>을 사용해보세요.</Text>
           </View>
         </View>
   
@@ -126,24 +132,14 @@ const LoginScreen = ({navigation}) => {
             style={styles.textFormTop}
             placeholder={'아이디'}
             onChangeText={(userId) => setUserId(userId)}
-            autoCapitalize="none"
-            returnKeyType="next"
-            onSubmitEditing={() =>
-              passwordInputRef.current && passwordInputRef.current.focus()
-            }
-            underlineColorAndroid="#f000"
-            blurOnSubmit={false}
+            ref={idInputRef}
           />
           <TextInput
             style={styles.textFormBottom}
             onChangeText={(userPassword) => setUserPassword(userPassword)}
             secureTextEntry={true}
             placeholder={'비밀번호'}
-            returnKeyType="next"
-            keyboardType="default"
             ref={passwordInputRef}
-            onSubmitEditing={Keyboard.dismiss}
-            blurOnSubmit={false}
           />
           {errortext != '' ? (
             <Text style={styles.TextValidation}> {errortext}</Text>
@@ -152,7 +148,7 @@ const LoginScreen = ({navigation}) => {
   
         <View style={{flex: 0.75, paddingTop:30}}>
           <View style={styles.btnArea}>
-            <TouchableOpacity style={styles.btn}>
+            <TouchableOpacity style={styles.btn} onPress={handleLoginButton}>
               <Text style={(styles.Text, {color: 'white'})}>로그인</Text>
             </TouchableOpacity>
           </View>
@@ -167,6 +163,7 @@ const LoginScreen = ({navigation}) => {
               style={{ width: 220, height: 50 }}
               size={GoogleSigninButton.Size.Wide}
               color={GoogleSigninButton.Color.Dark}
+              onPress={_signIn}
               />
             </View>
           </View>
@@ -178,7 +175,6 @@ const LoginScreen = ({navigation}) => {
   }
 
   
-
 const styles = StyleSheet.create({
   container: {
     flex: 1, //전체의 공간을 차지한다는 의미
