@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const axi = axios.create({baseURL: "http://10.0.2.2:3000/"});
+const axi = axios.create({baseURL: "http://10.0.2.2:3000"});
 
 export async function userTest(){
     const info = await axi.get('/user/test')
@@ -10,7 +10,7 @@ export async function userTest(){
 }
 
 export async function postInfo({title, content, category, tag, view, date}){
-    console.log("request")
+    console.log("request");
     console.log({title,content});
     const info = await axi.post("/user/write", {title, content, category, tag, view, date});
     console.log(info);

@@ -51,15 +51,12 @@ export default class HomeScreen extends Component{
             });
           });*/
 
-        /*const url = 'http://10.0.2.2:3000/data/getPost';
-        fetch(url)
-            .then(res => res.json())
-            .then(data => {
+        const postData = await request.getPost();
+                //console.log(postData)
                 this.setState({
-                    data: this.state.data.concat(data),
-                    page : this.state.page +1
+                    data: this.state.data.concat(postData),
+                    page : this.state.page + 1
                 });
-            });*/
 
       }
 
@@ -83,7 +80,7 @@ export default class HomeScreen extends Component{
       }
 
       async morePage() {
-        console.log("더 불러와 시발!");
+        console.log("더 불러와 제발!");
       }
 
     updateSearch = (search) =>{
