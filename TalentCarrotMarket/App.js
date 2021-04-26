@@ -25,6 +25,7 @@ import chatScreen from './src/screens/ChatScreen';
 //aroundStack
 import aroundScreen from './src/screens/AroundScreen';
 import aroundSetScreen from './src/screens/AroundSetScreen';
+import aroundAddScreen from './src/screens/AroundAddScreen';
 import aroundCertifyScreen from './src/screens/AroundCertifyScreen';
 
 const Tab = createBottomTabNavigator();
@@ -75,6 +76,7 @@ const AroundStackScreen = () => {
     <Stack.Navigator>
       <AroundStack.Screen name="around" component={aroundScreen} />
       <AroundStack.Screen name="aroundSet" component={aroundSetScreen} />
+      <AroundStack.Screen name="aroundAdd" component={aroundAddScreen} />
       <AroundStack.Screen name="aroundCertify" component={aroundCertifyScreen} />
     </Stack.Navigator>
   );

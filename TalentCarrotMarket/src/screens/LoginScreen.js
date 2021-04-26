@@ -27,7 +27,7 @@ const LoginScreen = ({navigation}) => {
   const [userPassword, setUserPassword] = useState('');
   const [errortext, setErrortext] = useState('');
   const [userInfo, setUserInfo] = useState(null);
-  const [gettingLoginStatus, setGettingLoginStatus] = useState(true);
+  // const [gettingLoginStatus, setGettingLoginStatus] = useState(true);
   const idInputRef = createRef();
   const passwordInputRef = createRef();
   
