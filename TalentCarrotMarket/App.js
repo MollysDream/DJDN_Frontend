@@ -34,6 +34,8 @@ import chattingScreen from './src/screens/ChattingScreen';
 import mypageScreen from './src/screens/MypageScreen';
 import talentScreen from './src/screens/TalentScreen';
 
+import searchPostScreen from './src/screens/Post/SearchPostScreen';
+
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 const HomeStack = createStackNavigator();
@@ -63,6 +65,8 @@ const HomeStackScreen = () => {
   return (
     <Stack.Navigator>
       <HomeStack.Screen name="Home" component={homeScreen} />
+      <HomeStack.Screen name="SearchPost" component={searchPostScreen} />
+
     </Stack.Navigator>
   );
 };

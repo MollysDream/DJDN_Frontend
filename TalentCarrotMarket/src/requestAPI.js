@@ -18,16 +18,23 @@ export async function postInfo({title, content, category, tag, view, date}){
 }
 
 //HomeScreen 컴포넌트로 게시물 데이터 GET
-export async function getPost(){
-    console.log("getPost함수 호출됨");
-    const postData = await axi.get("/data/getPost");
+export async function getPost(page){
+    console.log("getPost함수 ${page} 페이지 호출됨");
+    const postData = await axi.get("/data/getPost", {params:{page:page}});
     //console.log(postData.data);
+    return postData.data;
+}
 
+export async function getPostBySearch(search){
+    //console.log(search);
+    console.log("getPostBySearch함수 호출됨");
+    const postData = await axi.get("/data/getPostBySearch", {params:{searchValue : search}});
     return postData.data;
 }
 
 export default{
     userTest,
     postInfo,
-    getPost
+    getPost,
+    getPostBySearch
 }

@@ -19,7 +19,7 @@ import {SearchBar} from 'react-native-elements';
 
 import request from '../requestAPI';
 
-class ListItem extends Component{
+/*class ListItem extends Component{
 
     render(){
         console.log(this.props.desc);
@@ -34,14 +34,14 @@ class ListItem extends Component{
             </View>
         );
     }
-}
+}*/
 
 
 
 export default class HomeScreen extends Component{
 
-    getData = async () => {
-        /*const url = 'https://jsonplaceholder.typicode.com/photos?_limit=10';
+    /*getData = async () => {
+        /!*const url = 'https://jsonplaceholder.typicode.com/photos?_limit=10';
         fetch(url)
           .then(res => res.json())
           .then(data => {
@@ -49,7 +49,7 @@ export default class HomeScreen extends Component{
               data: this.state.data.concat(data),
               page : this.state.page +1
             });
-          });*/
+          });*!/
 
         const postData = await request.getPost();
                 //console.log(postData)
@@ -58,34 +58,48 @@ export default class HomeScreen extends Component{
                     page : this.state.page + 1
                 });
 
-      }
+      }*/
 
       constructor(props) {
         super(props);
         this.state = {
             search:'',
             data:[],
-            page:0
+            page:0,
+            rerender: false
         }
       }
 
       async componentDidMount() {
         //console.log("홈스크린 componentDidMount");
-        const postData = await request.getPost();
-        //console.log(postData)
+        const postData = await request.getPost(this.state.page);
         this.setState({
             data: this.state.data.concat(postData),
             page : this.state.page + 1
         });
       }
 
-      async morePage() {
-        console.log("더 불러와 제발!");
+      morePage = async() => {
+          //console.log('더 불러와 제발!!');
+          const postData = await request.getPost(this.state.page);
+          this.setState({
+              data: this.state.data.concat(postData),
+              page : this.state.page + 1,
+              rerender: !this.state.rerender
+          });
       }
+
 
     updateSearch = (search) =>{
         this.setState({search});
     }
+
+    searchPost = () =>{
+        console.log(`${this.state.search} 검색 시작!!`)
+        this.props.navigation.navigate('SearchPost', {searchValue: this.state.search});
+        this.setState({search:''});
+    }
+
     returnFlatListItem(item,index){
         return(
             <View style={styles.post}>
@@ -105,6 +119,7 @@ export default class HomeScreen extends Component{
                     placeholder="   검색어를 입력해주세요"
                     onChangeText={this.updateSearch}
                     value={search}
+                    onSubmitEditing={this.searchPost}
                     />
                 <FlatList
                     data={this.state.data}
@@ -112,6 +127,7 @@ export default class HomeScreen extends Component{
                     renderItem={({item,index})=>this.returnFlatListItem(item,index)}
                     onEndReached={this.morePage}
                     onEndReachedThreshold={1}
+                    extraData={this.state.rerender}
                 />
 
             </View>
