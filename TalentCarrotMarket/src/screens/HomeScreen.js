@@ -9,6 +9,7 @@ import {
     FlatList,
     TouchableOpacity,
     Platform,
+    Button
 } from 'react-native';
 import {
     widthPercentageToDP as wp,
@@ -19,46 +20,8 @@ import {SearchBar} from 'react-native-elements';
 
 import request from '../requestAPI';
 
-/*class ListItem extends Component{
-
-    render(){
-        console.log(this.props.desc);
-        return(
-            <View style={styles.post}>
-
-                <View style={styles.postDetail}>
-                    <Text  style={styles.postTitle}>{this.props.title}</Text>
-                    <Text style={styles.postTime}>{this.props.time}</Text>
-                    <Text style={styles.postPrice}>{this.props.price}</Text>
-                </View>
-            </View>
-        );
-    }
-}*/
-
-
 
 export default class HomeScreen extends Component{
-
-    /*getData = async () => {
-        /!*const url = 'https://jsonplaceholder.typicode.com/photos?_limit=10';
-        fetch(url)
-          .then(res => res.json())
-          .then(data => {
-            this.setState({
-              data: this.state.data.concat(data),
-              page : this.state.page +1
-            });
-          });*!/
-
-        const postData = await request.getPost();
-                //console.log(postData)
-                this.setState({
-                    data: this.state.data.concat(postData),
-                    page : this.state.page + 1
-                });
-
-      }*/
 
       constructor(props) {
         super(props);
@@ -103,11 +66,22 @@ export default class HomeScreen extends Component{
     returnFlatListItem(item,index){
         return(
             <View style={styles.post}>
-             <Image style={{width: wp(30), height: hp(30),resizeMode: 'contain'}} source={{ uri: item.content.image}} />
+             <Image style={{width: wp(30), height: hp(30),resizeMode: 'contain'}} source={{ uri: item.image[0]}} />
              <Text  style={styles.postTitle}>{item.title}</Text>
             </View>
 
         );
+    }
+
+    categoryFilter = async() =>{
+          const category = ['운동','애견']
+          const postData = await request.getPostByCategory(category);
+          console.log(postData);
+        this.setState({
+            data: postData,
+            page : 0,
+            rerender: !this.state.rerender
+        });
     }
 
     render() {
@@ -115,6 +89,10 @@ export default class HomeScreen extends Component{
         return (
 
             <View >
+                <Button
+                    onPress={this.categoryFilter}
+                    title="카테고리 검색"
+                    />
                 <SearchBar
                     placeholder="   검색어를 입력해주세요"
                     onChangeText={this.updateSearch}

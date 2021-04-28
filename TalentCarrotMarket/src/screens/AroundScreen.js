@@ -16,28 +16,15 @@ export default class AroundScreen extends Component{
         this.state = {infos:[]}
     }
     async componentDidMount(){
-        /*console.log("안녕 친구들")
-        const infos = await request.userTest();
-        console.log(infos);*/
-        //this.setState({infos:infos});
-        //console.log(this.state.infos);
-        /*const data={
-            title: "Moooooly",
-            content: "Ih"
-        }*/
 
         const data={
-            title:"턱걸이 보조해주실분 구합니다",
-            content:{
-                image:"https://mollysdreampostdata.s3.ap-northeast-2.amazonaws.com/IMG_20191112_212153.jpg",
-                text:"귀여운 몰리 산책시켜 줄사람!!!"
-            },
-            category:["운동","턱걸이"],
-            tag:["운동"],
-            view:0,
-            date:Date.now()
+            title:"DDD!",
+            image: ["https://mollysdreampostdata.s3.ap-northeast-2.amazonaws.com/20190212_141450.jpg", "https://mollysdreampostdata.s3.ap-northeast-2.amazonaws.com/20190308_173803(0).jpg"],
+            text: "몰리랑 같이 산책할 사람 찾아요!",
+            category:["애견"],
+            tag:["애견"],
         }
-        await request.postInfo(data);
+        await request.createPost(data);
     }
 
     render(){

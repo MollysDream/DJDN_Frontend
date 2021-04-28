@@ -58,7 +58,7 @@ export default class SearchPostScreen extends Component{
     returnFlatListItem(item,index){
         return(
             <View style={styles.post}>
-                <Image style={{width: wp(30), height: hp(30),resizeMode: 'contain'}} source={{ uri: item.content.image}} />
+                <Image style={{width: wp(30), height: hp(30),resizeMode: 'contain'}} source={{ uri: item.image[0]}} />
                 <Text  style={styles.postTitle}>{item.title}</Text>
             </View>
 
