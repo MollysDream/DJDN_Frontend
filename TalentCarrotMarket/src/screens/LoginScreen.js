@@ -100,7 +100,7 @@ const LoginScreen = ({navigation}) => {
         if (returnData.data.message && returnData.data.login === "1") {
           AsyncStorage.setItem('user_id', returnData.data.email);
           console.log(returnData.data.message);
-          navigation.replace('MainTab')
+          navigation.replace('MainTab');
         } else {
           setErrortext('아이디와 비밀번호를 다시 확인해주세요');
           console.log('Please check your id or password');

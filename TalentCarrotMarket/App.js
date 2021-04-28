@@ -78,6 +78,7 @@ const AroundStackScreen = () => {
       <AroundStack.Screen name="aroundSet" component={aroundSetScreen} />
       <AroundStack.Screen name="aroundAdd" component={aroundAddScreen} />
       <AroundStack.Screen name="aroundCertify" component={aroundCertifyScreen} />
+      <AroundStack.Screen name="home" component={homeScreen} />
     </Stack.Navigator>
   );
 };
