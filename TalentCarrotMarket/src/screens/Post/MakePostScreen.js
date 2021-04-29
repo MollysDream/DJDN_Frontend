@@ -17,7 +17,7 @@ import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import request from "../requestAPI";
+import request from "../../requestAPI";
 import formdata from 'form-data';
 import { Alert } from 'react-native';
 

@@ -21,7 +21,7 @@ import LoginScreen from './src/screens/Auth/LoginScreen';
 //postStack(home)
 import homeScreen from './src/screens/Post/HomeScreen';
 import searchPostScreen from './src/screens/Post/SearchPostScreen';
-import makepostScreen from './src/screens/MakePostScreen'
+import makepostScreen from './src/screens/Post/MakePostScreen'
 
 //chatStack
 import chatchScreen from './src/screens/Chat/ChatChScreen';
