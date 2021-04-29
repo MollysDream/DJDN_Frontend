@@ -6,27 +6,34 @@ import {
 import { NavigationContainer } from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+// import Icon from 'react-native-vector-icons/MaterialIcons';
 import Icon2 from 'react-native-vector-icons/Foundation';
 import Icon3 from 'react-native-vector-icons/Ionicons';
 import Icon4 from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import SplashScreen from './src/screens/SplashScreen';
-import LoginScreen from './src/screens/LoginScreen';
-import RegisterScreen from './src/screens/RegisterScreen';
-import homeScreen from './src/screens/HomeScreen';
-import mypageScreen from './src/screens/MypageScreen';
 import talentScreen from './src/screens/TalentScreen';
 
-//ChatStack
-import chatchScreen from './src/screens/ChatChScreen';
-import chatScreen from './src/screens/ChatScreen';
+//Auth
+import RegisterScreen from './src/Auth/RegisterScreen';
+import LoginScreen from './src/Auth/LoginScreen';
+
+//postStack(home)
+import homeScreen from './src/screens/Post/HomeScreen';
+import searchPostScreen from './src/screens/Post/SearchPostScreen';
+
+//chatStack
+import chatchScreen from './src/screens/Chat/ChatChScreen';
+import chatScreen from './src/screens/Chat/ChatScreen';
 
 //aroundStack
-import aroundScreen from './src/screens/AroundScreen';
-import aroundSetScreen from './src/screens/AroundSetScreen';
-import aroundAddScreen from './src/screens/AroundAddScreen';
-import aroundCertifyScreen from './src/screens/AroundCertifyScreen';
+import aroundScreen from './src/screens/Around/AroundScreen';
+import aroundSetScreen from './src/screens/Around/AroundSetScreen';
+import aroundAddScreen from './src/screens/Around/AroundAddScreen';
+import aroundCertifyScreen from './src/screens/Around/AroundCertifyScreen';
+
+//MyPageStack
+import mypageScreen from './src/Mypage/MypageScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -57,6 +64,7 @@ const HomeStackScreen = () => {
   return (
     <Stack.Navigator>
       <HomeStack.Screen name="Home" component={homeScreen} />
+      <HomeStack.Screen name="SearchPost" component={searchPostScreen} />
     </Stack.Navigator>
   );
 };
