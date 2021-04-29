@@ -15,8 +15,8 @@ import SplashScreen from './src/screens/SplashScreen';
 import talentScreen from './src/screens/TalentScreen';
 
 //Auth
-import RegisterScreen from './src/Auth/RegisterScreen';
-import LoginScreen from './src/Auth/LoginScreen';
+import RegisterScreen from './src/screens/Auth/RegisterScreen';
+import LoginScreen from './src/screens/Auth/LoginScreen';
 
 //postStack(home)
 import homeScreen from './src/screens/Post/HomeScreen';
@@ -33,7 +33,7 @@ import aroundAddScreen from './src/screens/Around/AroundAddScreen';
 import aroundCertifyScreen from './src/screens/Around/AroundCertifyScreen';
 
 //MyPageStack
-import mypageScreen from './src/Mypage/MypageScreen';
+import mypageScreen from './src/screens/Mypage/MypageScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
