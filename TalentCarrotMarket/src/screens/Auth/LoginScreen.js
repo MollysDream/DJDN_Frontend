@@ -117,7 +117,7 @@ const LoginScreen = ({navigation}) => {
         <View style={styles.topArea}>
           <View style={styles.titleArea}>
             <Image
-              source={require('../login.png')}
+              source={require('../../login.png')}
               style={{width: wp(30), resizeMode: 'contain'}}
             />
           </View>

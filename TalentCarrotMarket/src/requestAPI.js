@@ -2,13 +2,12 @@ import axios from 'axios';
 
 const axi = axios.create({baseURL: "http://10.0.2.2:3000"});
 
-//Test 용도
-// export async function userTest(){
-//     const info = await axi.get('/user/test')
+export async function userTest(){
+    const info = await axi.get('/user/test')
 
-//     console.log(info.data)
-//     return info.data;
-// }
+    console.log(info.data)
+    return info.data;
+}
 
 
 // Auth 관련 (나중에 정리해볼게요....)//

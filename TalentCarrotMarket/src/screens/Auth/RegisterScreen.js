@@ -108,7 +108,7 @@ const RegisterScreen = (props) => {
               alignItems: 'center',
             }}>
             <Image
-              source={require('../check.png')}
+              source={require('../../check.png')}
               style={{
                 height: wp(20),
                 resizeMode: 'contain',
@@ -149,7 +149,7 @@ const RegisterScreen = (props) => {
       <View style={styles.topArea}>
         <View style={styles.titleArea}>
           <Image
-            source={require('../login.png')}
+            source={require('../../login.png')}
             style={{width: wp(40), resizeMode: 'contain'}}
           />
         </View>
