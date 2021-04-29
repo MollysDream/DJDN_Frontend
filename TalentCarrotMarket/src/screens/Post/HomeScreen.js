@@ -9,55 +9,21 @@ import {
     FlatList,
     TouchableOpacity,
     Platform,
+    Button
 } from 'react-native';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
-  } from 'react-native-responsive-screen';
+} from 'react-native-responsive-screen';
 import { SafeAreaInsetsContext } from 'react-native-safe-area-context';
 import {SearchBar} from 'react-native-elements';
-
+import Icon from 'react-native-vector-icons/Ionicons';
 import request from '../../requestAPI';
-
-/*class ListItem extends Component{
-
-    render(){
-        console.log(this.props.desc);
-        return(
-            <View style={styles.post}>
-                <View style={styles.postDetail}>
-                    <Text  style={styles.postTitle}>{this.props.title}</Text>
-                    <Text style={styles.postTime}>{this.props.time}</Text>
-                    <Text style={styles.postPrice}>{this.props.price}</Text>
-                </View>
-            </View>
-        );
-    }
-}*/
-
 
 
 export default class HomeScreen extends Component{
 
-    /*getData = async () => {
-        /!*const url = 'https://jsonplaceholder.typicode.com/photos?_limit=10';
-        fetch(url)
-          .then(res => res.json())
-          .then(data => {
-            this.setState({
-              data: this.state.data.concat(data),
-              page : this.state.page +1
-            });
-          });*!/
-        const postData = await request.getPost();
-                //console.log(postData)
-                this.setState({
-                    data: this.state.data.concat(postData),
-                    page : this.state.page + 1
-                });
-      }*/
-
-      constructor(props) {
+    constructor(props) {
         super(props);
         this.state = {
             search:'',
@@ -65,26 +31,26 @@ export default class HomeScreen extends Component{
             page:0,
             rerender: false
         }
-      }
+    }
 
-      async componentDidMount() {
+    async componentDidMount() {
         //console.log("홈스크린 componentDidMount");
         const postData = await request.getPost(this.state.page);
         this.setState({
             data: this.state.data.concat(postData),
             page : this.state.page + 1
         });
-      }
+    }
 
-      morePage = async() => {
-          //console.log('더 불러와 제발!!');
-          const postData = await request.getPost(this.state.page);
-          this.setState({
-              data: this.state.data.concat(postData),
-              page : this.state.page + 1,
-              rerender: !this.state.rerender
-          });
-      }
+    morePage = async() => {
+        //console.log('더 불러와 제발!!');
+        const postData = await request.getPost(this.state.page);
+        this.setState({
+            data: this.state.data.concat(postData),
+            page : this.state.page + 1,
+            rerender: !this.state.rerender
+        });
+    }
 
 
     updateSearch = (search) =>{
@@ -100,24 +66,39 @@ export default class HomeScreen extends Component{
     returnFlatListItem(item,index){
         return(
             <View style={styles.post}>
-             <Image style={{width: wp(30), height: hp(30),resizeMode: 'contain'}} source={{ uri: item.content.image}} />
-             <Text  style={styles.postTitle}>{item.title}</Text>
+                <Image style={{width: wp(30), height: hp(30),resizeMode: 'contain'}} source={{ uri: item.image[0]}} />
+                <Text  style={styles.postTitle}>{item.title}</Text>
             </View>
 
         );
     }
 
+    categoryFilter = async() =>{
+        const category = ['운동','애견']
+        const postData = await request.getPostByCategory(category);
+        console.log(postData);
+        this.setState({
+            data: postData,
+            page : 0,
+            rerender: !this.state.rerender
+        });
+    }
+
     render() {
         const {search} = this.state;
         return (
-
+            <View style={{flex:1}}>
             <View >
+                <Button
+                    onPress={this.categoryFilter}
+                    title="카테고리 검색"
+                />
                 <SearchBar
                     placeholder="   검색어를 입력해주세요"
                     onChangeText={this.updateSearch}
                     value={search}
                     onSubmitEditing={this.searchPost}
-                    />
+                />
                 <FlatList
                     data={this.state.data}
                     keyExtractor={(item,index) => String(item._id)}
@@ -126,6 +107,11 @@ export default class HomeScreen extends Component{
                     onEndReachedThreshold={1}
                     extraData={this.state.rerender}
                 />
+            </View>
+                <TouchableOpacity onPress={()=>this.props.navigation.navigate('MakePost')}
+                                  style={{borderWidth:0,position:'absolute',bottom:5,alignSelf:'flex-end'}}>
+                    <Icon name="add-circle"  size={80} color="#01a699" />
+                </TouchableOpacity>
 
             </View>
         );

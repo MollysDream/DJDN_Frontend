@@ -24,7 +24,7 @@ const SplashScreen = ({navigation}) => {
           value === null ? 'Auth' : 'MainTab'
         ),
       );
-    }, 5000);
+    }, 100);
   }, []);
 
   return (
