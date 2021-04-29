@@ -73,7 +73,7 @@ const RegisterScreen = (props) => {
       nickname: userNickName
     };
     axios
-      .post("http://10.0.2.2:3001/member/join", send_param)
+      .post("http://10.0.2.2:3000/member/join", send_param)
       //정상 수행
       .then(returnData => {
         setErrortext2('');

@@ -94,7 +94,7 @@ const LoginScreen = ({navigation}) => {
     };
 
     axios
-    .post("http://10.0.2.2:3001/member/login", send_param)
+    .post("http://10.0.2.2:3000/member/login", send_param)
       //정상 수행
       .then(returnData => {
         if (returnData.data.message && returnData.data.login === "1") {
