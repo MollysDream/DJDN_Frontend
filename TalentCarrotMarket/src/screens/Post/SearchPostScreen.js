@@ -26,6 +26,7 @@ export default class SearchPostScreen extends Component{
 
     async componentDidMount() {
         const postData = await request.getPostBySearch(this.state.search);
+        console.log(postData);
         this.setState({
             data: this.state.data.concat(postData),
             page : this.state.page + 1

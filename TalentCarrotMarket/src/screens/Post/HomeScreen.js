@@ -84,14 +84,23 @@ export default class HomeScreen extends Component{
         });
     }
 
+    filterOption = () =>{
+        console.log('필터 옵션 설정!!')
+        this.props.navigation.navigate('FilterOption');
+    }
+
     render() {
         const {search} = this.state;
         return (
             <View style={{flex:1}}>
             <View >
-                <Button
+                {/*<Button
                     onPress={this.categoryFilter}
                     title="카테고리 검색"
+                />*/}
+                <Button
+                    title={"필터 설정"}
+                    onPress={this.filterOption}
                 />
                 <SearchBar
                     placeholder="   검색어를 입력해주세요"

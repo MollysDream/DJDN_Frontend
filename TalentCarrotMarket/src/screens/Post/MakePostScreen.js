@@ -66,7 +66,7 @@ export default class MakePostScreen extends Component {
         }
     }
 
-    confirmPost(){
+    async confirmPost(){
         if(this.state.title.length === 0){
             Alert.alert("경고","제목을 작성해주세요", [{ text: '확인', style: 'cancel' }])
             return;
@@ -95,12 +95,24 @@ export default class MakePostScreen extends Component {
             return;
         }
         console.log(this.state)
-        axi.post("/data/createPost", (this.state)).then((data)=> {  //수범이가 requestAPI에서 쉽게 할 수 있다고 수정하겠다고 냅두라고 함..
+
+        try{
+            const postData = await request.createPost(this.state)
+            Alert.alert("작성 완료", "게시글 작성이 완료되었습니다.",
+                [{ text: '확인', style: 'cancel',
+                onPress : ()=> this.props.navigation.navigate('Home')}])
+        }catch(err){
+            Alert.alert("작성 실패","게시글을 다시 작성해주세요.", err.response.data.error,[
+                {text:'확인', style:'cancel', onPress: () => {this.setState({loading: false})}}
+            ])
+        }
+
+        /*axi.post("/data/createPost", (this.state)).then((data)=> {  //수범이가 requestAPI에서 쉽게 할 수 있다고 수정하겠다고 냅두라고 함..
             Alert.alert("작성 완료", "게시글 작성이 완료되었습니다.", [{ text: '확인', style: 'cancel', onPress : ()=> this.props.navigation.navigate('Home')}])}).catch(function (e) {
             Alert.alert("작성 실패","게시글을 다시 작성해주세요.", e.response.data.error,[
                 {text:'확인', style:'cancel', onPrees: () => {this.setState({loading: false})}}
             ])
-        })
+        })*/
     }
 
 

@@ -47,11 +47,19 @@ export async function getPostByCategory(category){
     return postData.data;
 }
 
+export async function getCategoryList(){
+    console.log('getCategoryList함수 호출됨');
+    const categoryData = await axi.get("/data/getCategoryList");
+    //console.log(categoryData.data);
+    return categoryData.data;
+}
+
 export default{
     userTest,
     postInfo,
     getPost,
     getPostBySearch,
     createPost,
-    getPostByCategory
+    getPostByCategory,
+    getCategoryList
 }
