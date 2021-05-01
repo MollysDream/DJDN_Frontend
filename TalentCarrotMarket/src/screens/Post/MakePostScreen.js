@@ -12,7 +12,9 @@ import {
     KeyboardAvoidingView,
     TouchableWithoutFeedback
 } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/Entypo';
+import {RNS3} from 'react-native-aws3';
 
 import {
     widthPercentageToDP as wp,
@@ -22,9 +24,7 @@ import request from "../../requestAPI";
 //import selectimage from "../Post/SelectImageScreen";
 import { Alert } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
-import axios from 'axios';
-
-const axi = axios.create({baseURL: "http://10.0.2.2:3000"});
+import {min} from "react-native-reanimated";
 
 export default class MakePostScreen extends Component {
     state = {
@@ -33,8 +33,19 @@ export default class MakePostScreen extends Component {
         text:"",
         category:[],
         price: 0,
+        imageTemp:[] //디바이스에서 불러온 이미지 정보 임시 저장
     }
 
+    getFormatDate(date){
+        let year = date.getFullYear();
+        let month = (1 + date.getMonth());
+        month = month >= 10 ? month: '0' + month;
+        let day = date.getDate();
+        day = day >= 10 ? day : '0' + day;
+        let hour = date.getHours();
+        let minutes = date.getMinutes();
+        return `${year}-${month}-${day}-${hour}-${minutes}`
+    }
 
     writePost = (text, type)=>{
         if(type == 'title'){
@@ -55,12 +66,12 @@ export default class MakePostScreen extends Component {
         }
     }
 
-    confirmPost(){
+    async confirmPost(){
         if(this.state.title.length === 0){
             Alert.alert("경고","제목을 작성해주세요", [{ text: '확인', style: 'cancel' }])
             return;
         }
-        else if(this.state.image.length === 0){
+        else if(this.state.imageTemp.length === 0){
             Alert.alert("경고","이미지를 첨부해주세요", [{ text: '확인', style: 'cancel' }])
             return;
         }
@@ -78,16 +89,55 @@ export default class MakePostScreen extends Component {
             Alert.alert("경고","가격을 작성해주세요", [{ text: '확인', style: 'cancel' }])
             return;
         }
-        console.log(this.state)
-        axi.post("/data/createPost", (this.state)).then((data)=> {  //수범이가 requestAPI에서 쉽게 할 수 있다고 수정하겠다고 냅두라고 함..
-            Alert.alert("작성 완료", "게시글 작성이 완료되었습니다.", [{ text: '확인', style: 'cancel', onPress : ()=> this.props.navigation.navigate('Home')}])}).catch(function (e) {
-            Alert.alert("작성 실패","게시글을 다시 작성해주세요.", e.response.data.error,[
-                {text:'확인', style:'cancel', onPrees: () => {this.setState({loading: false})}}
-            ])
+
+        const date = this.getFormatDate(new Date());
+        const options = {
+            keyPrefix: `${this.state.title}/`,
+            bucket: 'mollysdreampostdata',
+            region: 'ap-northeast-2',
+            accessKey: 'AKIA2H2WIFGYFMLG6XFV',
+            secretKey: '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',
+            successActionStatus: 201,
+        }
+
+
+        /*this.state.imageTemp.map((file)=> {
+            RNS3.put(file, options).then(response => {
+                if (response.status !== 201)
+                    throw new Error("Failed to upload image to S3");
+                imageUrl.push(response.body.postResponse.location);
+            })
         })
+        console.log(imageUrl);*/
+
+
+
+        try{
+            const imageUrl: string[] = await Promise.all(this.state.imageTemp.map(async (file):Promise<string>=>{
+                let imageLocation = await request.postImageToS3(file,options);
+                return imageLocation
+            }))
+            this.setState({image:imageUrl});
+
+            }catch(err){
+            console.log(err);
+        }
+
+        console.log(this.state)
+        try{
+            const postData = await request.createPost(this.state)
+            Alert.alert("작성 완료", "게시글 작성이 완료되었습니다.",
+                [{ text: '확인', style: 'cancel',
+                    onPress : ()=> this.props.navigation.navigate('Home')}])
+        }catch(err){
+            Alert.alert("작성 실패","게시글을 다시 작성해주세요.", err.response.data.error,[
+                {text:'확인', style:'cancel', onPress: () => {this.setState({loading: false})}}
+            ])
+        }
     }
 
-    selectImage =()=>{
+    selectImage = async ()=>{
+        const path =require('path');
 
         ImagePicker.openPicker({
             width: 300,
@@ -97,38 +147,27 @@ export default class MakePostScreen extends Component {
             compressImageQuality : 0.1,
             includeBase64 : true,
             cancelButtonTitle : true,
-          }).then(images => { images.map((i)=>this.state.image.push(`${i.path}`))
-            
+          }).then(images => {
+              const imageTemp = []
+              images.map((i)=>{
+                  const name = path.parse(i.path).base;
+                  const file = {
+                      uri: i.path,
+                      name: name,
+                      type: i.mime
+                  }
+
+                  imageTemp.push(file);
+
+              })
+            this.setState({imageTemp:imageTemp})
+            /*this.state.imageTemp.map((file)=>{
+                console.log(file);
+            })*/
         })
-          
-              
-              console.log(this.state.image)
+
     }
 
-
-    // url(path) {
-    //     //빈파일이 아닌 경우 함수 진행
-    //      if (path !== null) {
-    //        //FormData 생성
-    //        const fd = new FormData();
-    //        //FormData에 key, value 추가하기
-    //        fd.append('path', path);
-    //        // axios 사용해서 백엔드에게 파일 보내기
-    //        axi
-    //          .post(`${URL}/user/profile-upload`, fd)
-    //          .then(res => {
-    //       //응답으로 받은 url 저장하기 (응답 내용의 표시나 방법은 백엔드와 결정해야한다.)
-    //           this.state.image.push(res.data.image_url)
-                
-    //          })
-    //        //에러가 날 경우 처리
-    //          .catch(error => {
-    //            console.log(error.response);
-    //          });
-    //      }
-    //    };
-
-    
 
     render() {
         return (
@@ -167,7 +206,7 @@ export default class MakePostScreen extends Component {
                                         </Item>
                                         <Item  inlinelabel laststyle={{ marginTop: '5%' }} >
                                         <TouchableOpacity
-                                        onPress={this.selectImage.bind(this)}
+                                        onPress={this.selectImage}
                                         style={styles.imageArea}>
                                                 <Icon name="camera"  size={50} />
                                         </TouchableOpacity>
