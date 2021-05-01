@@ -239,16 +239,6 @@ export default class MakePostScreen extends Component {
                                                    
                                                 <Image style={styles.post} source={{uri: item.uri}} /> )}
                                                 />  
-                                              
-
-                                            {/* <FlatList 
-                                                 data={this.state.imageTemp}
-                                                 horizontal = {true}
-                                                keyExtractor={(item,index) => String(index)}
-                                               renderItem={({item,index})=>this.returnFlatListItem(item,index)}
-                                             /> */}
-                                            {console.log(this.state.image)}
-                                            { console.log("왔다 감")}
                                             </Item>
                                         }
 
@@ -276,8 +266,8 @@ const styles = StyleSheet.create({
         backgroundColor: "#FFFFFF",
         borderBottomWidth: 1,
         padding: 5,
-        height: 200,
-        width : 200
+        height: 150,
+        width : 150
     },
     container: {
         flex: 1, //전체의 공간을 차지한다는 의미
