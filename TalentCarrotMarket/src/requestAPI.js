@@ -69,6 +69,6 @@ export default{
     getPostBySearch,
     createPost,
     getPostByCategory,
-    postImageToS3
+    postImageToS3,
     getCategoryList
 }
