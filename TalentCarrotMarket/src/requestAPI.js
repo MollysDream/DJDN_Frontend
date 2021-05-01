@@ -1,4 +1,5 @@
 import axios from 'axios';
+import {RNS3} from "react-native-aws3";
 
 const axi = axios.create({baseURL: "http://10.0.2.2:3000"});
 
@@ -33,10 +34,10 @@ export async function getPostBySearch(search){
     return postData.data;
 }
 
-export async function createPost({title, image, text, category, tag}){
+export async function createPost({title, image, text, category, tag, price}){
     console.log("createPost함수 호출됨");
-    console.log({title, image, text, category, tag});
-    const info = await axi.post("/data/createPost", {title, image, text, category, tag});
+    console.log({title, image, text, category, tag, price});
+    const info = await axi.post("/data/createPost", {title, image, text, category, tag, price});
     return info.data;
 }
 
@@ -45,6 +46,13 @@ export async function getPostByCategory(category){
     console.log(category);
     const postData = await axi.get("/data/getPostByCategory", {params:{category:category}});
     return postData.data;
+}
+
+export async function postImageToS3(file, options){
+    console.log("postImageToS3함수 호출됨");
+    const imageData = await RNS3.put(file, options);
+    //console.log(imageData.body.postResponse.location);
+    return imageData.body.postResponse.location
 }
 
 export async function getCategoryList(){
@@ -61,5 +69,6 @@ export default{
     getPostBySearch,
     createPost,
     getPostByCategory,
+    postImageToS3
     getCategoryList
 }
