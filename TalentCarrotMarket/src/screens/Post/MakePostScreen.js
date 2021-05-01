@@ -92,25 +92,13 @@ export default class MakePostScreen extends Component {
 
         const date = this.getFormatDate(new Date());
         const options = {
-            keyPrefix: `${this.state.title}/`,
+            keyPrefix: `${this.state.title}/`,  //제목 뒤에 user_id 값 추가해야 됨.
             bucket: 'mollysdreampostdata',
             region: 'ap-northeast-2',
             accessKey: 'AKIA2H2WIFGYFMLG6XFV',
             secretKey: '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',
             successActionStatus: 201,
         }
-
-
-        /*this.state.imageTemp.map((file)=> {
-            RNS3.put(file, options).then(response => {
-                if (response.status !== 201)
-                    throw new Error("Failed to upload image to S3");
-                imageUrl.push(response.body.postResponse.location);
-            })
-        })
-        console.log(imageUrl);*/
-
-
 
         try{
             const imageUrl: string[] = await Promise.all(this.state.imageTemp.map(async (file):Promise<string>=>{
