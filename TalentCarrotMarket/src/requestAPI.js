@@ -55,6 +55,13 @@ export async function postImageToS3(file, options){
     return imageData.body.postResponse.location
 }
 
+export async function getCategoryList(){
+    console.log('getCategoryList함수 호출됨');
+    const categoryData = await axi.get("/data/getCategoryList");
+    //console.log(categoryData.data);
+    return categoryData.data;
+}
+
 export default{
     userTest,
     postInfo,
@@ -63,4 +70,5 @@ export default{
     createPost,
     getPostByCategory,
     postImageToS3
+    getCategoryList
 }

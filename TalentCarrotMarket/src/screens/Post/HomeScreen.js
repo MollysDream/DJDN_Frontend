@@ -9,7 +9,8 @@ import {
     FlatList,
     TouchableOpacity,
     Platform,
-    Button
+    Button,
+    RefreshControl
 } from 'react-native';
 import {
     widthPercentageToDP as wp,
@@ -29,7 +30,8 @@ export default class HomeScreen extends Component{
             search:'',
             data:[],
             page:0,
-            rerender: false
+            rerender: false,
+            refreshing: false
         }
     }
 
@@ -48,9 +50,25 @@ export default class HomeScreen extends Component{
         this.setState({
             data: this.state.data.concat(postData),
             page : this.state.page + 1,
-            rerender: !this.state.rerender
+            rerender: !this.state.rerender,
         });
     }
+
+    refreshPage = async() => {
+        console.log('페이지 새로고침');
+
+        this.state.page = 0;
+        this.setState({page:this.state.page, refreshing: true});
+
+        const postData = await request.getPost(this.state.page);
+        this.setState({
+            data: postData,
+            page : this.state.page + 1,
+            rerender: !this.state.rerender,
+            refreshing: false
+        });
+    }
+
 
 
     updateSearch = (search) =>{
@@ -84,14 +102,23 @@ export default class HomeScreen extends Component{
         });
     }
 
+    filterOption = () =>{
+        console.log('필터 옵션 설정!!')
+        this.props.navigation.navigate('FilterOption');
+    }
+
     render() {
         const {search} = this.state;
         return (
             <View style={{flex:1}}>
             <View >
-                <Button
+                {/*<Button
                     onPress={this.categoryFilter}
                     title="카테고리 검색"
+                />*/}
+                <Button
+                    title={"필터 설정"}
+                    onPress={this.filterOption}
                 />
                 <SearchBar
                     placeholder="   검색어를 입력해주세요"
@@ -106,6 +133,7 @@ export default class HomeScreen extends Component{
                     onEndReached={this.morePage}
                     onEndReachedThreshold={1}
                     extraData={this.state.rerender}
+                    refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.refreshPage} />}
                 />
             </View>
                 <TouchableOpacity onPress={()=>this.props.navigation.navigate('MakePost')}

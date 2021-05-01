@@ -124,6 +124,7 @@ export default class MakePostScreen extends Component {
         }
 
         console.log(this.state)
+
         try{
             const postData = await request.createPost(this.state)
             Alert.alert("작성 완료", "게시글 작성이 완료되었습니다.",
