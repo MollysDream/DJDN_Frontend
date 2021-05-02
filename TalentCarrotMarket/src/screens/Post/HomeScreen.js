@@ -10,7 +10,8 @@ import {
     TouchableOpacity,
     Platform,
     Button,
-    RefreshControl
+    RefreshControl,
+    TouchableHighlight
 } from 'react-native';
 import {
     widthPercentageToDP as wp,
@@ -81,12 +82,27 @@ export default class HomeScreen extends Component{
         this.setState({search:''});
     }
 
+    goToDetailPostScreen(item){
+        console.log(`${item.title} 게시글 확인`);
+        const postImages = []
+        item.image.map((image)=>{
+            let temp={
+                image:image,
+                desc:image,
+            }
+            postImages.push(temp);
+        })
+        this.props.navigation.navigate('DetailPost',{detailPost: item, postImages: postImages});
+    }
+
     returnFlatListItem(item,index){
         return(
-            <View style={styles.post}>
-                <Image style={{width: wp(30), height: hp(30),resizeMode: 'contain'}} source={{ uri: item.image[0]}} />
-                <Text  style={styles.postTitle}>{item.title}</Text>
-            </View>
+            <TouchableHighlight onPress={() => this.goToDetailPostScreen(item)}>
+                <View style={styles.post}>
+                    <Image style={{width: wp(30), height: hp(30),resizeMode: 'contain'}} source={{ uri: item.image[0]}} />
+                    <Text  style={styles.postTitle}>{item.title}</Text>
+                </View>
+            </TouchableHighlight>
 
         );
     }

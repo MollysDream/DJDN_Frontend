@@ -28,6 +28,7 @@ export default class FilterOptionScreen extends Component{
         console.log(categoryList)
         console.log(`전체 카테고리 리스트 ${categoryList.category}`);
 
+        //user_id 값으로 사용자 정보 받아와야 됨
         const userData = await requestUser.getUserData("teller2016@ajou.ac.kr");
         console.log(`사용자의 카테고리 ${userData.category}`);
 
