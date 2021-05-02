@@ -9,61 +9,59 @@ import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
   } from 'react-native-responsive-screen';
+import axios from "axios";
 
 import AsyncStorage from '@react-native-community/async-storage';
 
-const P0 = {latitude: 37.564362, longitude: 126.977011};
-
 const MypageScreen = ({navigation}) => {
 
-  const [address, setAddress] = useState('');
+  const [address, setAddress] = useState([]);
     
     const handleLogoutButton = () => {
         AsyncStorage.clear();
-        navigation.replace('Auth');
-        
+        navigation.replace('Auth'); 
     };
 
-    const certifyAroundButton = () =>{
-
+    //인증한 동네 확인
+    useEffect(() => {
       AsyncStorage.getItem('user_id')
       .then((value) => {
-        const data = JSON.parse(value);
-        console.log('name is ', data.name);
+        console.log('name is ', value);
 
         const send_param = {
-          email:data,
-          location: P0
+          email:value,
         };
 
-      axios
-      .post("http://10.0.2.2:3001/address/certifyAddress", send_param)
-        //정상 수행
-        .then(returnData => {
-          if (returnData.data.message) {
-            setCertify(true);
-            setCertifyPopup(returnData.data.message);
-            navigation.replace('home');
-          } else {
-            setCertify(false);
-            setCertifyPopup('동네인증을 다시 해주세요');
-          }
-        })
-        //에러
-        .catch(err => {
-          console.log(err);
+        axios
+        .post("http://10.0.2.2:3000/address/checkAddress", send_param)
+          //정상 수행
+          .then(returnData => {
+            if (returnData.data.address) {
+              console.log(returnData.data.address)
+              setAddress(returnData.data.address)
+            } else {
+              setAddress('gkdl')
+            }
+          })
+          //에러
+          .catch(err => {
+            console.log(err);
+          });
         });
-      });
 
-  }
- 
+    }, []);
+
+    const certifyAddress=address.map(list=>
+      <Text>내가 인증한 동네 : {list.addressName}</Text>
+    )
+    
     return (
       <View style={styles.container}>
             <View style={styles.btnArea2}>
                 <TouchableOpacity style={styles.btn2} onPress={handleLogoutButton}>
                     <Text style={(styles.Text, {color: 'white'})}>로그아웃</Text>
                     
-                    <TouchableOpacity style={styles.btn, {flex:0.35}} onPress={certifyAroundButton}>
+                    <TouchableOpacity style={styles.btn, {flex:0.35}} onPress={handleLogoutButton}>
                         <Text style={(styles.Text, {color: 'black', paddingLeft:20})}>❌</Text>
                     </TouchableOpacity>
                   
@@ -76,9 +74,9 @@ const MypageScreen = ({navigation}) => {
               }}
               />
 
-              <View>
-                <Text>{address}</Text>
-              </View>
+            <View>
+              {certifyAddress}
+            </View>
       </View>
 
         
