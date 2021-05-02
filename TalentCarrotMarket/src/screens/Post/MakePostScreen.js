@@ -13,16 +13,13 @@ import {
     KeyboardAvoidingView,
     TouchableWithoutFeedback
 } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/Entypo';
-import {RNS3} from 'react-native-aws3';
 
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import request from "../../requestAPI";
-//import selectimage from "../Post/SelectImageScreen";
 import { Alert } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import {min} from "react-native-reanimated";

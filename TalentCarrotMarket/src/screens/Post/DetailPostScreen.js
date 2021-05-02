@@ -27,6 +27,12 @@ export default class SearchPostScreen extends Component{
     }
 
     async componentDidMount() {
+        //게시글 조회수 증가
+        await request.updatePostView({
+            postId: this.state.detailPost._id,
+            view: this.state.detailPost.view ++
+        });
+
         //post 스키마에 저장된 user_id 값으로 사용자 정보 받아와야 됨
         const userData = await requestUser.getUserData("teller2016@ajou.ac.kr");
         console.log(`사용자의 닉네임 ${userData.nickname}`);

@@ -2,14 +2,12 @@ import React, {Component} from 'react';
 import {
     View,
     Text,
-    ScrollView,
-    StyleSheet, Image, FlatList
+    StyleSheet, Image, FlatList, TouchableHighlight
 } from 'react-native';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import { SafeAreaInsetsContext } from 'react-native-safe-area-context';
 import {SearchBar} from 'react-native-elements';
 import request from "../../requestAPI";
 
@@ -41,11 +39,6 @@ export default class SearchPostScreen extends Component{
         this.setState({search});
     }
 
-    /*searchPost = () =>{
-        console.log(`${this.state.search} 검색 시작!!`)
-        this.props.navigation.replace('SearchPost', {searchValue: this.state.search});
-    }*/
-
     searchPost = async ()=>{
         console.log(this.state.search);
         const postData = await request.getPostBySearch(this.state.search);
@@ -56,12 +49,27 @@ export default class SearchPostScreen extends Component{
         });
     }
 
+    goToDetailPostScreen(item){
+        console.log(`${item.title} 게시글 확인`);
+        const postImages = []
+        item.image.map((image)=>{
+            let temp={
+                image:image,
+                desc:image,
+            }
+            postImages.push(temp);
+        })
+        this.props.navigation.navigate('DetailPost',{detailPost: item, postImages: postImages});
+    }
+
     returnFlatListItem(item,index){
         return(
-            <View style={styles.post}>
-                <Image style={{width: wp(30), height: hp(30),resizeMode: 'contain'}} source={{ uri: item.image[0]}} />
-                <Text  style={styles.postTitle}>{item.title}</Text>
-            </View>
+            <TouchableHighlight onPress={() => this.goToDetailPostScreen(item)}>
+                <View style={styles.post}>
+                    <Image style={{width: wp(30), height: hp(30),resizeMode: 'contain'}} source={{ uri: item.image[0]}} />
+                    <Text  style={styles.postTitle}>{item.title}</Text>
+                </View>
+            </TouchableHighlight>
 
         );
     }
@@ -69,7 +77,7 @@ export default class SearchPostScreen extends Component{
     render(){
         const {search} = this.state;
         return (
-            <View >
+            <View style={{flex:1}}>
                 <SearchBar
                     placeholder= "   검색어를 입력해주세요"
                     onChangeText={this.updateSearch}

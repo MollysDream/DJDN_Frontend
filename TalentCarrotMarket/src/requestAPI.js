@@ -62,6 +62,12 @@ export async function getCategoryList(){
     return categoryData.data;
 }
 
+export async function updatePostView({postId, view}){
+    console.log('updatePostView함수 호출됨');
+    await axi.post("/data/updatePostView", {postId,view});
+
+}
+
 export default{
     userTest,
     postInfo,
@@ -70,5 +76,6 @@ export default{
     createPost,
     getPostByCategory,
     postImageToS3,
-    getCategoryList
+    getCategoryList,
+    updatePostView
 }

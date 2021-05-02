@@ -17,7 +17,6 @@ import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import { SafeAreaInsetsContext } from 'react-native-safe-area-context';
 import {SearchBar} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
 import request from '../../requestAPI';
@@ -191,25 +190,3 @@ const styles = StyleSheet.create({
     postPrice: {fontSize:13}
 
 });
-
-
-// import React, {Component} from 'react';
-// import {
-//     View,
-//     Text,
-//     Image,
-//     ScrollView,
-//     StyleSheet
-// } from 'react-native';
-
-
-// export default class HomeScreen extends Component{
-//     render(){
-//         return (
-//             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-//              <Text>Home!</Text>
-//              <Image source = {require('../molly.png')} />
-//             </View>
-//         );
-//     }
-// }
