@@ -127,7 +127,7 @@ export default class HomeScreen extends Component{
         const {search} = this.state;
         return (
             <View style={{flex:1}}>
-            <View >
+            <View style={{flex:1}} >
                 {/*<Button
                     onPress={this.categoryFilter}
                     title="카테고리 검색"

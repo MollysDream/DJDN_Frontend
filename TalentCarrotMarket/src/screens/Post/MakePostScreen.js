@@ -7,6 +7,7 @@ import {
     Image,
     TouchableOpacity,
     TextInput,
+    FlatList,
     ScrollView,
     Keyboard,
     KeyboardAvoidingView,
@@ -33,7 +34,8 @@ export default class MakePostScreen extends Component {
         text:"",
         category:[],
         price: 0,
-        imageTemp:[] //디바이스에서 불러온 이미지 정보 임시 저장
+        imageTemp:[], //디바이스에서 불러온 이미지 정보 임시 저장
+        countImage:0 //선택한 이미지 개수
     }
 
     getFormatDate(date){
@@ -127,10 +129,9 @@ export default class MakePostScreen extends Component {
 
     selectImage = async ()=>{
         const path =require('path');
-
         ImagePicker.openPicker({
-            width: 300,
-            height: 300,
+            width: 200,
+            height: 200,
             multiple: true,
             sortOrder : 'asc',
             compressImageQuality : 0.1,
@@ -139,17 +140,17 @@ export default class MakePostScreen extends Component {
           }).then(images => {
               const imageTemp = []
               images.map((i)=>{
-                  const name = path.parse(i.path).base;
+                const name = path.parse(i.path).base;  
                   const file = {
                       uri: i.path,
                       name: name,
                       type: i.mime
                   }
-
                   imageTemp.push(file);
-
               })
             this.setState({imageTemp:imageTemp})
+            this.setState({countImage:this.state.imageTemp.length})
+            console.log(this.state.imageTemp)
             /*this.state.imageTemp.map((file)=>{
                 console.log(file);
             })*/
@@ -157,6 +158,17 @@ export default class MakePostScreen extends Component {
 
     }
 
+    returnFlatListItem(item,index){
+        console.log(item)
+        return(
+           
+            <View style={styles.post}>
+                <Image source={{uri : item.uri}} />
+
+            </View>
+
+        );
+    }
 
     render() {
         return (
@@ -192,15 +204,31 @@ export default class MakePostScreen extends Component {
                                                    keyboardType="numeric"
                                                    onChangeText={(text) => this.writePost(text, "price")}
                                             />
+
                                         </Item>
                                         <Item  inlinelabel laststyle={{ marginTop: '5%' }} >
-                                        <TouchableOpacity
-                                        onPress={this.selectImage}
-                                        style={styles.imageArea}>
-                                                <Icon name="camera"  size={50} />
-                                        </TouchableOpacity>
-                                        </Item>
-                                    
+                                            <TouchableOpacity
+                                                onPress={this.selectImage}
+                                                style={styles.imageArea}>
+                                                    <Icon name="camera"  size={50} />
+                                            </TouchableOpacity>
+                                                                                  </Item>
+
+                                        {
+                                            this.state.countImage != 0 &&
+                                            <Item  inlinelabel laststyle={{ marginTop: '5%' }} >
+                                  
+                                               <FlatList
+                                               data ={this.state.imageTemp}
+                                               horizontal = {true}
+                                               nestedScrollEnabled={true}
+                                               keyExtractor={item => item.name}
+                                               renderItem={({item}) => (
+                                                   
+                                                <Image style={styles.post} source={{uri: item.uri}} /> )}
+                                                />  
+                                            </Item>
+                                        }
 
                                         <Textarea rowSpan={8} placeholder="게시글 내용을 입력해주세요." autoCapitalize='none'
                                                   onChangeText={(text) => this.writePost(text, "text")}
@@ -220,6 +248,15 @@ export default class MakePostScreen extends Component {
 
 
 const styles = StyleSheet.create({
+    post:{
+        flexDirection: "row",
+        alignItems : "center",
+        backgroundColor: "#FFFFFF",
+        borderBottomWidth: 1,
+        padding: 5,
+        height: 150,
+        width : 150
+    },
     container: {
         flex: 1, //전체의 공간을 차지한다는 의미
         flexDirection: 'column',
@@ -240,6 +277,11 @@ const styles = StyleSheet.create({
     imageArea : {
         marginVertical: '5%',
         marginLeft:'40%',
+     
+    },
+    imageTextArea : {
+        marginVertical: '0%',
+        marginLeft:'0%',
      
     }
    
