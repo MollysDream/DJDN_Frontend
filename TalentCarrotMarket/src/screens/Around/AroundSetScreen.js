@@ -26,7 +26,7 @@ const AroundSetScreen = ({navigation}) => {
     ];
 
     const [address1,setAddress1]= useState('우만2동');
-    const [address2,setAddress2]= useState('원천동');
+    const [address2,setAddress2]= useState('');
     const [aroundAddress,setAroundAddress]= useState(10);
     const [chooseState1,setChooseState1] = useState('choose');
     const [chooseState2,setChooseState2] = useState('');
@@ -44,59 +44,27 @@ const AroundSetScreen = ({navigation}) => {
     //내 동네 설정 추가
     const addressOneAddButton = () => {
       navigation.navigate('aroundAdd')
-      // setAddress('아무거나');
-
-      // axios
-      // .post("http://10.0.2.2:3001/address/get")
-      //   //정상 수행
-      //   .then(returnData => {
-      //     if (returnData.data.message && returnData.data.login === "1") {
-      //       AsyncStorage.setItem('user_id', returnData.data.email);
-      //       console.log(returnData.data.message);
-      //       navigation.replace('MainTab')
-      //     } else {
-      //       setErrortext('아이디와 비밀번호를 다시 확인해주세요');
-      //       console.log('Please check your id or password');
-      //     }
-      //   })
-      //   //에러
-      //   .catch(err => {
-      //     console.log(err);
-      //   });
     };
 
     const addressTwoAddButton = () => {
-      navigation.navigate('addressAdd')
-      setAddress2('아무거나');
-
-      axios
-      .post("http://10.0.2.2:3001/address/addAddress", send_param)
-        //정상 수행
-        .then(returnData => {
-          if (returnData.data.message && returnData.data.login === "1") {
-            AsyncStorage.setItem('user_id', returnData.data.email);
-            console.log(returnData.data.message);
-            navigation.replace('MainTab')
-          } else {
-            setErrortext('아이디와 비밀번호를 다시 확인해주세요');
-            console.log('Please check your id or password');
-          }
-        })
-        //에러
-        .catch(err => {
-          console.log(err);
-        });
+      navigation.navigate('addressAdd')      
     };
 
     //동네 선택
     const chooseAddressOneButton = (value) => {
       setChooseState1('choose')
       setChooseState2('')
+      navigation.navigate('aroundCertify',{
+        chosenAddress:address1
+      })
     }
 
     const chooseAddressTwoButton = (value) => {
       setChooseState1('')
       setChooseState2('choose')
+      navigation.navigate('aroundCertify',{
+        chosenAddress:address2
+      })
     }
 
     //근처 동네 갯수 설정

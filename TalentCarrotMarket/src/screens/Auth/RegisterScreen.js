@@ -1,4 +1,4 @@
-import React, {useState, createRef} from 'react';
+import React, {useState} from 'react';
 
 import {
   widthPercentageToDP as wp,
@@ -18,7 +18,7 @@ import {
 } from 'react-native';
 
 
-const RegisterScreen = (props) => {
+const RegisterScreen = ({navigation}) => {
   const [userName, setUserName] = useState('');
   const [userId, setUserId] = useState('');
   const [userNickName, setUserNickName] = useState('');
@@ -132,7 +132,7 @@ const RegisterScreen = (props) => {
               <TouchableOpacity
                 style={styles.btn}
                 activeOpacity={0.5}
-                onPress={() => props.navigation.navigate('Login')}>
+                onPress={() => navigation.navigate('Login')}>
                 <Text style={{color: 'white', fontSize: wp('4%')}}>
                   로그인하기
                 </Text>
