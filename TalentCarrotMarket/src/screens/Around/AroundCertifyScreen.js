@@ -79,7 +79,9 @@ const AroundCertifyScreen = ({navigation,route}) => {
 
         const send_param = {
           userId:value,
-          address: address
+          address: address,
+          latitude: location.latitude,
+          longitude: location.longitude
         };
 
         axios
