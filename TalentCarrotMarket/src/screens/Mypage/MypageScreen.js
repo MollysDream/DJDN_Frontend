@@ -12,6 +12,7 @@ import {
 import axios from "axios";
 
 import AsyncStorage from '@react-native-community/async-storage';
+import firestore from '@react-native-firebase/firestore';
 
 const MypageScreen = ({navigation}) => {
 
@@ -22,14 +23,18 @@ const MypageScreen = ({navigation}) => {
         navigation.replace('Auth'); 
     };
 
-    //인증한 동네 확인
+    const addChatListButton = () =>{
+
+    }
+
+    //인증한 동네 확인 - 사용자
     useEffect(() => {
       AsyncStorage.getItem('user_id')
       .then((value) => {
         console.log('name is ', value);
 
         const send_param = {
-          email:value,
+          userId:value,
         };
 
         axios
@@ -40,7 +45,7 @@ const MypageScreen = ({navigation}) => {
               console.log(returnData.data.address)
               setAddress(returnData.data.address)
             } else {
-              setAddress('gkdl')
+              setAddress('')
             }
           })
           //에러
@@ -61,7 +66,7 @@ const MypageScreen = ({navigation}) => {
                 <TouchableOpacity style={styles.btn2} onPress={handleLogoutButton}>
                     <Text style={(styles.Text, {color: 'white'})}>로그아웃</Text>
                     
-                    <TouchableOpacity style={styles.btn, {flex:0.35}} onPress={handleLogoutButton}>
+                    <TouchableOpacity style={styles.btn, {flex:0.35}} onPress={addChatListButton}>
                         <Text style={(styles.Text, {color: 'black', paddingLeft:20})}>❌</Text>
                     </TouchableOpacity>
                   

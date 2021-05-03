@@ -98,7 +98,7 @@ const LoginScreen = ({navigation}) => {
       //정상 수행
       .then(returnData => {
         if (returnData.data.message && returnData.data.login === "1") {
-          AsyncStorage.setItem('user_id', returnData.data.email);
+          AsyncStorage.setItem('user_id', returnData.data.userId);
           console.log(returnData.data.message);
           navigation.replace('MainTab');
         } else {

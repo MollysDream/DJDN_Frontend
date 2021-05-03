@@ -78,7 +78,7 @@ const AroundCertifyScreen = ({navigation,route}) => {
         console.log('name is ', value);
 
         const send_param = {
-          email:value,
+          userId:value,
           address: address
         };
 
