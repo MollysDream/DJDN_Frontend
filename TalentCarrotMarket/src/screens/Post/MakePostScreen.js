@@ -1,88 +1,82 @@
 import React, {useState, createRef, Component} from 'react';
 import { Content, Container, Header, Left, Right, Title, Body, Item, Label, Text,
-    Input, Form, Textarea, Icon } from 'native-base';
+    Input, Form, Textarea } from 'native-base';
 import {
     StyleSheet,
     View,
     Image,
     TouchableOpacity,
     TextInput,
+    FlatList,
     ScrollView,
     Keyboard,
     KeyboardAvoidingView,
     TouchableWithoutFeedback
 } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/Entypo';
+
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import request from "../../requestAPI";
-import formdata from 'form-data';
 import { Alert } from 'react-native';
-
-import axios from 'axios';
-
-const axi = axios.create({baseURL: "http://10.0.2.2:3000"});
-
-var postData = new FormData();
+import ImagePicker from 'react-native-image-crop-picker';
+import {min} from "react-native-reanimated";
 
 export default class MakePostScreen extends Component {
     state = {
         title:"",
-        image: ["https://mollysdreampostdata.s3.ap-northeast-2.amazonaws.com/20191020_112929+(2).jpg"],
+        image: [],
         text:"",
         category:[],
         price: 0,
-        tag:[],
+        imageTemp:[], //디바이스에서 불러온 이미지 정보 임시 저장
+        countImage:0 //선택한 이미지 개수
     }
 
-    postInfo = () =>{
-        postData = new FormData()
-        postData.append('title',this.state.title)
-        postData.append('image',this.state.image)
-        postData.append('text',this.state.text)
-        postData.append('category',this.state.category)
-        postData.append('tag',this.state.tag)
-        postData.append('price',this.state.price)
+    getFormatDate(date){
+        let year = date.getFullYear();
+        let month = (1 + date.getMonth());
+        month = month >= 10 ? month: '0' + month;
+        let day = date.getDate();
+        day = day >= 10 ? day : '0' + day;
+        let hour = date.getHours();
+        let minutes = date.getMinutes();
+        return `${year}-${month}-${day}-${hour}-${minutes}`
     }
 
     writePost = (text, type)=>{
         if(type == 'title'){
-            this.setState({title:text},()=>{ console.log(this.state.title)})
+            this.setState({title:text})
         }
 
         else if(type == 'text'){
-            this.setState({text:text},()=>{ console.log(this.state.text)})
+            this.setState({text:text})
         }
         else if(type == 'category'){
-            this.setState({category:text},()=>{ console.log(this.state.category)})
+            this.setState({category:text})
         }
         else if(type == 'tag'){
-            this.setState({tag:text},()=>{ console.log(this.state.tag)})
+            this.setState({tag:text})
         }
         else if(type == 'price'){
-            this.setState({price:text},()=>{ console.log(this.state.price)})
+            this.setState({price:text})
         }
     }
 
-    confirmPost(){
+    async confirmPost(){
         if(this.state.title.length === 0){
             Alert.alert("경고","제목을 작성해주세요", [{ text: '확인', style: 'cancel' }])
             return;
         }
-        else if(this.state.image.length === 0){
+        else if(this.state.imageTemp.length === 0){
             Alert.alert("경고","이미지를 첨부해주세요", [{ text: '확인', style: 'cancel' }])
             return;
         }
 
         else if(this.state.category.length === 0){
             Alert.alert("경고","카테고리를 설정해주세요", [{ text: '확인', style: 'cancel' }])
-            return;
-        }
-
-        else if(this.state.tag.length === 0){
-            Alert.alert("경고","테그을 작성해주세요", [{ text: '확인', style: 'cancel' }])
             return;
         }
 
@@ -94,15 +88,84 @@ export default class MakePostScreen extends Component {
             Alert.alert("경고","가격을 작성해주세요", [{ text: '확인', style: 'cancel' }])
             return;
         }
+
+        const date = this.getFormatDate(new Date());
+        const options = {
+            keyPrefix: `${this.state.title}/`,  //제목 뒤에 user_id 값 추가해야 됨.
+            bucket: 'mollysdreampostdata',
+            region: 'ap-northeast-2',
+            accessKey: 'AKIA2H2WIFGYFMLG6XFV',
+            secretKey: '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',
+            successActionStatus: 201,
+        }
+
+        try{
+            const imageUrl: string[] = await Promise.all(this.state.imageTemp.map(async (file):Promise<string>=>{
+                let imageLocation = await request.postImageToS3(file,options);
+                return imageLocation
+            }))
+            this.setState({image:imageUrl});
+
+            }catch(err){
+            console.log(err);
+        }
+
         console.log(this.state)
-        axi.post("/data/createPost", (this.state)).then((data)=> {  //수범이가 requestAPI에서 쉽게 할 수 있다고 수정하겠다고 냅두라고 함..
-            Alert.alert("작성 완료", "게시글 작성이 완료되었습니다.", [{ text: '확인', style: 'cancel', onPress : ()=> this.props.navigation.navigate('Home')}])}).catch(function (e) {
-            Alert.alert("작성 실패","게시글을 다시 작성해주세요.", e.response.data.error,[
-                {text:'확인', style:'cancel', onPrees: () => {this.setState({loading: false})}}
+
+        try{
+            const postData = await request.createPost(this.state)
+            Alert.alert("작성 완료", "게시글 작성이 완료되었습니다.",
+                [{ text: '확인', style: 'cancel',
+                    onPress : ()=> this.props.navigation.navigate('Home')}])
+        }catch(err){
+            Alert.alert("작성 실패","게시글을 다시 작성해주세요.", err.response.data.error,[
+                {text:'확인', style:'cancel', onPress: () => {this.setState({loading: false})}}
             ])
-        })
+        }
     }
 
+    selectImage = async ()=>{
+        const path =require('path');
+        ImagePicker.openPicker({
+            width: 200,
+            height: 200,
+            multiple: true,
+            sortOrder : 'asc',
+            compressImageQuality : 0.1,
+            includeBase64 : true,
+            cancelButtonTitle : true,
+          }).then(images => {
+              const imageTemp = []
+              images.map((i)=>{
+                const name = path.parse(i.path).base;  
+                  const file = {
+                      uri: i.path,
+                      name: name,
+                      type: i.mime
+                  }
+                  imageTemp.push(file);
+              })
+            this.setState({imageTemp:imageTemp})
+            this.setState({countImage:this.state.imageTemp.length})
+            console.log(this.state.imageTemp)
+            /*this.state.imageTemp.map((file)=>{
+                console.log(file);
+            })*/
+        })
+
+    }
+
+    returnFlatListItem(item,index){
+        console.log(item)
+        return(
+           
+            <View style={styles.post}>
+                <Image source={{uri : item.uri}} />
+
+            </View>
+
+        );
+    }
 
     render() {
         return (
@@ -127,27 +190,47 @@ export default class MakePostScreen extends Component {
                                             <Input autoCapitalize='none'
                                                    onChangeText={(text) => this.writePost(text, "title")} />
                                         </Item>
-                                        <Item inlinelabel last>
-                                            <Label style={{width:'18%'}}>Tag</Label>
-                                            <Input autoCapitalize='none'
-                                                   onChangeText={(text) => this.writePost(text, "tag")} />
-                                        </Item>
-
                                         <Item inlinelabel>
                                             <Label style={{width:'18%'}}>카테고리</Label>
                                             <Input autoCapitalize='none'
                                                    onChangeText={(text) => this.writePost(text, "category")} />
                                         </Item>
-                                        <Item inlinelabel last>
+                                        <Item inlinelabel >
                                             <Label style={{width:'18%'}}>가격</Label>
                                             <Input autoCapitalize='none'
                                                    keyboardType="numeric"
-                                                   onChangeText={(text) => this.writePost(text, "")}
+                                                   onChangeText={(text) => this.writePost(text, "price")}
                                             />
+
                                         </Item>
+                                        <Item  inlinelabel style={{ marginTop: '5%' }} >
+                                            <TouchableOpacity
+                                                onPress={this.selectImage}
+                                                style={styles.imageArea}>
+                                                    <Icon name="camera"  size={50} />
+                                            </TouchableOpacity>
+                                                                                  </Item>
+
+                                        {
+                                            this.state.countImage != 0 &&
+                                            <Item  inlinelabel laststyle={{ marginTop: '5%' }} >
+                                  
+                                               <FlatList
+                                               data ={this.state.imageTemp}
+                                               horizontal = {true}
+                                               nestedScrollEnabled={true}
+                                               keyExtractor={item => item.name}
+                                               renderItem={({item}) => (
+                                                   
+                                                <Image style={styles.post} source={{uri: item.uri}} /> )}
+                                                />  
+                                            </Item>
+                                        }
+
                                         <Textarea rowSpan={8} placeholder="게시글 내용을 입력해주세요." autoCapitalize='none'
                                                   onChangeText={(text) => this.writePost(text, "text")}
                                                   style={styles.textAreaContainer} />
+                                        
                                     </Form>
                                 </Content>
                             </Container>
@@ -162,6 +245,15 @@ export default class MakePostScreen extends Component {
 
 
 const styles = StyleSheet.create({
+    post:{
+        flexDirection: "row",
+        alignItems : "center",
+        backgroundColor: "#FFFFFF",
+        borderBottomWidth: 1,
+        padding: 5,
+        height: 150,
+        width : 150
+    },
     container: {
         flex: 1, //전체의 공간을 차지한다는 의미
         flexDirection: 'column',
@@ -173,65 +265,21 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: wp(2),
     },
-    titleArea: {
-        flex: 0.7,
-        justifyContent: 'center',
-        paddingTop: wp(3),
-    },
-    TextArea: {
-        flex: 0.3,
-        justifyContent: 'center',
-        backgroundColor: 'white',
-    },
-    Text: {
-        fontSize: wp('4%'),
-    },
-    TextValidation: {
-        fontSize: wp('4%'),
-        color: 'red',
-        paddingTop: wp(2),
-    },
 
     formArea: {
         justifyContent: 'center',
         // paddingTop: wp(10),
         flex: 1.5,
     },
-    textFormTop: {
-        borderWidth: 2,
-        borderBottomWidth: 1,
-        borderColor: 'black',
-        borderTopLeftRadius: 7,
-        borderTopRightRadius: 7,
-        width: '100%',
-        height: hp(6),
-        paddingLeft: 10,
-        paddingRight: 10,
+    imageArea : {
+        marginVertical: '5%',
+        marginLeft:'40%',
+     
     },
-    textFormBottom: {
-        borderWidth: 2,
-        borderTopWidth: 1,
-        borderColor: 'black',
-        borderBottomRightRadius: 7,
-        borderBottomLeftRadius: 7,
-        width: '100%',
-        height: hp(6),
-        paddingLeft: 10,
-        paddingRight: 10,
-    },
-    btnArea: {
-        height: hp(8),
-        // backgroundColor: 'orange',
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingBottom: hp(1.5),
-    },
-    btn: {
-        flex: 1,
-        width: '100%',
-        borderRadius: 7,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'black',
-    },
+    imageTextArea : {
+        marginVertical: '0%',
+        marginLeft:'0%',
+     
+    }
+   
 });

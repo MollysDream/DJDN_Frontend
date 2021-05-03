@@ -9,13 +9,14 @@ import {
     FlatList,
     TouchableOpacity,
     Platform,
-    Button
+    Button,
+    RefreshControl,
+    TouchableHighlight
 } from 'react-native';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import { SafeAreaInsetsContext } from 'react-native-safe-area-context';
 import {SearchBar} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
 import request from '../../requestAPI';
@@ -29,7 +30,8 @@ export default class HomeScreen extends Component{
             search:'',
             data:[],
             page:0,
-            rerender: false
+            rerender: false,
+            refreshing: false
         }
     }
 
@@ -48,9 +50,25 @@ export default class HomeScreen extends Component{
         this.setState({
             data: this.state.data.concat(postData),
             page : this.state.page + 1,
-            rerender: !this.state.rerender
+            rerender: !this.state.rerender,
         });
     }
+
+    refreshPage = async() => {
+        console.log('페이지 새로고침');
+
+        this.state.page = 0;
+        this.setState({page:this.state.page, refreshing: true});
+
+        const postData = await request.getPost(this.state.page);
+        this.setState({
+            data: postData,
+            page : this.state.page + 1,
+            rerender: !this.state.rerender,
+            refreshing: false
+        });
+    }
+
 
 
     updateSearch = (search) =>{
@@ -63,12 +81,27 @@ export default class HomeScreen extends Component{
         this.setState({search:''});
     }
 
+    goToDetailPostScreen(item){
+        console.log(`${item.title} 게시글 확인`);
+        const postImages = []
+        item.image.map((image)=>{
+            let temp={
+                image:image,
+                desc:image,
+            }
+            postImages.push(temp);
+        })
+        this.props.navigation.navigate('DetailPost',{detailPost: item, postImages: postImages});
+    }
+
     returnFlatListItem(item,index){
         return(
-            <View style={styles.post}>
-                <Image style={{width: wp(30), height: hp(30),resizeMode: 'contain'}} source={{ uri: item.image[0]}} />
-                <Text  style={styles.postTitle}>{item.title}</Text>
-            </View>
+            <TouchableHighlight onPress={() => this.goToDetailPostScreen(item)}>
+                <View style={styles.post}>
+                    <Image style={{width: wp(30), height: hp(30),resizeMode: 'contain'}} source={{ uri: item.image[0]}} />
+                    <Text  style={styles.postTitle}>{item.title}</Text>
+                </View>
+            </TouchableHighlight>
 
         );
     }
@@ -84,14 +117,23 @@ export default class HomeScreen extends Component{
         });
     }
 
+    filterOption = () =>{
+        console.log('필터 옵션 설정!!')
+        this.props.navigation.navigate('FilterOption');
+    }
+
     render() {
         const {search} = this.state;
         return (
             <View style={{flex:1}}>
-            <View >
-                <Button
+            <View style={{flex:1}} >
+                {/*<Button
                     onPress={this.categoryFilter}
                     title="카테고리 검색"
+                />*/}
+                <Button
+                    title={"필터 설정"}
+                    onPress={this.filterOption}
                 />
                 <SearchBar
                     placeholder="   검색어를 입력해주세요"
@@ -106,6 +148,7 @@ export default class HomeScreen extends Component{
                     onEndReached={this.morePage}
                     onEndReachedThreshold={1}
                     extraData={this.state.rerender}
+                    refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.refreshPage} />}
                 />
             </View>
                 <TouchableOpacity onPress={()=>this.props.navigation.navigate('MakePost')}
@@ -147,25 +190,3 @@ const styles = StyleSheet.create({
     postPrice: {fontSize:13}
 
 });
-
-
-// import React, {Component} from 'react';
-// import {
-//     View,
-//     Text,
-//     Image,
-//     ScrollView,
-//     StyleSheet
-// } from 'react-native';
-
-
-// export default class HomeScreen extends Component{
-//     render(){
-//         return (
-//             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-//              <Text>Home!</Text>
-//              <Image source = {require('../molly.png')} />
-//             </View>
-//         );
-//     }
-// }

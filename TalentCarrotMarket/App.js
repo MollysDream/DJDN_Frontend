@@ -21,7 +21,11 @@ import LoginScreen from './src/screens/Auth/LoginScreen';
 //postStack(home)
 import homeScreen from './src/screens/Post/HomeScreen';
 import searchPostScreen from './src/screens/Post/SearchPostScreen';
-import makepostScreen from './src/screens/Post/MakePostScreen'
+
+import makePostScreen from './src/screens/Post/MakePostScreen';
+import filterOptionScreen from './src/screens/Post/FilterOptionScreen';
+
+import detailPostScreen from './src/screens/Post/DetailPostScreen';
 
 //chatStack
 import chatchScreen from './src/screens/Chat/ChatChScreen';
@@ -66,7 +70,10 @@ const HomeStackScreen = () => {
     <Stack.Navigator>
       <HomeStack.Screen name="Home" component={homeScreen} />
       <HomeStack.Screen name="SearchPost" component={searchPostScreen} />
-        <HomeStack.Screen name="MakePost" component={makepostScreen}/>
+      <HomeStack.Screen name="MakePost" component={makePostScreen}/>
+      <HomeStack.Screen name="FilterOption" component={filterOptionScreen}/>
+      <HomeStack.Screen name="DetailPost" component={detailPostScreen}/>
+
     </Stack.Navigator>
   );
 };
