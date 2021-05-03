@@ -11,7 +11,7 @@ import {
 import { SafeAreaInsetsContext } from 'react-native-safe-area-context';
 import {SearchBar} from 'react-native-elements';
 import request from "../../requestAPI";
-import {Container, Content, Form, Header, Input, Item, Label, Right, Textarea} from "native-base";
+import {Container, Content, Form, Header, Input, Item, Label, Left, Right, Textarea} from "native-base";
 import Icon from "react-native-vector-icons/Entypo";
 import requestUser from "../../requestUserAPI";
 import {FlatListSlider} from 'react-native-flatlist-slider';
@@ -45,20 +45,19 @@ export default class SearchPostScreen extends Component{
 
     render(){
         const item = this.state.detailPost;
+        var slice_date = item.date.split("T");
         const postOwner = this.state.postOwner;
         const images = this.state.postImages;
+        console.log(slice_date);
         return (
             <Container>
-                <Header>
-                    <Text style={{fontSize:20}}>
-                        {item.title}
-                    </Text>
-                </Header>
                 <TouchableWithoutFeedback >
                     <KeyboardAvoidingView>
                         <ScrollView style={{ marginTop : '3%' }}>
                             <Container>
                                 <Content>
+                                   
+                                <Item >
                                     <View>
                                         <FlatListSlider
                                             data={images}
@@ -70,31 +69,50 @@ export default class SearchPostScreen extends Component{
                                             separatorWidth={16}
                                             loop={false}
                                         />
-
-
                                     </View>
-
+                                </Item>
+                                <Item >
+                                    <Text style={{fontSize:15, marginBottom : "3%", marginTop : "3%" ,marginLeft : "3%"}}>
+                                        {`${postOwner.nickname}`}
+                                        </Text>
+                                </Item>
+                              
+                                    <Text style={{fontSize:20, fontWeight : 'bold', marginLeft : '3%', marginTop : '3%',  marginBottom : '3%'}}>
+                                      {`${item.title}`}
+                                    </Text>
+                                    
+                                <Item >
                                     <View>
-                                        <Text>{`카테고리: ${item.category}`}</Text>
+                                        <Text style={{fontSize:15, color : "grey",marginBottom : '2%', marginLeft : "3%"}}>
+                                            {`  ${item.category}`}
+                                            {"    "}
+                                            {slice_date[0]}
+                                        </Text>
                                     </View>
-
-                                    <View>
-                                        <Text>{`내용: ${item.text}`}</Text>
-                                    </View>
-
-                                    <View>
-                                        <Text>{`조회수: ${item.view}`}</Text>
-                                    </View>
-
-                                    <View>
-                                        <Text>{`가격: ${item.price}`}</Text>
-                                    </View>
-
-                                    <View>
-                                        <Text>{`게시자: ${postOwner.nickname}`}</Text>
-                                    </View>
-
-
+                                </Item>
+                                <Item >
+                                   
+                                        <Text style={{fontSize:15, marginTop : '7%',marginBottom : '20%', marginLeft : '3%'}}>
+                                            {`${item.text}`}
+                                        </Text>
+                                </Item>
+                                <Item >
+                                    <Left>
+                                        <Text style={{fontSize: 15 , marginLeft : "3%",marginTop : '10%',marginBottom : '10%'}}>
+                                        {`  가격 ${item.price}`}
+                                        </Text>
+                                    </Left>
+                                    <Right>
+                                    <Text style={{fontSize:15, color : "grey", marginRight : "10%", marginTop : "10%",marginBottom : '10%'}}>
+                                            {`조회수: ${item.view}`}
+                                    </Text>
+                                    </Right>
+                                </Item>    
+                                <View style={styles.btnArea2} >
+                                    <TouchableOpacity style={styles.btn2} onPress={() => navigation.navigate('aroundSet')}>
+                                        <Text style={(styles.Text, {color: 'white'})}>채팅</Text>
+                                    </TouchableOpacity>
+                                </View>
                                 </Content>
                             </Container>
                         </ScrollView>
@@ -117,7 +135,23 @@ const styles = StyleSheet.create({
         padding: 5,
         height: 150,
         width: 150,
-    },
+    }, 
+    btn2: {
+        flex: 1,
+        width: 300,
+        height: 50,
+        borderRadius: 7,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#4672B8',
+      },
+    btnArea2: {
+        height: hp(10),
+        // backgroundColor: 'orange',
+        paddingTop: hp(1.5),
+        paddingBottom: hp(1.5),
+        alignItems: 'center',
+      },
     cover:{
         flex: 1,
         width: 200,

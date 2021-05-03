@@ -203,7 +203,7 @@ export default class MakePostScreen extends Component {
                                             />
 
                                         </Item>
-                                        <Item  inlinelabel laststyle={{ marginTop: '5%' }} >
+                                        <Item  inlinelabel style={{ marginTop: '5%' }} >
                                             <TouchableOpacity
                                                 onPress={this.selectImage}
                                                 style={styles.imageArea}>
