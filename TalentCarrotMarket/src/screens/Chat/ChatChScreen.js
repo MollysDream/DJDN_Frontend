@@ -3,28 +3,16 @@ import {
     View,
     Text,
     StyleSheet,
+    FlatList,
     TouchableOpacity
 } from 'react-native';
+import {List, Divider} from 'react-native-paper'
 
 const ChatChScreen =({navigation})=>{
     
         return (
             <View style={styles.container}>
-                <FlatList
-                    data={threads}
-                    keyExtractor={item => item._id}
-                    ItemSeparatorComponent={() => <Divider />}
-                    renderItem={({ item }) => (
-                    <List.Item
-                        title={item.name}
-                        description="Item description"
-                        titleNumberOfLines={1}
-                        titleStyle={styles.listTitle}
-                        descriptionStyle={styles.listDescription}
-                        descriptionNumberOfLines={1}
-                    />
-                    )}
-                />
+                <ChatListItem chatRoom />
             </View>
         );
     
