@@ -23,8 +23,9 @@ import request from "../../requestAPI";
 import requestAddressAPI from "../../requestAddressAPI"
 import { Alert } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
-import {min} from "react-native-reanimated";
 import AsyncStorage from "@react-native-community/async-storage";
+import {Picker} from '@react-native-picker/picker';
+import {PickerItem} from "react-native/Libraries/Components/Picker/Picker";
 
 export default class MakePostScreen extends Component {
     state = {
@@ -36,22 +37,33 @@ export default class MakePostScreen extends Component {
         imageTemp:[], //디바이스에서 불러온 이미지 정보 임시 저장
         countImage:0, //선택한 이미지 개수
         user_id:"",
-        userAddress:{}
+        userAddress:{},
+        categoryList:[]
     }
 
     async componentDidMount() {
+        //카테고리 설정에 필요한 카테고리 불러옴
+        const category = await request.getCategoryList();
+        const categoryList = []
+        //카테고리 객체를 key로만 구성된 카테고리 배열로 변경
+        for(const [key, value] of Object.entries(category.category[0])){
+            categoryList.push(key);
+        }
 
+        //게시글 작성 사용자의 userId값을 저장하기 위해 요청
         const userId = await AsyncStorage.getItem('user_id');
+        //게시글 작성시 게시글의 위치정보 저장을 위해 요청
         const addressData = await requestAddressAPI.getUserAddress(userId);
 
         this.setState({
             user_id:userId,
             userAddress:addressData.address[0],
+            categoryList:categoryList
         })
+        console.log(this.state.categoryList);
+        //console.log(this.state.userAddress);
 
-        console.log(this.state.userAddress);
-
-        //동네 인증이 되었는지 확인 (안되어 있으면 작성 불가
+        //동네 인증이 되었는지 확인 (안되어 있으면 작성 불가 => 홈 화면으로 이동)
         if(this.state.userAddress == undefined || !this.state.userAddress['isAuth']){
             this.props.navigation.navigate('Home');
             Alert.alert("알림","게시글을 작성하기 위해\n동네 인증을 먼저 해주세요", [{ text: '확인', style: 'cancel' }])
@@ -82,9 +94,9 @@ export default class MakePostScreen extends Component {
         else if(type == 'text'){
             this.setState({text:text})
         }
-        else if(type == 'category'){
+        /*else if(type == 'category'){
             this.setState({category:text})
-        }
+        }*/
         else if(type == 'tag'){
             this.setState({tag:text})
         }
@@ -101,16 +113,14 @@ export default class MakePostScreen extends Component {
             Alert.alert("경고","제목을 작성해주세요", [{ text: '확인', style: 'cancel' }])
             return;
         }
+        else if(this.state.category == ''){
+            Alert.alert("경고","카테고리를 설정해주세요", [{ text: '확인', style: 'cancel' }])
+            return;
+        }
         else if(this.state.imageTemp.length === 0){
             Alert.alert("경고","이미지를 첨부해주세요", [{ text: '확인', style: 'cancel' }])
             return;
         }
-
-        else if(this.state.category.length === 0){
-            Alert.alert("경고","카테고리를 설정해주세요", [{ text: '확인', style: 'cancel' }])
-            return;
-        }
-
         else if(this.state.text.length === 0){
             Alert.alert("경고","게시글 내용을 작성해주세요", [{ text: '확인', style: 'cancel' }])
             return;
@@ -221,11 +231,25 @@ export default class MakePostScreen extends Component {
                                             <Input autoCapitalize='none'
                                                    onChangeText={(text) => this.writePost(text, "title")} />
                                         </Item>
-                                        <Item inlinelabel>
+                                        <Picker
+                                            onValueChange={(value) => this.setState({category:value})}
+                                            placeholder='카테고리'
+                                        >
+                                            <PickerItem color={'grey'} label={'카테고리 선택'} value={''}/>
+                                            {
+                                                this.state.categoryList.map((category, key)=>(
+                                                <PickerItem label={category} value={category} key={key}/>
+                                                ))
+
+                                            }
+                                        </Picker>
+                                        {/*<Item inlinelabel>
                                             <Label style={{width:'18%'}}>카테고리</Label>
+
                                             <Input autoCapitalize='none'
                                                    onChangeText={(text) => this.writePost(text, "category")} />
-                                        </Item>
+
+                                        </Item>*/}
                                         <Item inlinelabel >
                                             <Label style={{width:'18%'}}>가격</Label>
                                             <Input autoCapitalize='none'
