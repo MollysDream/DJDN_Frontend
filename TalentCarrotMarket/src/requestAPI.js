@@ -34,10 +34,10 @@ export async function getPostBySearch(search){
     return postData.data;
 }
 
-export async function createPost({title, image, text, category, tag, price}){
+export async function createPost(postData){
     console.log("createPost함수 호출됨");
-    console.log({title, image, text, category, tag, price});
-    const info = await axi.post("/data/createPost", {title, image, text, category, tag, price});
+    console.log(postData);
+    const info = await axi.post("/data/createPost", postData);
     return info.data;
 }
 
