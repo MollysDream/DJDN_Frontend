@@ -10,6 +10,7 @@ import {
 } from 'react-native-responsive-screen';
 import {SearchBar} from 'react-native-elements';
 import request from "../../requestAPI";
+import requestUser from "../../requestUserAPI";
 
 export default class SearchPostScreen extends Component{
     constructor(props) {
@@ -49,7 +50,7 @@ export default class SearchPostScreen extends Component{
         });
     }
 
-    goToDetailPostScreen(item){
+    async goToDetailPostScreen(item){
         console.log(`${item.title} 게시글 확인`);
         const postImages = []
         item.image.map((image)=>{
@@ -59,7 +60,10 @@ export default class SearchPostScreen extends Component{
             }
             postImages.push(temp);
         })
-        this.props.navigation.navigate('DetailPost',{detailPost: item, postImages: postImages});
+
+        const userData = await requestUser.getUserData(item.user_id);
+        
+        this.props.navigation.navigate('DetailPost',{detailPost: item, postImages: postImages, postOwner: userData});
     }
 
     returnFlatListItem(item,index){
