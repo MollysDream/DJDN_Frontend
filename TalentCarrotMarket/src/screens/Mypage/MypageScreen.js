@@ -12,7 +12,6 @@ import {
 import axios from "axios";
 
 import AsyncStorage from '@react-native-community/async-storage';
-import firestore from '@react-native-firebase/firestore';
 
 const MypageScreen = ({navigation}) => {
 
@@ -124,7 +123,6 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       backgroundColor: '#4672B8',
       flexDirection: "row",
-      justifyContent: 'center',
     },
   });
 

@@ -20,9 +20,11 @@ import {
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import request from "../../requestAPI";
+import requestAddressAPI from "../../requestAddressAPI"
 import { Alert } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import {min} from "react-native-reanimated";
+import AsyncStorage from "@react-native-community/async-storage";
 
 export default class MakePostScreen extends Component {
     state = {
@@ -32,8 +34,32 @@ export default class MakePostScreen extends Component {
         category:[],
         price: 0,
         imageTemp:[], //디바이스에서 불러온 이미지 정보 임시 저장
-        countImage:0 //선택한 이미지 개수
+        countImage:0, //선택한 이미지 개수
+        user_id:"",
+        userAddress:{}
     }
+
+    async componentDidMount() {
+
+        const userId = await AsyncStorage.getItem('user_id');
+        const addressData = await requestAddressAPI.getUserAddress(userId);
+
+        this.setState({
+            user_id:userId,
+            userAddress:addressData.address[0],
+        })
+
+        console.log(this.state.userAddress);
+
+        //동네 인증이 되었는지 확인 (안되어 있으면 작성 불가
+        if(this.state.userAddress == undefined || !this.state.userAddress['isAuth']){
+            this.props.navigation.navigate('Home');
+            Alert.alert("알림","게시글을 작성하기 위해\n동네 인증을 먼저 해주세요", [{ text: '확인', style: 'cancel' }])
+            return;
+
+        }
+    }
+
 
     getFormatDate(date){
         let year = date.getFullYear();
@@ -47,6 +73,8 @@ export default class MakePostScreen extends Component {
     }
 
     writePost = (text, type)=>{
+
+
         if(type == 'title'){
             this.setState({title:text})
         }
@@ -66,6 +94,9 @@ export default class MakePostScreen extends Component {
     }
 
     async confirmPost(){
+
+
+
         if(this.state.title.length === 0){
             Alert.alert("경고","제목을 작성해주세요", [{ text: '확인', style: 'cancel' }])
             return;
