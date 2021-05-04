@@ -8,13 +8,12 @@ import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import { SafeAreaInsetsContext } from 'react-native-safe-area-context';
-import {SearchBar} from 'react-native-elements';
 import request from "../../requestAPI";
 import {Container, Content, Form, Header, Input, Item, Label, Left, Right, Textarea} from "native-base";
-import Icon from "react-native-vector-icons/Entypo";
 import requestUser from "../../requestUserAPI";
 import {FlatListSlider} from 'react-native-flatlist-slider';
+import AsyncStorage from "@react-native-community/async-storage";
+
 
 export default class SearchPostScreen extends Component{
     constructor(props) {
@@ -33,8 +32,9 @@ export default class SearchPostScreen extends Component{
             view: this.state.detailPost.view ++
         });
 
+
         //post 스키마에 저장된 user_id 값으로 사용자 정보 받아와야 됨
-        const userData = await requestUser.getUserData("teller2016@ajou.ac.kr");
+        const userData = await requestUser.getUserData(this.state.detailPost.user_id);
         console.log(`사용자의 닉네임 ${userData.nickname}`);
         this.setState({
             postOwner:userData
