@@ -20,7 +20,7 @@ export default class SearchPostScreen extends Component{
         super(props);
         this.state = {
             detailPost:this.props.route.params.detailPost,
-            postOwner:[],
+            postOwner:this.props.route.params.postOwner,
             postImages:this.props.route.params.postImages
         }
     }
@@ -34,11 +34,11 @@ export default class SearchPostScreen extends Component{
 
 
         //post 스키마에 저장된 user_id 값으로 사용자 정보 받아와야 됨
-        const userData = await requestUser.getUserData(this.state.detailPost.user_id);
+        /*const userData = await requestUser.getUserData(this.state.detailPost.user_id);
         console.log(`사용자의 닉네임 ${userData.nickname}`);
         this.setState({
             postOwner:userData
-        })
+        })*/
 
     }
 
@@ -48,7 +48,7 @@ export default class SearchPostScreen extends Component{
         var slice_date = item.date.split("T");
         const postOwner = this.state.postOwner;
         const images = this.state.postImages;
-        console.log(slice_date);
+        //console.log(slice_date);
         return (
             <Container>
                 <TouchableWithoutFeedback >

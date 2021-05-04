@@ -214,7 +214,6 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       backgroundColor: '#4672B8',
       flexDirection: "row",
-      justifyContent: 'center',
     },
     btnAround: {
       flex: 1,
@@ -225,7 +224,6 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       backgroundColor: 'white',
       flexDirection: "row",
-      justifyContent: 'center',
       borderWidth: 0.5,
       borderColor: 'gray',
     },
@@ -238,7 +236,6 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       backgroundColor: '#4672B8',
       flexDirection: "row",
-      justifyContent: 'center',
     },
     Text: {
       fontSize: wp('4%'),

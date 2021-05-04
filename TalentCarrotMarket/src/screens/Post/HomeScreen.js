@@ -20,6 +20,7 @@ import {
 import {SearchBar} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
 import request from '../../requestAPI';
+import requestUser from "../../requestUserAPI";
 
 
 export default class HomeScreen extends Component{
@@ -81,7 +82,7 @@ export default class HomeScreen extends Component{
         this.setState({search:''});
     }
 
-    goToDetailPostScreen(item){
+    async goToDetailPostScreen(item){
         console.log(`${item.title} 게시글 확인`);
         const postImages = []
         item.image.map((image)=>{
@@ -91,7 +92,10 @@ export default class HomeScreen extends Component{
             }
             postImages.push(temp);
         })
-        this.props.navigation.navigate('DetailPost',{detailPost: item, postImages: postImages});
+
+        const userData = await requestUser.getUserData(item.user_id);
+
+        this.props.navigation.navigate('DetailPost',{detailPost: item, postImages: postImages, postOwner: userData});
     }
 
     returnFlatListItem(item,index){
