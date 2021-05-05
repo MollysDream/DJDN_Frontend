@@ -5,6 +5,7 @@ import {
     ScrollView,
     StyleSheet, Image, FlatList, Button, AsyncStorage
 } from 'react-native';
+import SwitchSelector from "react-native-switch-selector";
 
 
 import {CheckBox} from 'react-native-elements';
@@ -17,29 +18,19 @@ export default class FilterOptionScreen extends Component{
     constructor(props) {
         super(props);
         this.state = {
-            categoryList:[],
             categoryChecked:{},
-            userCategory:[],
-            userData:[]
+            userCategory:this.props.route.params.userData.category,
+            userData:this.props.route.params.userData,
+            sort:this.props.route.params.userData.sort
         }
     }
 
     async componentDidMount() {
         const categoryList = await request.getCategoryList();
         console.log(categoryList)
-        console.log(`전체 카테고리 리스트 ${categoryList.category}`);
-
-        const userId = await AsyncStorage.getItem('user_id');
-
-        //user_id 값으로 사용자 정보 받아와야 됨
-        const userData = await requestUser.getUserData(userId);
-
-        console.log(`사용자의 카테고리 ${userData.category}`);
 
         this.setState({
             categoryChecked:categoryList.category[0],
-            userCategory:userData.category,
-            userData:userData
         })
 
         for(const [key, value] of Object.entries(this.state.categoryChecked)){
@@ -63,9 +54,10 @@ export default class FilterOptionScreen extends Component{
         }
         console.log(`${newUserCategory} 사용자 필터 설정함`);
 
-        await requestUserAPI.updateUserCategory({
+        await requestUserAPI.updateUserCategoryAndSort({
             userId:this.state.userData._id,
-            newUserCategory:newUserCategory
+            newUserCategory:newUserCategory,
+            newSort:this.state.sort
         });
 
         this.props.navigation.navigate('Home');
@@ -73,7 +65,12 @@ export default class FilterOptionScreen extends Component{
 
 
     render(){
+        const options = [
+            {label: "최신순", value:0},
+            {label: "거리순", value:1}
+        ]
         return (
+
             <View style={{flex:1}}>
                 <View>
                     <Text>카테고리 설정</Text>
@@ -93,6 +90,17 @@ export default class FilterOptionScreen extends Component{
                             />
                         )
                     }
+
+                    <Text>정렬</Text>
+                    <SwitchSelector
+                        initial={this.state.sort}
+                        options={options}
+                        onPress={value => this.setState({sort:value})}
+                        buttonColor={'#89dcfd'}
+                        borderColor={'#89dcfd'}
+                        hasPadding
+                                    />
+
                     <Button title={'필터 적용'} onPress={this.setFilter}/>
                 </View>
 

@@ -11,7 +11,7 @@ import {
     Platform,
     Button,
     RefreshControl,
-    TouchableHighlight
+    TouchableHighlight, AsyncStorage
 } from 'react-native';
 import {
     widthPercentageToDP as wp,
@@ -121,9 +121,14 @@ export default class HomeScreen extends Component{
         });
     }
 
-    filterOption = () =>{
+    filterOption = async () =>{
         console.log('필터 옵션 설정!!')
-        this.props.navigation.navigate('FilterOption');
+
+        const userId = await AsyncStorage.getItem('user_id');
+        //user_id 값으로 사용자 정보 받아와야 됨
+        const userData = await requestUser.getUserData(userId);
+
+        this.props.navigation.navigate('FilterOption',{userData:userData});
     }
 
     render() {
