@@ -9,13 +9,13 @@ export async function getUserData(userId){
     return userData.data;
 }
 
-export async function updateUserCategory({userId, newUserCategory}){   //_id로 하던가 email로 하던가
+export async function updateUserCategoryAndSort({userId, newUserCategory, newSort}){
     console.log('updateUserCategory함수 호출됨');
-    const userData = await axi.post("/user/updateUserCategory", {userId,newUserCategory});
+    const userData = await axi.post("/user/updateUserCategoryAndSort", {userId,newUserCategory, newSort});
 
 }
 
 export default{
     getUserData,
-    updateUserCategory
+    updateUserCategoryAndSort
 }
