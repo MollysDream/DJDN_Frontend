@@ -29,7 +29,7 @@ export default class SearchPostScreen extends Component{
         //게시글 조회수 증가
         await request.updatePostView({
             postId: this.state.detailPost._id,
-            view: this.state.detailPost.view ++
+            view: ++this.state.detailPost.view
         });
 
 
@@ -104,7 +104,7 @@ export default class SearchPostScreen extends Component{
                                     </Left>
                                     <Right>
                                     <Text style={{fontSize:15, color : "grey", marginRight : "10%", marginTop : "10%",marginBottom : '10%'}}>
-                                            {`조회수: ${item.view}`}
+                                            {`조회수: ${item.view + 1}`}
                                     </Text>
                                     </Right>
                                 </Item>    
