@@ -41,6 +41,13 @@ export async function createPost(postData){
     return info.data;
 }
 
+export async function updatePost(postData){
+    console.log("updatePost함수 호출됨");
+    console.log(postData);
+    const info = await axi.post("/data/updatePost", postData);
+    return info.data;
+}
+
 export async function getPostByCategory(category){
     console.log("getPostByCategory함수 호출됨");
     console.log(category);
@@ -69,6 +76,20 @@ export async function updatePostView({postId, view}){
 }
 
 
+export async function getUserPost(userId){
+    console.log('getUserPost함수 호출됨');
+    const userPostData = await axi.get("/data/getUserPost", {params:{userId:userId}});
+
+    return userPostData.data;
+}
+
+export async function deletePost(postId){
+    console.log('deletePost함수 호출됨');
+    await axi.delete("/data/deletePost", {params:{postId:postId}});
+
+}
+
+
 // location = 거래장소 ex) 경기도 수원시 영통구 중부대로271번길, 27-9 104-1402
 export async function createTradeTime({ startTime, endTime, workTime, location, userId1, userId2, postId }){
     console.log('createTradeTime함수 호출됨');
@@ -85,6 +106,7 @@ export async function endTrade(tradeId){
     await axi.post("/trade/endTrade", {tradeId});
 }
 
+
 export default{
     userTest,
     postInfo,
@@ -94,5 +116,8 @@ export default{
     getPostByCategory,
     postImageToS3,
     getCategoryList,
-    updatePostView
+    updatePostView,
+    getUserPost,
+    updatePost,
+    deletePost
 }

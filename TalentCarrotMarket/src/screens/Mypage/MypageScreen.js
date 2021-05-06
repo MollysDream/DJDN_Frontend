@@ -3,7 +3,8 @@ import {
     View,
     Text,
     StyleSheet,
-    TouchableOpacity
+    TouchableOpacity,
+    Button
 } from 'react-native';
 import {
     widthPercentageToDP as wp,
@@ -58,7 +59,11 @@ const MypageScreen = ({navigation}) => {
     const certifyAddress=address.map(list=>
       <Text>내가 인증한 동네 : {list.addressName}</Text>
     )
-    
+
+    const goToUserPostScreen = ()=>{
+        navigation.navigate('userPostScreen');
+    }
+
     return (
       <View style={styles.container}>
             <View style={styles.btnArea2}>
@@ -81,6 +86,7 @@ const MypageScreen = ({navigation}) => {
             <View>
               {certifyAddress}
             </View>
+          <Button title={'재능거래 내역'} onPress={goToUserPostScreen}/>
       </View>
 
         

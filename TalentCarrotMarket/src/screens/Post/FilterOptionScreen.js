@@ -12,6 +12,7 @@ import {CheckBox} from 'react-native-elements';
 import request from "../../requestAPI";
 import requestUser from "../../requestUserAPI";
 import requestUserAPI from "../../requestUserAPI";
+import {CommonActions} from '@react-navigation/native';
 
 
 export default class FilterOptionScreen extends Component{
@@ -60,7 +61,13 @@ export default class FilterOptionScreen extends Component{
             newSort:this.state.sort
         });
 
-        this.props.navigation.navigate('Home');
+        this.props.navigation.dispatch(
+            CommonActions.reset({
+                index: 0,
+                routes:[{name:'Home'}],
+            })
+        )
+        //this.props.navigation.navigate('Home');
     }
 
 
