@@ -21,6 +21,7 @@ import {SearchBar} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
 import request from '../../requestAPI';
 import requestUser from "../../requestUserAPI";
+import {CommonActions} from "@react-navigation/native";
 
 
 export default class UserPostScreen extends Component{
@@ -76,6 +77,17 @@ export default class UserPostScreen extends Component{
 
     }
 
+    async deletePost(item){
+        console.log(item._id);
+        await request.deletePost(item._id);
+        this.props.navigation.dispatch(
+            CommonActions.reset({
+                index: 0,
+                routes:[{name:'userPostScreen'}],
+            })
+        )
+    }
+
     refreshPage = async() => {
         console.log('페이지 새로고침');
 
@@ -103,6 +115,7 @@ export default class UserPostScreen extends Component{
                     </View>
                 </TouchableHighlight>
                 <Button title={'수정'} onPress={()=>this.goToEditPostScreen(item)}/>
+                <Button title={'삭제'} onPress={()=>this.deletePost(item)}/>
             </View>
 
 

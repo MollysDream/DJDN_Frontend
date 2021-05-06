@@ -82,6 +82,12 @@ export async function getUserPost(userId){
     return userPostData.data;
 }
 
+export async function deletePost(postId){
+    console.log('deletePost함수 호출됨');
+    await axi.delete("/data/deletePost", {params:{postId:postId}});
+
+}
+
 
 
 export default{
@@ -95,5 +101,6 @@ export default{
     getCategoryList,
     updatePostView,
     getUserPost,
-    updatePost
+    updatePost,
+    deletePost
 }
