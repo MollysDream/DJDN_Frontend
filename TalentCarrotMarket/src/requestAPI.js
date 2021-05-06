@@ -41,6 +41,13 @@ export async function createPost(postData){
     return info.data;
 }
 
+export async function updatePost(postData){
+    console.log("updatePost함수 호출됨");
+    console.log(postData);
+    const info = await axi.post("/data/updatePost", postData);
+    return info.data;
+}
+
 export async function getPostByCategory(category){
     console.log("getPostByCategory함수 호출됨");
     console.log(category);
@@ -68,6 +75,15 @@ export async function updatePostView({postId, view}){
 
 }
 
+export async function getUserPost(userId){
+    console.log('getUserPost함수 호출됨');
+    const userPostData = await axi.get("/data/getUserPost", {params:{userId:userId}});
+
+    return userPostData.data;
+}
+
+
+
 export default{
     userTest,
     postInfo,
@@ -77,5 +93,7 @@ export default{
     getPostByCategory,
     postImageToS3,
     getCategoryList,
-    updatePostView
+    updatePostView,
+    getUserPost,
+    updatePost
 }

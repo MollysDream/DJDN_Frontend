@@ -39,6 +39,8 @@ import aroundCertifyScreen from './src/screens/Around/AroundCertifyScreen';
 
 //MyPageStack
 import mypageScreen from './src/screens/Mypage/MypageScreen';
+import userPostScreen from './src/screens/Mypage/UserPostScreen';
+import editUserPostScreen from './src/screens/Mypage/EditUserPostScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -115,6 +117,8 @@ const SettingStackScreen = () => {
   return (
     <Stack.Navigator>
       <SettingStack.Screen name="Home" component={mypageScreen} />
+      <SettingStack.Screen name="userPostScreen" component={userPostScreen}/>
+      <SettingStack.Screen name="editUserPostScreen" component={editUserPostScreen}/>
     </Stack.Navigator>
   );
 };
