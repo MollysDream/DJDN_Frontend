@@ -20,9 +20,9 @@ export async function postInfo({title, content, category, tag, view, date}){
 }
 
 //HomeScreen 컴포넌트로 게시물 데이터 GET
-export async function getPost(page){
-    console.log(`getPost함수 ${page} 페이지 호출됨`);
-    const postData = await axi.get("/data/getPost", {params:{page:page}});
+export async function getPost(page, userId){
+    console.log(`getPost함수 ${page} 페이지 호출됨/ 사용자 ID: ${userId}`);
+    const postData = await axi.get("/data/getPost", {params:{page:page, userId:userId}});
     //console.log(postData.data);
     return postData.data;
 }
