@@ -106,8 +106,8 @@ const AroundStackScreen = () => {
 const ChatStackScreen = () => {
   return (
     <Stack.Navigator>
-      <ChatStack.Screen name="chatch" component={chatchScreen} />
       <ChatStack.Screen name="chat" component={chatScreen} />
+      <ChatStack.Screen name="chatch" component={chatchScreen} />
     </Stack.Navigator>
   );
 };
