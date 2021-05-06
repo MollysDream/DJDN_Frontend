@@ -32,13 +32,16 @@ export default class HomeScreen extends Component{
             data:[],
             page:0,
             rerender: false,
-            refreshing: false
+            refreshing: false,
+            userId: undefined
         }
     }
 
     async componentDidMount() {
         //console.log("홈스크린 componentDidMount");
-        const postData = await request.getPost(this.state.page);
+        const userId = await AsyncStorage.getItem('user_id');
+        this.setState({userId:userId})
+        const postData = await request.getPost(this.state.page, userId);
         this.setState({
             data: this.state.data.concat(postData),
             page : this.state.page + 1
@@ -47,7 +50,7 @@ export default class HomeScreen extends Component{
 
     morePage = async() => {
         //console.log('더 불러와 제발!!');
-        const postData = await request.getPost(this.state.page);
+        const postData = await request.getPost(this.state.page, this.state.userId);
         this.setState({
             data: this.state.data.concat(postData),
             page : this.state.page + 1,
@@ -61,7 +64,7 @@ export default class HomeScreen extends Component{
         this.state.page = 0;
         this.setState({page:this.state.page, refreshing: true});
 
-        const postData = await request.getPost(this.state.page);
+        const postData = await request.getPost(this.state.page, this.state.userId);
         this.setState({
             data: postData,
             page : this.state.page + 1,
