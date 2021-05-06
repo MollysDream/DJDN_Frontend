@@ -68,6 +68,23 @@ export async function updatePostView({postId, view}){
 
 }
 
+
+// location = 거래장소 ex) 경기도 수원시 영통구 중부대로271번길, 27-9 104-1402
+export async function createTradeTime({ startTime, endTime, workTime, location, userId1, userId2, postId }){
+    console.log('createTradeTime함수 호출됨');
+    await axi.post("/trade/createTradeTime", { startTime, endTime, workTime, location, userId1, userId2, postId});
+}
+
+export async function updateTradeTime({tradeInfo, workTime, endTime}){
+    console.log('updateTradeTime함수 호출됨');
+    await axi.post("/trade/updateTradeTime", {tradeInfo, workTime, endTime});
+}
+
+export async function endTrade(tradeId){
+    console.log('endTrade함수 호출됨');
+    await axi.post("/trade/endTrade", {tradeId});
+}
+
 export default{
     userTest,
     postInfo,
