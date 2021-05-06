@@ -21,7 +21,6 @@ import {SearchBar} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
 import request from '../../requestAPI';
 import requestUser from "../../requestUserAPI";
-import {CommonActions} from "@react-navigation/native";
 
 
 export default class UserPostScreen extends Component{
@@ -80,12 +79,7 @@ export default class UserPostScreen extends Component{
     async deletePost(item){
         console.log(item._id);
         await request.deletePost(item._id);
-        this.props.navigation.dispatch(
-            CommonActions.reset({
-                index: 0,
-                routes:[{name:'userPostScreen'}],
-            })
-        )
+        this.props.navigation.navigate('Home');
     }
 
     refreshPage = async() => {
