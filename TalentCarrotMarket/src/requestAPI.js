@@ -36,7 +36,7 @@ export async function getPostBySearch(search){
 
 export async function createPost(postData){
     console.log("createPost함수 호출됨");
-    console.log(postData);
+    //console.log(postData);
     const info = await axi.post("/data/createPost", postData);
     return info.data;
 }

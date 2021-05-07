@@ -36,7 +36,6 @@ export default class HomeScreen extends Component{
     }
 
 
-
     async componentDidMount() {
         //console.log("홈스크린 componentDidMount");
         const userId = await AsyncStorage.getItem('user_id');
@@ -72,8 +71,6 @@ export default class HomeScreen extends Component{
             refreshing: false
         });
     }
-
-
 
     updateSearch = (search) =>{
         this.setState({search});
@@ -175,7 +172,7 @@ export default class HomeScreen extends Component{
                     refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.refreshPage} />}
                 />
             </View>
-                <TouchableOpacity onPress={()=>this.props.navigation.navigate('MakePost')}
+                <TouchableOpacity onPress={()=>this.props.navigation.navigate('MakePost',{onGoBack: ()=>this.refreshPage()})}
                                   style={{borderWidth:0,position:'absolute',bottom:5,alignSelf:'flex-end'}}>
                     <Icon name="add-circle"  size={80} color="#01a699" />
                 </TouchableOpacity>

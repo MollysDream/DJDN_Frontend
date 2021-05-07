@@ -157,7 +157,10 @@ export default class MakePostScreen extends Component {
             const postData = await request.createPost(this.state)
             Alert.alert("작성 완료", "게시글 작성이 완료되었습니다.",
                 [{ text: '확인', style: 'cancel',
-                    onPress : ()=> this.props.navigation.navigate('Home')}])
+                    onPress : ()=> {
+                    this.props.route.params.onGoBack();
+                    this.props.navigation.navigate('Home')
+                }}])
         }catch(err){
             Alert.alert("작성 실패","게시글을 다시 작성해주세요.", err.response.data.error,[
                 {text:'확인', style:'cancel', onPress: () => {this.setState({loading: false})}}
