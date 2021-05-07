@@ -157,7 +157,10 @@ export default class EditUserPostScreen extends Component {
             const postData = await request.updatePost(this.state)
             Alert.alert("수정 완료", "게시글 수정이 완료되었습니다.",
                 [{ text: '확인', style: 'cancel',
-                    onPress : ()=> this.props.navigation.navigate('userPostScreen')}])
+                    onPress : ()=> {
+                        this.props.route.params.onGoBack();
+                        this.props.navigation.navigate('userPostScreen')
+                    }}])
         }catch(err){
             Alert.alert("작성 실패","게시글을 다시 수정해주세요.", err.response.data.error,[
                 {text:'확인', style:'cancel', onPress: () => {this.setState({loading: false})}}
