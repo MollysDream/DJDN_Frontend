@@ -17,7 +17,7 @@ function ChatScreen(props) {
     const [message, setMessage] = useState("");
     const [messages, setMessages] = useState([]);
     var [userId, setUserid] = useState("");
-    var socket = io("http://10.0.2.2:3001");
+    var socket = io("http://10.0.2.2:3002");
 
     //gift chat 관련
     useEffect(() => {
@@ -27,9 +27,12 @@ function ChatScreen(props) {
       console.log('name is ', value);
       console.log(userId);
     });
+
+      // socket.emit('connect', 1);
+
       setMessages([
         {
-          _id: userId,
+          _id: 1,
           text: 'Hello developer',
           createdAt: new Date(),
           user: {
@@ -39,14 +42,33 @@ function ChatScreen(props) {
           },
         },
       ])
-    }, [])
+      console.log("messages 출력~ "+ messages[0]);
 
-    const onSend = useCallback((messages = []) => {
-      setMessages(previousMessages => GiftedChat.append(previousMessages, messages))
-      socket.emit("chat message", msg=>{
-        console.log("bye"+socket.connect(A).connected);
-      })
-    }, [])
+      return () => {
+        // socket.emit('disconnect', 1);
+        socket.disconnect();
+      };
+
+    },[]);
+
+    socket.on('newMessage', (newMessage) => {
+      let newMessaged = newMessage;
+      // newMessaged[0].user._id = 1;
+      setMessages((previous) => GiftedChat.append(previous, newMessaged));
+      console.log("client에서 chat message 받는거 ");
+      // console.log(newMessage);
+      // onSendDB(newMessage);
+    });
+
+    function onSend(newMessages = []){
+      setMessages(GiftedChat.append(messages, newMessages))
+      socket.emit("chat message", newMessages)
+      console.log("client에서 지금 메세지 보내는 중");
+      console.log(newMessages);
+
+      //이게 실제 보여지는 텍스트임
+      console.log(newMessages[0].text);
+    };
 
 
 
@@ -64,7 +86,7 @@ function ChatScreen(props) {
     return (
     <GiftedChat
       messages={messages}
-      onSend={messages => onSend(messages)}
+      onSend={(newMessages) => onSend(newMessages)}
       user={{
         _id: userId,
       }}

@@ -15,13 +15,16 @@ import {
 } from 'react-native-responsive-screen';
 
 const ChatChScreen =({navigation})=>{
-
       return (
         <View style={styles.btnArea2} >
-        <TouchableOpacity style={styles.btn2} onPress={() => navigation.navigate('chatTest')}>
-            <Text style={(styles.Text, {color: 'white'})}>채팅</Text>
+        <TouchableOpacity style={styles.btn2} onPress={() => navigation.navigate('chat')}>
+          <Text style={(styles.Text, {color: 'white'})}>채팅</Text>
         </TouchableOpacity>
-         </View>
+          <TouchableOpacity style={styles.btn2} onPress={() => navigation.navigate('chatTest')}>
+            <Text style={(styles.Text, {color: 'white'})}>채팅2</Text>
+          </TouchableOpacity>
+        </View>
+
       );
 
 }
