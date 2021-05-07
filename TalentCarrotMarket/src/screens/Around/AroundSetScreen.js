@@ -66,15 +66,48 @@ const AroundSetScreen = ({navigation}) => {
         }
         console.log(Math.floor(haversine(start,end ,{unit:'meter'})))
         setDistance(Math.floor(haversine(start,end ,{unit:'meter'})));
+    }
 
+    //근처 동네 갯수 설정
+    const saveSwitchRadius = (value) => {
+        console.log(`${value}m의 재능 구매 게시글 찾기`)
+
+        //스위치에서 지정값 선택했는지, 커스텀 값 선택했는지 Flag 지정
+        if(value == 500 || value == 1000 || value == 2000){
+            console.log('지정된 값');
+            setCustomFlag(0);
+        }else{
+            console.log('커스텀 값')
+            setCustomFlag(1);
+        }
+
+        if(value >= 1000) {
+            setRadius(`${(value / 1000).toFixed(1)}km`);
+            setDistance(value);
+        }
+        else {
+            setRadius(`${value}m`);
+            setDistance(value);
+        }
     }
 
     useEffect(()=>{
+
         if(distance >= 1000)
             setStrDistance(`${(distance/1000).toFixed(1)}km`);
         else
-            setStrDistance(`${distance}m`)
+            setStrDistance(`${distance}m`);
 
+        //커스텀 값일 경우
+        if(customFlag)
+            if(distance >= 1000) {
+                setRadius(`${(distance / 1000).toFixed(1)}km`);
+            }
+            else {
+                setRadius(`${distance}m`);
+            }
+
+        //console.log(`설정한 반경: ${Radius}`);
     })
 
     const options = [
@@ -86,9 +119,13 @@ const AroundSetScreen = ({navigation}) => {
 
     const [address1,setAddress1]= useState('우만2동');
     const [address2,setAddress2]= useState('');
-    const [aroundAddress,setAroundAddress]= useState(10);
+
+    const [Radius,setRadius]= useState(0);
+    const [customFlag, setCustomFlag]= useState(0);
+
     const [chooseState1,setChooseState1] = useState('choose');
     const [chooseState2,setChooseState2] = useState('');
+
 
     //설정된 동네 삭제
     const addressOneDeleteButton = () => {
@@ -123,21 +160,6 @@ const AroundSetScreen = ({navigation}) => {
       navigation.navigate('aroundCertify',{
         chosenAddress:address2
       })
-    }
-
-    //근처 동네 갯수 설정
-    const saveSearchRadius = (value) => {
-        console.log(`${value}m의 재능 구매 게시글 찾기`)
-        if(value >= 1000) {
-            setAroundAddress(`${(value / 1000).toFixed(1)}km`);
-            setDistance(value);
-
-        }
-        else {
-            setAroundAddress(`${value}m`);
-            setDistance(value);
-
-        }
     }
 
 
@@ -222,7 +244,7 @@ const AroundSetScreen = ({navigation}) => {
               />
 
             <View style={styles.bottomArea}>
-              <Text style={{paddingBottom:10,paddingTop:10}}><B>{address1} 반경 {aroundAddress}</B></Text>
+              <Text style={{paddingBottom:10,paddingTop:10}}><B>{address1} 반경 {Radius}</B></Text>
               <Text style={{paddingBottom:25}}>선택한 범위의 게시글만 볼 수 있어요.</Text>
 
 
@@ -232,8 +254,6 @@ const AroundSetScreen = ({navigation}) => {
                 style={{flex: 0.5, width: '100%', height: '100%'}}
                 showsMyLocationButton={true}
                 center={{...P0, zoom:16}}
-                onTouch={e => console.log('onTouch', JSON.stringify(e.nativeEvent))}
-                onCameraChange={e => console.log('onCameraChange', JSON.stringify(e))}
                 onMapClick={e => setMapRadius(e)}>
                 {
                     location.latitude == null ? null :
@@ -244,7 +264,7 @@ const AroundSetScreen = ({navigation}) => {
             <SwitchSelector style={{paddingTop:10}}
                 options={options}
                 initial={0}
-                onPress={saveSearchRadius}
+                onPress={saveSwitchRadius}
                 textColor={'#7a44cf'}
                 selectedColor={'white'}
                 buttonColor={'#7a44cf'}
