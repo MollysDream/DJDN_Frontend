@@ -13,20 +13,32 @@ import {GiftedChat} from 'react-native-gifted-chat'
 
 import io from "socket.io-client";
 
+import AsyncStorage from '@react-native-community/async-storage';
 
 
-const ChatScreen = () =>{
+function ChatScreen(props) {
     
     const [message, setMessage] = useState("");
     const [messages, setMessages] = useState([]);
-    var socket = io("http://10.0.2.2:3001")
+    var [userId, setUserid] = useState(""); 
+    var socket = io("http://10.0.2.2:3001");
+
+    
+ 
+  
 
 
     //gift chat 관련
     useEffect(() => {
+      AsyncStorage.getItem('user_id')
+    .then((value) => {
+      setUserid(value);
+      console.log('name is ', value);
+      console.log(userId);
+    });
       setMessages([
         {
-          _id: 1,
+          _id: userId,
           text: 'Hello developer',
           createdAt: new Date(),
           user: {
@@ -40,16 +52,12 @@ const ChatScreen = () =>{
 
     const onSend = useCallback((messages = []) => {
       setMessages(previousMessages => GiftedChat.append(previousMessages, messages))
+      socket.emit("chat message", msg=>{
+        console.log("bye"+socket.connect(A).connected);
+      })
     }, [])
 
-    //소켓 연동
-    useEffect(()=> {
-      socket.on("chat message", msg=>{
-        console.log("bye"+socket.connect().connected);
-        setMessages(msg)
-        console.log(messages)
-      })
-    })
+    
 
     // const chatMessages=messages.map(chatMessage=>
     //   <Text style={{borderWidth:2, top:500}}>{chatMessage}</Text>
@@ -62,27 +70,15 @@ const ChatScreen = () =>{
     }
 
   
-    return (
-      // <GiftedChat
-      //   messages={messages}
-      //   onSend={messages => onSend(messages)}
-      //   user={{
-      //     _id: 1,
-      //   }}
-      // />
-      <View style={styles.container}>
-        {/* {chatMessages} */}
-        <TextInput
-          style={{height: 40, borderWidth: 2, top: 600}}
-          autoCorrect={false}
-          value={message}
-          onSubmitEditing={submitChatMessage}
-          onChangeText={message => {
-            setMessage(message);
-          }}
-        />
-      </View>
-    )
+    return ( 
+    <GiftedChat
+      messages={messages}
+      onSend={messages => onSend(messages)}
+      user={{
+        _id: userId,
+      }}
+    />
+  )
     
 }
 

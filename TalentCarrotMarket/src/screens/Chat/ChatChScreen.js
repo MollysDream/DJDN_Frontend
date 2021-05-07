@@ -9,44 +9,19 @@ import {
 import { List, Divider } from 'react-native-paper';
 import firestore from '@react-native-firebase/firestore';
 
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
+
 const ChatChScreen =({navigation})=>{
 
-      const [threads, setThreads] = useState([]);
-
-      useEffect(() => {
-        const unsubscribe = firestore()
-        .collection('Trade')
-        .onSnapshot(querySnapshot => {
-          const threads = querySnapshot.docs.map(documentSnapshot =>{
-            return {
-              _id: documentSnapshot.id,
-              name:'',
-              ...documentSnapshot.data()
-            };
-        });
-
-        setThreads(threads);
-        });
-
-        return () => unsubscribe();
-      }, []);
-    
       return (
-          <View style={styles.container}>
-            <FlatList 
-              data={threads}
-              keyExtractor={item=>item._id}
-              ItemSeparatorComponent={() => <Divider />}
-              renderItem={({}) => (
-                <List.Item
-                  description="Item description"
-                  titleNumberOfLines={1}
-                  descriptionStyle={styles.listDescription}
-                  descriptionNumberOfLines={1}
-                  />
-              )}
-            />
-          </View>
+        <View style={styles.btnArea2} >
+        <TouchableOpacity style={styles.btn2} onPress={() => navigation.navigate('chat')}>
+            <Text style={(styles.Text, {color: 'white'})}>채팅</Text>
+        </TouchableOpacity>
+         </View>
       );
     
 }
@@ -55,6 +30,21 @@ const styles = StyleSheet.create({
     container: {
       backgroundColor: '#f5f5f5',
       flex: 1
+    },    btn2: {
+      flex: 1,
+      width: 300,
+      height: 50,
+      borderRadius: 7,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#4672B8',
+    },
+  btnArea2: {
+      height: hp(10),
+      // backgroundColor: 'orange',
+      paddingTop: hp(1.5),
+      paddingBottom: hp(1.5),
+      alignItems: 'center',
     },
     listDescription: {
       fontSize: 16
