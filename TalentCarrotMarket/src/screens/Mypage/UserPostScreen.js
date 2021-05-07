@@ -4,23 +4,18 @@ import {
     View,
     Text,
     Image,
-    Dimensions,
-    ScrollView,
     FlatList,
-    TouchableOpacity,
-    Platform,
     Button,
     RefreshControl,
-    TouchableHighlight, AsyncStorage
+    TouchableHighlight
 } from 'react-native';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {SearchBar} from 'react-native-elements';
-import Icon from 'react-native-vector-icons/Ionicons';
 import request from '../../requestAPI';
 import requestUser from "../../requestUserAPI";
+import AsyncStorage from '@react-native-community/async-storage';
 
 
 export default class UserPostScreen extends Component{
@@ -72,14 +67,18 @@ export default class UserPostScreen extends Component{
         })
 
         this.props.navigation.navigate('editUserPostScreen',
-            {detailPost: item, postImages: postImages});
+            {
+                detailPost: item,
+                postImages: postImages,
+                onGoBack: ()=>this.refreshPage()
+            });
 
     }
 
     async deletePost(item){
         console.log(item._id);
         await request.deletePost(item._id);
-        this.props.navigation.navigate('Home');
+        await this.refreshPage();
     }
 
     refreshPage = async() => {

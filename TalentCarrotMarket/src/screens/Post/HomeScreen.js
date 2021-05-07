@@ -1,17 +1,14 @@
-import React, {Component} from 'react';
+import React, {Component, useEffect} from 'react';
 import {
     StyleSheet,
     View,
     Text,
     Image,
-    Dimensions,
-    ScrollView,
     FlatList,
     TouchableOpacity,
-    Platform,
     Button,
     RefreshControl,
-    TouchableHighlight, AsyncStorage
+    TouchableHighlight, Alert
 } from 'react-native';
 import {
     widthPercentageToDP as wp,
@@ -21,6 +18,7 @@ import {SearchBar} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
 import request from '../../requestAPI';
 import requestUser from "../../requestUserAPI";
+import AsyncStorage from '@react-native-community/async-storage';
 
 
 export default class HomeScreen extends Component{
@@ -36,6 +34,8 @@ export default class HomeScreen extends Component{
             userId: undefined
         }
     }
+
+
 
     async componentDidMount() {
         //console.log("홈스크린 componentDidMount");
@@ -96,7 +96,16 @@ export default class HomeScreen extends Component{
             postImages.push(temp);
         })
 
-        const userData = await requestUser.getUserData(item.user_id);
+        let userData
+        try{
+            userData = await requestUser.getUserData(item.user_id);
+        }catch(err){
+            console.log('게시글이 존재하지 않습니다');
+            Alert.alert("수정 완료", "게시글이 존재하지 않습니다.",
+                [{ text: '확인', style: 'cancel',
+                    onPress : ()=> this.refreshPage()}])
+        }
+
 
         this.props.navigation.navigate('DetailPost',{detailPost: item, postImages: postImages, postOwner: userData});
     }
@@ -131,7 +140,10 @@ export default class HomeScreen extends Component{
         //user_id 값으로 사용자 정보 받아와야 됨
         const userData = await requestUser.getUserData(userId);
 
-        this.props.navigation.navigate('FilterOption',{userData:userData});
+        this.props.navigation.navigate('FilterOption',{
+            userData:userData,
+            onGoBack: ()=>this.refreshPage()
+        });
     }
 
     render() {

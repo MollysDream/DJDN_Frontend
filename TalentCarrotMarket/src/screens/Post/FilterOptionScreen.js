@@ -61,12 +61,14 @@ export default class FilterOptionScreen extends Component{
             newSort:this.state.sort
         });
 
-        this.props.navigation.dispatch(
+        this.props.route.params.onGoBack();
+        this.props.navigation.goBack();
+        /*this.props.navigation.dispatch(
             CommonActions.reset({
                 index: 0,
                 routes:[{name:'Home'}],
             })
-        )
+        )*/
         //this.props.navigation.navigate('Home');
     }
 
