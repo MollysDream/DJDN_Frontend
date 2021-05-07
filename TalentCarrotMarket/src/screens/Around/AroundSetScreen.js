@@ -4,7 +4,7 @@ import {
     Text,
     StyleSheet,
     TouchableOpacity,
-    ScrollView
+    ScrollView, Button, Alert
 } from 'react-native';
 
 import {
@@ -37,6 +37,7 @@ const AroundSetScreen = ({navigation}) => {
     //반경 저장
     const [distance, setDistance] = useState(0)
     const [strDistance, setStrDistance] = useState('');
+    const [tempDistance, setTempDistance] = useState(0);
 
     // 실제 안드로이드 폰에서 되는지 확인 필요
     useEffect(() =>{
@@ -54,8 +55,11 @@ const AroundSetScreen = ({navigation}) => {
     },[]);
 
     const setMapRadius= (endLocation)=>{
-        //console.log(location);
-        //console.log('onMapClick', JSON.stringify(endLocation))
+
+        //커스텀이 아닐경우 반경 조작 못함
+        if(!customFlag)
+            return;
+
         const start = {
             latitude: location.latitude,
             longitude: location.longitude
@@ -64,57 +68,72 @@ const AroundSetScreen = ({navigation}) => {
             latitude: endLocation.latitude,
             longitude: endLocation.longitude
         }
-        console.log(Math.floor(haversine(start,end ,{unit:'meter'})))
+        //console.log(Math.floor(haversine(start,end ,{unit:'meter'})))
         setDistance(Math.floor(haversine(start,end ,{unit:'meter'})));
     }
 
     //근처 동네 갯수 설정
-    const saveSwitchRadius = (value) => {
+    const selectSwitchRadius = (value) => {
         console.log(`${value}m의 재능 구매 게시글 찾기`)
 
-        //스위치에서 지정값 선택했는지, 커스텀 값 선택했는지 Flag 지정
-        if(value == 500 || value == 1000 || value == 2000){
-            console.log('지정된 값');
-            setCustomFlag(0);
-        }else{
-            console.log('커스텀 값')
+        //컴스텀일 경우 Flag 1로 지정
+        if(value == -1){
+            console.log('커스텀')
             setCustomFlag(1);
+            setDistance(tempDistance);
+            setRadius(distance);
+            return;
         }
 
-        if(value >= 1000) {
-            setRadius(`${(value / 1000).toFixed(1)}km`);
-            setDistance(value);
-        }
-        else {
-            setRadius(`${value}m`);
-            setDistance(value);
-        }
+        //커스텀 아닐경우 Flag 0으로 지정
+        console.log('지정값');
+        setCustomFlag(0);
+
+        setRadius(value);
+        setDistance(value);
     }
 
     useEffect(()=>{
 
-        if(distance >= 1000)
-            setStrDistance(`${(distance/1000).toFixed(1)}km`);
-        else
-            setStrDistance(`${distance}m`);
+        //커스텀 상태이면 실행
+        if(customFlag){
+            if(distance >= 1000)
+                setStrDistance(`${(distance/1000).toFixed(1)}km`);
+            else
+                setStrDistance(`${distance}m`);
 
-        //커스텀 값일 경우
-        if(customFlag)
-            if(distance >= 1000) {
-                setRadius(`${(distance / 1000).toFixed(1)}km`);
-            }
-            else {
-                setRadius(`${distance}m`);
-            }
+            console.log(distance);
+            setTempDistance(distance);
+            setRadius(distance);
 
-        //console.log(`설정한 반경: ${Radius}`);
+        }
+
+
     })
+
+    const circleClick = ()=>{
+        if(!customFlag)
+            return;
+
+        setDistance(0);
+    }
+
+    const saveRadius = () =>{
+        console.log(`${Radius} 반경 저장!!!`);
+
+        if(Radius < 50){
+            Alert.alert("설정 실패","50m 이상 반경으로 설정해주세요.",[
+                {text:'확인', style:'cancel'}
+            ])
+            return
+        }
+    }
 
     const options = [
       {label:"500m", value: 500},
       {label:"1km", value: 1000},
       {label:"2km", value: 2000},
-        {label:strDistance, value:distance}
+        {label:'커스텀: '+ strDistance, value:-1}
     ];
 
     const [address1,setAddress1]= useState('우만2동');
@@ -244,7 +263,11 @@ const AroundSetScreen = ({navigation}) => {
               />
 
             <View style={styles.bottomArea}>
-              <Text style={{paddingBottom:10,paddingTop:10}}><B>{address1} 반경 {Radius}</B></Text>
+              <Text style={{paddingBottom:10,paddingTop:10}}><B>{address1} 반경 {
+                  Radius>=1000?
+                      `${(Radius/1000).toFixed(1)}km`:
+                      `${Radius}m`
+              }</B></Text>
               <Text style={{paddingBottom:25}}>선택한 범위의 게시글만 볼 수 있어요.</Text>
 
 
@@ -257,20 +280,21 @@ const AroundSetScreen = ({navigation}) => {
                 onMapClick={e => setMapRadius(e)}>
                 {
                     location.latitude == null ? null :
-                        <Circle coordinate={location} color={"rgba(0,199,249,0.2)"} radius={distance} onClick={() => setDistance(0)}/>
+                        <Circle coordinate={location} color={"rgba(0,199,249,0.2)"} radius={distance} onClick={circleClick}/>
 
                 }
             </NaverMapView>
             <SwitchSelector style={{paddingTop:10}}
                 options={options}
                 initial={0}
-                onPress={saveSwitchRadius}
+                onPress={selectSwitchRadius}
                 textColor={'#7a44cf'}
                 selectedColor={'white'}
                 buttonColor={'#7a44cf'}
                 borderColor={'#7a44cf'}
                 hasPadding
             />
+            <Button title={'반경설정'} onPress={saveRadius}/>
 
         </View>
     );
