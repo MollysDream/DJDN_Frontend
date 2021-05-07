@@ -18,12 +18,12 @@ const ChatChScreen =({navigation})=>{
 
       return (
         <View style={styles.btnArea2} >
-        <TouchableOpacity style={styles.btn2} onPress={() => navigation.navigate('chat')}>
+        <TouchableOpacity style={styles.btn2} onPress={() => navigation.navigate('chatTest')}>
             <Text style={(styles.Text, {color: 'white'})}>채팅</Text>
         </TouchableOpacity>
          </View>
       );
-    
+
 }
 
 const styles = StyleSheet.create({

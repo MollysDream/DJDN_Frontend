@@ -10,23 +10,14 @@ import {
     heightPercentageToDP as hp,
   } from 'react-native-responsive-screen';
 import {GiftedChat} from 'react-native-gifted-chat'
-
 import io from "socket.io-client";
-
 import AsyncStorage from '@react-native-community/async-storage';
 
-
 function ChatScreen(props) {
-    
     const [message, setMessage] = useState("");
     const [messages, setMessages] = useState([]);
-    var [userId, setUserid] = useState(""); 
+    var [userId, setUserid] = useState("");
     var socket = io("http://10.0.2.2:3001");
-
-    
- 
-  
-
 
     //gift chat 관련
     useEffect(() => {
@@ -57,7 +48,7 @@ function ChatScreen(props) {
       })
     }, [])
 
-    
+
 
     // const chatMessages=messages.map(chatMessage=>
     //   <Text style={{borderWidth:2, top:500}}>{chatMessage}</Text>
@@ -69,8 +60,8 @@ function ChatScreen(props) {
       setMessage('')
     }
 
-  
-    return ( 
+
+    return (
     <GiftedChat
       messages={messages}
       onSend={messages => onSend(messages)}
@@ -79,7 +70,7 @@ function ChatScreen(props) {
       }}
     />
   )
-    
+
 }
 
 const styles = StyleSheet.create({
