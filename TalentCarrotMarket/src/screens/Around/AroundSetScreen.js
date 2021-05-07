@@ -11,12 +11,15 @@ import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
   } from 'react-native-responsive-screen';
+import AsyncStorage from '@react-native-community/async-storage';
 
 import SwitchSelector from "react-native-switch-selector";
 import axios from 'axios';
 
 import NaverMapView, {Circle, Marker, Path, Polyline, Polygon, Align} from "react-native-nmap";
 import Geolocation from 'react-native-geolocation-service';
+
+import requestAddressAPI from "../../requestAddressAPI";
 
 const P0 = {latitude: 37.564362, longitude: 126.977011};
 const haversine = require('haversine');
@@ -39,6 +42,8 @@ const AroundSetScreen = ({navigation}) => {
     const [strDistance, setStrDistance] = useState('');
     const [tempDistance, setTempDistance] = useState(0);
 
+    const [userId,setUserId] = useState('');
+
     // 실제 안드로이드 폰에서 되는지 확인 필요
     useEffect(() =>{
         Geolocation.getCurrentPosition(
@@ -53,6 +58,21 @@ const AroundSetScreen = ({navigation}) => {
             { enableHighAccuracy:true, timeout: 20000, maximumAge:1000},
         );
     },[]);
+
+    useEffect(async ()=>{
+        console.log("사용자 Radius 값 불러오기");
+        let userId = await AsyncStorage.getItem('user_id');
+        setUserId(userId);
+        const userAddressData = await requestAddressAPI.getUserAddress(userId);
+
+        //**************이중에서 하나만 이용해야됨************//
+        console.log(userAddressData.address[0]);
+        let userRadius = userAddressData.address[0].radius;
+        console.log(userRadius);
+        setRadius(userRadius);
+        setDistance(userRadius);
+        setCustomFlag(1);
+    },[])
 
     const setMapRadius= (endLocation)=>{
 
@@ -107,8 +127,7 @@ const AroundSetScreen = ({navigation}) => {
             setRadius(distance);
 
         }
-
-
+        
     })
 
     const circleClick = ()=>{
@@ -118,7 +137,7 @@ const AroundSetScreen = ({navigation}) => {
         setDistance(0);
     }
 
-    const saveRadius = () =>{
+    const saveRadius = async () =>{
         console.log(`${Radius} 반경 저장!!!`);
 
         if(Radius < 50){
@@ -127,6 +146,13 @@ const AroundSetScreen = ({navigation}) => {
             ])
             return
         }
+
+        await requestAddressAPI.updateRadius(userId, Radius);
+
+        Alert.alert("설정 완료",`거래 반경이 ${Radius}m로 설정 되었습니다.`,[
+            {text:'확인', style:'cancel'}
+        ])
+
     }
 
     const options = [
@@ -263,12 +289,12 @@ const AroundSetScreen = ({navigation}) => {
               />
 
             <View style={styles.bottomArea}>
-              <Text style={{paddingBottom:10,paddingTop:10}}><B>{address1} 반경 {
+              <Text style={{paddingBottom:5}}><B>{address1} 반경 {
                   Radius>=1000?
                       `${(Radius/1000).toFixed(1)}km`:
                       `${Radius}m`
               }</B></Text>
-              <Text style={{paddingBottom:25}}>선택한 범위의 게시글만 볼 수 있어요.</Text>
+              <Text style={{paddingBottom:5}}>선택한 범위의 게시글만 볼 수 있어요.</Text>
 
 
 
@@ -284,9 +310,9 @@ const AroundSetScreen = ({navigation}) => {
 
                 }
             </NaverMapView>
-            <SwitchSelector style={{paddingTop:10}}
+            <SwitchSelector style={{paddingTop:10, paddingBottom:4}}
                 options={options}
-                initial={0}
+                initial={3}
                 onPress={selectSwitchRadius}
                 textColor={'#7a44cf'}
                 selectedColor={'white'}
