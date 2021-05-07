@@ -24,6 +24,7 @@
     "@react-navigation/native": "^5.9.4",
     "@react-navigation/stack": "^5.14.3",
     "axios": "^0.21.1",
+    "haversine": "^1.1.1",
     "jquery": "^3.6.0",
     "native-base": "^2.15.2",
     "path": "^0.12.7",

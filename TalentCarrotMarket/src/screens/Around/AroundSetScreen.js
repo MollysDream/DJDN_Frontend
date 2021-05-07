@@ -1,9 +1,10 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     View,
     Text,
     StyleSheet,
     TouchableOpacity,
+    ScrollView
 } from 'react-native';
 
 import {
@@ -14,15 +15,73 @@ import {
 import SwitchSelector from "react-native-switch-selector";
 import axios from 'axios';
 
+import NaverMapView, {Circle, Marker, Path, Polyline, Polygon, Align} from "react-native-nmap";
+import Geolocation from 'react-native-geolocation-service';
+
+const P0 = {latitude: 37.564362, longitude: 126.977011};
+const haversine = require('haversine');
+
+
 //글자 강조
 const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{props.children}</Text>
 
 const AroundSetScreen = ({navigation}) => {
 
+    //현재 위치값 저장
+    const [location,setLocation]= useState({
+        locations:[
+            {latitude:null,longitude:null}
+        ]
+    });
+
+    //반경 저장
+    const [distance, setDistance] = useState(0)
+    const [strDistance, setStrDistance] = useState('');
+
+    // 실제 안드로이드 폰에서 되는지 확인 필요
+    useEffect(() =>{
+        Geolocation.getCurrentPosition(
+            position =>{
+                const {latitude,longitude}=position.coords;
+                setLocation({
+                    latitude,
+                    longitude
+                });
+            },
+            error => {console.log(error.code,error.message)},
+            { enableHighAccuracy:true, timeout: 20000, maximumAge:1000},
+        );
+    },[]);
+
+    const setMapRadius= (endLocation)=>{
+        //console.log(location);
+        //console.log('onMapClick', JSON.stringify(endLocation))
+        const start = {
+            latitude: location.latitude,
+            longitude: location.longitude
+        }
+        const end ={
+            latitude: endLocation.latitude,
+            longitude: endLocation.longitude
+        }
+        console.log(Math.floor(haversine(start,end ,{unit:'meter'})))
+        setDistance(Math.floor(haversine(start,end ,{unit:'meter'})));
+
+    }
+
+    useEffect(()=>{
+        if(distance >= 1000)
+            setStrDistance(`${(distance/1000).toFixed(1)}km`);
+        else
+            setStrDistance(`${distance}m`)
+
+    })
+
     const options = [
-      {label:"10", value: "10"},
-      {label:"20", value: "20"},
-      {label:"30", value: "30"}
+      {label:"500m", value: 500},
+      {label:"1km", value: 1000},
+      {label:"2km", value: 2000},
+        {label:strDistance, value:distance}
     ];
 
     const [address1,setAddress1]= useState('우만2동');
@@ -39,7 +98,6 @@ const AroundSetScreen = ({navigation}) => {
     const addressTwoDeleteButton = () => {
       setAddress2('');   
     };
-
 
     //내 동네 설정 추가
     const addressOneAddButton = () => {
@@ -68,8 +126,18 @@ const AroundSetScreen = ({navigation}) => {
     }
 
     //근처 동네 갯수 설정
-    const aroundAddressButton = (value) => {
-      setAroundAddress(value)
+    const saveSearchRadius = (value) => {
+        console.log(`${value}m의 재능 구매 게시글 찾기`)
+        if(value >= 1000) {
+            setAroundAddress(`${(value / 1000).toFixed(1)}km`);
+            setDistance(value);
+
+        }
+        else {
+            setAroundAddress(`${value}m`);
+            setDistance(value);
+
+        }
     }
 
 
@@ -152,21 +220,38 @@ const AroundSetScreen = ({navigation}) => {
                 borderBottomWidth: StyleSheet.hairlineWidth,
               }}
               />
-              
+
             <View style={styles.bottomArea}>
-              <Text style={{paddingBottom:10,paddingTop:10}}><B>{address1} 근처동네 {aroundAddress}개</B></Text>
-              <Text style={{paddingBottom:25}}>선택한 범위의 게시글만 볼 수 있어요.</Text> 
-              <SwitchSelector 
-              options={options} 
-              initial={0}
-              onPress={aroundAddressButton}
-              textColor={'#7a44cf'}
-              selectedColor={'white'}
-              buttonColor={'#7a44cf'}
-              borderColor={'#7a44cf'}
-              hasPadding
-              />      
+              <Text style={{paddingBottom:10,paddingTop:10}}><B>{address1} 반경 {aroundAddress}</B></Text>
+              <Text style={{paddingBottom:25}}>선택한 범위의 게시글만 볼 수 있어요.</Text>
+
+
+
             </View>
+            <NaverMapView
+                style={{flex: 0.5, width: '100%', height: '100%'}}
+                showsMyLocationButton={true}
+                center={{...P0, zoom:16}}
+                onTouch={e => console.log('onTouch', JSON.stringify(e.nativeEvent))}
+                onCameraChange={e => console.log('onCameraChange', JSON.stringify(e))}
+                onMapClick={e => setMapRadius(e)}>
+                {
+                    location.latitude == null ? null :
+                        <Circle coordinate={location} color={"rgba(0,199,249,0.2)"} radius={distance} onClick={() => setDistance(0)}/>
+
+                }
+            </NaverMapView>
+            <SwitchSelector style={{paddingTop:10}}
+                options={options}
+                initial={0}
+                onPress={saveSearchRadius}
+                textColor={'#7a44cf'}
+                selectedColor={'white'}
+                buttonColor={'#7a44cf'}
+                borderColor={'#7a44cf'}
+                hasPadding
+            />
+
         </View>
     );
     
