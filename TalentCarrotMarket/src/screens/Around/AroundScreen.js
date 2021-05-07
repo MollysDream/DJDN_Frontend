@@ -73,9 +73,9 @@ const AroundScreen = ({navigation}) => {
           style={{flex: 0.7, width: '100%', height: '100%'}}
           showsMyLocationButton={true}
           center={{...P0, zoom:16}}
-          onTouch={e => console.warn('onTouch', JSON.stringify(e.nativeEvent))}
-          onCameraChange={e => console.warn('onCameraChange', JSON.stringify(e))}
-          onMapClick={e => console.warn('onMapClick', JSON.stringify(e))}>
+          onTouch={e => console.log('onTouch', JSON.stringify(e.nativeEvent))}
+          onCameraChange={e => console.log('onCameraChange', JSON.stringify(e))}
+          onMapClick={e => console.log('onMapClick', JSON.stringify(e))}>
           </NaverMapView>
           <View style={styles.btnArea2} >
             <TouchableOpacity style={styles.btn2} onPress={() => navigation.navigate('aroundSet')}>

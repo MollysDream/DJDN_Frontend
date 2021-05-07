@@ -9,6 +9,12 @@ export async function getUserAddress(userId){
     return categoryData.data;
 }
 
+export async function updateRadius(userId, Radius){
+    console.log(`updateRadius함수 호출됨 ${Radius}m ${userId} ID 호출됨`);
+    await axi.post("/address/updateRadius", {userId:userId, radius:Radius});
+}
+
 export default{
-    getUserAddress
+    getUserAddress,
+    updateRadius
 }
