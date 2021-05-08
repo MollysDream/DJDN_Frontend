@@ -22,6 +22,7 @@ import Geolocation from 'react-native-geolocation-service';
 import requestAddressAPI from "../../requestAddressAPI";
 import requestUserAPI from "../../requestUserAPI";
 
+import { useIsFocused } from '@react-navigation/native';
 //const P0 = {latitude: 37.564362, longitude: 126.977011};
 const haversine = require('haversine');
 
@@ -83,8 +84,7 @@ const AroundSetScreen = ({navigation}) => {
         );
     },[]);
 
-
-
+    const isFocused = useIsFocused();
     useEffect(async ()=>{
 
         let userId = await AsyncStorage.getItem('user_id');
@@ -156,13 +156,9 @@ const AroundSetScreen = ({navigation}) => {
             userRadius = add2.radius;
         }
 
-        //**************이중에서 하나만 이용해야됨************//
-        //console.log(userAddressDataList.address[0]);
-        //let userRadius = userAddressDataList.address[0].radius;
-        //console.log(userRadius);
         setRadius(userRadius);
         setDistance(userRadius);
-    },[userAddressIndex])
+    },[isFocused, userAddressIndex])
 
     const setMapRadius= (endLocation)=>{
 
