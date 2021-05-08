@@ -20,6 +20,7 @@ import NaverMapView, {Circle, Marker, Path, Polyline, Polygon, Align} from "reac
 import Geolocation from 'react-native-geolocation-service';
 
 import requestAddressAPI from "../../requestAddressAPI";
+import requestUserAPI from "../../requestUserAPI";
 
 //const P0 = {latitude: 37.564362, longitude: 126.977011};
 const haversine = require('haversine');
@@ -46,6 +47,8 @@ const AroundSetScreen = ({navigation}) => {
     const [tempDistance, setTempDistance] = useState(0);
 
     const [userId,setUserId] = useState('');
+    const [userData, setUserData] = useState();
+    const [userAddressIndex, setUserAddressIndex]=useState();
 
     // 실제 안드로이드 폰에서 되는지 확인 필요
     useEffect(() =>{
@@ -66,16 +69,53 @@ const AroundSetScreen = ({navigation}) => {
         );
     },[]);
 
+
+
     useEffect(async ()=>{
-        console.log("사용자 Radius 값 불러오기");
+
         let userId = await AsyncStorage.getItem('user_id');
         setUserId(userId);
-        const userAddressData = await requestAddressAPI.getUserAddress(userId);
+
+        console.log('사용자 Address Data 불러오기');
+        let userAddressDataList = await requestAddressAPI.getUserAddress(userId);
+
+        let address1
+        let address2
+        if(userAddressDataList.address[0].chooseIndex == 1){
+            address1 = userAddressDataList.address[0]
+            address2 = userAddressDataList.address[1]
+        }else{
+            address2 = userAddressDataList.address[0]
+            address1 = userAddressDataList.address[1]
+        }
+
+        setAddress1(address1.addressName);
+        setAddress2(address2.addressName);
+
+        console.log(address1);
+        console.log(address2);
+
+        //**********사용자가 사용중인 동네 무엇인지 불러옴
+        let userData = await requestUserAPI.getUserData(userId);
+        setUserData(userData);
+        setUserAddressIndex(userData.addressIndex);
+
+        let userRadius;
+        //현재 선택된 동네 색으로 표시  +  Radius 값 저장
+        if(userData.addressIndex == 1){
+            setChooseState1('choose')
+            setChooseState2('')
+            userRadius = address1.radius;
+        }else{
+            setChooseState1('')
+            setChooseState2('choose');
+            userRadius = address2.radius;
+        }
 
         //**************이중에서 하나만 이용해야됨************//
-        console.log(userAddressData.address[0]);
-        let userRadius = userAddressData.address[0].radius;
-        console.log(userRadius);
+        //console.log(userAddressDataList.address[0]);
+        //let userRadius = userAddressDataList.address[0].radius;
+        //console.log(userRadius);
         setRadius(userRadius);
         setDistance(userRadius);
     },[])
@@ -153,7 +193,7 @@ const AroundSetScreen = ({navigation}) => {
             return
         }
 
-        await requestAddressAPI.updateRadius(userId, Radius);
+        await requestAddressAPI.updateRadius(userId, Radius, userAddressIndex);
 
         Alert.alert("설정 완료",`거래 반경이 ${Radius}m로 설정 되었습니다.`,[
             {text:'확인', style:'cancel'}
@@ -168,7 +208,7 @@ const AroundSetScreen = ({navigation}) => {
         {label:'커스텀: '+ strDistance, value:-1}
     ];
 
-    const [address1,setAddress1]= useState('우만2동');
+    const [address1,setAddress1]= useState('');
     const [address2,setAddress2]= useState('');
 
     const [Radius,setRadius]= useState(0);
@@ -187,29 +227,33 @@ const AroundSetScreen = ({navigation}) => {
       setAddress2('');   
     };
 
-    //내 동네 설정 추가
+    //내 동네 추가 ( ** 동 설정 ** )
     const addressOneAddButton = () => {
-      navigation.navigate('aroundAdd')
+      navigation.navigate('aroundAdd',{chooseIndex: 1})
     };
 
     const addressTwoAddButton = () => {
-      navigation.navigate('aroundAdd');
+      navigation.navigate('aroundAdd',{chooseIndex: 2});
     };
 
-    //동네 선택
+    //동네 선택 및 인증
     const chooseAddressOneButton = (value) => {
-      setChooseState1('choose')
-      setChooseState2('')
+      /*setChooseState1('choose')
+      setChooseState2('')*/
       navigation.navigate('aroundCertify',{
-        chosenAddress:address1
+        chosenAddress:address1,
+          addressIndex: 1,
+          userId: userId
       })
     }
 
     const chooseAddressTwoButton = (value) => {
-      setChooseState1('')
-      setChooseState2('choose')
+      /*setChooseState1('')
+      setChooseState2('choose')*/
       navigation.navigate('aroundCertify',{
-        chosenAddress:address2
+        chosenAddress:address2,
+          addressIndex: 2,
+          userId: userId
       })
     }
 
@@ -265,8 +309,8 @@ const AroundSetScreen = ({navigation}) => {
                       <Text style={{paddingLeft:20}}>❌</Text>
                     </TouchableOpacity>
                   </TouchableOpacity>
-
-                  ):<TouchableOpacity onPress={chooseAddressTwoButton} style={styles.btnAround}>
+                      ):
+                      <TouchableOpacity onPress={chooseAddressTwoButton} style={styles.btnAround}>
                   <Text style={(styles.Text, {color: 'black'})}>{address2}</Text>
                   <TouchableOpacity onPress={addressTwoDeleteButton} style={styles.btn}>
                     <Text style={{paddingLeft:20}}>❌</Text>

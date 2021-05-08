@@ -16,6 +16,8 @@ import {
 import NaverMapView, {Circle, Marker, Path, Polyline, Polygon, Align} from "react-native-nmap";
 import Geolocation from 'react-native-geolocation-service';
 import AsyncStorage from '@react-native-community/async-storage';
+import requestAddressAPI from "../../requestAddressAPI";
+import requestUserAPI from "../../requestUserAPI";
 
 //글자 강조
 const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('4.5%')}}>{props.children}</Text>
@@ -26,7 +28,7 @@ const AroundCertifyScreen = ({navigation,route}) => {
 
     const [P0, setP0] = useState({latitude: 37.564362, longitude: 126.977011})
 
-    const {chosenAddress}=route.params;
+    const {chosenAddress, addressIndex, userId}=route.params;
 
     const [certify, setCertify] = useState(false);
     const [location,setLocation]= useState({
@@ -35,7 +37,9 @@ const AroundCertifyScreen = ({navigation,route}) => {
         ]
       });
 
+    //사용자가 인증하려는 **동
     const [address,setAddress]= useState(chosenAddress);
+    //현재 위치 **동
     const [currentLocation, setCurrentLocation]= useState('');
 
     useEffect(() =>{
@@ -78,34 +82,30 @@ const AroundCertifyScreen = ({navigation,route}) => {
     }
 
     //동네 인증
-    const certifyAroundButton = () =>{
+    const certifyAroundButton = async () =>{
 
-      AsyncStorage.getItem('user_id')
-      .then((value) => {
-        console.log('name is ', value);
+          //현재 위치정보
+        const addressDataParam ={
+            userId:userId,
+            addressName:address,
+            addressIndex:addressIndex,
+            latitude: location.latitude,
+            longitude: location.longitude
 
-        const send_param = {
-          userId:value,
-          address: address,
-          latitude: location.latitude,
-          longitude: location.longitude
-        };
+        }
 
-        axios
-        .post("http://10.0.2.2:3000/address/certifyAddress", send_param)
-          //정상 수행
-          .then(returnData => {
-            if (returnData.data.message) {
-              setCertify(true);
-            } else {
-              setCertify(false);
-            }
-          })
-          //에러
-          .catch(err => {
+
+        try{
+            //동네 인증
+            const returnData = await requestAddressAPI.certifyAddress(addressDataParam);
+            //사용자가 사용할 주소 인덱스 저장 ( 1, 2 중 하나)
+            await requestUserAPI.updateUserAddressIndex(userId, addressIndex);
+            setCertify(true);
+        }catch(err){
             console.log(err);
-          });
-        });
+            setCertify(false);
+        }
+
 
 
     }

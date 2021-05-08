@@ -13,28 +13,23 @@ import {
 import Geolocation from 'react-native-geolocation-service';
 import Postcode from '@actbase/react-daum-postcode';
 import axios from "axios";
+import AsyncStorage from '@react-native-community/async-storage';
+import requestAddressAPI from "../../requestAddressAPI";
+
 //글자 강조
 const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{props.children}</Text>
 
-const AroundAddScreen = () => {
+const AroundAddScreen = ({navigation,route}) => {
 
-    /*const [location,setLocation]= useState({
-        latitude:null,longitude:null
-      });*/
-
-
+    const chooseIndex = route.params.chooseIndex;
     const [aroundAddress,setAroundAddress]= useState('');
 
-    const [chosenAddress, setChosenAddress] = useState('ㅁ');
+    const [chosenAddress, setChosenAddress] = useState('');
 
     const addAddressButton = () =>{
         Geolocation.getCurrentPosition(
             position =>{
                 const {latitude,longitude}=position.coords;
-                /*setLocation({
-                    latitude,
-                    longitude
-                });*/
 
                 const send_param = {
                     currentX: longitude,
@@ -61,14 +56,22 @@ const AroundAddScreen = () => {
     const selectByPostcode = (data)=>{
         //console.log(data.bname);
         setChosenAddress(data.bname);
+
         Alert.alert("동네 검색 완료", `${data.bname}으로 동네 선택함`,
             [{ text: '확인', style: 'cancel'}])
     }
 
-    const saveChosenAddress = () =>{
+    const saveChosenAddress = async() =>{
         console.log(`${chosenAddress} 저장`);
+        let userId = await AsyncStorage.getItem('user_id');
+        await requestAddressAPI.createAddress(userId, chosenAddress, chooseIndex);
 
-        
+
+        Alert.alert("동네 저장 완료", `${chosenAddress}으로 동네 저장함`,
+            [{ text: '확인', style: 'cancel',
+            onPress:()=>{
+                navigation.goBack();
+            }}])
     }
 
     return (
