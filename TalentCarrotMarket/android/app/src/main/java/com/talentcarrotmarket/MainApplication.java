@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.ocetnik.timer.BackgroundTimerPackage;
+import com.emekalites.react.alarm.notification.ANPackage;
 // import com.reactnativecommunity.geolocation.GeolocationPackage;
 // import com.teamsf.daummap.DaumMapPackage;
 import com.facebook.react.ReactInstanceManager;
@@ -12,6 +14,12 @@ import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+
+import com.ocetnik.timer.BackgroundTimerPackage;
+
+// import com.emekalites.react.alarm.notification.ANPackage;
+
+
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -31,6 +39,8 @@ public class MainApplication extends Application implements ReactApplication {
           return packages;
           // return Arrays.<ReactPackage>asList(
           //       new MainReactPackage(),
+            // new BackgroundTimerPackage();
+            // new ANPackage();
           //       new DaumMapPackage()
           //   );
           //       return Arrays.asList(

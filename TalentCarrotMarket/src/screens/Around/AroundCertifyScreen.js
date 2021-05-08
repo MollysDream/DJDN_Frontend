@@ -154,7 +154,7 @@ const AroundCertifyScreen = ({navigation,route}) => {
         <View style={styles.container}>
               <NaverMapView style={{flex: 0.5, width: '100%', height: '100%'}}
               showsMyLocationButton={true}
-              center={{...P0, zoom:16}}
+              center={{...location, zoom:16}}
               // onTouch={e => console.warn('onTouch', JSON.stringify(e.nativeEvent))}
               // onCameraChange={e => console.warn('onCameraChange', JSON.stringify(e))}
               // onMapClick={e => console.warn('onMapClick', JSON.stringify(e))}

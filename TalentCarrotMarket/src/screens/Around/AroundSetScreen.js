@@ -129,7 +129,7 @@ const AroundSetScreen = ({navigation}) => {
                   <Text style={(styles.Text, {color: 'black'})}>{address2}</Text>
                   <TouchableOpacity onPress={addressTwoDeleteButton} style={styles.btn}>
                     <Text style={{paddingLeft:20}}>❌</Text>
-                  </TouchableOpacity>
+                  </TouchableOpacity>0
                 </TouchableOpacity>}
                 </View>
                 

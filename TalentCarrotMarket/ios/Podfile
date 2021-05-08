@@ -12,6 +12,10 @@ target 'TalentCarrotMarket' do
     :hermes_enabled => false
   )
 
+  pod 'react-native-alarm-notification', :path => '../node_modules/react-native-alarm-notification'
+
+  pod 'react-native-background-timer', :path => '../node_modules/react-native-background-timer'
+
   target 'TalentCarrotMarketTests' do
     inherit! :complete
     # Pods for testing

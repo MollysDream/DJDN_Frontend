@@ -21,7 +21,8 @@ const SplashScreen = ({navigation}) => {
 
       AsyncStorage.getItem('user_id').then((value) =>
         navigation.replace(
-          value === null ? 'Auth' : 'MainTab'
+          value===null? 'MainTab' :'Auth'
+          //value === null ? 'Auth' : 'MainTab'
         ),
       );
     }, 100);
