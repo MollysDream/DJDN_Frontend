@@ -52,6 +52,9 @@ const AroundSetScreen = ({navigation}) => {
     //동 이름
     const [address1,setAddress1]= useState('');
     const [address2,setAddress2]= useState('');
+    //주소 전체정보
+    const [address1Full, setAddress1Full] = useState();
+    const [address2Full, setAddress2Full] = useState();
     //반경 저장 및 커스텀 플래그
     const [Radius,setRadius]= useState(0);
     const [customFlag, setCustomFlag]= useState(1);
@@ -101,12 +104,14 @@ const AroundSetScreen = ({navigation}) => {
             if(userAddressDataList.address[0].addressIndex == 1){
                 console.log("인덱스1 일때 1개")
                 add1 = userAddressDataList.address[0]
+                setAddress1Full(add1);
                 setAddress1(add1.addressName);
                 setChooseState1('choose')
                 userRadius = add1.radius;
             }else{
                 console.log("인덱스2 일때 1개")
                 add2 = userAddressDataList.address[0]
+                setAddress2Full(add2);
                 setAddress2(add2.addressName);
                 setChooseState2('choose');
                 userRadius = add2.radius;
@@ -127,7 +132,9 @@ const AroundSetScreen = ({navigation}) => {
             add1 = userAddressDataList.address[1]
         }
 
+        setAddress1Full(add1);
         setAddress1(add1.addressName);
+        setAddress2Full(add2);
         setAddress2(add2.addressName);
 
         console.log(add1);
@@ -155,7 +162,7 @@ const AroundSetScreen = ({navigation}) => {
         //console.log(userRadius);
         setRadius(userRadius);
         setDistance(userRadius);
-    },[])
+    },[userAddressIndex])
 
     const setMapRadius= (endLocation)=>{
 
@@ -260,6 +267,7 @@ const AroundSetScreen = ({navigation}) => {
             return;
 
       setAddress1('');
+      setAddress1Full(null);
       await requestAddressAPI.deleteAddress(userId, 1);
 
       if(userAddressIndex == 1){
@@ -269,12 +277,12 @@ const AroundSetScreen = ({navigation}) => {
       }
       setNumberOfAddress(1);
     };
-
     const addressTwoDeleteButton = async () => {
         if(blockDelete(numberOfAddress))
             return;
 
       setAddress2('');
+      setAddress2Full(null);
       await requestAddressAPI.deleteAddress(userId, 2);
 
         if(userAddressIndex == 2){
@@ -285,11 +293,37 @@ const AroundSetScreen = ({navigation}) => {
         setNumberOfAddress(1);
     };
 
+    function blockSelect(addressFull){
+        if(addressFull.isAuth==false){
+            Alert.alert("선택 실패","동네 인증을 해주세요.",[
+                {text:'확인', style:'cancel'}
+            ])
+            return 1;
+        }
+        return 0;
+    }
+    //해당 동네로 선택
+    const addressOneSelectButton = async () => {
+        if(blockSelect(address1Full))
+            return
+        setChooseState1('choose');
+        setChooseState2('');
+        await requestUserAPI.updateUserAddressIndex(userId, 1);
+        setUserAddressIndex(1);
+    };
+    const addressTwoSelectButton = async () => {
+        if(blockSelect(address2Full))
+            return
+        setChooseState1('');
+        setChooseState2('choose');
+        await requestUserAPI.updateUserAddressIndex(userId, 2);
+        setUserAddressIndex(2);
+    };
+
     //내 동네 추가 ( ** 동 설정 ** )
     const addressOneAddButton = () => {
       navigation.navigate('aroundAdd',{chooseIndex: 1})
     };
-
     const addressTwoAddButton = () => {
       navigation.navigate('aroundAdd',{chooseIndex: 2});
     };
@@ -302,7 +336,6 @@ const AroundSetScreen = ({navigation}) => {
           userId: userId
       })
     }
-
     const chooseAddressTwoButton = (value) => {
       navigation.navigate('aroundCertify',{
         chosenAddress:address2,
@@ -326,17 +359,23 @@ const AroundSetScreen = ({navigation}) => {
                       <TouchableOpacity onPress={chooseAddressOneButton} style={styles.btnAroundChoose}>
                         <Text style={(styles.Text, {color: 'white'})}>{address1}</Text>
                       
-                        <TouchableOpacity onPress={addressOneDeleteButton} style={styles.btn}>
-                          <Text style={{paddingLeft:20}}>❌</Text>
+                        <TouchableOpacity onPress={addressOneSelectButton} style={styles.btn}>
+                          <Text style={{paddingLeft:20}}>⭕</Text>
                         </TouchableOpacity>
+                          <TouchableOpacity onPress={addressOneDeleteButton} style={styles.btn}>
+                              <Text style={{paddingLeft:20}}>❌</Text>
+                          </TouchableOpacity>
                       </TouchableOpacity>
 
                       ):<TouchableOpacity onPress={chooseAddressOneButton} style={styles.btnAround}>
                       <Text style={(styles.Text, {color: 'black'})}>{address1}</Text>
-                    
-                      <TouchableOpacity onPress={addressOneDeleteButton} style={styles.btn}>
-                        <Text style={{paddingLeft:20}}>❌</Text>
+
+                      <TouchableOpacity onPress={addressOneSelectButton} style={styles.btn}>
+                        <Text style={{paddingLeft:20}}>⭕</Text>
                       </TouchableOpacity>
+                          <TouchableOpacity onPress={addressOneDeleteButton} style={styles.btn}>
+                              <Text style={{paddingLeft:20}}>❌</Text>
+                          </TouchableOpacity>
                     </TouchableOpacity>
                       }
                     </View>
@@ -359,6 +398,9 @@ const AroundSetScreen = ({navigation}) => {
                   {chooseState2 !=''?(
                   <TouchableOpacity onPress={chooseAddressTwoButton} style={styles.btnAroundChoose}>
                     <Text style={(styles.Text, {color: 'white'})}>{address2}</Text>
+                      <TouchableOpacity onPress={addressTwoSelectButton} style={styles.btn}>
+                          <Text style={{paddingLeft:20}}>⭕</Text>
+                      </TouchableOpacity>
                     <TouchableOpacity onPress={addressTwoDeleteButton} style={styles.btn}>
                       <Text style={{paddingLeft:20}}>❌</Text>
                     </TouchableOpacity>
@@ -366,6 +408,9 @@ const AroundSetScreen = ({navigation}) => {
                       ):
                       <TouchableOpacity onPress={chooseAddressTwoButton} style={styles.btnAround}>
                   <Text style={(styles.Text, {color: 'black'})}>{address2}</Text>
+                          <TouchableOpacity onPress={addressTwoSelectButton} style={styles.btn}>
+                              <Text style={{paddingLeft:20}}>⭕</Text>
+                          </TouchableOpacity>
                   <TouchableOpacity onPress={addressTwoDeleteButton} style={styles.btn}>
                     <Text style={{paddingLeft:20}}>❌</Text>
                   </TouchableOpacity>
