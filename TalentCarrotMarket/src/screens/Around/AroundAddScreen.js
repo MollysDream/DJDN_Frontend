@@ -7,30 +7,79 @@ import {
     View,
     Text,
     StyleSheet,
-    TouchableOpacity,
+    TouchableOpacity, Button, Alert,
 } from 'react-native';
 
 import Geolocation from 'react-native-geolocation-service';
+import Postcode from '@actbase/react-daum-postcode';
+import axios from "axios";
+import AsyncStorage from '@react-native-community/async-storage';
+import requestAddressAPI from "../../requestAddressAPI";
 
 //글자 강조
 const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{props.children}</Text>
 
-const AroundAddScreen = () => {
+const AroundAddScreen = ({navigation,route}) => {
 
-    const [location,setLocation]= useState({
-        locations:[
-          {latitude:null,longitude:null}
-        ]
-      });
+    const chooseIndex = route.params.chooseIndex;
     const [aroundAddress,setAroundAddress]= useState('');
 
-    const addAddressButton = () => {
-      setAroundAddress('existAround');   
-    };
+    const [chosenAddress, setChosenAddress] = useState('');
 
+    const addAddressButton = () =>{
+        Geolocation.getCurrentPosition(
+            position =>{
+                const {latitude,longitude}=position.coords;
+
+                const send_param = {
+                    currentX: longitude,
+                    currentY: latitude
+                }
+
+                axios
+                    .post("http://10.0.2.2:3000/address/currentLocation", send_param)
+                    //정상 수행
+                    .then(returnData => {
+                        console.log(returnData.data);
+                        setChosenAddress(returnData.data.address)
+                    })
+                    //에러
+                    .catch(err => {
+                        console.log(err);
+                    });
+            },
+            error => {console.log(error.code,error.message)},
+            { enableHighAccuracy:true, timeout: 20000, maximumAge:1000},
+        );
+    }
+
+    const selectByPostcode = (data)=>{
+        //console.log(data.bname);
+        setChosenAddress(data.bname);
+
+        Alert.alert("동네 검색 완료", `${data.bname}으로 동네 선택함`,
+            [{ text: '확인', style: 'cancel'}])
+    }
+
+    const saveChosenAddress = async() =>{
+        console.log(`${chosenAddress} 저장`);
+        let userId = await AsyncStorage.getItem('user_id');
+        await requestAddressAPI.createAddress(userId, chosenAddress, chooseIndex);
+
+
+        Alert.alert("동네 저장 완료", `${chosenAddress}으로 동네 저장함`,
+            [{ text: '확인', style: 'cancel',
+            onPress:()=>{
+                navigation.goBack();
+            }}])
+    }
 
     return (
-        <View style={styles.container}>   
+        <View style={styles.container}>
+            {
+                chosenAddress == ''? null:
+                    <Button title={chosenAddress} onPress={()=>saveChosenAddress()}/>
+            }
           <View style={styles.btnArea}>
             <TouchableOpacity style={styles.btnAround} onPress={addAddressButton}>
               <Text style={(styles.Text, {color: 'white'})}>현재 위치로 찾기</Text>
@@ -39,6 +88,12 @@ const AroundAddScreen = () => {
               ) : null}
             </TouchableOpacity>
           </View>
+            {/*주소 찾기 태그*/}
+            <Postcode
+                style={{ flex:1 }}
+                jsOptions={{ animated: true }}
+                onSelected={data => selectByPostcode(data)}
+            />
         </View>    
     );
     
@@ -56,7 +111,7 @@ const styles = StyleSheet.create({
       height: hp(8),
       // backgroundColor: 'orange',
       paddingTop: hp(1.5),
-      paddingBottom: hp(1.5),
+      paddingBottom: hp(9),
       flexDirection: "row",
       // justifyContent: 'center',
     },
