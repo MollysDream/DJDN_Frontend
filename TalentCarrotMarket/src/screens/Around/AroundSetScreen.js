@@ -21,7 +21,7 @@ import Geolocation from 'react-native-geolocation-service';
 
 import requestAddressAPI from "../../requestAddressAPI";
 
-const P0 = {latitude: 37.564362, longitude: 126.977011};
+//const P0 = {latitude: 37.564362, longitude: 126.977011};
 const haversine = require('haversine');
 
 
@@ -37,6 +37,9 @@ const AroundSetScreen = ({navigation}) => {
         ]
     });
 
+
+    //navermap에서 보여줄 초기 위치
+    const [P1, setP1] = useState({latitude: 37.564362, longitude: 126.977011})
     //반경 저장
     const [distance, setDistance] = useState(0)
     const [strDistance, setStrDistance] = useState('');
@@ -53,6 +56,10 @@ const AroundSetScreen = ({navigation}) => {
                     latitude,
                     longitude
                 });
+                setP1({
+                    latitude,
+                    longitude
+                })
             },
             error => {console.log(error.code,error.message)},
             { enableHighAccuracy:true, timeout: 20000, maximumAge:1000},
@@ -71,7 +78,6 @@ const AroundSetScreen = ({navigation}) => {
         console.log(userRadius);
         setRadius(userRadius);
         setDistance(userRadius);
-        setCustomFlag(1);
     },[])
 
     const setMapRadius= (endLocation)=>{
@@ -114,7 +120,7 @@ const AroundSetScreen = ({navigation}) => {
     }
 
     useEffect(()=>{
-
+        console.log("헤이");
         //커스텀 상태이면 실행
         if(customFlag){
             if(distance >= 1000)
@@ -128,7 +134,7 @@ const AroundSetScreen = ({navigation}) => {
 
         }
         
-    })
+    },[distance])
 
     const circleClick = ()=>{
         if(!customFlag)
@@ -166,7 +172,7 @@ const AroundSetScreen = ({navigation}) => {
     const [address2,setAddress2]= useState('');
 
     const [Radius,setRadius]= useState(0);
-    const [customFlag, setCustomFlag]= useState(0);
+    const [customFlag, setCustomFlag]= useState(1);
 
     const [chooseState1,setChooseState1] = useState('choose');
     const [chooseState2,setChooseState2] = useState('');
@@ -302,7 +308,7 @@ const AroundSetScreen = ({navigation}) => {
             <NaverMapView
                 style={{flex: 0.5, width: '100%', height: '100%'}}
                 showsMyLocationButton={true}
-                center={{...P0, zoom:16}}
+                center={{...P1, zoom:16}}
                 onMapClick={e => setMapRadius(e)}>
                 {
                     location.latitude == null ? null :
