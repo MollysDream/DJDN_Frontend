@@ -20,9 +20,11 @@ import AsyncStorage from '@react-native-community/async-storage';
 //글자 강조
 const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('4.5%')}}>{props.children}</Text>
 
-const P0 = {latitude: 37.564362, longitude: 126.977011};
+
 
 const AroundCertifyScreen = ({navigation,route}) => {
+
+    const [P0, setP0] = useState({latitude: 37.564362, longitude: 126.977011})
 
     const {chosenAddress}=route.params;
 
@@ -44,6 +46,10 @@ const AroundCertifyScreen = ({navigation,route}) => {
               latitude,
               longitude
             });
+            setP0({
+                latitude,
+                longitude
+            });
             const send_param = {
               currentX: longitude,
               currentY: latitude
@@ -52,6 +58,7 @@ const AroundCertifyScreen = ({navigation,route}) => {
             .post("http://10.0.2.2:3000/address/currentLocation", send_param)
               //정상 수행
               .then(returnData => {
+                  console.log(returnData.data);
                 setCurrentLocation(returnData.data.address)
               })
               //에러

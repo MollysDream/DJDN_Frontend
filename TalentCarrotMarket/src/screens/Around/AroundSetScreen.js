@@ -193,7 +193,7 @@ const AroundSetScreen = ({navigation}) => {
     };
 
     const addressTwoAddButton = () => {
-      navigation.navigate('addressAdd')      
+      navigation.navigate('aroundAdd');
     };
 
     //동네 선택
