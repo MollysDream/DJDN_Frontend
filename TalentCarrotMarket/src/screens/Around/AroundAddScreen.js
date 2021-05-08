@@ -7,7 +7,7 @@ import {
     View,
     Text,
     StyleSheet,
-    TouchableOpacity, Button,
+    TouchableOpacity, Button, Alert,
 } from 'react-native';
 
 import Geolocation from 'react-native-geolocation-service';
@@ -18,11 +18,9 @@ const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{pr
 
 const AroundAddScreen = () => {
 
-    const [location,setLocation]= useState({
-        locations:[
-          {latitude:null,longitude:null}
-        ]
-      });
+    /*const [location,setLocation]= useState({
+        latitude:null,longitude:null
+      });*/
 
 
     const [aroundAddress,setAroundAddress]= useState('');
@@ -33,10 +31,10 @@ const AroundAddScreen = () => {
         Geolocation.getCurrentPosition(
             position =>{
                 const {latitude,longitude}=position.coords;
-                setLocation({
+                /*setLocation({
                     latitude,
                     longitude
-                });
+                });*/
 
                 const send_param = {
                     currentX: longitude,
@@ -60,11 +58,24 @@ const AroundAddScreen = () => {
         );
     }
 
+    const selectByPostcode = (data)=>{
+        //console.log(data.bname);
+        setChosenAddress(data.bname);
+        Alert.alert("동네 검색 완료", `${data.bname}으로 동네 선택함`,
+            [{ text: '확인', style: 'cancel'}])
+    }
+
+    const saveChosenAddress = () =>{
+        console.log(`${chosenAddress} 저장`);
+
+        
+    }
+
     return (
         <View style={styles.container}>
             {
                 chosenAddress == ''? null:
-                    <Button title={chosenAddress} onPress={()=>console.log(`${chosenAddress} 선택완료`)}/>
+                    <Button title={chosenAddress} onPress={()=>saveChosenAddress()}/>
             }
           <View style={styles.btnArea}>
             <TouchableOpacity style={styles.btnAround} onPress={addAddressButton}>
@@ -74,10 +85,11 @@ const AroundAddScreen = () => {
               ) : null}
             </TouchableOpacity>
           </View>
+            {/*주소 찾기 태그*/}
             <Postcode
                 style={{ flex:1 }}
                 jsOptions={{ animated: true }}
-                onSelected={data => console.log(data.bname)}
+                onSelected={data => selectByPostcode(data)}
             />
         </View>    
     );
