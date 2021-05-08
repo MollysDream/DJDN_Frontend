@@ -12,7 +12,10 @@ import {
 import {GiftedChat} from 'react-native-gifted-chat'
 import io from "socket.io-client";
 import AsyncStorage from '@react-native-community/async-storage';
+
+import axios from 'axios';
 import requestUser from "../../requestUserAPI";
+
 
 let socket;
 let messages
@@ -26,8 +29,8 @@ function ChatScreen(props) {
     const [sellerId, setpostid] = useState(props.route.params.postOwner._id);
     const [roomId, setRoomid] = useState("");
     const [buyerNick, setbuyerNick] = useState(props.route.params.postOwner.nickname);
-    
-    
+   
+
 
     AsyncStorage.getItem('user_id')
     .then((value) => {
@@ -36,6 +39,7 @@ function ChatScreen(props) {
     let sellerNick;
     let socketId;
     //gift chat 관련
+
     useEffect( async() => {
       // 소켓 연결
       const temp = buyerId;
@@ -57,9 +61,12 @@ function ChatScreen(props) {
     
       // console.log("messages 출력 "+ messages[0]);
 
-    //  socket.emit("sellerEntrance",sellerNick);
 
-      console.log("Hello developer _id 출력 : " );
+      if(messages.length !== 1){
+
+      }
+
+
 
       // 서버에 있는 채팅 불러오기...? 라고 이해하면 될듯?
         socket.on('chat message to client', (msg) => {
@@ -67,11 +74,16 @@ function ChatScreen(props) {
         let newMessage= msg;
         newMessage[0].user._id = 1;
         setMessages( (previous) => GiftedChat.append(previous, newMessage));
+
+
+
+
         //console.log("UseEffect 안에 socket.on임// 현재 사용중인 소켓 아이디 : ",socket.id);
         //console.log("옛날 message 받아와서 출력할 때 새로 append 되는 msg : " + msg);
         //console.log("message 길이 : " + messages.length);
         //console.log("client에서 chat message 받는거 :" + msg[0].text);
         // onSendDB(newMessage);
+
       });
         // 채팅방 떠나기
       return () => {
@@ -86,18 +98,10 @@ function ChatScreen(props) {
 
 
 
-    let count=0;
 
     // 내가 send버튼 눌렀을때 발생하는 이벤트..?
     function onSend(newMessages = []){
-
-      if(0){
-
-      }
-
-      else{
       socket.emit("chat message to server", newMessages);
-      console.log('onSend가 호출됨!! count : ' + count++);
       setMessages((prevMessages)=>GiftedChat.append(prevMessages, newMessages));
 
       console.log("onSend에서 쓰는 중 // 현재 사용중인 소켓 아이디 : ",socket.id);
@@ -109,9 +113,58 @@ function ChatScreen(props) {
 
       //이게 실제 보여지는 텍스트임
       console.log(newMessages[0].text);
-      }
+      onSendDB(newMessages);
     };
 
+
+    function onSendDB(newMessage) {
+      let beforeTime = new Date();
+      let month = beforeTime.getMonth() + 1;
+      let time =
+        beforeTime.getFullYear() +
+        '-' +
+        month +
+        '-' +
+        beforeTime.getDate() +
+        ' ' +
+        beforeTime.getHours() +
+        ':' +
+        beforeTime.getMinutes() +
+        ':' +
+        beforeTime.getSeconds();
+      let textId = newMessage[0]._id;
+      let createdAt = time;
+      let text = newMessage[0].text;
+      let senderId = newMessage[0].user._id;
+      let roomId = 'room1';
+      // let image = newMessage[0].image;
+      // let messageType = newMessage[0].messageType;
+
+      let newChat = {
+        beforeTime: time,
+        textId : textId,
+        createdAt : createdAt,
+        text : text,
+        senderId : senderId,
+        roomId : roomId,
+        // image : image,
+        // messageType : messageType
+      }
+
+      axios.post("http://10.0.2.2:3000/chat/createChat", newChat)
+        .then((data)=>{
+          console.log(data);
+        })
+
+      // db.Chat.save(err, (newChat)=>{
+      //   if(err){
+      //     console.log(err);
+      //   }
+      //   else{
+      //     console.log('newChat 저장 완료');
+      //   }
+      // })
+  }
 
 
     // user 정보 좀 손봐야할듯
