@@ -14,9 +14,9 @@ export async function updateRadius(userId, Radius, addressIndex){
     await axi.post("/address/updateRadius", {userId:userId, radius:Radius, addressIndex:addressIndex});
 }
 
-export async function createAddress(userId, addressName, chooseIndex){
-    console.log(`createAddress함수 호출됨 ${addressName}으로 ${chooseIndex}인덱스로 ${userId} ID 호출됨`);
-    await axi.post("/address/createAddress", {userId:userId, addressName:addressName, chooseIndex:chooseIndex});
+export async function createAddress(userId, addressName, addressIndex){
+    console.log(`createAddress함수 호출됨 ${addressName}으로 ${addressIndex}인덱스로 ${userId} ID 호출됨`);
+    await axi.post("/address/createAddress", {userId:userId, addressName:addressName, addressIndex:addressIndex});
 }
 
 export async function certifyAddress(addressDataParam){
@@ -27,9 +27,16 @@ export async function certifyAddress(addressDataParam){
     return returnData.data;
 }
 
+export async function deleteAddress(userId, addressIndex){
+    console.log(`deleteAddress함수 호출됨 아이디:${userId} 인덱스:${addressIndex} 주소 삭제`);
+    await axi.delete("/address/deleteAddress", {params:{userId:userId,addressIndex:addressIndex}});
+
+}
+
 export default{
     getUserAddress,
     updateRadius,
     createAddress,
-    certifyAddress
+    certifyAddress,
+    deleteAddress
 }

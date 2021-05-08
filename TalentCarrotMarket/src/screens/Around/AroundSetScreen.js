@@ -45,10 +45,21 @@ const AroundSetScreen = ({navigation}) => {
     const [distance, setDistance] = useState(0)
     const [strDistance, setStrDistance] = useState('');
     const [tempDistance, setTempDistance] = useState(0);
-
+    //사용자 id,정보,주소인덱스
     const [userId,setUserId] = useState('');
     const [userData, setUserData] = useState();
     const [userAddressIndex, setUserAddressIndex]=useState();
+    //동 이름
+    const [address1,setAddress1]= useState('');
+    const [address2,setAddress2]= useState('');
+    //반경 저장 및 커스텀 플래그
+    const [Radius,setRadius]= useState(0);
+    const [customFlag, setCustomFlag]= useState(1);
+    //선택된 상태 표시를 위한 Flag
+    const [chooseState1,setChooseState1] = useState('');
+    const [chooseState2,setChooseState2] = useState('');
+    //지정한 동네 갯수
+    const [numberOfAddress, setNumberOfAddress] = useState(0);
 
     // 실제 안드로이드 폰에서 되는지 확인 필요
     useEffect(() =>{
@@ -78,38 +89,64 @@ const AroundSetScreen = ({navigation}) => {
 
         console.log('사용자 Address Data 불러오기');
         let userAddressDataList = await requestAddressAPI.getUserAddress(userId);
+        console.log(userAddressDataList.address);
 
-        let address1
-        let address2
-        if(userAddressDataList.address[0].chooseIndex == 1){
-            address1 = userAddressDataList.address[0]
-            address2 = userAddressDataList.address[1]
-        }else{
-            address2 = userAddressDataList.address[0]
-            address1 = userAddressDataList.address[1]
+        setNumberOfAddress(userAddressDataList.address.length);
+
+        let add1
+        let add2
+        let userRadius;
+
+        if(userAddressDataList.address.length == 1){
+            if(userAddressDataList.address[0].addressIndex == 1){
+                console.log("인덱스1 일때 1개")
+                add1 = userAddressDataList.address[0]
+                setAddress1(add1.addressName);
+                setChooseState1('choose')
+                userRadius = add1.radius;
+            }else{
+                console.log("인덱스2 일때 1개")
+                add2 = userAddressDataList.address[0]
+                setAddress2(add2.addressName);
+                setChooseState2('choose');
+                userRadius = add2.radius;
+
+            }
+
+            setRadius(userRadius);
+            setDistance(userRadius);
+            return;
         }
 
-        setAddress1(address1.addressName);
-        setAddress2(address2.addressName);
 
-        console.log(address1);
-        console.log(address2);
+        if(userAddressDataList.address[0].addressIndex == 1){
+            add1 = userAddressDataList.address[0]
+            add2 = userAddressDataList.address[1]
+        }else{
+            add2 = userAddressDataList.address[0]
+            add1 = userAddressDataList.address[1]
+        }
+
+        setAddress1(add1.addressName);
+        setAddress2(add2.addressName);
+
+        console.log(add1);
+        console.log(add2);
 
         //**********사용자가 사용중인 동네 무엇인지 불러옴
         let userData = await requestUserAPI.getUserData(userId);
         setUserData(userData);
         setUserAddressIndex(userData.addressIndex);
 
-        let userRadius;
         //현재 선택된 동네 색으로 표시  +  Radius 값 저장
         if(userData.addressIndex == 1){
             setChooseState1('choose')
             setChooseState2('')
-            userRadius = address1.radius;
+            userRadius = add1.radius;
         }else{
             setChooseState1('')
             setChooseState2('choose');
-            userRadius = address2.radius;
+            userRadius = add2.radius;
         }
 
         //**************이중에서 하나만 이용해야됨************//
@@ -160,7 +197,6 @@ const AroundSetScreen = ({navigation}) => {
     }
 
     useEffect(()=>{
-        console.log("헤이");
         //커스텀 상태이면 실행
         if(customFlag){
             if(distance >= 1000)
@@ -208,23 +244,45 @@ const AroundSetScreen = ({navigation}) => {
         {label:'커스텀: '+ strDistance, value:-1}
     ];
 
-    const [address1,setAddress1]= useState('');
-    const [address2,setAddress2]= useState('');
 
-    const [Radius,setRadius]= useState(0);
-    const [customFlag, setCustomFlag]= useState(1);
-
-    const [chooseState1,setChooseState1] = useState('choose');
-    const [chooseState2,setChooseState2] = useState('');
-
-
+    function blockDelete(numberOfAddress){
+        if(numberOfAddress==1){
+            Alert.alert("삭제 실패","동네는 최소한 1개가 필요합니다.",[
+                {text:'확인', style:'cancel'}
+            ])
+            return 1;
+        }
+        return 0;
+    }
     //설정된 동네 삭제
-    const addressOneDeleteButton = () => {
+    const addressOneDeleteButton = async () => {
+        if(blockDelete(numberOfAddress))
+            return;
+
       setAddress1('');
+      await requestAddressAPI.deleteAddress(userId, 1);
+
+      if(userAddressIndex == 1){
+          await requestUserAPI.updateUserAddressIndex(userId, 2);
+          setUserAddressIndex(2);
+          setChooseState2('choose');
+      }
+      setNumberOfAddress(1);
     };
 
-    const addressTwoDeleteButton = () => {
-      setAddress2('');   
+    const addressTwoDeleteButton = async () => {
+        if(blockDelete(numberOfAddress))
+            return;
+
+      setAddress2('');
+      await requestAddressAPI.deleteAddress(userId, 2);
+
+        if(userAddressIndex == 2){
+            await requestUserAPI.updateUserAddressIndex(userId, 1);
+            setUserAddressIndex(1);
+            setChooseState1('choose');
+        }
+        setNumberOfAddress(1);
     };
 
     //내 동네 추가 ( ** 동 설정 ** )
@@ -238,8 +296,6 @@ const AroundSetScreen = ({navigation}) => {
 
     //동네 선택 및 인증
     const chooseAddressOneButton = (value) => {
-      /*setChooseState1('choose')
-      setChooseState2('')*/
       navigation.navigate('aroundCertify',{
         chosenAddress:address1,
           addressIndex: 1,
@@ -248,8 +304,6 @@ const AroundSetScreen = ({navigation}) => {
     }
 
     const chooseAddressTwoButton = (value) => {
-      /*setChooseState1('')
-      setChooseState2('choose')*/
       navigation.navigate('aroundCertify',{
         chosenAddress:address2,
           addressIndex: 2,
@@ -261,8 +315,8 @@ const AroundSetScreen = ({navigation}) => {
     return (
         <View style={styles.container}>
             <View style={styles.topArea}>
-                <Text style={{paddingBottom:10,paddingTop:10}}><B>동네 선택</B></Text>
-                <Text style={{paddingBottom:25}}>지역은 최소 1개 이상 최대 2개까지 설정 가능해요.</Text>
+                <Text style={{paddingTop:10}}><B>동네 선택</B></Text>
+                <Text style={{paddingBottom:25}}>지역은 최소 1개 이상 최대 2개까지 저장 가능해요.</Text>
             </View>
 
             <View style={styles.btnArea}>
@@ -339,16 +393,16 @@ const AroundSetScreen = ({navigation}) => {
               />
 
             <View style={styles.bottomArea}>
-              <Text style={{paddingBottom:5}}><B>{address1} 반경 {
+              <Text style={{paddingBottom:5}}>
+                  <B>{userAddressIndex == 1 ? address1: address2} 반경 {
                   Radius>=1000?
                       `${(Radius/1000).toFixed(1)}km`:
                       `${Radius}m`
-              }</B></Text>
+              }</B>
+              </Text>
               <Text style={{paddingBottom:5}}>선택한 범위의 게시글만 볼 수 있어요.</Text>
-
-
-
             </View>
+
             <NaverMapView
                 style={{flex: 0.5, width: '100%', height: '100%'}}
                 showsMyLocationButton={true}

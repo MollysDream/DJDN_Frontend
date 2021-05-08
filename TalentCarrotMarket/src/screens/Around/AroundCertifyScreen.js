@@ -147,7 +147,7 @@ const AroundCertifyScreen = ({navigation,route}) => {
                 <TouchableOpacity
                   style={styles.btn}
                   activeOpacity={0.5}
-                  onPress={() => navigation.navigate('home')}>
+                  onPress={() => navigation.navigate('Home')}>
                   <Text style={{color: 'white', fontSize: wp('4%')}}>
                     주변 동네 게시글 확인하기
                   </Text>
