@@ -76,7 +76,7 @@ const HomeStackScreen = () => {
       <HomeStack.Screen name="MakePost" component={makePostScreen}/>
       <HomeStack.Screen name="FilterOption" component={filterOptionScreen}/>
       <HomeStack.Screen name="DetailPost" component={detailPostScreen}/>
-
+      <ChatStack.Screen name="chat" component={chatScreen} />
     </Stack.Navigator>
   );
 };

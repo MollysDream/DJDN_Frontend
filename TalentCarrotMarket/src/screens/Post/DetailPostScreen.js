@@ -109,7 +109,7 @@ export default class SearchPostScreen extends Component{
                                     </Right>
                                 </Item>    
                                 <View style={styles.btnArea2} >
-                                    <TouchableOpacity style={styles.btn2} onPress={() => navigation.navigate('aroundSet')}>
+                                    <TouchableOpacity style={styles.btn2} onPress={() => this.props.navigation.navigate('chat',{postOwner})}>
                                         <Text style={(styles.Text, {color: 'white'})}>채팅</Text>
                                     </TouchableOpacity>
                                 </View>
