@@ -10,12 +10,13 @@ import {
     heightPercentageToDP as hp,
   } from 'react-native-responsive-screen';
 import {GiftedChat} from 'react-native-gifted-chat'
+import {AnimatedAbsoluteButton} from 'react-native-animated-absolute-buttons'
 
 import io from "socket.io-client";
 
 
 
-const ChatScreen = () =>{
+const ChatScreen = ({navigation}) =>{
     
     const [message, setMessage] = useState("");
     const [messages, setMessages] = useState([]);
@@ -42,46 +43,78 @@ const ChatScreen = () =>{
       setMessages(previousMessages => GiftedChat.append(previousMessages, messages))
     }, [])
 
-    //소켓 연동
-    useEffect(()=> {
-      socket.on("chat message", msg=>{
-        console.log("bye"+socket.connect().connected);
-        setMessages(msg)
-        console.log(messages)
-      })
-    })
+    // //소켓 연동
+    // useEffect(()=> {
+    //   socket.on("chat message", msg=>{
+    //     console.log("bye"+socket.connect().connected);
+    //     setMessages(msg)
+    //     console.log(messages)
+    //   })
+    // })
 
-    // const chatMessages=messages.map(chatMessage=>
-    //   <Text style={{borderWidth:2, top:500}}>{chatMessage}</Text>
-    // )
+    // // const chatMessages=messages.map(chatMessage=>
+    // //   <Text style={{borderWidth:2, top:500}}>{chatMessage}</Text>
+    // // )
 
-    const submitChatMessage = () =>{
-      console.log("hi"+socket.connect().connected);
-      socket.emit('chat message', message);
-      setMessage('')
-    }
+    // const submitChatMessage = () =>{
+    //   console.log("hi"+socket.connect().connected);
+    //   socket.emit('chat message', message);
+    //   setMessage('')
+    // }
+
+    const buttons = [
+      {
+          color: '#4672B8',
+          content: 
+          <View>
+            <Text>  ⌚ 🗺️</Text> 
+            <Text>시간 설정</Text> 
+          </View>,
+          action: () => {
+              navigation.navigate('tradeSet')
+          }
+      }
+      
+  ];
 
   
     return (
-      // <GiftedChat
-      //   messages={messages}
-      //   onSend={messages => onSend(messages)}
-      //   user={{
-      //     _id: 1,
-      //   }}
-      // />
       <View style={styles.container}>
-        {/* {chatMessages} */}
-        <TextInput
-          style={{height: 40, borderWidth: 2, top: 600}}
-          autoCorrect={false}
-          value={message}
-          onSubmitEditing={submitChatMessage}
-          onChangeText={message => {
-            setMessage(message);
+        <GiftedChat
+          messages={messages}
+          onSend={messages => onSend(messages)}
+          user={{
+            _id: 1,
           }}
         />
+        
+
+    <AnimatedAbsoluteButton
+        buttonSize={100}
+        buttonColor='gray'
+        buttonShape='circular'
+        buttonContent={<Text>거래 제안</Text>}
+        direction='top'
+        position='bottom-right'
+        positionVerticalMargin={10}
+        positionHorizontalMargin={10}
+        time={500}
+        easing='bounce'
+        buttons={buttons}
+    />
       </View>
+      // <View style={styles.container}>
+      //   {/* {chatMessages} */}
+      //   <TextInput
+      //     style={{height: 40, borderWidth: 2, top: 600}}
+      //     autoCorrect={false}
+      //     value={message}
+      //     onSubmitEditing={submitChatMessage}
+      //     onChangeText={message => {
+      //       setMessage(message);
+      //     }}
+      //   />
+      // </View>
     )
     
 }
@@ -90,7 +123,7 @@ const styles = StyleSheet.create({
     container: {
     flex: 1,
     height:400,
-    backgroundColor: '#6E5BAA'
+    backgroundColor: 'white'
     },
     // btnArea2: {
     //     height: hp(8),
