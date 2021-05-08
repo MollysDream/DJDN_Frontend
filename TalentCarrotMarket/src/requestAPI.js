@@ -26,6 +26,15 @@ export async function getPost(page, userId){
     //console.log(postData.data);
     return postData.data;
 }
+///////////
+export async function getChat(){
+    console.log("getpre");
+    const preData = await axi.get("/chat/getChat");
+    //console.log(postData.data);
+    return preData.data;
+}
+//////////////
+
 
 export async function getPostBySearch(search){
     //console.log(search);
@@ -119,5 +128,6 @@ export default{
     updatePostView,
     getUserPost,
     updatePost,
-    deletePost
+    deletePost,
+    getChat
 }

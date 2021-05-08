@@ -42,6 +42,7 @@ export default class HomeScreen extends Component{
         const userId = await AsyncStorage.getItem('user_id');
         this.setState({userId:userId})
         const postData = await request.getPost(this.state.page, userId);
+        
         this.setState({
             data: this.state.data.concat(postData),
             page : this.state.page + 1
