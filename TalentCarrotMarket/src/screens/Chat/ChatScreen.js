@@ -12,99 +12,67 @@ import {
 import {GiftedChat} from 'react-native-gifted-chat'
 import io from "socket.io-client";
 import AsyncStorage from '@react-native-community/async-storage';
+import requestUser from "../../requestUserAPI";
 
 let socket;
 let messages
-
+let seller;
 function ChatScreen(props) {
     // const [message, setMessage] = useState("");
    // const [message, setMessage] = useState("");
+   
     const [messages, setMessages] = useState([]);
     const [buyerId, setbuyerid] = useState("");
     const [sellerId, setpostid] = useState(props.route.params.postOwner._id);
     const [roomId, setRoomid] = useState("");
+    const [buyerNick, setbuyerNick] = useState(props.route.params.postOwner.nickname);
     
+    
+
     AsyncStorage.getItem('user_id')
     .then((value) => {
       setbuyerid(value);
-      // console.log('name is ', value);
-      // console.log(userId);
     });
-
+    let sellerNick;
     let socketId;
     //gift chat 관련
-    useEffect(() => {
-   
-
+    useEffect( async() => {
       // 소켓 연결
+      const temp = buyerId;
+      seller = await requestUser.getUserData(temp);
+      sellerNick = seller.nickname;
+     
       socket = io("http://10.0.2.2:3002");
 
-      socket.emit("usersId",buyerId,sellerId);
-
+      socket.emit("usersId",buyerId,buyerNick, sellerId, sellerNick);
+      socket.emit("sellerEntrance",sellerNick);
       // 여기서 room1이 하드코딩
       socket.emit('joinRoom','room1');
-      console.log('room1에 접속');
 
       // 내 현재 소켓 아이디
-      console.log(socket.id);
 
       socketId = socket.id;
 
-      // if(messages !== null){
-      //   let helpArray = [];
-      //   let text = {
-      //     _id: 1,
-      //     text: 'Hello developer',
-      //     createdAt: new Date(),
-      //     user: {
-      //       _id: 2,
-      //       name: 'React Native',
-      //       avatar: 'https://placeimg.com/140/140/any',
-      //     }
-      //   };
-      //   helpArray.push(text);
-      //
-      //   setMessages(GiftedChat.append(helpArray));
-      // }
-
-      // 처음 시작 메세지, messages가 비어있으니까 setState로 설정해
-      setMessages([
-        {
-          _id: 1,
-          text: buyerId+'님께서 채팅을 주셨어요.',
-          createdAt: new Date(),
-          user: {
-            _id: 2,
-            name: 'React Native',
-            avatar: 'https://placeimg.com/140/140/any',
-          },
-        },
-      ])
+      
+    
       // console.log("messages 출력 "+ messages[0]);
 
-
-
+    //  socket.emit("sellerEntrance",sellerNick);
 
       console.log("Hello developer _id 출력 : " );
 
       // 서버에 있는 채팅 불러오기...? 라고 이해하면 될듯?
         socket.on('chat message to client', (msg) => {
+        console.log(msg);
         let newMessage= msg;
         newMessage[0].user._id = 1;
         setMessages( (previous) => GiftedChat.append(previous, newMessage));
-        console.log("UseEffect 안에 socket.on임// 현재 사용중인 소켓 아이디 : ",socket.id);
-        console.log("옛날 message 받아와서 출력할 때 새로 append 되는 msg : " + msg);
-
-        console.log("message 길이 : " + messages.length);
-        console.log("client에서 chat message 받는거 :" + msg[0].text);
-
-
-
+        //console.log("UseEffect 안에 socket.on임// 현재 사용중인 소켓 아이디 : ",socket.id);
+        //console.log("옛날 message 받아와서 출력할 때 새로 append 되는 msg : " + msg);
+        //console.log("message 길이 : " + messages.length);
+        //console.log("client에서 chat message 받는거 :" + msg[0].text);
         // onSendDB(newMessage);
       });
-
-
-
         // 채팅방 떠나기
       return () => {
         socket.emit('leaveRoom','room1');
@@ -114,6 +82,7 @@ function ChatScreen(props) {
 
     },[buyerId]);
 
+   
 
 
 
