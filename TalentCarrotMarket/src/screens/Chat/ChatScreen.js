@@ -27,6 +27,21 @@ function ChatScreen(props) {
     const [sellerId, setsellerid] = useState();
     const [roomId, setRoomid] = useState("");
     const [buyerNick, setbuyerNick] = useState(props.route.params.postOwner.nickname);
+
+    const buttons = [
+      {
+          color: '#4672B8',
+          content: 
+          <View>
+            <Text>  ⌚ 🗺️</Text> 
+            <Text>시간 장소</Text> 
+          </View>,
+          action: () => {
+              navigation.navigate('tradeSet')
+          }
+      }
+
+  ];
     
     useEffect( async() => {
     AsyncStorage.getItem('user_id')
@@ -133,14 +148,30 @@ function ChatScreen(props) {
 
 
     return (
-    <GiftedChat
-      messages={messages}
-      onSend={(newMessages) => onSend(newMessages)}
-     
-      user={{
-        _id: 1,
-      }}
-    />
+      <View style={styles.container}>
+        <GiftedChat
+          messages={messages}
+          onSend={(newMessages) => onSend(newMessages)}
+        
+          user={{
+            _id: 1,
+          }}
+        />
+
+        <AnimatedAbsoluteButton
+            buttonSize={100}
+            buttonColor='gray'
+            buttonShape='circular'
+            buttonContent={<Text>거래 제안</Text>}
+            direction='top'
+            position='bottom-right'
+            positionVerticalMargin={10}
+            positionHorizontalMargin={10}
+            time={500}
+            easing='bounce'
+            buttons={buttons}
+        />
+      </View>
   )
 
 }
