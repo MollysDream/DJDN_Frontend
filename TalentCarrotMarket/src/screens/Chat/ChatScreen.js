@@ -20,8 +20,9 @@ import request from '../../requestAPI';
 let socket;
 let messages
 let seller;
+
 function ChatScreen(props) {
-  
+
     const [messages, setMessages] = useState([]);
     const [buyerId, setbuyerid] = useState(props.route.params.postOwner._id);
     const [sellerId, setsellerid] = useState();
@@ -31,18 +32,17 @@ function ChatScreen(props) {
     const buttons = [
       {
           color: '#4672B8',
-          content: 
+          content:
           <View>
-            <Text>  ⌚ 🗺️</Text> 
-            <Text>시간 장소</Text> 
+            <Text>  ⌚ 🗺️</Text>
+            <Text>시간 장소</Text>
           </View>,
           action: () => {
               navigation.navigate('tradeSet')
           }
       }
-
   ];
-    
+
     useEffect( async() => {
     AsyncStorage.getItem('user_id')
     .then((value) => {
@@ -52,16 +52,42 @@ function ChatScreen(props) {
   },[]);
 
   let sellerNick;
-  let socketId;
-  
+
+
+  /*
+  *
+  * 우리가 참여하고있는 채팅방의 Id값 저장용
+  *
+  * */
+  let chatRoomId;
+
     useEffect( async() => {
       const temp = sellerId;
       seller = await requestUser.getUserData(temp);
       sellerNick = seller.nickname;
       socket = io("http://10.0.2.2:3002");
       socket.emit("usersId",buyerId,buyerNick, sellerId, sellerNick);
+      //딱 여기까지하면, 지금 buyerId,sellerId 가져온 상태니까 ?
+
+
+      /*
+      * buyerId, SellerId가 있는 채팅룸을 DB에서 검색  (근데 여기서 postId가 필요할거같음, 왜냐? 같은 사용자 2명이 다른 게시물에 대해 채팅할수도 있자나!)
+      * -> 있으면 getChat()하고,
+      * 없으면 채팅방 만들어서 실행 -> 이건 axios.post("http://10.0.2.2:3000/chat/createChatRoom",user1, user2, postId) .-> 요런식?
+      *         .then((data)=>{
+      *            여기는 뭐 너가 data로 하고싶은거 하면 되고
+      *            data._id 해서 roomId값 가져와서 joinRoom args로 주면 될듯? (지금 'room1' 이라고 되어있는거)
+      *          })
+      *       }
+      */
+
       socket.emit('joinRoom','room1');
-      socketId = socket.id;
+
+
+      /*
+      * getChat 의 인자! => {roomId: chatRoomId}
+      *
+      * */
 
       const preData = await request.getChat();
 
@@ -75,13 +101,13 @@ function ChatScreen(props) {
               createdAt: data.createdAt,
               user: {
                 _id: 1,
-                
+
               },
             },
           ]));
         }
         else{
-          setMessages((prevMessages)=>GiftedChat.append(prevMessages, 
+          setMessages((prevMessages)=>GiftedChat.append(prevMessages,
            [
             {
               _id : data._id,
@@ -89,13 +115,16 @@ function ChatScreen(props) {
               createdAt: data.createdAt,
               user: {
                 _id: 2,
-                
+
               },
              },
            ]));
        }
       });
       }
+
+
+
     return () => {
         socket.emit('leaveRoom','room1');
         socket.disconnect();
@@ -103,7 +132,7 @@ function ChatScreen(props) {
 
     },[sellerId]);
 
- 
+
     function onSend(newMessages = []){
       socket.emit("chat message to server", newMessages);
       setMessages((prevMessages)=>GiftedChat.append(prevMessages, newMessages));
@@ -131,7 +160,9 @@ function ChatScreen(props) {
       let text = newMessage[0].text;
       let senderId = sellerId;
       let roomId = 'room1';
-  
+
+      // roomId도 chatRoomId로 바꿔서 저장해야돼. 왜? 이래야 몽고DB에 잘 저장돼
+
       let newChat = {
         beforeTime: time,
         textId : textId,
@@ -152,7 +183,7 @@ function ChatScreen(props) {
         <GiftedChat
           messages={messages}
           onSend={(newMessages) => onSend(newMessages)}
-        
+
           user={{
             _id: 1,
           }}
@@ -182,6 +213,7 @@ const styles = StyleSheet.create({
     height:400,
     backgroundColor: '#6E5BAA'
     },
- 
+
 });
+
 export default ChatScreen;
