@@ -27,6 +27,8 @@ import AsyncStorage from "@react-native-community/async-storage";
 import {Picker} from '@react-native-picker/picker';
 import {PickerItem} from "react-native/Libraries/Components/Picker/Picker";
 
+import {S3Key} from "../../Key";
+
 export default class EditUserPostScreen extends Component {
     state = {
         postId:this.props.route.params.detailPost._id,
@@ -133,8 +135,8 @@ export default class EditUserPostScreen extends Component {
             keyPrefix: `${this.state.title}/`,  //제목 뒤에 user_id 값 추가해야 됨.
             bucket: 'mollysdreampostdata',
             region: 'ap-northeast-2',
-            accessKey: 'AKIA2H2WIFGYFMLG6XFV',
-            secretKey: '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',
+            accessKey: S3Key.accessKey,
+            secretKey: S3Key.secretKey,
             successActionStatus: 201,
         }
 
