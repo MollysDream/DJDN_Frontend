@@ -1,10 +1,10 @@
-import React, {useState,useEffect} from 'react';
+import React, {useState} from 'react';
+
 import {
     View,
     Text,
-    StyleSheet,
-    FlatList,
-    TouchableOpacity
+    TouchableOpacity,
+    StyleSheet
 } from 'react-native';
 
 import {
@@ -12,111 +12,134 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
-import NaverMapView, {Circle, Marker, Path, Polyline, Polygon, Align} from "react-native-nmap";
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-const P0 = {latitude: 37.564362, longitude: 126.977011};
+import axios from "axios";
 
-const TradeExtendScreen =({navigation})=>{
 
-      const [startTime,setStartTime]=useState('');
-      const [endTime,setEndTime]=useState('');
-      const [workTime,setWorkTime]=useState('');
-      const [locate,setLocate]=useState('');
-      const [isSave,setSave]=useState(false);
+const TradeExtendScreen = ({navigation, route}) =>{
 
-      const [date, setDate] = useState(new Date(1598051730000));
-      const [mode, setMode] = useState('date');
-      const [show, setShow] = useState(false);
+  const {tradeId,endDate}=route.params;
 
-      const onChange = (event, selectedDate) => {
-        const currentDate = selectedDate || date;
-        setShow(Platform.OS === 'android');
-        setDate(currentDate);
-      };
+  const [mode, setMode] = useState('date');
+  const [show, setShow] = useState(false);
+  const [newEndDate, setNewEndDate] = useState(endDate);
 
-      const showMode = (currentMode) => {
-        setShow(true);
-        setMode(currentMode);
-      };
+  const showMode = (currentMode) => {
+    setShow(true);
+    setMode(currentMode);
+  };
 
-      const showDatepicker = () => {
-        showMode('date');
-      };
+  const showDatepicker = () => {
+    showMode('date');
+  };
+  
+  const onChange = (event, selectedValue) =>{
+    setShow(Platform.OS === 'ios');
+    if(mode == 'date'){
+      const currentDate = selectedValue || new Date();
+      setStartDate(currentDate);
+      setMode('time');
+      setShow(Platform.OS !== 'ios'); 
+    }
+    else if(mode == 'time'){
+      const selectedTime = selectedValue || new Date();
+      setStartTime(selectedTime);
+      setShow(Platform.OS === 'ios');
+      setMode('date');
+    }
+  }
 
-      const showTimepicker = () => {
-        showMode('time');
-      };
+  const extendSetButton = () =>{
 
-      // 거래 시간 및 장소 제안
-      const proposeTrade =
-      <View>
-        <NaverMapView 
-          style={{flex: 0.7, width: '100%', height: '100%'}}
-          showsMyLocationButton={true}
-          center={{...P0, zoom:16}}
-          onTouch={e => console.warn('onTouch', JSON.stringify(e.nativeEvent))}
-          onCameraChange={e => console.warn('onCameraChange', JSON.stringify(e))}
-          onMapClick={e => console.warn('onMapClick', JSON.stringify(e))}>
-        </NaverMapView>
-          
-          
-          <Text>장소를 선택하세요</Text>
-          <TouchableOpacity><Text>제안하기</Text></TouchableOpacity>
-        </View>
-     
+    setNewEndDate('')
+    //거래완료 통신
+    const send_param = {
+      tradeId:tradeId,
+      endTime: newEndDate
+    }
+    axios
+    .post("http://10.0.2.2:3000/trade/updateTradeTime", send_param)
+      //정상 수행
+      .then(returnData => {
+        navigation.navigate('tradeTimer',{
+          endDate:newEndDate,
+        })
+      })
+      //에러
+      .catch(err => {
+        console.log(err);
+      });
+  }
 
-      // 거래 시간 및 장소 저장 후
-      const saveTrade =
-      <View>
-        <NaverMapView 
-          style={{flex: 0.7, width: '100%', height: '100%'}}
-          showsMyLocationButton={true}
-          center={{...location, zoom:16}}
-          onTouch={e => console.warn('onTouch', JSON.stringify(e.nativeEvent))}
-          onCameraChange={e => console.warn('onCameraChange', JSON.stringify(e))}
-          onMapClick={e => console.warn('onMapClick', JSON.stringify(e))}>
-        </NaverMapView>
-          
-        <View style={styles.bottomArea}>
-          <Text>시작 시간</Text>
-          <Text>끝나는 시간</Text>
-          <Text>예상시간 : {workTime}</Text>
-          <Text>선택된 장소</Text>
-          <TouchableOpacity><Text>다시 제안하기</Text></TouchableOpacity>
-        </View>
+  const extendCancelButton = () =>{
+
+    navigation.navigate('tradeTimer',{
+      endDate:endDate,
+    })
+  }
+  return (
+    <View style ={{ flex : 1, justifyContent : 'center', alignItems : 'center'}}>
+      <View style={styles.dateArea}>
+          <TouchableOpacity style={styles.btnDate} onPress={showDatepicker} >
+            <Text style={{color: 'black'}}>연장할 종료 날짜 및 시간을 설정하세요 ⌚</Text>
+          </TouchableOpacity>
       </View>
 
+      {show && (
+          <DateTimePicker
+            testID="dateTimePicker"
+            value={startDate}
+            mode={mode}
+            is24Hour={true}
+            display="default"
+            onChange={onChange}
+          />)}
 
 
-      return (
-        <View style={styles.container}>
-        <View style={styles.topArea}>
-            <Text style={{paddingBottom:10,paddingTop:10}}><B>거래 종료</B></Text>
+      <View style={styles.rowbtnArea}>
+        <View style={styles.btnArea}>
+          <TouchableOpacity style={styles.btn} onPress={extendSetButton}>
+            <Text style={{color: 'white'}}>연장하기</Text>
+          </TouchableOpacity>
         </View>
-
-        {isSave == false ?(
-          {proposeTrade}
-        ): {saveTrade}}
+        <View style={styles.btnArea}>
+          <TouchableOpacity style={styles.btnCancel} onPress={extendCancelButton}>
+            <Text style={{color: 'white'}}>연장취소하기</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
-      );
-    
+    )
 }
 
 const styles = StyleSheet.create({
-    container: {
-      backgroundColor: '#f5f5f5',
-      flex: 1
-    },
-    topArea: {
-      flex: 0.15,
-      paddingTop: wp(3),
-      alignItems: 'center',
-    },
-    bottomArea: {
-      flex: 0.15,
-      paddingTop: wp(3),
-      alignItems: 'center',
-    },
-  });
+  btnArea: {
+    height: hp(8),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  btn: {
+    width: 150,
+    height: 50,
+    borderRadius: 7,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#4672B8'
+  },
+  btnCancel: {
+    width: 150,
+    height: 50,
+    borderRadius: 7,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#EB3B30'
+  },
+  rowbtnArea:{
+    flexDirection: "row",
+    justifyContent: 'center',
+    paddingTop:hp(5),
+    paddingBottom:hp(3)
+  },
+});
 export default TradeExtendScreen;

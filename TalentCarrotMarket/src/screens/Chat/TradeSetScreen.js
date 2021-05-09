@@ -6,7 +6,6 @@ import {
     TouchableOpacity,
     TextInput,
     Alert,
-    Button, 
 } from 'react-native';
 
 import axios from "axios";
@@ -23,14 +22,8 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 //글자 강조
 const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{props.children}</Text>
 
-// //${time.getHours()}:${time.getMinutes()}
-// const formatDate = (date, time)=>{
-//   const setDate= `${date.getFullYear()}/${date.getMonth() +
-//     1}/${date.getDate()} ${time.getHours()}:${time.getMinutes()}`;
-//   return setDate;
-//   };
 
-const TradeSetScreen =()=>{
+const TradeSetScreen =({navigation})=>{
 
       const locateInputRef = createRef();
 
@@ -169,9 +162,12 @@ const TradeSetScreen =()=>{
 
       const startSet = formatDate(startDate,startTime)
       const endSet = formatDate(endDate,endTime)
+      const sendEndSet = sendFormatDate(endDate,endTime)
+      var endDate = parse(sendEndSet);
+
       const entireLocate = locate + detailLocate;
 
-      console.log(startSet)
+      console.log(endDate)
 
       const send_param = {
         startTime: startSet,
@@ -186,6 +182,10 @@ const TradeSetScreen =()=>{
           if (returnData.data.message) {
             console.log("거래 장소 및 시간 설정 완료")
             setIsSave(true)
+            navigation.navigate('tradeTimer',{
+              tradeId: returnData.data.tradeId,
+              endDate: endDate
+            })
           } else {
             console.log('거래 장소 및 시간 설정 실패');
           }
@@ -228,7 +228,7 @@ const TradeSetScreen =()=>{
       </View>
       
       <View style={styles.dateArea}>
-          <TouchableOpacity style={styles.btnDate} onPress={showEndDatepicker} >
+          <TouchableOpacity style={styles.btnDate} onPress={showDatepicker} >
             <Text style={{color: 'black'}}>시작 날짜 및 시간 설정하세요 ⌚</Text>
           </TouchableOpacity>
         <View style={styles.datetimeButton}>
@@ -278,31 +278,35 @@ const TradeSetScreen =()=>{
         onMapClick={e => console.warn('onMapClick', JSON.stringify(e))}>
       </NaverMapView>
         
-      
-      <Text style={{fontSize: wp('4'), paddingBottom: hp('2')}}>시작 시간: {formatDate(startDate,startTime)}</Text>
-      <Text style={{fontSize: wp('4'), paddingBottom: hp('2')}}>종료 시간: {formatDate(endDate,endTime)}</Text>
-      {/* <Text>예상시간 : {workTime}</Text> */}
-      <Text style={{fontSize: wp('4'), paddingBottom: hp('2')}}>선택된 장소: {locate} {detailLocate}</Text>
+      <View style={{justifyContent: 'center',alignItems: 'center', paddingBottom: hp('3')}}> 
+        <Text style={{fontSize: wp('4'), paddingTop: hp('2'), paddingBottom: hp('2')}}>시작 시간: {formatDate(startDate,startTime)}</Text>
+        <Text style={{fontSize: wp('4'), paddingBottom: hp('2')}}>종료 시간: {formatDate(endDate,endTime)}</Text>
+        {/* <Text>예상시간 : {workTime}</Text> */}
+        <Text style={{fontSize: wp('4')}}>선택된 장소: {locate} {detailLocate}</Text>
+      </View>
+    
       
       {isSuggest==true && isSave==false?
         (<View style={styles.rowbtnArea}> 
           <View style={styles.btnArea,{paddingRight: wp('1')}}>
               <TouchableOpacity style={styles.btn} onPress={agreeButton}>
-                <Text>동의하기</Text>
+                <Text style={{color:'white'}}>동의하기</Text>
               </TouchableOpacity>
             </View>
-            <View style={styles.btnArea}>
+          <View style={styles.btnArea,{paddingLeft: wp('1')}}>
             <TouchableOpacity style={styles.btn} onPress={resuggestButton}>
-              <Text>다시 제안하기</Text>
+              <Text style={{color:'white'}}>다시 제안하기</Text>
             </TouchableOpacity>
           </View>
         </View>
         ):
+        
         <View style={styles.btnArea}>
           <TouchableOpacity style={styles.btn} onPress={resuggestButton}>
-            <Text>다시 제안하기</Text>
+            <Text style={{color:'white'}}>다시 제안하기</Text>
           </TouchableOpacity>
         </View>
+        
         }
       
     </>
@@ -329,12 +333,30 @@ const TradeSetScreen =()=>{
     
 }
 
-// ${time.getHours()}:${time.getMinutes()}
+
 const formatDate = (date,time)=>{
   const setDate= `${date.getFullYear()}/${date.getMonth() +
     1}/${date.getDate()} ${time.getHours()}:${time.getMinutes()}`;
   return setDate;
   };
+
+//타이머 설정용 전달 시간
+const sendFormatDate = (date,time)=>{
+  const setDate= `${date.getFullYear()}/${date.getMonth() +
+    1}/${date.getDate()}/${time.getHours()}/${time.getMinutes()}`;
+  return setDate;
+  };
+
+  //str-->date
+function parse(str){
+  var newDd=str.split('/');
+  var y = newDd[0];
+  var m = newDd[1];
+  var d= newDd[2];
+  var h = newDd[3];
+  var minute = newDd[4];
+  return new Date(y,m-1,d,h,minute);
+}
 
 
 const styles = StyleSheet.create({
@@ -376,10 +398,8 @@ const styles = StyleSheet.create({
     },
     btnArea: {
       height: hp(8),
-      // backgroundColor: 'orange',
       justifyContent: 'center',
       alignItems: 'center',
-      // paddingBottom: 15,
     },
     btn: {
       width: 150,
