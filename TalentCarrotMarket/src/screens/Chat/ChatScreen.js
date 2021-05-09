@@ -10,133 +10,147 @@ import {
     heightPercentageToDP as hp,
   } from 'react-native-responsive-screen';
 import {GiftedChat} from 'react-native-gifted-chat'
-import {AnimatedAbsoluteButton} from 'react-native-animated-absolute-buttons'
-
 import io from "socket.io-client";
+import AsyncStorage from '@react-native-community/async-storage';
 
+import axios from 'axios';
+import requestUser from "../../requestUserAPI";
+import request from '../../requestAPI';
 
-
-const ChatScreen = ({navigation}) =>{
-    
-    const [message, setMessage] = useState("");
-    const [messages, setMessages] = useState([]);
-    var socket = io("http://10.0.2.2:3001")
-
-
-    //gift chat 관련
-    useEffect(() => {
-      setMessages([
-        {
-          _id: 1,
-          text: 'Hello developer',
-          createdAt: new Date(),
-          user: {
-            _id: 2,
-            name: 'React Native',
-            avatar: 'https://placeimg.com/140/140/any',
-          },
-        },
-      ])
-    }, [])
-
-    const onSend = useCallback((messages = []) => {
-      setMessages(previousMessages => GiftedChat.append(previousMessages, messages))
-    }, [])
-
-    // //소켓 연동
-    // useEffect(()=> {
-    //   socket.on("chat message", msg=>{
-    //     console.log("bye"+socket.connect().connected);
-    //     setMessages(msg)
-    //     console.log(messages)
-    //   })
-    // })
-
-    // // const chatMessages=messages.map(chatMessage=>
-    // //   <Text style={{borderWidth:2, top:500}}>{chatMessage}</Text>
-    // // )
-
-    // const submitChatMessage = () =>{
-    //   console.log("hi"+socket.connect().connected);
-    //   socket.emit('chat message', message);
-    //   setMessage('')
-    // }
-
-    const buttons = [
-      {
-          color: '#4672B8',
-          content: 
-          <View>
-            <Text>  ⌚ 🗺️</Text> 
-            <Text>시간 설정</Text> 
-          </View>,
-          action: () => {
-              navigation.navigate('tradeSet')
-          }
-      }
-      
-  ];
-
+let socket;
+let messages
+let seller;
+function ChatScreen(props) {
   
-    return (
-      <View style={styles.container}>
-        <GiftedChat
-          messages={messages}
-          onSend={messages => onSend(messages)}
-          user={{
-            _id: 1,
-          }}
-        />
-        
-
-    <AnimatedAbsoluteButton
-        buttonSize={100}
-        buttonColor='gray'
-        buttonShape='circular'
-        buttonContent={<Text>거래 제안</Text>}
-        direction='top'
-        position='bottom-right'
-        positionVerticalMargin={10}
-        positionHorizontalMargin={10}
-        time={500}
-        easing='bounce'
-        buttons={buttons}
-    />
-      </View>
-      // <View style={styles.container}>
-      //   {/* {chatMessages} */}
-      //   <TextInput
-      //     style={{height: 40, borderWidth: 2, top: 600}}
-      //     autoCorrect={false}
-      //     value={message}
-      //     onSubmitEditing={submitChatMessage}
-      //     onChangeText={message => {
-      //       setMessage(message);
-      //     }}
-      //   />
-      // </View>
-    )
+    const [messages, setMessages] = useState([]);
+    const [buyerId, setbuyerid] = useState(props.route.params.postOwner._id);
+    const [sellerId, setsellerid] = useState();
+    const [roomId, setRoomid] = useState("");
+    const [buyerNick, setbuyerNick] = useState(props.route.params.postOwner.nickname);
     
+    useEffect( async() => {
+    AsyncStorage.getItem('user_id')
+    .then((value) => {
+      setsellerid(value);
+    });
+    console.log(":1111");
+  },[]);
+
+  let sellerNick;
+  let socketId;
+  
+    useEffect( async() => {
+      const temp = sellerId;
+      seller = await requestUser.getUserData(temp);
+      sellerNick = seller.nickname;
+      socket = io("http://10.0.2.2:3002");
+      socket.emit("usersId",buyerId,buyerNick, sellerId, sellerNick);
+      socket.emit('joinRoom','room1');
+      socketId = socket.id;
+
+      const preData = await request.getChat();
+
+      if(preData.length != 0){
+        preData.map((data)=>{
+        if(data.senderId == sellerId){
+          setMessages((prevMessages)=>GiftedChat.append(prevMessages,[
+            {
+              _id : data._id,
+              text: data.text,
+              createdAt: data.createdAt,
+              user: {
+                _id: 1,
+                
+              },
+            },
+          ]));
+        }
+        else{
+          setMessages((prevMessages)=>GiftedChat.append(prevMessages, 
+           [
+            {
+              _id : data._id,
+              text: data.text,
+              createdAt: data.createdAt,
+              user: {
+                _id: 2,
+                
+              },
+             },
+           ]));
+       }
+      });
+      }
+    return () => {
+        socket.emit('leaveRoom','room1');
+        socket.disconnect();
+      };
+
+    },[sellerId]);
+
+ 
+    function onSend(newMessages = []){
+      socket.emit("chat message to server", newMessages);
+      setMessages((prevMessages)=>GiftedChat.append(prevMessages, newMessages));
+      onSendDB(newMessages);
+    };
+
+
+    function onSendDB(newMessage) {
+      let beforeTime = new Date();
+      let month = beforeTime.getMonth() + 1;
+      let time =
+        beforeTime.getFullYear() +
+        '-' +
+        month +
+        '-' +
+        beforeTime.getDate() +
+        ' ' +
+        beforeTime.getHours() +
+        ':' +
+        beforeTime.getMinutes() +
+        ':' +
+        beforeTime.getSeconds();
+      let textId = newMessage[0]._id;
+      let createdAt = time;
+      let text = newMessage[0].text;
+      let senderId = sellerId;
+      let roomId = 'room1';
+  
+      let newChat = {
+        beforeTime: time,
+        textId : textId,
+        createdAt : createdAt,
+        text : text,
+        senderId : sellerId,
+        roomId : roomId,
+      }
+
+      axios.post("http://10.0.2.2:3000/chat/createChat", newChat)
+        .then((data)=>{
+         })
+      }
+
+
+    return (
+    <GiftedChat
+      messages={messages}
+      onSend={(newMessages) => onSend(newMessages)}
+     
+      user={{
+        _id: 1,
+      }}
+    />
+  )
+
 }
 
 const styles = StyleSheet.create({
     container: {
     flex: 1,
     height:400,
-    backgroundColor: 'white'
+    backgroundColor: '#6E5BAA'
     },
-    // btnArea2: {
-    //     height: hp(8),
-    //     paddingBottom: hp(1.5),
-    // },
-    // btn2: {
-    //     flex: 1,
-    //     width: 150,
-    //     height: 50,
-    //     borderRadius: 7,
-    //     justifyContent: 'center',
-    //     alignItems: 'center',
-    //     backgroundColor: '#4672B8',
-    //   },
+ 
 });
 export default ChatScreen;

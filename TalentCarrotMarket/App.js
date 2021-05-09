@@ -30,10 +30,7 @@ import detailPostScreen from './src/screens/Post/DetailPostScreen';
 //chatStack
 import chatchScreen from './src/screens/Chat/ChatChScreen';
 import chatScreen from './src/screens/Chat/ChatScreen';
-import tradeSetScreen from './src/screens/Chat/TradeSetScreen';
-import tradeTimerScreen from './src/screens/Chat/TradeTimerScreen';
-import tradeExtendScreen from './src/screens/Chat/TradeExtendScreen';
-import userRateScreen from './src/screens/Chat/UserRateScreen';
+import chatTestScreen from './src/screens/Chat/ChatTestScreen';
 
 //aroundStack
 import aroundScreen from './src/screens/Around/AroundScreen';
@@ -43,6 +40,8 @@ import aroundCertifyScreen from './src/screens/Around/AroundCertifyScreen';
 
 //MyPageStack
 import mypageScreen from './src/screens/Mypage/MypageScreen';
+import userPostScreen from './src/screens/Mypage/UserPostScreen';
+import editUserPostScreen from './src/screens/Mypage/EditUserPostScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -58,14 +57,14 @@ const Auth = () =>{
     <Stack.Navigator>
       <Stack.Screen
         name="Login"
-        component={LoginScreen}   
+        component={LoginScreen}
       />
       <Stack.Screen
         name="Register"
         component={RegisterScreen}
       />
     </Stack.Navigator>
-    
+
   )
 }
 //Home Tab 스크린 기준 Stack(게시글 확인)
@@ -77,7 +76,7 @@ const HomeStackScreen = () => {
       <HomeStack.Screen name="MakePost" component={makePostScreen}/>
       <HomeStack.Screen name="FilterOption" component={filterOptionScreen}/>
       <HomeStack.Screen name="DetailPost" component={detailPostScreen}/>
-
+      <ChatStack.Screen name="chat" component={chatScreen} />
     </Stack.Navigator>
   );
 };
@@ -108,12 +107,9 @@ const AroundStackScreen = () => {
 const ChatStackScreen = () => {
   return (
     <Stack.Navigator>
-      <ChatStack.Screen name="chat" component={chatScreen} />
       <ChatStack.Screen name="chatch" component={chatchScreen} />
-      <ChatStack.Screen name="tradeSet" component={tradeSetScreen} />
-      <ChatStack.Screen name="tradeTimer" component={tradeTimerScreen} />
-      <ChatStack.Screen name="tradeExtend" component={tradeExtendScreen} />
-      <ChatStack.Screen name="userRate" component={userRateScreen} />
+      <ChatStack.Screen name="chat" component={chatScreen} />
+      <ChatStack.Screen name="chatTest" component={chatTestScreen} />
     </Stack.Navigator>
   );
 };
@@ -123,6 +119,8 @@ const SettingStackScreen = () => {
   return (
     <Stack.Navigator>
       <SettingStack.Screen name="Home" component={mypageScreen} />
+      <SettingStack.Screen name="userPostScreen" component={userPostScreen}/>
+      <SettingStack.Screen name="editUserPostScreen" component={editUserPostScreen}/>
     </Stack.Navigator>
   );
 };
@@ -185,7 +183,7 @@ const MainTabScreen =({}) => {
 
 const App=()=> {
   return (
-    
+
     <NavigationContainer>
     {/* Stack Navigator for Login+Logout  */}
     <Stack.Navigator initialRouteName="SplashScreen">

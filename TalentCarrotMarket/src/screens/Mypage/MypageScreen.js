@@ -3,7 +3,8 @@ import {
     View,
     Text,
     StyleSheet,
-    TouchableOpacity
+    TouchableOpacity,
+    Button
 } from 'react-native';
 import {
     widthPercentageToDP as wp,
@@ -12,8 +13,6 @@ import {
 import axios from "axios";
 
 import AsyncStorage from '@react-native-community/async-storage';
-import DateTimePicker from '@react-native-community/datetimepicker';
-
 
 const MypageScreen = ({navigation}) => {
 
@@ -61,43 +60,10 @@ const MypageScreen = ({navigation}) => {
       <Text>내가 인증한 동네 : {list.addressName}</Text>
     )
 
-    const [date, setDate] = useState(
-      new Date() // to set default from props or current date
-    );
-    const [time, setTime] = useState(
-      new Date() // to set default from props or current date
-    );
-    const [mode, setMode] = useState('date');
-    const [show, setShow] = useState(false);
-    
-    const onChange = (event, selectedValue) => {
-      setShow(Platform.OS === 'ios');
-      if (mode == 'date') {
-        const currentDate = selectedValue || new Date();
-        setDate(currentDate);
-        setMode('time');
-        setShow(Platform.OS !== 'ios'); // to show time
-      } else {
-        const selectedTime = selectedValue || new Date();
-        setTime(selectedTime);
-        setShow(Platform.OS === 'ios'); // to hide back the picker
-        setMode('date'); // defaulting to date for next open
-      }
-    };
-    const showMode = currentMode => {
-      setShow(true);
-      setMode(currentMode);
-    };
-    
-    const showDatePicker = () => {
-      showMode('date');
-    };
+    const goToUserPostScreen = ()=>{
+        navigation.navigate('userPostScreen');
+    }
 
-    const formatDate = (date, time) => {
-      return `${date.getDate()}/${date.getMonth() +
-        1}/${date.getFullYear()} ${time.getHours()}:${time.getMinutes()}`;
-      };
-    
     return (
       <View style={styles.container}>
             <View style={styles.btnArea2}>
@@ -116,24 +82,11 @@ const MypageScreen = ({navigation}) => {
                 borderBottomWidth: StyleSheet.hairlineWidth,
               }}
               />
-            <View>
-              <TouchableOpacity onPress={showDatePicker}>
-                <Text style={styles.title}>{formatDate(date, time)}</Text>
-              </TouchableOpacity>
-              {show && (
-                <DateTimePicker
-                  value={date}
-                  minimumDate={Date.parse(new Date())}
-                  display='default'
-                  mode={mode}
-                  onChange={onChange}
-                />
-              )}
-            </View>
-            {/* <View>
-              {certifyAddress}
-            </View> */}
 
+            <View>
+              {certifyAddress}
+            </View>
+          <Button title={'재능거래 내역'} onPress={goToUserPostScreen}/>
       </View>
 
         
