@@ -82,8 +82,8 @@ const HomeStackScreen = () => {
       <HomeStack.Screen name="MakePost" component={makePostScreen}/>
       <HomeStack.Screen name="FilterOption" component={filterOptionScreen}/>
       <HomeStack.Screen name="DetailPost" component={detailPostScreen}/>
-      <ChatStack.Screen name="chat" component={chatScreen} />
-      <ChatStack.Screen name="tradeset" component={tradeSetScreen} />
+      <HomeStack.Screen name="chat" component={chatScreen} />
+      <HomeStack.Screen name="tradeset" component={tradeSetScreen} />
       
     </Stack.Navigator>
   );
@@ -121,7 +121,8 @@ const ChatStackScreen = () => {
       <ChatStack.Screen name="tradeTimer" component={tradeTimerScreen} />
       <ChatStack.Screen name="tradeExtend" component={tradeExtendScreen} />
       <ChatStack.Screen name="userRate" component={userRateScreen} />
-    </Stack.Navigator>
+      <ChatStack.Screen name="tradeset" component={tradeSetScreen} />
+ </Stack.Navigator>
   );
 };
 

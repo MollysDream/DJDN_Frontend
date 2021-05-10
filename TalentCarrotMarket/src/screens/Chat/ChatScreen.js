@@ -22,14 +22,14 @@ let socket;
 let messages;
 let host;
 
-function ChatScreen(props, {navigation}) {
+function ChatScreen(props) {
     const [messages, setMessages] = useState([]);
     const [postOwnerId, setPostOwnerId] = useState(props.route.params.postOwner._id);
     const [hostId, sethostId] = useState();
     const [roomId, setRoomId] = useState("");
     const [postOwnerNick, setPostOwnerNick] = useState(props.route.params.postOwner.nickname);
 
-    buttons = [
+    const buttons = [
       {
           color: '#4672B8',
           content:
@@ -38,7 +38,7 @@ function ChatScreen(props, {navigation}) {
             <Text>시간 장소</Text>
           </View>,
          action: () => {
-          navigation.navigate('tradeSet')
+          props.navigation.navigate('tradeset')
          }
       }
   ];
