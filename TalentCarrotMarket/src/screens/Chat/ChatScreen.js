@@ -37,12 +37,11 @@ function ChatScreen(props) {
             <Text>  ⌚ 🗺️</Text>
             <Text>시간 장소</Text>
           </View>,
-          action: () => {
-              navigation.navigate('tradeSet')
-          }
+         action: () => {
+          props.navigation.navigate('tradeset')
+         }
       }
   ];
-
     useEffect( async() => {
     AsyncStorage.getItem('user_id')
     .then((value) => {
@@ -182,13 +181,12 @@ function ChatScreen(props) {
         <GiftedChat
           messages={messages}
           onSend={(newMessages) => onSend(newMessages)}
-
           user={{
             _id: 1,
           }}
         />
 
-        {/* <AnimatedAbsoluteButton
+        <AnimatedAbsoluteButton
             buttonSize={100}
             buttonColor='gray'
             buttonShape='circular'
@@ -200,7 +198,7 @@ function ChatScreen(props) {
             time={500}
             easing='bounce'
             buttons={buttons}
-        /> */}
+        />
       </View>
   )
 

@@ -26,6 +26,9 @@ import makePostScreen from './src/screens/Post/MakePostScreen';
 import filterOptionScreen from './src/screens/Post/FilterOptionScreen';
 
 import detailPostScreen from './src/screens/Post/DetailPostScreen';
+import tradeSetScreen from './src/screens/Chat/TradeSetScreen';
+
+
 
 //chatStack
 import chatchScreen from './src/screens/Chat/ChatChScreen';
@@ -34,7 +37,6 @@ import chatTestScreen from './src/screens/Chat/ChatTestScreen';
 import tradeTimerScreen from './src/screens/Chat/TradeTimerScreen';
 import tradeExtendScreen from './src/screens/Chat/TradeExtendScreen';
 import userRateScreen from './src/screens/Chat/UserRateScreen';
-import tradeSetScreen from './src/screens/Chat/TradeSetScreen';
 
 //aroundStack
 import aroundScreen from './src/screens/Around/AroundScreen';
@@ -80,7 +82,9 @@ const HomeStackScreen = () => {
       <HomeStack.Screen name="MakePost" component={makePostScreen}/>
       <HomeStack.Screen name="FilterOption" component={filterOptionScreen}/>
       <HomeStack.Screen name="DetailPost" component={detailPostScreen}/>
-      <ChatStack.Screen name="chat" component={chatScreen} />
+      <HomeStack.Screen name="chat" component={chatScreen} />
+      <HomeStack.Screen name="tradeset" component={tradeSetScreen} />
+      
     </Stack.Navigator>
   );
 };
@@ -117,7 +121,8 @@ const ChatStackScreen = () => {
       <ChatStack.Screen name="tradeTimer" component={tradeTimerScreen} />
       <ChatStack.Screen name="tradeExtend" component={tradeExtendScreen} />
       <ChatStack.Screen name="userRate" component={userRateScreen} />
-    </Stack.Navigator>
+      <ChatStack.Screen name="tradeset" component={tradeSetScreen} />
+ </Stack.Navigator>
   );
 };
 

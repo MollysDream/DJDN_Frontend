@@ -8,22 +8,45 @@ import {
 } from 'react-native';
 import { List, Divider } from 'react-native-paper';
 import firestore from '@react-native-firebase/firestore';
+import {AnimatedAbsoluteButton} from 'react-native-animated-absolute-buttons';
 
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
-const ChatChScreen =({navigation})=>{
+function ChatChScreen({navigation}) {
+
+  
+  const buttons = [
+    {
+        color: '#4672B8',
+        content:
+        <View>
+          <Text>  ⌚ 🗺️</Text>
+          <Text>시간 장소</Text>
+        </View>,
+       action: () => {
+        navigation.navigate('tradeset')
+       }
+    }
+];
       return (
-        <View style={styles.btnArea2} >
-        <TouchableOpacity style={styles.btn2} onPress={() => navigation.navigate('chat')}>
-          <Text style={(styles.Text, {color: 'white'})}>채팅</Text>
-        </TouchableOpacity>
-          <TouchableOpacity style={styles.btn2} onPress={() => navigation.navigate('chatTest')}>
-            <Text style={(styles.Text, {color: 'white'})}>채팅2</Text>
-          </TouchableOpacity>
-        </View>
+        <View style={styles.container}>
+           <AnimatedAbsoluteButton
+            buttonSize={100}
+            buttonColor='gray'
+            buttonShape='circular'
+            buttonContent={<Text>거래 제안</Text>}
+            direction='top'
+            position='bottom-right'
+            positionVerticalMargin={10}
+            positionHorizontalMargin={10}
+            time={500}
+            easing='bounce'
+            buttons={buttons}
+        />
+      </View>
       );
 }
 
@@ -49,6 +72,10 @@ const styles = StyleSheet.create({
     },
     listDescription: {
       fontSize: 16
-    }
+    },
+    container: {
+      flex: 1,
+      height:400,
+      },
   });
 export default ChatChScreen;
