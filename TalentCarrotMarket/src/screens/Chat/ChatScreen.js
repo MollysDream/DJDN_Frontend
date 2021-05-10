@@ -16,6 +16,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 import requestUser from "../../requestUserAPI";
 import request from '../../requestAPI';
+import {AnimatedAbsoluteButton} from 'react-native-animated-absolute-buttons';
 
 let socket;
 let messages
@@ -189,7 +190,7 @@ function ChatScreen(props) {
           }}
         />
 
-        <AnimatedAbsoluteButton
+        {/* <AnimatedAbsoluteButton
             buttonSize={100}
             buttonColor='gray'
             buttonShape='circular'
@@ -201,7 +202,7 @@ function ChatScreen(props) {
             time={500}
             easing='bounce'
             buttons={buttons}
-        />
+        /> */}
       </View>
   )
 
@@ -211,7 +212,6 @@ const styles = StyleSheet.create({
     container: {
     flex: 1,
     height:400,
-    backgroundColor: '#6E5BAA'
     },
 
 });
