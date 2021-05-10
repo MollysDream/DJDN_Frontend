@@ -12,13 +12,13 @@ export async function getUserData(userId){
 export async function updateUserCategoryAndSort({userId, newUserCategory, newSort}){
     console.log('updateUserCategory함수 호출됨');
     const userData = await axi.post("/user/updateUserCategoryAndSort", {userId,newUserCategory, newSort});
-
+    return userData.data;
 }
 
 export async function updateUserAddressIndex(userId, addressIndex){
     console.log(`updateUserAddressIndex함수 호출됨 아이디: ${userId} // 인덱스: ${addressIndex}`);
-    await axi.post("/user/updateUserAddressIndex", {userId,addressIndex});
-
+    const result = await axi.post("/user/updateUserAddressIndex", {userId,addressIndex});
+    return result.data;
 }
 
 

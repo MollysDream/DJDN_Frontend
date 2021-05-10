@@ -27,7 +27,7 @@ export default class SearchPostScreen extends Component{
 
     async componentDidMount() {
         //게시글 조회수 증가
-        await request.updatePostView({
+        let result = await request.updatePostView({
             postId: this.state.detailPost._id,
             view: ++this.state.detailPost.view
         });

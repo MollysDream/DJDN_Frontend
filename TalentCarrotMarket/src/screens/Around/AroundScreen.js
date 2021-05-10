@@ -19,7 +19,7 @@ const P0 = {latitude: 37.564362, longitude: 126.977011};
 
 const AroundScreen = ({navigation}) => {
 
-    const [location,setLocation]= useState({
+    /*const [location,setLocation]= useState({
       locations:[
         {latitude:null,longitude:null}
       ]
@@ -38,9 +38,9 @@ const AroundScreen = ({navigation}) => {
         error => {console.log(error.code,error.message)},
         { enableHighAccuracy:true, timeout: 20000, maximumAge:1000},
       );
-    },[]);
+    },[]);*/
 
-    const certifyButton = () =>{
+    /*const certifyButton = () =>{
       const send_param = {
           currentX: location.longitude,
           currentY: location.latitude
@@ -58,7 +58,7 @@ const AroundScreen = ({navigation}) => {
           console.log(err);
         });
 
-    }
+    }*/
     
     return (
 
@@ -69,24 +69,24 @@ const AroundScreen = ({navigation}) => {
       // </View>
 
       <View style={styles.container}>
-          <NaverMapView 
+          {/*<NaverMapView
           style={{flex: 0.7, width: '100%', height: '100%'}}
           showsMyLocationButton={true}
           center={{...P0, zoom:16}}
           onTouch={e => console.log('onTouch', JSON.stringify(e.nativeEvent))}
           onCameraChange={e => console.log('onCameraChange', JSON.stringify(e))}
           onMapClick={e => console.log('onMapClick', JSON.stringify(e))}>
-          </NaverMapView>
+          </NaverMapView>*/}
           <View style={styles.btnArea2} >
             <TouchableOpacity style={styles.btn2} onPress={() => navigation.navigate('aroundSet')}>
               <Text style={(styles.Text, {color: 'white'})}>내 동네 설정</Text>
             </TouchableOpacity>
           </View>
-          <View style={styles.btnArea2} >
+          {/*<View style={styles.btnArea2} >
             <TouchableOpacity style={styles.btn2} onPress={certifyButton}>
               <Text style={(styles.Text, {color: 'white'})}>동네 인증하기</Text>
             </TouchableOpacity>
-        </View>
+        </View>*/}
       </View>
       
 

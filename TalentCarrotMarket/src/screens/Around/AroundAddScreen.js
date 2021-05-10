@@ -25,6 +25,7 @@ const AroundAddScreen = ({navigation,route}) => {
     const [aroundAddress,setAroundAddress]= useState('');
 
     const [chosenAddress, setChosenAddress] = useState('');
+    const userId=route.params.userId;
 
     const addAddressButton = () =>{
         Geolocation.getCurrentPosition(
@@ -63,9 +64,8 @@ const AroundAddScreen = ({navigation,route}) => {
 
     const saveChosenAddress = async() =>{
         console.log(`${chosenAddress} 저장`);
-        let userId = await AsyncStorage.getItem('user_id');
-        await requestAddressAPI.createAddress(userId, chosenAddress, chooseIndex);
-
+        //let userId = await AsyncStorage.getItem('user_id');
+        let result = await requestAddressAPI.createAddress(userId, chosenAddress, chooseIndex);
 
         Alert.alert("동네 저장 완료", `${chosenAddress}으로 동네 저장함`,
             [{ text: '확인', style: 'cancel',
