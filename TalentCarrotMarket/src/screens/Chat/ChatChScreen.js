@@ -24,9 +24,7 @@ const ChatChScreen =({navigation})=>{
             <Text style={(styles.Text, {color: 'white'})}>채팅2</Text>
           </TouchableOpacity>
         </View>
-
       );
-
 }
 
 const styles = StyleSheet.create({
