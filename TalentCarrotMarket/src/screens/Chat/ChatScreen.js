@@ -18,16 +18,15 @@ import requestUser from "../../requestUserAPI";
 import request from '../../requestAPI';
 
 let socket;
-let messages
-let seller;
+let messages;
+let host;
 
 function ChatScreen(props) {
-
     const [messages, setMessages] = useState([]);
-    const [buyerId, setbuyerid] = useState(props.route.params.postOwner._id);
-    const [sellerId, setsellerid] = useState();
-    const [roomId, setRoomid] = useState("");
-    const [buyerNick, setbuyerNick] = useState(props.route.params.postOwner.nickname);
+    const [postOwnerId, setPostOwnerId] = useState(props.route.params.postOwner._id);
+    const [hostId, sethostId] = useState();
+    const [roomId, setRoomId] = useState("");
+    const [postOwnerNick, setPostOwnerNick] = useState(props.route.params.postOwner.nickname);
 
     const buttons = [
       {
@@ -46,12 +45,12 @@ function ChatScreen(props) {
     useEffect( async() => {
     AsyncStorage.getItem('user_id')
     .then((value) => {
-      setsellerid(value);
+      sethostId(value);
     });
-    console.log(":1111");
+    // console.log(":1111");
   },[]);
 
-  let sellerNick;
+  let hostNick;
 
 
   /*
@@ -62,16 +61,15 @@ function ChatScreen(props) {
   let chatRoomId;
 
     useEffect( async() => {
-      const temp = sellerId;
-      seller = await requestUser.getUserData(temp);
-      sellerNick = seller.nickname;
+      host = await requestUser.getUserData(hostId);
+      hostNick = host.nickname;
       socket = io("http://10.0.2.2:3002");
-      socket.emit("usersId",buyerId,buyerNick, sellerId, sellerNick);
-      //딱 여기까지하면, 지금 buyerId,sellerId 가져온 상태니까 ?
+      socket.emit("searchChatRoom", postOwnerId, postOwnerNick, hostId, hostNick);
+      //딱 여기까지하면, 지금 postOwnerId,hostId 가져온 상태니까 ?
 
 
       /*
-      * buyerId, SellerId가 있는 채팅룸을 DB에서 검색  (근데 여기서 postId가 필요할거같음, 왜냐? 같은 사용자 2명이 다른 게시물에 대해 채팅할수도 있자나!)
+      * postOwnerId, hostId가 있는 채팅룸을 DB에서 검색  (근데 여기서 postId가 필요할거같음, 왜냐? 같은 사용자 2명이 다른 게시물에 대해 채팅할수도 있자나!)
       * -> 있으면 getChat()하고,
       * 없으면 채팅방 만들어서 실행 -> 이건 axios.post("http://10.0.2.2:3000/chat/createChatRoom",user1, user2, postId) .-> 요런식?
       *         .then((data)=>{
@@ -93,7 +91,7 @@ function ChatScreen(props) {
 
       if(preData.length != 0){
         preData.map((data)=>{
-        if(data.senderId == sellerId){
+        if(data.senderId == hostId){
           setMessages((prevMessages)=>GiftedChat.append(prevMessages,[
             {
               _id : data._id,
@@ -130,7 +128,7 @@ function ChatScreen(props) {
         socket.disconnect();
       };
 
-    },[sellerId]);
+    },[hostId]);
 
 
     function onSend(newMessages = []){
@@ -158,7 +156,7 @@ function ChatScreen(props) {
       let textId = newMessage[0]._id;
       let createdAt = time;
       let text = newMessage[0].text;
-      let senderId = sellerId;
+      let senderId = hostId;
       let roomId = 'room1';
 
       // roomId도 chatRoomId로 바꿔서 저장해야돼. 왜? 이래야 몽고DB에 잘 저장돼
@@ -168,7 +166,7 @@ function ChatScreen(props) {
         textId : textId,
         createdAt : createdAt,
         text : text,
-        senderId : sellerId,
+        senderId : senderId,
         roomId : roomId,
       }
 
