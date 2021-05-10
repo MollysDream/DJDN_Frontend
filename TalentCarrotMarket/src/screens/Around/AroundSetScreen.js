@@ -85,79 +85,82 @@ const AroundSetScreen = ({navigation}) => {
     },[]);
 
     const isFocused = useIsFocused();
-    useEffect(async ()=>{
+    useEffect( ()=>{
+        async function refreshData(){
+            let userId = await AsyncStorage.getItem('user_id');
+            setUserId(userId);
 
-        let userId = await AsyncStorage.getItem('user_id');
-        setUserId(userId);
+            console.log('사용자 Address Data 불러오기');
+            let userAddressDataList = await requestAddressAPI.getUserAddress(userId);
+            console.log(userAddressDataList.address);
 
-        console.log('사용자 Address Data 불러오기');
-        let userAddressDataList = await requestAddressAPI.getUserAddress(userId);
-        console.log(userAddressDataList.address);
+            setNumberOfAddress(userAddressDataList.address.length);
 
-        setNumberOfAddress(userAddressDataList.address.length);
+            let add1
+            let add2
+            let userRadius;
 
-        let add1
-        let add2
-        let userRadius;
+            if(userAddressDataList.address.length == 1){
+                if(userAddressDataList.address[0].addressIndex == 1){
+                    console.log("인덱스1 일때 1개")
+                    add1 = userAddressDataList.address[0]
+                    setAddress1Full(add1);
+                    setAddress1(add1.addressName);
+                    setChooseState1('choose')
+                    userRadius = add1.radius;
+                }else{
+                    console.log("인덱스2 일때 1개")
+                    add2 = userAddressDataList.address[0]
+                    setAddress2Full(add2);
+                    setAddress2(add2.addressName);
+                    setChooseState2('choose');
+                    userRadius = add2.radius;
 
-        if(userAddressDataList.address.length == 1){
+                }
+
+                setRadius(userRadius);
+                setDistance(userRadius);
+                return;
+            }
+
+
             if(userAddressDataList.address[0].addressIndex == 1){
-                console.log("인덱스1 일때 1개")
                 add1 = userAddressDataList.address[0]
-                setAddress1Full(add1);
-                setAddress1(add1.addressName);
+                add2 = userAddressDataList.address[1]
+            }else{
+                add2 = userAddressDataList.address[0]
+                add1 = userAddressDataList.address[1]
+            }
+
+            setAddress1Full(add1);
+            setAddress1(add1.addressName);
+            setAddress2Full(add2);
+            setAddress2(add2.addressName);
+
+            console.log(add1);
+            console.log(add2);
+
+            //**********사용자가 사용중인 동네 무엇인지 불러옴
+            let userData = await requestUserAPI.getUserData(userId);
+            setUserData(userData);
+            setUserAddressIndex(userData.addressIndex);
+
+            //현재 선택된 동네 색으로 표시  +  Radius 값 저장
+            if(userData.addressIndex == 1){
                 setChooseState1('choose')
+                setChooseState2('')
                 userRadius = add1.radius;
             }else{
-                console.log("인덱스2 일때 1개")
-                add2 = userAddressDataList.address[0]
-                setAddress2Full(add2);
-                setAddress2(add2.addressName);
+                setChooseState1('')
                 setChooseState2('choose');
                 userRadius = add2.radius;
-
             }
 
             setRadius(userRadius);
             setDistance(userRadius);
-            return;
         }
 
-
-        if(userAddressDataList.address[0].addressIndex == 1){
-            add1 = userAddressDataList.address[0]
-            add2 = userAddressDataList.address[1]
-        }else{
-            add2 = userAddressDataList.address[0]
-            add1 = userAddressDataList.address[1]
-        }
-
-        setAddress1Full(add1);
-        setAddress1(add1.addressName);
-        setAddress2Full(add2);
-        setAddress2(add2.addressName);
-
-        console.log(add1);
-        console.log(add2);
-
-        //**********사용자가 사용중인 동네 무엇인지 불러옴
-        let userData = await requestUserAPI.getUserData(userId);
-        setUserData(userData);
-        setUserAddressIndex(userData.addressIndex);
-
-        //현재 선택된 동네 색으로 표시  +  Radius 값 저장
-        if(userData.addressIndex == 1){
-            setChooseState1('choose')
-            setChooseState2('')
-            userRadius = add1.radius;
-        }else{
-            setChooseState1('')
-            setChooseState2('choose');
-            userRadius = add2.radius;
-        }
-
-        setRadius(userRadius);
-        setDistance(userRadius);
+        let result = refreshData();
     },[isFocused, userAddressIndex])
 
     const setMapRadius= (endLocation)=>{
@@ -232,7 +235,7 @@ const AroundSetScreen = ({navigation}) => {
             return
         }
 
-        await requestAddressAPI.updateRadius(userId, Radius, userAddressIndex);
+        let result = await requestAddressAPI.updateRadius(userId, Radius, userAddressIndex);
 
         Alert.alert("설정 완료",`거래 반경이 ${Radius}m로 설정 되었습니다.`,[
             {text:'확인', style:'cancel'}
@@ -264,10 +267,10 @@ const AroundSetScreen = ({navigation}) => {
 
       setAddress1('');
       setAddress1Full(null);
-      await requestAddressAPI.deleteAddress(userId, 1);
+      let result = await requestAddressAPI.deleteAddress(userId, 1);
 
       if(userAddressIndex == 1){
-          await requestUserAPI.updateUserAddressIndex(userId, 2);
+          let result = await requestUserAPI.updateUserAddressIndex(userId, 2);
           setUserAddressIndex(2);
           setChooseState2('choose');
       }
@@ -279,10 +282,10 @@ const AroundSetScreen = ({navigation}) => {
 
       setAddress2('');
       setAddress2Full(null);
-      await requestAddressAPI.deleteAddress(userId, 2);
+      let result = await requestAddressAPI.deleteAddress(userId, 2);
 
         if(userAddressIndex == 2){
-            await requestUserAPI.updateUserAddressIndex(userId, 1);
+            let result =  requestUserAPI.updateUserAddressIndex(userId, 1);
             setUserAddressIndex(1);
             setChooseState1('choose');
         }
@@ -304,7 +307,7 @@ const AroundSetScreen = ({navigation}) => {
             return
         setChooseState1('choose');
         setChooseState2('');
-        await requestUserAPI.updateUserAddressIndex(userId, 1);
+        let result = await requestUserAPI.updateUserAddressIndex(userId, 1);
         setUserAddressIndex(1);
     };
     const addressTwoSelectButton = async () => {
@@ -312,16 +315,16 @@ const AroundSetScreen = ({navigation}) => {
             return
         setChooseState1('');
         setChooseState2('choose');
-        await requestUserAPI.updateUserAddressIndex(userId, 2);
+        let result = await requestUserAPI.updateUserAddressIndex(userId, 2);
         setUserAddressIndex(2);
     };
 
     //내 동네 추가 ( ** 동 설정 ** )
     const addressOneAddButton = () => {
-      navigation.navigate('aroundAdd',{chooseIndex: 1})
+      navigation.navigate('aroundAdd',{chooseIndex: 1, userId:userId})
     };
     const addressTwoAddButton = () => {
-      navigation.navigate('aroundAdd',{chooseIndex: 2});
+      navigation.navigate('aroundAdd',{chooseIndex: 2, userId:userId});
     };
 
     //동네 선택 및 인증

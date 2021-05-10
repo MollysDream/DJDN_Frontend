@@ -77,8 +77,8 @@ export default class UserPostScreen extends Component{
 
     async deletePost(item){
         console.log(item._id);
-        await request.deletePost(item._id);
-        await this.refreshPage();
+        let result = await request.deletePost(item._id);
+        let result_refresh = await this.refreshPage();
     }
 
     refreshPage = async() => {

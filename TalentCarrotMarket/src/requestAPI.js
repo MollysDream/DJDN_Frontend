@@ -80,8 +80,8 @@ export async function getCategoryList(){
 
 export async function updatePostView({postId, view}){
     console.log('updatePostView함수 호출됨');
-    await axi.post("/data/updatePostView", {postId,view});
-
+    const result = await axi.post("/data/updatePostView", {postId,view});
+    return result.data;
 }
 
 
@@ -94,25 +94,29 @@ export async function getUserPost(userId){
 
 export async function deletePost(postId){
     console.log('deletePost함수 호출됨');
-    await axi.delete("/data/deletePost", {params:{postId:postId}});
+    const result = await axi.delete("/data/deletePost", {params:{postId:postId}});
 
+    return result.data;
 }
 
 
 // location = 거래장소 ex) 경기도 수원시 영통구 중부대로271번길, 27-9 104-1402
 export async function createTradeTime({ startTime, endTime, workTime, location, userId1, userId2, postId }){
     console.log('createTradeTime함수 호출됨');
-    await axi.post("/trade/createTradeTime", { startTime, endTime, workTime, location, userId1, userId2, postId});
+    const result = await axi.post("/trade/createTradeTime", { startTime, endTime, workTime, location, userId1, userId2, postId});
+    return result.data;
 }
 
 export async function updateTradeTime({tradeInfo, workTime, endTime}){
     console.log('updateTradeTime함수 호출됨');
-    await axi.post("/trade/updateTradeTime", {tradeInfo, workTime, endTime});
+    const result = await axi.post("/trade/updateTradeTime", {tradeInfo, workTime, endTime});
+    return result.data;
 }
 
 export async function endTrade(tradeId){
     console.log('endTrade함수 호출됨');
-    await axi.post("/trade/endTrade", {tradeId});
+    const result = await axi.post("/trade/endTrade", {tradeId});
+    return result.data;
 }
 
 

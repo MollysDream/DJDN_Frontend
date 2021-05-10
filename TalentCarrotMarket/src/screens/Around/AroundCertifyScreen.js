@@ -99,7 +99,7 @@ const AroundCertifyScreen = ({navigation,route}) => {
             //동네 인증
             const returnData = await requestAddressAPI.certifyAddress(addressDataParam);
             //사용자가 사용할 주소 인덱스 저장 ( 1, 2 중 하나)
-            await requestUserAPI.updateUserAddressIndex(userId, addressIndex);
+            let result = await requestUserAPI.updateUserAddressIndex(userId, addressIndex);
             setCertify(true);
         }catch(err){
             console.log(err);

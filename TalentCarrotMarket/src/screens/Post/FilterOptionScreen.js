@@ -55,7 +55,7 @@ export default class FilterOptionScreen extends Component{
         }
         console.log(`${newUserCategory} 사용자 필터 설정함`);
 
-        await requestUserAPI.updateUserCategoryAndSort({
+        let result = await requestUserAPI.updateUserCategoryAndSort({
             userId:this.state.userData._id,
             newUserCategory:newUserCategory,
             newSort:this.state.sort
