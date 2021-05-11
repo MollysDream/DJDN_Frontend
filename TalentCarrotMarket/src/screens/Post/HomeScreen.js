@@ -97,15 +97,6 @@ export default class HomeScreen extends Component{
 
     async goToDetailPostScreen(item){
         console.log(`${item.title} 게시글 확인`);
-        const postImages = []
-        console.log(item.image);
-        item.image.map((image)=>{
-            let temp={
-                image:image,
-                desc:image,
-            }
-            postImages.push(temp);
-        })
 
         let userData
         try{
@@ -118,7 +109,7 @@ export default class HomeScreen extends Component{
         }
 
 
-        this.props.navigation.navigate('DetailPost',{detailPost: item, postImages: postImages, postOwner: userData});
+        this.props.navigation.navigate('DetailPost',{detailPost: item, postOwner: userData});
     }
 
     returnFlatListItem(item,index){
@@ -216,7 +207,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
 
         backgroundColor: "#f6faff",
-        borderBottomColor: "#d2f0ff",
+        borderBottomColor: "#3ac2ff",
         borderBottomWidth: 2,
         padding: 10,
         height: 145
