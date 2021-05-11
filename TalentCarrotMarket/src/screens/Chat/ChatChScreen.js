@@ -18,19 +18,6 @@ import {
 function ChatChScreen({navigation}) {
 
   
-  const buttons = [
-    {
-        color: '#4672B8',
-        content:
-        <View>
-          <Text>  ⌚ 🗺️</Text>
-          <Text>시간 장소</Text>
-        </View>,
-       action: () => {
-        navigation.navigate('tradeset')
-       }
-    }
-];
       return (
         <View style={styles.container}>
            <AnimatedAbsoluteButton

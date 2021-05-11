@@ -26,16 +26,21 @@ export async function getPost(page, userId){
     //console.log(postData.data);
     return postData.data;
 }
-///////////
-export async function getChat(){
+// chat 내용 조회
+export async function getChat(chatRoomId){
     console.log("getpre");
-    const preData = await axi.get("/chat/getChat");
+    const preData = await axi.get("/chat/getChat", {params : {chatRoomId : chatRoomId}});
+    //console.log(postData.data);
+    return preData.data;
+}
+// chatroom 조회
+export async function getChatRoom(){
+    console.log("getroom");
+    const preData = await axi.get("/chat/getChatRoom");
     //console.log(postData.data);
     return preData.data;
 }
 //////////////
-
-
 export async function getPostBySearch(search){
     //console.log(search);
     console.log("getPostBySearch함수 호출됨");
@@ -133,5 +138,6 @@ export default{
     getUserPost,
     updatePost,
     deletePost,
-    getChat
+    getChat,
+    getChatRoom
 }
