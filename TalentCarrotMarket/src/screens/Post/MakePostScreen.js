@@ -121,7 +121,6 @@ export default class MakePostScreen extends Component {
             return;
         }
 
-        const date = this.getFormatDate(new Date());
         const options = {
             keyPrefix: `${this.state.title}/`,  //제목 뒤에 user_id 값 추가해야 됨.
             bucket: 'mollysdreampostdata',

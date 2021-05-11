@@ -19,7 +19,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import request from '../../requestAPI';
 import requestUser from "../../requestUserAPI";
 import AsyncStorage from '@react-native-community/async-storage';
-
+import {getDate, getPrice} from '../../function';
 
 export default class HomeScreen extends Component{
 
@@ -67,17 +67,22 @@ export default class HomeScreen extends Component{
 
     refreshPage = async() => {
         console.log('페이지 새로고침');
+        try{
+            this.state.page = 0;
+            this.setState({page:this.state.page, refreshing: true});
 
-        this.state.page = 0;
-        this.setState({page:this.state.page, refreshing: true});
+            const postData = await request.getPost(this.state.page, this.state.userId);
+            this.setState({
+                data: postData,
+                page : this.state.page + 1,
+                rerender: !this.state.rerender,
+                refreshing: false
+            });
+        }catch(err){
+            console.log("DB에러")
+            console.log(err);
+        }
 
-        const postData = await request.getPost(this.state.page, this.state.userId);
-        this.setState({
-            data: postData,
-            page : this.state.page + 1,
-            rerender: !this.state.rerender,
-            refreshing: false
-        });
     }
 
     updateSearch = (search) =>{
@@ -116,11 +121,17 @@ export default class HomeScreen extends Component{
     }
 
     returnFlatListItem(item,index){
+        let time = getDate(item.date);
+        let price = getPrice(item.price);
         return(
             <TouchableHighlight onPress={() => this.goToDetailPostScreen(item)}>
                 <View style={styles.post}>
-                    <Image style={{width: wp(30), height: hp(30),resizeMode: 'contain'}} source={{ uri: item.image[0]}} />
-                    <Text  style={styles.postTitle}>{item.title}</Text>
+                    <Image style={styles.image} source={{ uri: item.image[0]}} />
+                    <View>
+                        <Text style={styles.postTitle}>{item.title}</Text>
+                        <Text style={styles.postPrice}>{`${price}원`}</Text>
+                        <Text style={styles.postAddressTime}>{`${item.addressName} ◦ ${time}`}</Text>
+                    </View>
                 </View>
             </TouchableHighlight>
 
@@ -192,14 +203,22 @@ export default class HomeScreen extends Component{
 
 
 const styles = StyleSheet.create({
+    image:{
+        width: wp(30),
+        overflow:"hidden",
+        height: hp(30),
+        aspectRatio: 1,
+        borderRadius: 9,
+        marginRight:10
+    },
     post:{
         flexDirection: "row",
-        alignItems : "center",
-        backgroundColor: "#FFFFFF",
-        borderBottomColor: "#AAAAAA",
-        borderBottomWidth: 1,
-        padding: 5,
-        height: 150
+
+        backgroundColor: "#f6faff",
+        borderBottomColor: "#d2f0ff",
+        borderBottomWidth: 2,
+        padding: 10,
+        height: 145
     },
     cover:{
         flex: 1,
@@ -214,8 +233,8 @@ const styles = StyleSheet.create({
         alignSelf : "center",
         padding:20
     },
-    postTitle:{fontSize:18, fontWeight: "bold", paddingLeft : 5},
-    postTime: {fontSize:13},
-    postPrice: {fontSize:13}
+    postTitle:{fontSize:18, fontWeight: "bold", width:280, height:80},
+    postAddressTime: {fontSize:13, textAlign:'right', width:250, marginRight:10},
+    postPrice: {fontSize:17}
 
 });
