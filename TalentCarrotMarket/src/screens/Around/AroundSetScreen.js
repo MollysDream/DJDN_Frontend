@@ -87,6 +87,7 @@ const AroundSetScreen = ({navigation}) => {
     const isFocused = useIsFocused();
     useEffect( ()=>{
         async function refreshData(){
+            console.log("***********************************씨발 나 왜부르냐고 개새끼야********************");
             let userId = await AsyncStorage.getItem('user_id');
             setUserId(userId);
 
@@ -327,7 +328,7 @@ const AroundSetScreen = ({navigation}) => {
       navigation.navigate('aroundAdd',{chooseIndex: 2, userId:userId});
     };
 
-    //동네 선택 및 인증
+    //동네 인증
     const chooseAddressOneButton = (value) => {
       navigation.navigate('aroundCertify',{
         chosenAddress:address1,

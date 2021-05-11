@@ -58,8 +58,8 @@ const AroundAddScreen = ({navigation,route}) => {
         //console.log(data.bname);
         setChosenAddress(data.bname);
 
-        Alert.alert("동네 검색 완료", `${data.bname}으로 동네 선택함`,
-            [{ text: '확인', style: 'cancel'}])
+        /*Alert.alert("동네 검색 완료", `${data.bname}으로 동네 선택함`,
+            [{ text: '확인', style: 'cancel'}])*/
     }
 
     const saveChosenAddress = async() =>{
@@ -67,18 +67,27 @@ const AroundAddScreen = ({navigation,route}) => {
         //let userId = await AsyncStorage.getItem('user_id');
         let result = await requestAddressAPI.createAddress(userId, chosenAddress, chooseIndex);
 
-        Alert.alert("동네 저장 완료", `${chosenAddress}으로 동네 저장함`,
+        navigation.navigate('aroundCertify',{
+            chosenAddress:chosenAddress,
+            addressIndex: chooseIndex,
+            userId: userId
+        })
+       /* Alert.alert("동네 저장 완료", `${chosenAddress}으로 동네 저장함`,
             [{ text: '확인', style: 'cancel',
             onPress:()=>{
-                navigation.goBack();
-            }}])
+                navigation.navigate('aroundCertify',{
+                    chosenAddress:chosenAddress,
+                    addressIndex: chooseIndex,
+                    userId: userId
+                })
+            }}])*/
     }
 
     return (
         <View style={styles.container}>
             {
                 chosenAddress == ''? null:
-                    <Button title={chosenAddress} onPress={()=>saveChosenAddress()}/>
+                    <Button title={`${chosenAddress} 인증하기`} onPress={()=>saveChosenAddress()}/>
             }
           <View style={styles.btnArea}>
             <TouchableOpacity style={styles.btnAround} onPress={addAddressButton}>
