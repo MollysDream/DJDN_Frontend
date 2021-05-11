@@ -13,6 +13,7 @@ import {Container, Content, Form, Header, Input, Item, Label, Left, Right, Texta
 import requestUser from "../../requestUserAPI";
 import {FlatListSlider} from 'react-native-flatlist-slider';
 import AsyncStorage from "@react-native-community/async-storage";
+import {getDate, getPrice} from "../../function";
 
 
 export default class SearchPostScreen extends Component{
@@ -48,6 +49,8 @@ export default class SearchPostScreen extends Component{
         var slice_date = item.date.split("T");
         const postOwner = this.state.postOwner;
         const images = this.state.postImages;
+        let time = getDate(item.date);
+        let price = getPrice(item.price);
         //console.log(slice_date);
         return (
             <Container>
@@ -61,19 +64,21 @@ export default class SearchPostScreen extends Component{
                                     <View>
                                         <FlatListSlider
                                             data={images}
-                                            width={275}
+                                            width={300}
+                                            height={300}
                                             autoscroll={false}
                                             onPress={(item) => console.log(item)}
                                             indicatorActiveWidth={15}
-                                            contentContainerStyle={{paddingHorizontal: 16}}
-                                            separatorWidth={16}
+                                            contentContainerStyle={styles.sliderImage}
+                                            separatorWidth={4}
                                             loop={false}
+                                            indicatorContainerStyle={{position:'absolute', bottom: 3}}
                                         />
                                     </View>
                                 </Item>
                                 <Item >
                                     <Text style={{fontSize:15, marginBottom : "3%", marginTop : "3%" ,marginLeft : "3%"}}>
-                                        {`${postOwner.nickname}`}
+                                        {`${item.addressName}의 ${postOwner.nickname}님`}
                                         </Text>
                                 </Item>
                               
@@ -85,21 +90,21 @@ export default class SearchPostScreen extends Component{
                                     <View>
                                         <Text style={{fontSize:15, color : "grey",marginBottom : '2%', marginLeft : "3%"}}>
                                             {`  ${item.category}`}
-                                            {"    "}
-                                            {slice_date[0]}
+                                            {"  ◦ "}
+                                            {time}
                                         </Text>
                                     </View>
                                 </Item>
                                 <Item >
                                    
-                                        <Text style={{fontSize:15, marginTop : '7%',marginBottom : '20%', marginLeft : '3%'}}>
+                                        <Text style={{fontSize:16, marginTop : '7%',marginBottom : '20%', marginLeft : '3%'}}>
                                             {`${item.text}`}
                                         </Text>
                                 </Item>
                                 <Item >
                                     <Left>
                                         <Text style={{fontSize: 15 , marginLeft : "3%",marginTop : '10%',marginBottom : '10%'}}>
-                                        {`  가격 ${item.price}`}
+                                        {`  가격 ${price}원`}
                                         </Text>
                                     </Left>
                                     <Right>
@@ -126,6 +131,10 @@ export default class SearchPostScreen extends Component{
 }
 
 const styles = StyleSheet.create({
+    sliderImage:{
+        paddingHorizontal: 15,
+
+    },
     post:{
         flexDirection: "row",
         alignItems : "center",
@@ -165,8 +174,8 @@ const styles = StyleSheet.create({
         alignSelf : "center",
         padding:20
     },
-    postTitle:{fontSize:18, fontWeight: "bold", paddingLeft : 5},
-    postTime: {fontSize:13},
-    postPrice: {fontSize:13}
+    postTitle:{fontSize:18, fontWeight: "bold", width:280, height:80},
+    postAddressTime: {fontSize:13, textAlign:'right', width:250, marginRight:10},
+    postPrice: {fontSize:17}
 
 });

@@ -98,6 +98,7 @@ export default class HomeScreen extends Component{
     async goToDetailPostScreen(item){
         console.log(`${item.title} 게시글 확인`);
         const postImages = []
+        console.log(item.image);
         item.image.map((image)=>{
             let temp={
                 image:image,
@@ -233,7 +234,7 @@ const styles = StyleSheet.create({
         alignSelf : "center",
         padding:20
     },
-    postTitle:{fontSize:18, fontWeight: "bold", width:280, height:80},
+    postTitle:{fontSize:18, fontWeight: "bold", width:280, height:80, paddingTop:5},
     postAddressTime: {fontSize:13, textAlign:'right', width:250, marginRight:10},
     postPrice: {fontSize:17}
 
