@@ -121,8 +121,10 @@ export default class HomeScreen extends Component{
                     <Image style={styles.image} source={{ uri: item.image[0]}} />
                     <View>
                         <Text style={styles.postTitle}>{item.title}</Text>
-                        <Text style={styles.postPrice}>{`${price}원`}</Text>
-                        <Text style={styles.postAddressTime}>{`${item.addressName} ◦ ${time}`}</Text>
+                        <View style={{flexDirection:'row'}}>
+                            <Text style={styles.postPrice}>{`${price}원`}</Text>
+                            <Text style={styles.postAddressTime}>{`${item.addressName}\n${time}`}</Text>
+                        </View>
                     </View>
                 </View>
             </TouchableHighlight>
@@ -157,22 +159,25 @@ export default class HomeScreen extends Component{
     render() {
         const {search} = this.state;
         return (
-            <View style={{flex:1}}>
-            <View style={{flex:1}} >
-                {/*<Button
-                    onPress={this.categoryFilter}
-                    title="카테고리 검색"
-                />*/}
-                <Button
-                    title={"필터 설정"}
-                    onPress={this.filterOption}
-                />
-                <SearchBar
-                    placeholder="   검색어를 입력해주세요"
-                    onChangeText={this.updateSearch}
-                    value={search}
-                    onSubmitEditing={this.searchPost}
-                />
+            <View style={{flex:1, backgroundColor:'white'}}>
+            <View style={{flex:1, backgroundColor:'white'}} >
+
+                <View style={{flexDirection:'row', backgroundColor:'white' ,borderColor:'black'}}>
+                    <SearchBar
+                        placeholder="   검색어를 입력해주세요"
+                        onChangeText={this.updateSearch}
+                        value={search}
+                        onSubmitEditing={this.searchPost}
+                        lightTheme
+                        inputContainerStyle={{backgroundColor:'#edffff', borderRadius:15}}
+                        containerStyle={{width:'85%', borderRadius:10, backgroundColor:'#ffffff'}}
+                    />
+                    <TouchableOpacity onPress={()=>this.filterOption()}
+                                      style={{alignItems:'center'}}>
+                        <Icon name="options-outline"  size={60} color="#A8A8A8" />
+                    </TouchableOpacity>
+                </View>
+
                 <FlatList
                     data={this.state.data}
                     keyExtractor={(item,index) => String(item._id)}
@@ -185,7 +190,7 @@ export default class HomeScreen extends Component{
             </View>
                 <TouchableOpacity onPress={()=>this.props.navigation.navigate('MakePost',{onGoBack: ()=>this.refreshPage()})}
                                   style={{borderWidth:0,position:'absolute',bottom:5,alignSelf:'flex-end'}}>
-                    <Icon name="add-circle"  size={80} color="#01a699" />
+                    <Icon name="add-circle"  size={70} color="#37CEFF" />
                 </TouchableOpacity>
 
             </View>
@@ -196,21 +201,21 @@ export default class HomeScreen extends Component{
 
 const styles = StyleSheet.create({
     image:{
-        width: wp(30),
+        width: wp(28),
         overflow:"hidden",
-        height: hp(30),
+        height: hp(28),
         aspectRatio: 1,
         borderRadius: 9,
-        marginRight:10
+        marginRight:12
     },
     post:{
         flexDirection: "row",
-
-        backgroundColor: "#f6faff",
-        borderBottomColor: "#3ac2ff",
-        borderBottomWidth: 2,
+        borderRadius: 15,
+        backgroundColor: "white",
+        borderBottomColor: "#a6e5ff",
+        borderBottomWidth: 1,
         padding: 10,
-        height: 145
+        height: 136
     },
     cover:{
         flex: 1,
@@ -225,8 +230,8 @@ const styles = StyleSheet.create({
         alignSelf : "center",
         padding:20
     },
-    postTitle:{fontSize:18, fontWeight: "bold", width:280, height:80, paddingTop:5},
-    postAddressTime: {fontSize:13, textAlign:'right', width:250, marginRight:10},
-    postPrice: {fontSize:17}
+    postTitle:{fontSize:18, fontWeight: "bold", width:280, height:80, paddingTop:9},
+    postAddressTime: {fontSize:13, textAlign:'right', width:'30%', marginRight:10},
+    postPrice: {width:'50%',fontSize:17 , color:"#0088ff" ,paddingTop: 9}
 
 });
