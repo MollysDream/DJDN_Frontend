@@ -39,7 +39,7 @@ const AroundSetScreen = ({navigation}) => {
         ]
     });
 
-
+    const [isLoading, setIsLoading] = useState(false);
     //navermap에서 보여줄 초기 위치
     const [P1, setP1] = useState({latitude: 37.564362, longitude: 126.977011})
     //반경 저장
@@ -87,6 +87,8 @@ const AroundSetScreen = ({navigation}) => {
     const isFocused = useIsFocused();
     useEffect( ()=>{
         async function refreshData(){
+            setIsLoading(true);
+            console.log("***********************************useEffect 불림********************");
             let userId = await AsyncStorage.getItem('user_id');
             setUserId(userId);
 
@@ -120,6 +122,7 @@ const AroundSetScreen = ({navigation}) => {
 
                 setRadius(userRadius);
                 setDistance(userRadius);
+                setIsLoading(false);
                 return;
             }
 
@@ -158,6 +161,7 @@ const AroundSetScreen = ({navigation}) => {
 
             setRadius(userRadius);
             setDistance(userRadius);
+            setIsLoading(false);
         }
 
         let result = refreshData();
@@ -295,7 +299,15 @@ const AroundSetScreen = ({navigation}) => {
     function blockSelect(addressFull){
         if(addressFull.isAuth==false){
             Alert.alert("선택 실패","동네 인증을 해주세요.",[
-                {text:'확인', style:'cancel'}
+                {text:'확인', style:'cancel',
+                onPress:()=>{
+                    navigation.navigate('aroundCertify',{
+                    chosenAddress:addressFull.addressName,
+                    addressIndex: addressFull.addressIndex,
+                    userId: userId
+                })}
+                },
+
             ])
             return 1;
         }
@@ -327,15 +339,15 @@ const AroundSetScreen = ({navigation}) => {
       navigation.navigate('aroundAdd',{chooseIndex: 2, userId:userId});
     };
 
-    //동네 선택 및 인증
-    const chooseAddressOneButton = (value) => {
+    //동네 인증
+    const chooseAddressOneButton = () => {
       navigation.navigate('aroundCertify',{
         chosenAddress:address1,
           addressIndex: 1,
           userId: userId
       })
     }
-    const chooseAddressTwoButton = (value) => {
+    const chooseAddressTwoButton = () => {
       navigation.navigate('aroundCertify',{
         chosenAddress:address2,
           addressIndex: 2,
@@ -346,6 +358,7 @@ const AroundSetScreen = ({navigation}) => {
 
     return (
         <View style={styles.container}>
+            {isLoading ? (<Text>Loading...</Text>):null}
             <View style={styles.topArea}>
                 <Text style={{paddingTop:10}}><B>동네 선택</B></Text>
                 <Text style={{paddingBottom:25}}>지역은 최소 1개 이상 최대 2개까지 저장 가능해요.</Text>
@@ -355,23 +368,19 @@ const AroundSetScreen = ({navigation}) => {
               {address1 !=''?(
                     <View style={styles.btnArea2}>
                       {chooseState1 !=''?(
-                      <TouchableOpacity onPress={chooseAddressOneButton} style={styles.btnAroundChoose}>
+                      <TouchableOpacity onPress={()=>console.log("이미 선택됨")} style={styles.btnAroundChoose}>
                         <Text style={(styles.Text, {color: 'white'})}>{address1}</Text>
                       
-                        <TouchableOpacity onPress={addressOneSelectButton} style={styles.btn}>
-                          <Text style={{paddingLeft:20}}>⭕</Text>
-                        </TouchableOpacity>
+
                           <TouchableOpacity onPress={addressOneDeleteButton} style={styles.btn}>
                               <Text style={{paddingLeft:20}}>❌</Text>
                           </TouchableOpacity>
                       </TouchableOpacity>
 
-                      ):<TouchableOpacity onPress={chooseAddressOneButton} style={styles.btnAround}>
+                      ):<TouchableOpacity onPress={addressOneSelectButton} style={styles.btnAround}>
                       <Text style={(styles.Text, {color: 'black'})}>{address1}</Text>
 
-                      <TouchableOpacity onPress={addressOneSelectButton} style={styles.btn}>
-                        <Text style={{paddingLeft:20}}>⭕</Text>
-                      </TouchableOpacity>
+
                           <TouchableOpacity onPress={addressOneDeleteButton} style={styles.btn}>
                               <Text style={{paddingLeft:20}}>❌</Text>
                           </TouchableOpacity>
@@ -389,27 +398,24 @@ const AroundSetScreen = ({navigation}) => {
                             fontSize: 15,
                           }}>➕</Text>
                       </TouchableOpacity>
-                    </View>}
+                    </View>
+              }
 
               {address2 !=''?(
                 
                   <View style={styles.btnArea2}>
                   {chooseState2 !=''?(
-                  <TouchableOpacity onPress={chooseAddressTwoButton} style={styles.btnAroundChoose}>
+                  <TouchableOpacity onPress={()=>console.log("이미 선택됨")} style={styles.btnAroundChoose}>
                     <Text style={(styles.Text, {color: 'white'})}>{address2}</Text>
-                      <TouchableOpacity onPress={addressTwoSelectButton} style={styles.btn}>
-                          <Text style={{paddingLeft:20}}>⭕</Text>
-                      </TouchableOpacity>
+
                     <TouchableOpacity onPress={addressTwoDeleteButton} style={styles.btn}>
                       <Text style={{paddingLeft:20}}>❌</Text>
                     </TouchableOpacity>
                   </TouchableOpacity>
                       ):
-                      <TouchableOpacity onPress={chooseAddressTwoButton} style={styles.btnAround}>
+                      <TouchableOpacity onPress={addressTwoSelectButton} style={styles.btnAround}>
                   <Text style={(styles.Text, {color: 'black'})}>{address2}</Text>
-                          <TouchableOpacity onPress={addressTwoSelectButton} style={styles.btn}>
-                              <Text style={{paddingLeft:20}}>⭕</Text>
-                          </TouchableOpacity>
+
                   <TouchableOpacity onPress={addressTwoDeleteButton} style={styles.btn}>
                     <Text style={{paddingLeft:20}}>❌</Text>
                   </TouchableOpacity>
@@ -426,7 +432,8 @@ const AroundSetScreen = ({navigation}) => {
                       fontSize: 15,
                     }}>➕</Text>
                 </TouchableOpacity>
-              </View>}
+              </View>
+              }
             </View>
 
             <View

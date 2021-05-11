@@ -38,14 +38,21 @@ export default class HomeScreen extends Component{
 
     async componentDidMount() {
         //console.log("홈스크린 componentDidMount");
-        const userId = await AsyncStorage.getItem('user_id');
-        this.setState({userId:userId})
-        const postData = await request.getPost(this.state.page, userId);
-        
-        this.setState({
-            data: this.state.data.concat(postData),
-            page : this.state.page + 1
-        });
+        try{
+            const userId = await AsyncStorage.getItem('user_id');
+            this.setState({userId:userId})
+            const postData = await request.getPost(this.state.page, userId);
+
+            this.setState({
+                data: this.state.data.concat(postData),
+                page : this.state.page + 1
+            });
+
+        }catch(err){
+            console.log("DB에러")
+            console.log(err);
+        }
+
     }
 
     morePage = async() => {

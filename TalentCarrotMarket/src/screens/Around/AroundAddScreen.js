@@ -25,10 +25,12 @@ const AroundAddScreen = ({navigation,route}) => {
     const [aroundAddress,setAroundAddress]= useState('');
 
     const [chosenAddress, setChosenAddress] = useState('');
+    const [geoAddress, setGeoAddress] = useState('');
     const userId=route.params.userId;
 
     const addAddressButton = () =>{
-        Geolocation.getCurrentPosition(
+        setChosenAddress(geoAddress);
+        /*Geolocation.getCurrentPosition(
             position =>{
                 const {latitude,longitude}=position.coords;
 
@@ -51,15 +53,43 @@ const AroundAddScreen = ({navigation,route}) => {
             },
             error => {console.log(error.code,error.message)},
             { enableHighAccuracy:true, timeout: 20000, maximumAge:1000},
-        );
+        );*/
+
     }
+
+    useEffect(() =>{
+        Geolocation.getCurrentPosition(
+            position =>{
+                const {latitude,longitude}=position.coords;
+
+                const send_param = {
+                    currentX: longitude,
+                    currentY: latitude
+                }
+
+                axios
+                    .post("http://10.0.2.2:3000/address/currentLocation", send_param)
+                    //정상 수행
+                    .then(returnData => {
+                        console.log(returnData.data);
+                        setGeoAddress(returnData.data.address)
+                    })
+                    //에러
+                    .catch(err => {
+                        console.log(err);
+                    });
+            },
+            error => {console.log(error.code,error.message)},
+            { enableHighAccuracy:true, timeout: 20000, maximumAge:1000},
+        );
+    },[]);
 
     const selectByPostcode = (data)=>{
         //console.log(data.bname);
         setChosenAddress(data.bname);
 
-        Alert.alert("동네 검색 완료", `${data.bname}으로 동네 선택함`,
-            [{ text: '확인', style: 'cancel'}])
+        /*Alert.alert("동네 검색 완료", `${data.bname}으로 동네 선택함`,
+            [{ text: '확인', style: 'cancel'}])*/
     }
 
     const saveChosenAddress = async() =>{
@@ -67,18 +97,27 @@ const AroundAddScreen = ({navigation,route}) => {
         //let userId = await AsyncStorage.getItem('user_id');
         let result = await requestAddressAPI.createAddress(userId, chosenAddress, chooseIndex);
 
-        Alert.alert("동네 저장 완료", `${chosenAddress}으로 동네 저장함`,
+        navigation.navigate('aroundCertify',{
+            chosenAddress:chosenAddress,
+            addressIndex: chooseIndex,
+            userId: userId
+        })
+       /* Alert.alert("동네 저장 완료", `${chosenAddress}으로 동네 저장함`,
             [{ text: '확인', style: 'cancel',
             onPress:()=>{
-                navigation.goBack();
-            }}])
+                navigation.navigate('aroundCertify',{
+                    chosenAddress:chosenAddress,
+                    addressIndex: chooseIndex,
+                    userId: userId
+                })
+            }}])*/
     }
 
     return (
         <View style={styles.container}>
             {
                 chosenAddress == ''? null:
-                    <Button title={chosenAddress} onPress={()=>saveChosenAddress()}/>
+                    <Button title={`${chosenAddress} 인증하기`} onPress={()=>saveChosenAddress()}/>
             }
           <View style={styles.btnArea}>
             <TouchableOpacity style={styles.btnAround} onPress={addAddressButton}>
