@@ -27,7 +27,7 @@ function getDate(date){
     if(parseInt(HM[1]) != parseInt(minutes))
         ret = String(minutes- HM[1])+'분 전';
     if((parseInt(HM[0])+9)%24 != parseInt(hour))
-        ret = String(hour - HM[0] - 9)+'시간 전';
+        ret = String(hour - (parseInt(HM[0])+9)%24)+'시간 전';
     if((parseInt(HM[0])+9)>=24)
         YMD[2] = parseInt(YMD[2]) + 1;
     if(YMD[2] != day)

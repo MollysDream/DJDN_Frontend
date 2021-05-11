@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {
     View,
     Text,
-    StyleSheet, Image, FlatList, TouchableOpacity, TouchableWithoutFeedback, KeyboardAvoidingView, ScrollView
+    StyleSheet, Image, TouchableOpacity, TouchableWithoutFeedback, Modal, TouchableHighlight
 } from 'react-native';
 import {
     widthPercentageToDP as wp,
@@ -11,8 +11,10 @@ import {
 import request from "../../requestAPI";
 import {Container, Content, Form, Header, Input, Item, Label, Left, Right, Textarea} from "native-base";
 import requestUser from "../../requestUserAPI";
-import {FlatListSlider} from 'react-native-flatlist-slider';
+import { SliderBox } from "react-native-image-slider-box";
 import AsyncStorage from "@react-native-community/async-storage";
+import {getDate, getPrice} from "../../function";
+
 
 
 export default class SearchPostScreen extends Component{
@@ -21,7 +23,9 @@ export default class SearchPostScreen extends Component{
         this.state = {
             detailPost:this.props.route.params.detailPost,
             postOwner:this.props.route.params.postOwner,
-            postImages:this.props.route.params.postImages
+            postImages:this.props.route.params.detailPost.image,
+            modalVisible:false,
+            modalImage:0
         }
     }
 
@@ -42,81 +46,96 @@ export default class SearchPostScreen extends Component{
 
     }
 
+    onImagePress(index){
+        this.setState({
+            modalVisible:true,
+            modalImage:index
+        })
+    }
+
 
     render(){
         const item = this.state.detailPost;
         var slice_date = item.date.split("T");
         const postOwner = this.state.postOwner;
         const images = this.state.postImages;
+        let time = getDate(item.date);
+        let price = getPrice(item.price);
         //console.log(slice_date);
         return (
             <Container>
                 <TouchableWithoutFeedback >
-                    <KeyboardAvoidingView>
-                        <ScrollView style={{ marginTop : '3%' }}>
-                            <Container>
-                                <Content>
-                                   
-                                <Item >
-                                    <View>
-                                        <FlatListSlider
-                                            data={images}
-                                            width={275}
-                                            autoscroll={false}
-                                            onPress={(item) => console.log(item)}
-                                            indicatorActiveWidth={15}
-                                            contentContainerStyle={{paddingHorizontal: 16}}
-                                            separatorWidth={16}
-                                            loop={false}
+                    <Container>
+                        <Content>
+                            <Modal animationType={"fade"} transparent={false}
+                                   visible={this.state.modalVisible}
+                                   onRequestClose={() => { console.log("Modal has been closed.") }}>
+                                <View style={styles.modal}>
+                                    <TouchableHighlight onPress={() => { this.setState({modalVisible:false}) }}>
+                                        <Image
+                                            style={{ width: '100%', height: '100%', resizeMode:"contain" }}
+                                            source={{ uri: images[this.state.modalImage] }}
                                         />
-                                    </View>
-                                </Item>
-                                <Item >
-                                    <Text style={{fontSize:15, marginBottom : "3%", marginTop : "3%" ,marginLeft : "3%"}}>
-                                        {`${postOwner.nickname}`}
-                                        </Text>
-                                </Item>
-                              
-                                    <Text style={{fontSize:20, fontWeight : 'bold', marginLeft : '3%', marginTop : '3%',  marginBottom : '3%'}}>
-                                      {`${item.title}`}
-                                    </Text>
-                                    
-                                <Item >
-                                    <View>
-                                        <Text style={{fontSize:15, color : "grey",marginBottom : '2%', marginLeft : "3%"}}>
-                                            {`  ${item.category}`}
-                                            {"    "}
-                                            {slice_date[0]}
-                                        </Text>
-                                    </View>
-                                </Item>
-                                <Item >
-                                   
-                                        <Text style={{fontSize:15, marginTop : '7%',marginBottom : '20%', marginLeft : '3%'}}>
-                                            {`${item.text}`}
-                                        </Text>
-                                </Item>
-                                <Item >
-                                    <Left>
-                                        <Text style={{fontSize: 15 , marginLeft : "3%",marginTop : '10%',marginBottom : '10%'}}>
-                                        {`  가격 ${item.price}`}
-                                        </Text>
-                                    </Left>
-                                    <Right>
-                                    <Text style={{fontSize:15, color : "grey", marginRight : "10%", marginTop : "10%",marginBottom : '10%'}}>
-                                            {`조회수: ${item.view + 1}`}
-                                    </Text>
-                                    </Right>
-                                </Item>    
-                                <View style={styles.btnArea2} >
-                                    <TouchableOpacity style={styles.btn2} onPress={() => this.props.navigation.navigate('chat',{postOwner,item})}>
-                                        <Text style={(styles.Text, {color: 'white'})}>채팅</Text>
-                                    </TouchableOpacity>
+                                    </TouchableHighlight>
                                 </View>
-                                </Content>
-                            </Container>
-                        </ScrollView>
-                    </KeyboardAvoidingView>
+                            </Modal>
+
+                            <Item >
+                                <View>
+                                    <SliderBox
+                                        images={images}
+                                        sliderBoxHeight={350}
+                                        onCurrentImagePressed={index => this.onImagePress(index)}
+                                        dotColor="#3AC2FF"
+                                        inactiveDotColor="#d2f0ff"
+                                        ImageComponentStyle={{borderRadius: 15, width: '100%'}}
+                                    />
+                                </View>
+                            </Item>
+                            <Item >
+                                <Text style={{fontSize:15, marginBottom : "3%", marginTop : "3%" ,marginLeft : "3%"}}>
+                                    {`${item.addressName}의 ${postOwner.nickname}님`}
+                                </Text>
+                            </Item>
+
+                            <Text style={{fontSize:20, fontWeight : 'bold', marginLeft : '3%', marginTop : '3%',  marginBottom : '3%'}}>
+                                {`${item.title}`}
+                            </Text>
+
+                            <Item >
+                                <View>
+                                    <Text style={{fontSize:15, color : "grey",marginBottom : '2%', marginLeft : "3%"}}>
+                                        {`  ${item.category}`}
+                                        {"  ◦ "}
+                                        {time}
+                                    </Text>
+                                </View>
+                            </Item>
+                            <Item >
+
+                                <Text style={{fontSize:16, marginTop : '7%',marginBottom : '20%', marginLeft : '3%'}}>
+                                    {`${item.text}`}
+                                </Text>
+                            </Item>
+                            <Item >
+                                <Left>
+                                    <Text style={{fontSize: 15 , marginLeft : "3%",marginTop : '10%',marginBottom : '10%'}}>
+                                        {`  가격: ${price}원`}
+                                    </Text>
+                                </Left>
+                                <Right>
+                                    <Text style={{fontSize:15, color : "grey", marginRight : "10%", marginTop : "10%",marginBottom : '10%'}}>
+                                        {`조회수: ${item.view + 1}`}
+                                    </Text>
+                                </Right>
+                            </Item>
+                            <View style={styles.btnArea2} >
+                                <TouchableOpacity style={styles.btn2} onPress={() => this.props.navigation.navigate('chat',{postOwner,item})}>
+                                    <Text style={(styles.Text, {color: 'white'})}>채팅</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </Content>
+                    </Container>
                 </TouchableWithoutFeedback>
             </Container>
 
@@ -126,6 +145,10 @@ export default class SearchPostScreen extends Component{
 }
 
 const styles = StyleSheet.create({
+    sliderImage:{
+        paddingHorizontal: 15,
+
+    },
     post:{
         flexDirection: "row",
         alignItems : "center",
@@ -165,8 +188,14 @@ const styles = StyleSheet.create({
         alignSelf : "center",
         padding:20
     },
-    postTitle:{fontSize:18, fontWeight: "bold", paddingLeft : 5},
-    postTime: {fontSize:13},
-    postPrice: {fontSize:13}
+    postTitle:{fontSize:18, fontWeight: "bold", width:280, height:80},
+    postAddressTime: {fontSize:13, textAlign:'right', width:250, marginRight:10},
+    postPrice: {fontSize:17},
+
+    modal: {
+        backgroundColor: '#000000',
+        justifyContent: 'center',
+    },
+
 
 });
