@@ -339,7 +339,7 @@ const AroundSetScreen = ({navigation}) => {
       navigation.navigate('aroundAdd',{chooseIndex: 2, userId:userId});
     };
 
-    //동네 인증
+    /*//동네 인증
     const chooseAddressOneButton = () => {
       navigation.navigate('aroundCertify',{
         chosenAddress:address1,
@@ -353,7 +353,7 @@ const AroundSetScreen = ({navigation}) => {
           addressIndex: 2,
           userId: userId
       })
-    }
+    }*/
 
 
     return (
