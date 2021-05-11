@@ -73,7 +73,7 @@ const AroundCertifyScreen = ({navigation,route}) => {
           error => {console.log(error.code,error.message)},
           { enableHighAccuracy:true, timeout: 20000, maximumAge:1000},
         );
-      },[]);
+      },[P0]);
     
 
     //현재 위치로 동네 변경
