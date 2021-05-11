@@ -75,17 +75,6 @@ export default class MakePostScreen extends Component {
     }
 
 
-    getFormatDate(date){
-        let year = date.getFullYear();
-        let month = (1 + date.getMonth());
-        month = month >= 10 ? month: '0' + month;
-        let day = date.getDate();
-        day = day >= 10 ? day : '0' + day;
-        let hour = date.getHours();
-        let minutes = date.getMinutes();
-        return `${year}-${month}-${day}-${hour}-${minutes}`
-    }
-
     writePost = (text, type)=>{
 
 
@@ -240,10 +229,10 @@ export default class MakePostScreen extends Component {
                                             onValueChange={(value) => this.setState({category:value})}
                                             placeholder='카테고리'
                                         >
-                                            <PickerItem color={'grey'} label={'카테고리 선택'} value={''}/>
+                                            <Picker.Item color={'grey'} label={'카테고리 선택'} value={''}/>
                                             {
                                                 this.state.categoryList.map((category, key)=>(
-                                                <PickerItem label={category} value={category} key={key}/>
+                                                <Picker.Item label={category} value={category} key={key}/>
                                                 ))
 
                                             }
