@@ -25,10 +25,12 @@ const AroundAddScreen = ({navigation,route}) => {
     const [aroundAddress,setAroundAddress]= useState('');
 
     const [chosenAddress, setChosenAddress] = useState('');
+    const [geoAddress, setGeoAddress] = useState('');
     const userId=route.params.userId;
 
     const addAddressButton = () =>{
-        Geolocation.getCurrentPosition(
+        setChosenAddress(geoAddress);
+        /*Geolocation.getCurrentPosition(
             position =>{
                 const {latitude,longitude}=position.coords;
 
@@ -51,8 +53,36 @@ const AroundAddScreen = ({navigation,route}) => {
             },
             error => {console.log(error.code,error.message)},
             { enableHighAccuracy:true, timeout: 20000, maximumAge:1000},
-        );
+        );*/
+
     }
+
+    useEffect(() =>{
+        Geolocation.getCurrentPosition(
+            position =>{
+                const {latitude,longitude}=position.coords;
+
+                const send_param = {
+                    currentX: longitude,
+                    currentY: latitude
+                }
+
+                axios
+                    .post("http://10.0.2.2:3000/address/currentLocation", send_param)
+                    //정상 수행
+                    .then(returnData => {
+                        console.log(returnData.data);
+                        setGeoAddress(returnData.data.address)
+                    })
+                    //에러
+                    .catch(err => {
+                        console.log(err);
+                    });
+            },
+            error => {console.log(error.code,error.message)},
+            { enableHighAccuracy:true, timeout: 20000, maximumAge:1000},
+        );
+    },[]);
 
     const selectByPostcode = (data)=>{
         //console.log(data.bname);

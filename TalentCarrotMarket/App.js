@@ -102,7 +102,7 @@ const TalentStackScreen = () => {
 const AroundStackScreen = () => {
   return (
     <Stack.Navigator>
-      <AroundStack.Screen name="around" component={aroundScreen} />
+      {/*<AroundStack.Screen name="around" component={aroundScreen} />*/}
       <AroundStack.Screen name="aroundSet" component={aroundSetScreen} />
       <AroundStack.Screen name="aroundAdd" component={aroundAddScreen} />
       <AroundStack.Screen name="aroundCertify" component={aroundCertifyScreen} />
