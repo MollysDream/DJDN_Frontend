@@ -19,7 +19,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import request from '../../requestAPI';
 import requestUser from "../../requestUserAPI";
 import AsyncStorage from '@react-native-community/async-storage';
-
+import {getDate, getPrice} from '../../function';
 
 export default class HomeScreen extends Component{
 
@@ -67,17 +67,22 @@ export default class HomeScreen extends Component{
 
     refreshPage = async() => {
         console.log('페이지 새로고침');
+        try{
+            this.state.page = 0;
+            this.setState({page:this.state.page, refreshing: true});
 
-        this.state.page = 0;
-        this.setState({page:this.state.page, refreshing: true});
+            const postData = await request.getPost(this.state.page, this.state.userId);
+            this.setState({
+                data: postData,
+                page : this.state.page + 1,
+                rerender: !this.state.rerender,
+                refreshing: false
+            });
+        }catch(err){
+            console.log("DB에러")
+            console.log(err);
+        }
 
-        const postData = await request.getPost(this.state.page, this.state.userId);
-        this.setState({
-            data: postData,
-            page : this.state.page + 1,
-            rerender: !this.state.rerender,
-            refreshing: false
-        });
     }
 
     updateSearch = (search) =>{
@@ -92,14 +97,6 @@ export default class HomeScreen extends Component{
 
     async goToDetailPostScreen(item){
         console.log(`${item.title} 게시글 확인`);
-        const postImages = []
-        item.image.map((image)=>{
-            let temp={
-                image:image,
-                desc:image,
-            }
-            postImages.push(temp);
-        })
 
         let userData
         try{
@@ -112,15 +109,23 @@ export default class HomeScreen extends Component{
         }
 
 
-        this.props.navigation.navigate('DetailPost',{detailPost: item, postImages: postImages, postOwner: userData});
+        this.props.navigation.navigate('DetailPost',{detailPost: item, postOwner: userData});
     }
 
     returnFlatListItem(item,index){
+        let time = getDate(item.date);
+        let price = getPrice(item.price);
         return(
             <TouchableHighlight onPress={() => this.goToDetailPostScreen(item)}>
                 <View style={styles.post}>
-                    <Image style={{width: wp(30), height: hp(30),resizeMode: 'contain'}} source={{ uri: item.image[0]}} />
-                    <Text  style={styles.postTitle}>{item.title}</Text>
+                    <Image style={styles.image} source={{ uri: item.image[0]}} />
+                    <View>
+                        <Text style={styles.postTitle}>{item.title}</Text>
+                        <View style={{flexDirection:'row'}}>
+                            <Text style={styles.postPrice}>{`${price}원`}</Text>
+                            <Text style={styles.postAddressTime}>{`${item.addressName}\n${time}`}</Text>
+                        </View>
+                    </View>
                 </View>
             </TouchableHighlight>
 
@@ -154,22 +159,25 @@ export default class HomeScreen extends Component{
     render() {
         const {search} = this.state;
         return (
-            <View style={{flex:1}}>
-            <View style={{flex:1}} >
-                {/*<Button
-                    onPress={this.categoryFilter}
-                    title="카테고리 검색"
-                />*/}
-                <Button
-                    title={"필터 설정"}
-                    onPress={this.filterOption}
-                />
-                <SearchBar
-                    placeholder="   검색어를 입력해주세요"
-                    onChangeText={this.updateSearch}
-                    value={search}
-                    onSubmitEditing={this.searchPost}
-                />
+            <View style={{flex:1, backgroundColor:'white'}}>
+            <View style={{flex:1, backgroundColor:'white'}} >
+
+                <View style={{flexDirection:'row', backgroundColor:'white' ,borderColor:'black'}}>
+                    <SearchBar
+                        placeholder="   검색어를 입력해주세요"
+                        onChangeText={this.updateSearch}
+                        value={search}
+                        onSubmitEditing={this.searchPost}
+                        lightTheme
+                        inputContainerStyle={{backgroundColor:'#edffff', borderRadius:15}}
+                        containerStyle={{width:'85%', borderRadius:10, backgroundColor:'#ffffff'}}
+                    />
+                    <TouchableOpacity onPress={()=>this.filterOption()}
+                                      style={{alignItems:'center'}}>
+                        <Icon name="options-outline"  size={60} color="#A8A8A8" />
+                    </TouchableOpacity>
+                </View>
+
                 <FlatList
                     data={this.state.data}
                     keyExtractor={(item,index) => String(item._id)}
@@ -183,7 +191,7 @@ export default class HomeScreen extends Component{
             </View>
                 <TouchableOpacity onPress={()=>this.props.navigation.navigate('MakePost',{onGoBack: ()=>this.refreshPage()})}
                                   style={{borderWidth:0,position:'absolute',bottom:5,alignSelf:'flex-end'}}>
-                    <Icon name="add-circle"  size={80} color="#01a699" />
+                    <Icon name="add-circle"  size={70} color="#37CEFF" />
                 </TouchableOpacity>
 
             </View>
@@ -193,14 +201,22 @@ export default class HomeScreen extends Component{
 
 
 const styles = StyleSheet.create({
+    image:{
+        width: wp(28),
+        overflow:"hidden",
+        height: hp(28),
+        aspectRatio: 1,
+        borderRadius: 9,
+        marginRight:12
+    },
     post:{
         flexDirection: "row",
-        alignItems : "center",
-        backgroundColor: "#FFFFFF",
-        borderBottomColor: "#AAAAAA",
+        borderRadius: 15,
+        backgroundColor: "white",
+        borderBottomColor: "#a6e5ff",
         borderBottomWidth: 1,
-        padding: 5,
-        height: 150
+        padding: 10,
+        height: 136
     },
     cover:{
         flex: 1,
@@ -215,8 +231,8 @@ const styles = StyleSheet.create({
         alignSelf : "center",
         padding:20
     },
-    postTitle:{fontSize:18, fontWeight: "bold", paddingLeft : 5},
-    postTime: {fontSize:13},
-    postPrice: {fontSize:13}
+    postTitle:{fontSize:18, fontWeight: "bold", width:280, height:80, paddingTop:9},
+    postAddressTime: {fontSize:13, textAlign:'right', width:'30%', marginRight:10},
+    postPrice: {width:'50%',fontSize:17 , color:"#0088ff" ,paddingTop: 9}
 
 });

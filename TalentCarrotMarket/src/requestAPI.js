@@ -28,15 +28,17 @@ export async function getPost(page, userId){
 }
 // chat 내용 조회
 export async function getChat(chatRoomId){
-    console.log("getpre");
+    console.log("getChat, requestAPI, 채팅로그 불러오는거");
     const preData = await axi.get("/chat/getChat", {params : {chatRoomId : chatRoomId}});
     //console.log(postData.data);
     return preData.data;
 }
 // chatroom 조회
 export async function getChatRoom(){
-    console.log("getroom");
-    const roomData = await axi.get("/chat/getChatRoom");
+
+    console.log("getroom, requestAPI, room정보 불러오는거");
+    const preData = await axi.get("/chat/getChatRoom");
+
     //console.log(postData.data);
     return roomData.data;
 }

@@ -11,6 +11,7 @@ import {
 import {SearchBar} from 'react-native-elements';
 import request from "../../requestAPI";
 import requestUser from "../../requestUserAPI";
+import {getDate, getPrice} from "../../function";
 
 export default class SearchPostScreen extends Component{
     constructor(props) {
@@ -67,11 +68,17 @@ export default class SearchPostScreen extends Component{
     }
 
     returnFlatListItem(item,index){
+        let time = getDate(item.date);
+        let price = getPrice(item.price);
         return(
             <TouchableHighlight onPress={() => this.goToDetailPostScreen(item)}>
                 <View style={styles.post}>
-                    <Image style={{width: wp(30), height: hp(30),resizeMode: 'contain'}} source={{ uri: item.image[0]}} />
-                    <Text  style={styles.postTitle}>{item.title}</Text>
+                    <Image style={styles.image} source={{ uri: item.image[0]}} />
+                    <View>
+                        <Text style={styles.postTitle}>{item.title}</Text>
+                        <Text style={styles.postPrice}>{`${price}원`}</Text>
+                        <Text style={styles.postAddressTime}>{`${item.addressName} ◦ ${time}`}</Text>
+                    </View>
                 </View>
             </TouchableHighlight>
 
@@ -105,14 +112,22 @@ export default class SearchPostScreen extends Component{
 }
 
 const styles = StyleSheet.create({
+    image:{
+        width: wp(30),
+        overflow:"hidden",
+        height: hp(30),
+        aspectRatio: 1,
+        borderRadius: 9,
+        marginRight:10
+    },
     post:{
         flexDirection: "row",
-        alignItems : "center",
-        backgroundColor: "#FFFFFF",
-        borderBottomColor: "#AAAAAA",
-        borderBottomWidth: 1,
-        padding: 5,
-        height: 150
+
+        backgroundColor: "#f6faff",
+        borderBottomColor: "#d2f0ff",
+        borderBottomWidth: 2,
+        padding: 10,
+        height: 145
     },
     cover:{
         flex: 1,
@@ -127,8 +142,8 @@ const styles = StyleSheet.create({
         alignSelf : "center",
         padding:20
     },
-    postTitle:{fontSize:18, fontWeight: "bold", paddingLeft : 5},
-    postTime: {fontSize:13},
-    postPrice: {fontSize:13}
+    postTitle:{fontSize:18, fontWeight: "bold", width:280, height:80, paddingTop:5},
+    postAddressTime: {fontSize:13, textAlign:'right', width:250, marginRight:10},
+    postPrice: {fontSize:17}
 
 });
