@@ -111,7 +111,7 @@ const TradeSetScreen =({navigation})=>{
           .catch(err => {
             console.log(err);
           });
-      },[currentLocation])
+      },[])
       
       const locationHandler = (e) => {
         
@@ -163,7 +163,7 @@ const TradeSetScreen =({navigation})=>{
       const startSet = formatDate(startDate,startTime)
       const endSet = formatDate(endDate,endTime)
       const sendEndSet = sendFormatDate(endDate,endTime)
-      var endDate = parse(sendEndSet);
+      var sendEndDate = parse(sendEndSet);
 
       const entireLocate = locate + detailLocate;
 
@@ -182,9 +182,11 @@ const TradeSetScreen =({navigation})=>{
           if (returnData.data.message) {
             console.log("거래 장소 및 시간 설정 완료")
             setIsSave(true)
+            console.log("거래"+returnData.data.tradeId)
+
             navigation.navigate('tradeTimer',{
               tradeId: returnData.data.tradeId,
-              endDate: endDate
+              endSet: sendEndDate
             })
           } else {
             console.log('거래 장소 및 시간 설정 실패');

@@ -15,7 +15,21 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
-function ChatChScreen({navigation}) {
+const ChatChScreen = ({navigation}) => {
+
+  const buttons = [
+    {
+        color: '#4672B8',
+        content: <View>
+            <Text>
+                ⌚ 🗺️</Text>
+            <Text>시간 장소</Text>
+        </View>,
+        action: () => {
+          navigation.navigate('tradeset')
+        }
+    }
+];
 
   
       return (
