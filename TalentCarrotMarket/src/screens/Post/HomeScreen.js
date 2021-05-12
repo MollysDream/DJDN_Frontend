@@ -146,9 +146,9 @@ export default class HomeScreen extends Component{
     filterOption = async () =>{
         console.log('필터 옵션 설정!!')
 
-        const userId = await AsyncStorage.getItem('user_id');
+        //const userId = await AsyncStorage.getItem('user_id');
         //user_id 값으로 사용자 정보 받아와야 됨
-        const userData = await requestUser.getUserData(userId);
+        const userData = await requestUser.getUserData(this.state.userId);
 
         this.props.navigation.navigate('FilterOption',{
             userData:userData,
