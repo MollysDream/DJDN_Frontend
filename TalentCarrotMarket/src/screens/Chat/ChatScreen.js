@@ -26,10 +26,29 @@ function ChatScreen(props) {
     const [postId, setpostid] = useState(props.route.params.item._id);
     const [currentUserId, setCurrentUserId] = useState("");
 
+
+    const buttons = [
+        {
+            color: '#4672B8',
+            content: <View>
+                <Text>
+                    ⌚ 🗺️</Text>
+                <Text>시간 장소</Text>
+            </View>,
+            action: () => {
+                props
+                    .navigation
+                    .navigate('tradeset')
+            }
+        }
+    ];
+    
+
     useEffect(() => {
       loadingUserId();
       // console.log("첫번쨰 useEffect, hostId!! "+hostId);
       // console.log("첫번쨰 useEffect, currentUserId!! "+currentUserId);
+
     }, []);
 
     useEffect(() => {
@@ -42,11 +61,14 @@ function ChatScreen(props) {
 
             const roomData = await request.getChatRoom();
             await Room(roomData);
+
             const preData = await request.getChat(chatRoomId);
             checkChat(preData);
 
-          return() => {
-                socket.emit('leaveRoom', 'room1');
+
+            return() => {
+                socket.emit('leaveRoom', chatRoomId);
+
                 socket.disconnect();
             };
         }
