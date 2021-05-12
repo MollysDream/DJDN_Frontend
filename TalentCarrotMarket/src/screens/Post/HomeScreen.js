@@ -179,6 +179,7 @@ export default class HomeScreen extends Component{
                     extraData={this.state.rerender}
                     refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.refreshPage} />}
                 />
+                {console.log("이거", this.state.data)}
             </View>
                 <TouchableOpacity onPress={()=>this.props.navigation.navigate('MakePost',{onGoBack: ()=>this.refreshPage()})}
                                   style={{borderWidth:0,position:'absolute',bottom:5,alignSelf:'flex-end'}}>

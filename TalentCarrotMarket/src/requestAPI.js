@@ -36,10 +36,18 @@ export async function getChat(chatRoomId){
 // chatroom 조회
 export async function getChatRoom(){
     console.log("getroom");
-    const preData = await axi.get("/chat/getChatRoom");
+    const roomData = await axi.get("/chat/getChatRoom");
     //console.log(postData.data);
-    return preData.data;
+    return roomData.data;
 }
+// current Id가 포함되어 있는 chatroom 조회
+export async function getChatRoomById(currentUserId){
+    console.log("getroomById : " , currentUserId);
+    const RoomByIdData = await axi.get("/chat/getChatRoomById",{params : {currentUserId : currentUserId}});
+    console.log(RoomByIdData.data);
+    return RoomByIdData.data;
+}
+
 //////////////
 export async function getPostBySearch(search){
     //console.log(search);
@@ -139,5 +147,6 @@ export default{
     updatePost,
     deletePost,
     getChat,
-    getChatRoom
+    getChatRoom,
+    getChatRoomById
 }

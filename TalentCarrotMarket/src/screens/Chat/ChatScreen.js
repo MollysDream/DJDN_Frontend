@@ -43,13 +43,15 @@ function ChatScreen(props) {
             }
         }
     ];
-    useEffect(async () => {
+    useEffect(() => {
+        function loadingUserId(){
         AsyncStorage
             .getItem('user_id')
             .then((value) => {
                 sethostId(value);
             });
-    
+        }
+        loadingUserId();
     }, []);
 
     let hostNick = "";
@@ -66,6 +68,7 @@ function ChatScreen(props) {
 
 
             socket = io("http://10.0.2.2:3002");
+            console.log("io 정보", socket);
             socket.emit("searchChatRoom", postOwnerId, postOwnerNick, hostId);
            
             Room(roomData);
@@ -75,7 +78,7 @@ function ChatScreen(props) {
           
 
             return() => {
-                socket.emit('leaveRoom', 'room1');
+                socket.emit('leaveRoom', chatRoomId);
                 socket.disconnect();
             };
         }
