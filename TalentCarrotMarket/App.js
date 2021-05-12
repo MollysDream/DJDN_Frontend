@@ -27,6 +27,7 @@ import filterOptionScreen from './src/screens/Post/FilterOptionScreen';
 
 import detailPostScreen from './src/screens/Post/DetailPostScreen';
 import tradeSetScreen from './src/screens/Chat/TradeSetScreen';
+import reportScreen from './src/screens/Post/ReportScreen'
 
 
 
@@ -83,7 +84,7 @@ const HomeStackScreen = () => {
       <HomeStack.Screen name="DetailPost" component={detailPostScreen}/>
       <HomeStack.Screen name="chat" component={chatScreen} />
       <HomeStack.Screen name="tradeset" component={tradeSetScreen} />
-      
+      <HomeStack.Screen name="Report" component={reportScreen} />
     </Stack.Navigator>
   );
 };

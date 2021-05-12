@@ -17,7 +17,8 @@ import {getDate, getPrice} from "../../function";
 
 
 
-export default class SearchPostScreen extends Component{
+export default class DetailPostScreen extends Component{
+
     constructor(props) {
         super(props);
         this.state = {
@@ -51,6 +52,11 @@ export default class SearchPostScreen extends Component{
             modalVisible:true,
             modalImage:index
         })
+    }
+
+    reportPost(){
+        console.log("신고!!");
+        this.props.navigation.navigate('Report',{detailPost: this.state.detailPost, postOwner: this.state.postOwner});
     }
 
 
@@ -92,10 +98,16 @@ export default class SearchPostScreen extends Component{
                                     />
                                 </View>
                             </Item>
-                            <Item >
+                            <Item style={{flexDirection:'row'}} >
                                 <Text style={{fontSize:15, marginBottom : "3%", marginTop : "3%" ,marginLeft : "3%"}}>
                                     {`${item.addressName}의 ${postOwner.nickname}님`}
                                 </Text>
+                                <View style={styles.btnArea1}>
+                                    <TouchableOpacity style={styles.btn1} onPress={()=>this.reportPost()}>
+                                        <Text>신고</Text>
+                                    </TouchableOpacity>
+                                </View>
+
                             </Item>
 
                             <Text style={{fontSize:20, fontWeight : 'bold', marginLeft : '3%', marginTop : '3%',  marginBottom : '3%'}}>
@@ -158,7 +170,20 @@ const styles = StyleSheet.create({
         padding: 5,
         height: 150,
         width: 150,
-    }, 
+    },
+    btn1: {
+        width: 45,
+        height: 40,
+        borderRadius: 7,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#ffefef',
+    },
+    btnArea1: {
+        flex:1,
+        alignItems: 'flex-end',
+        paddingRight:10
+    },
     btn2: {
         flex: 1,
         width: 300,
@@ -166,7 +191,7 @@ const styles = StyleSheet.create({
         borderRadius: 7,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#4672B8',
+        backgroundColor: '#38b9ff',
       },
     btnArea2: {
         height: hp(10),

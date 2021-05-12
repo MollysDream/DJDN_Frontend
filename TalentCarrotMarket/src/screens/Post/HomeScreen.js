@@ -103,7 +103,7 @@ export default class HomeScreen extends Component{
             userData = await requestUser.getUserData(item.user_id);
         }catch(err){
             console.log('게시글이 존재하지 않습니다');
-            Alert.alert("수정 완료", "게시글이 존재하지 않습니다.",
+            Alert.alert("오류", "게시글이 존재하지 않습니다.",
                 [{ text: '확인', style: 'cancel',
                     onPress : ()=> this.refreshPage()}])
         }
