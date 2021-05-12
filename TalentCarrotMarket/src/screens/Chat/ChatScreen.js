@@ -11,17 +11,7 @@ import request from '../../requestAPI';
 import {AnimatedAbsoluteButton} from 'react-native-animated-absolute-buttons';
 
 let socket;
-let messages;
-let host;
-// let hostId = AsyncStorage.getItem('user_id');
-// let currentUserId = AsyncStorage.getItem('user_id');
-
-
-let currentUser;
-let roomID;
-let chatRoomId;
-let hostNick = "";
-
+let chatRoomId="";
 
 function ChatScreen(props) {
     const [messages, setMessages] = useState([]);
@@ -37,80 +27,32 @@ function ChatScreen(props) {
     const [currentUserId, setCurrentUserId] = useState("");
 
     useEffect(() => {
-    //    async function loadingUserId(){
-    //     AsyncStorage
-    //       .getItem('user_id')
-    //       .then((value) => {
-    //         // if(value == postOwnerId){
-    //         //
-    //         //   console.log("자기자신한테 채팅중!");
-    //         //   console.log("자기자신한테 채팅중!");
-    //         //   console.log("자기자신한테 채팅중!");
-    //         //
-    //         //    let errorMessage = [{
-    //         //
-    //         //      text: '자기 자신에게는 채팅할 수 없습니다.',
-    //         //      createdAt: Date.now(),
-    //         //      user: {
-    //         //        _id: 1
-    //         //      }
-    //         //    }];
-    //         //
-    //         //   return (
-    //         //     <View style={styles.container}>
-    //         //     <GiftedChat
-    //         //       messages={errorMessage}
-    //         //       onSend={(errorMessages) => onSend(errorMessages)}
-    //         //       user={{
-    //         //         _id: 1
-    //         //       }}/>
-    //         //   </View>
-    //         //   )
-    //         // }
-    //         // else{
-    //         sethostId(value);
-    //         setCurrentUserId(value);
-    //         // }
-    //       });
-    //   };
       loadingUserId();
-      console.log("첫번쨰 useEffect, hostId!! "+hostId);
-      console.log("첫번쨰 useEffect, currentUserId!! "+currentUserId);
+      // console.log("첫번쨰 useEffect, hostId!! "+hostId);
+      // console.log("첫번쨰 useEffect, currentUserId!! "+currentUserId);
     }, []);
 
     useEffect(() => {
         async function workBeforeChat() {
-            // host = await requestUser.getUserData(hostId);
-            // currentUser = await requestUser.getUserData(currentUserId);
+          // console.log("workBeforeChat 실행 / 2번쨰 useEffect, hostId!! "+hostId);
+          // console.log("workBeforeChat 실행 / 2번쨰 useEffect, currentUserId!! "+currentUserId);
 
-            // hostNick = host.nickname;
-
-          console.log("workBeforeChat 실행 / 2번쨰 useEffect, hostId!! "+hostId);
-          console.log("workBeforeChat 실행 / 2번쨰 useEffect, currentUserId!! "+currentUserId);
-
-            socket = io("http://10.0.2.2:3002");
+          socket = io("http://10.0.2.2:3002");
           // socket.emit("searchChatRoom", postOwnerId, postOwnerNick, hostId);
 
-
-            //  채팅방 조회 -> 연결 -> 채팅방 존재 여부 확인 -> 해당 채팅방의 채팅기록 가져오기
             const roomData = await request.getChatRoom();
-            Room(roomData);
-
+            await Room(roomData);
             const preData = await request.getChat(chatRoomId);
             checkChat(preData);
 
-
-            return() => {
+          return() => {
                 socket.emit('leaveRoom', 'room1');
                 socket.disconnect();
             };
         }
-
         if(currentUserId){
           workBeforeChat();
-
         }
-
     }, [currentUserId]);
 
     function onSend(newMessages = []) {
@@ -137,9 +79,9 @@ function ChatScreen(props) {
 
         if(data.postOwnerId == postOwnerId && data.hostId == hostId && data.postId == postId ){
           chatRoomId = data._id;
-          console.log("roomData.map에서 찾은 postOwnerId : "+ postOwnerId);
-          console.log("roomData.map에서 찾은 hostId : ", hostId);
-          console.log("roomData.map에서 찾은 currentUserId : ", currentUserId);
+          // console.log("roomData.map에서 찾은 postOwnerId : "+ postOwnerId);
+          // console.log("roomData.map에서 찾은 hostId : ", hostId);
+          // console.log("roomData.map에서 찾은 currentUserId : ", currentUserId);
           console.log("조회중 찾았다! : ", chatRoomId);
           socket.emit('joinRoom', chatRoomId);
           flag = 1;
@@ -167,7 +109,7 @@ function ChatScreen(props) {
       }
     }
 
-    async function checkChat(preData){  //채팅 내용들 중에서 내가 보낸 것, 상대방이 보낸 것 구분
+    function checkChat(preData){  //채팅 내용들 중에서 내가 보낸 것, 상대방이 보낸 것 구분
       if (preData.length != 0) {
         preData.map((data) => {
             if (data.senderId == hostId) {
@@ -208,7 +150,6 @@ function ChatScreen(props) {
         let text = newMessage[0].text;
         let senderId = hostId;
         let roomId = chatRoomId;
-
 
 
         let newChat = {
