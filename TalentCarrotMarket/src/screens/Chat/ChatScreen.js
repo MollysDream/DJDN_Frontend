@@ -198,7 +198,7 @@ function ChatScreen(props) {
                     _id: 1
                 }}/>
 
-            {/* <AnimatedAbsoluteButton
+            <AnimatedAbsoluteButton
                 buttonSize={100}
                 buttonColor='gray'
                 buttonShape='circular'
@@ -209,7 +209,7 @@ function ChatScreen(props) {
                 positionHorizontalMargin={10}
                 time={500}
                 easing='bounce'
-                buttons={buttons}/> */}
+                buttons={buttons}/>
         </View>
     )
 

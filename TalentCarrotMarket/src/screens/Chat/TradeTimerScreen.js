@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import CountDown from 'react-native-countdown-component';
 
 import {
@@ -20,13 +20,15 @@ import {
 //글자 강조
 const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{props.children}</Text>
 
+let diffTime;
 const TradeTimerScreen = ({navigation, route}) =>{
 
   const {tradeId,endSet}=route.params;
   const [endDateTime, setEndDateTime] = useState(endSet);
   const nowDate = new Date();
-  const diffTime = (endDateTime.getTime() - nowDate.getTime())/1000;
-  //const [diffTime, setDiffTime] = useState(Math.abs(endDateTime - nowDate)/100);
+  diffTime= (endDateTime.getTime() - nowDate.getTime())/1000;
+  // const diffTime = (endDateTime.getTime() - nowDate.getTime())/1000;
+  // const [diffTime, setDiffTime] = useState((endDateTime.getTime() - nowDate.getTime())/1000);
 
   const [page, setPage] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
@@ -36,6 +38,10 @@ const TradeTimerScreen = ({navigation, route}) =>{
 
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
+
+  useEffect(()=>{
+    console.log("새로운 연장시간은"+diffTime);
+  },[endDateTime])
 
   const showMode = (currentMode) => {
     setShow(true);
@@ -68,7 +74,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
     const newEndSet = sendFormatDate(newEndDate,newEndTime);
     const newEndDateTime = parse(newEndSet);
     console.log("현재 시간은 "+nowDate);
-    console.log("타입은 "+diffTime);
+    console.log("남은 시간은 "+diffTime);
 
     //거래연장 통신
     const send_param = {
@@ -80,10 +86,17 @@ const TradeTimerScreen = ({navigation, route}) =>{
       //정상 수행
       .then(returnData => {
         if(returnData.data.message){
-         alert("거래 연장에 성공했습니다!")
-          setEndDateTime(newEndDateTime)
+        var compareDiffTime=(endDateTime.getTime()-newEndDateTime.getTime())/1000;
+         setEndDateTime(newEndDateTime);
+
+         if(compareDiffTime>0){
+          alert("거래 연장에 성공했습니다!");
+         } else{
+           alert("거래 연장 시간이 현재시간보다 빠릅니다. 거래시간 재 설정을 해주세요")
+         }
+          
         } else{
-          alert('거래 연장에 실패하였습니다.')
+          alert('거래 연장에 실패하였습니다.');
         }
       })
       //에러
@@ -143,12 +156,13 @@ const TradeTimerScreen = ({navigation, route}) =>{
     
   }
 
+
   return (
     <View style ={{ flex : 1, justifyContent : 'center', alignItems : 'center'}}>
 
     <Text style={{paddingBottom:hp(3)}}><B>거래 종료까지 남은 시간</B></Text>
 
-      <CountDown
+    <CountDown
         size={30}
         until={diffTime}
         // onFinish={() => alert('거래 종료를 누르지 않아 자동으로 신고가 됩니다.')} 자동신고필요
