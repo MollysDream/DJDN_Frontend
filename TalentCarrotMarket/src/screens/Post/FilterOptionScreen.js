@@ -3,16 +3,13 @@ import {
     View,
     Text,
     ScrollView,
-    StyleSheet, Image, FlatList, Button, AsyncStorage
+    StyleSheet, Image, FlatList, Button, AsyncStorage, TouchableOpacity
 } from 'react-native';
 import SwitchSelector from "react-native-switch-selector";
-
-
 import {CheckBox} from 'react-native-elements';
 import request from "../../requestAPI";
-import requestUser from "../../requestUserAPI";
 import requestUserAPI from "../../requestUserAPI";
-import {CommonActions} from '@react-navigation/native';
+import {heightPercentageToDP as hp, widthPercentageToDP as wp} from "react-native-responsive-screen";
 
 
 export default class FilterOptionScreen extends Component{
@@ -63,13 +60,7 @@ export default class FilterOptionScreen extends Component{
 
         this.props.route.params.onGoBack();
         this.props.navigation.goBack();
-        /*this.props.navigation.dispatch(
-            CommonActions.reset({
-                index: 0,
-                routes:[{name:'Home'}],
-            })
-        )*/
-        //this.props.navigation.navigate('Home');
+
     }
 
 
@@ -79,28 +70,31 @@ export default class FilterOptionScreen extends Component{
             {label: "거리순", value:1}
         ]
         return (
+            <View style={{flex:1, backgroundColor:'white'}}>
+                <View style={styles.content}>
+                    <Text style={styles.text}>카테고리 설정</Text>
+                    <View style={{flexDirection:'row', flexWrap:'wrap'}}>
+                        {
+                            Object.keys(this.state.categoryChecked).map((key,index)=>
+                                <CheckBox
+                                    key={index}
+                                    title={key}
+                                    checked={
+                                        this.state.categoryChecked[key]
+                                    }
+                                    onPress={()=>{
+                                        this.state.categoryChecked[key] = !this.state.categoryChecked[key]
+                                        this.setState({categoryChecked:this.state.categoryChecked})
+                                    }}
 
-            <View style={{flex:1}}>
-                <View>
-                    <Text>카테고리 설정</Text>
-                    {
-                        Object.keys(this.state.categoryChecked).map((key,index)=>
-                            <CheckBox
-                                key={index}
-                                title={key}
-                                checked={
-                                    this.state.categoryChecked[key]
-                                }
-                                onPress={()=>{
-                                    this.state.categoryChecked[key] = !this.state.categoryChecked[key]
-                                    this.setState({categoryChecked:this.state.categoryChecked})
-                                }}
+                                />
+                            )
+                        }
+                    </View>
+                </View>
 
-                            />
-                        )
-                    }
-
-                    <Text>정렬</Text>
+                <View style={styles.content}>
+                    <Text style={styles.text}>정렬</Text>
                     <SwitchSelector
                         initial={this.state.sort}
                         options={options}
@@ -108,16 +102,47 @@ export default class FilterOptionScreen extends Component{
                         buttonColor={'#89dcfd'}
                         borderColor={'#89dcfd'}
                         hasPadding
-                                    />
-
-                    <Button title={'필터 적용'} onPress={this.setFilter}/>
+                    />
                 </View>
 
+                <View style={styles.btnArea2}>
+                    <TouchableOpacity style={styles.btn2} onPress={this.setFilter}>
+                        <Text style={{color: 'white', fontWeight:'bold'}}>필터 적용</Text>
 
+                    </TouchableOpacity>
+                </View>
             </View>
-
-
         );
     }
 }
 
+const styles = StyleSheet.create({
+    content:{
+      borderRadius: 10,
+        marginBottom: 20,
+      backgroundColor: 'white',
+    },
+    text:{
+        fontSize:20,
+        textAlign: 'center',
+        paddingBottom: 8,
+        fontWeight: "bold"
+    },
+    btnArea2: {
+        height: hp(8),
+        // backgroundColor: 'orange',
+        paddingBottom: hp(1.5),
+        marginTop:10,
+        alignItems: 'center'
+    },
+    btn2: {
+        flex: 1,
+        width: 150,
+        height: 50,
+        borderRadius: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#30bfff',
+        flexDirection: "row",
+    },
+});
