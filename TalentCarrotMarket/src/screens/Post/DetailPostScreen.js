@@ -26,7 +26,8 @@ export default class DetailPostScreen extends Component{
             postOwner:this.props.route.params.postOwner,
             postImages:this.props.route.params.detailPost.image,
             modalVisible:false,
-            modalImage:0
+            modalImage:0,
+            userId:''
         }
     }
 
@@ -37,6 +38,8 @@ export default class DetailPostScreen extends Component{
             view: ++this.state.detailPost.view
         });
 
+        const userId = await AsyncStorage.getItem('user_id');
+        this.setState({userId:userId})
 
         //post 스키마에 저장된 user_id 값으로 사용자 정보 받아와야 됨
         /*const userData = await requestUser.getUserData(this.state.detailPost.user_id);
@@ -103,9 +106,13 @@ export default class DetailPostScreen extends Component{
                                     {`${item.addressName}의 ${postOwner.nickname}님`}
                                 </Text>
                                 <View style={styles.btnArea1}>
-                                    <TouchableOpacity style={styles.btn1} onPress={()=>this.reportPost()}>
-                                        <Text>신고</Text>
-                                    </TouchableOpacity>
+                                    {
+                                        this.state.userId == this.state.postOwner._id || this.state.userId == '' ?
+                                            null:
+                                            <TouchableOpacity style={styles.btn1} onPress={()=>this.reportPost()}>
+                                                <Text>신고</Text>
+                                            </TouchableOpacity>
+                                    }
                                 </View>
 
                             </Item>
