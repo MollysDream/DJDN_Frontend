@@ -6,9 +6,11 @@ import {
     Text,
     TouchableOpacity,
     StyleSheet,
+    Alert
 } from 'react-native';
 
 import axios from "axios";
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 import {
   widthPercentageToDP as wp,
@@ -20,16 +22,74 @@ const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{pr
 
 const TradeTimerScreen = ({navigation, route}) =>{
 
-  const {tradeId,endDate}=route.params;
-  const currentDate = Date.now();
-  const diffTime = Math.abs(endDate - currentDate)/100;
+  const {tradeId,endSet}=route.params;
+  const [endDateTime, setEndDateTime] = useState(endSet);
+  const nowDate = new Date();
+  const diffTime = (endDateTime.getTime() - nowDate.getTime())/1000;
+  //const [diffTime, setDiffTime] = useState(Math.abs(endDateTime - nowDate)/100);
+
+  const [page, setPage] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const [newEndDate, setNewEndDate] = useState(new Date());
+  const [newEndTime, setNewEndTime] = useState(new Date());
+
+  const [mode, setMode] = useState('date');
+  const [show, setShow] = useState(false);
+
+  const showMode = (currentMode) => {
+    setShow(true);
+    setMode(currentMode);
+  };
+
+  const showDatepicker = () => {
+    showMode('date');
+  };
+  
+  const onChange = (event, selectedValue) =>{
+    setShow(Platform.OS === 'ios');
+    if(mode == 'date'){
+      const currentDate = selectedValue || new Date();
+      setNewEndDate(currentDate);
+      setMode('time');
+      setShow(Platform.OS !== 'ios'); 
+    }
+    else if(mode == 'time'){
+      const selectedTime = selectedValue || new Date();
+      setNewEndTime(selectedTime);
+      setShow(Platform.OS === 'ios');
+      setMode('date');
+    }
+  }
+
 
   const extendButton = () =>{
-    
-    navigation.navigate('tradeExtend',{
-      tradeId:tradeId, 
-      endDate: endDate
-    })
+
+    const newEndSet = sendFormatDate(newEndDate,newEndTime);
+    const newEndDateTime = parse(newEndSet);
+    console.log("현재 시간은 "+nowDate);
+    console.log("타입은 "+diffTime);
+
+    //거래연장 통신
+    const send_param = {
+      tradeId:tradeId,
+      endTime: newEndDateTime
+    }
+    axios
+    .post("http://10.0.2.2:3000/trade/updateTradeTime", send_param)
+      //정상 수행
+      .then(returnData => {
+        if(returnData.data.message){
+         alert("거래 연장에 성공했습니다!")
+          setEndDateTime(newEndDateTime)
+        } else{
+          alert('거래 연장에 실패하였습니다.')
+        }
+      })
+      //에러
+      .catch(err => {
+        console.log(err);
+      });
   }
 
   const endButton = () =>{
@@ -42,9 +102,14 @@ const TradeTimerScreen = ({navigation, route}) =>{
     .post("http://10.0.2.2:3000/trade/endTrade", send_param)
       //정상 수행
       .then(returnData => {
-        //async.getitem(userId)-value
-        //if(returnData.data.userId(1)==value --> returnData.data.userId(2)평가, 아니면 반대
-        navigation.navigate('userRate')
+        if(returnData.data.message){
+          //async.getitem(userId)-value
+          //if(returnData.data.userId(1)==value --> returnData.data.userId(2)평가, 아니면 반대
+          navigation.navigate('userRate')
+        } else{
+          alert('거래 완료가 실패했습니다.')
+        }
+        
       })
       //에러
       .catch(err => {
@@ -95,12 +160,32 @@ const TradeTimerScreen = ({navigation, route}) =>{
         timeLabels={{d: 'Days', h: 'Hours', m: 'Minutes', s: 'Seconds'}}
         showSeparator
       />
+
+      <View style={styles.dateArea}>
+          <TouchableOpacity style={styles.btnDate} onPress={showDatepicker} >
+            <Text style={{color: 'black', paddingBottom:hp(1)}}><B>연장할 종료 날짜 및 시간을 설정하세요 ⌚</B></Text>
+            <Text style={{color: 'black'}}>연장을 하실 경우, 연장할 종료 날짜 및 시간을 설정한 후,</Text>
+            <Text style={{color: 'black'}}>연장완료 버튼을 눌러야 연장 시간이 저장됩니다!</Text>
+          </TouchableOpacity>
+      </View>
+
       <View style={styles.rowbtnArea}>
         <View style={styles.btnArea,{paddingRight:wp('1')}}>
           <TouchableOpacity style={styles.btn} onPress={extendButton}>
-            <Text style={{color: 'white'}}>연장하기</Text>
+            <Text style={{color: 'white'}}>연장완료</Text>
           </TouchableOpacity>
         </View>
+
+        {show && (
+          <DateTimePicker
+            testID="dateTimePicker"
+            value={newEndDate}
+            mode={mode}
+            is24Hour={true}
+            display="default"
+            onChange={onChange}
+          />)}
+
         <View style={styles.btnArea,{paddingLeft:wp('1')}}>
           <TouchableOpacity style={styles.btn} onPress={endButton}>
             <Text style={{color: 'white'}}>종료하기</Text>
@@ -114,6 +199,24 @@ const TradeTimerScreen = ({navigation, route}) =>{
       </View>
     </View>
     )
+}
+
+//타이머 설정용 시간
+const sendFormatDate = (date,time)=>{
+  const setDate= `${date.getFullYear()}/${date.getMonth() +
+    1}/${date.getDate()}/${time.getHours()}/${time.getMinutes()}`;
+  return setDate;
+  };
+
+//str-->date
+function parse(str){
+  var newDd=str.split('/');
+  var y = newDd[0];
+  var m = newDd[1];
+  var d= newDd[2];
+  var h = newDd[3];
+  var minute = newDd[4];
+  return new Date(y,m-1,d,h,minute);
 }
 
 const styles = StyleSheet.create({
@@ -143,6 +246,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingTop:hp(5),
     paddingBottom:hp(3)
+  },
+  dateArea:{
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop:hp(5),
+  },
+  btnDate: {
+    width: 500,
+    height: 150,
+    borderRadius: 7,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#CDDDEF',
+    borderWidth: 0.5,
+    borderColor: 'gray',
   },
 });
 

@@ -28,21 +28,6 @@ function ChatScreen(props) {
     );
     const [postId, setpostid] = useState(props.route.params.item._id);
 
-    const buttons = [
-        {
-            color: '#4672B8',
-            content: <View>
-                <Text>
-                    ⌚ 🗺️</Text>
-                <Text>시간 장소</Text>
-            </View>,
-            action: () => {
-                props
-                    .navigation
-                    .navigate('tradeset')
-            }
-        }
-    ];
     useEffect(async () => {
         AsyncStorage
             .getItem('user_id')
