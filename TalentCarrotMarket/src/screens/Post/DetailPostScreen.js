@@ -53,6 +53,23 @@ export default class SearchPostScreen extends Component{
         })
     }
 
+    async onChatPress(){
+        let currentUserId = await AsyncStorage.getItem('user_id');
+        let postOwnerId = this.state.postOwner._id
+        const postOwner = this.state.postOwner;
+        const item = this.state.detailPost;
+
+        console.log('onChatPress 눌림! currentUserId : '+currentUserId,' postOwner : '+ this.state.postOwner._id);
+
+        if(postOwnerId == currentUserId){
+            alert("자기가 만든 게시글에는 채팅이 불가능합니다.");
+        }
+
+        if(postOwnerId !== currentUserId){
+            this.props.navigation.navigate('chat',{postOwner,item})
+        }
+
+    }
 
     render(){
         const item = this.state.detailPost;
@@ -130,7 +147,7 @@ export default class SearchPostScreen extends Component{
                                 </Right>
                             </Item>
                             <View style={styles.btnArea2} >
-                                <TouchableOpacity style={styles.btn2} onPress={() => this.props.navigation.navigate('chat',{postOwner,item})}>
+                                <TouchableOpacity style={styles.btn2} onPress={() => this.onChatPress()}>
                                     <Text style={(styles.Text, {color: 'white'})}>채팅</Text>
                                 </TouchableOpacity>
                             </View>
@@ -158,7 +175,7 @@ const styles = StyleSheet.create({
         padding: 5,
         height: 150,
         width: 150,
-    }, 
+    },
     btn2: {
         flex: 1,
         width: 300,
