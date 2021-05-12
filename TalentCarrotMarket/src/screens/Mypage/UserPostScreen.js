@@ -109,8 +109,10 @@ export default class UserPostScreen extends Component{
                         <Image style={styles.image} source={{ uri: item.image[0]}} />
                         <View>
                             <Text style={styles.postTitle}>{item.title}</Text>
-                            <Text style={styles.postPrice}>{`${price}원`}</Text>
-                            <Text style={styles.postAddressTime}>{`${item.addressName} ◦ ${time}`}</Text>
+                            <View style={{flexDirection:'row'}}>
+                                <Text style={styles.postPrice}>{`${price}원`}</Text>
+                                <Text style={styles.postAddressTime}>{`${item.addressName}\n${time}`}</Text>
+                            </View>
                         </View>
                     </View>
                 </TouchableHighlight>
@@ -149,21 +151,21 @@ export default class UserPostScreen extends Component{
 
 const styles = StyleSheet.create({
     image:{
-        width: wp(30),
+        width: wp(28),
         overflow:"hidden",
-        height: hp(30),
+        height: hp(28),
         aspectRatio: 1,
         borderRadius: 9,
-        marginRight:10
+        marginRight:12
     },
     post:{
         flexDirection: "row",
-
-        backgroundColor: "#f6faff",
-        borderBottomColor: "#d2f0ff",
-        borderBottomWidth: 2,
+        borderRadius: 15,
+        backgroundColor: "white",
+        borderBottomColor: "#a6e5ff",
+        borderBottomWidth: 1,
         padding: 10,
-        height: 145
+        height: 136
     },
     cover:{
         flex: 1,
@@ -178,8 +180,8 @@ const styles = StyleSheet.create({
         alignSelf : "center",
         padding:20
     },
-    postTitle:{fontSize:18, fontWeight: "bold", width:280, height:80},
-    postAddressTime: {fontSize:13, textAlign:'right', width:250, marginRight:10},
-    postPrice: {fontSize:17}
+    postTitle:{fontSize:18, fontWeight: "bold", width:280, height:80, paddingTop:9},
+    postAddressTime: {fontSize:13, textAlign:'right', width:'30%', marginRight:10},
+    postPrice: {width:'50%',fontSize:17 , color:"#0088ff" ,paddingTop: 9}
 
 });

@@ -162,7 +162,7 @@ export default class HomeScreen extends Component{
             <View style={{flex:1, backgroundColor:'white'}}>
             <View style={{flex:1, backgroundColor:'white'}} >
 
-                <View style={{flexDirection:'row', backgroundColor:'white' ,borderColor:'black'}}>
+                <View style={{flexDirection:'row', backgroundColor:'white'}}>
                     <SearchBar
                         placeholder="   검색어를 입력해주세요"
                         onChangeText={this.updateSearch}
