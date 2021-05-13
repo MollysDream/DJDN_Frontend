@@ -34,6 +34,7 @@ import reportScreen from './src/screens/Post/ReportScreen'
 //chatStack
 import chatchScreen from './src/screens/Chat/ChatChScreen';
 import chatScreen from './src/screens/Chat/ChatScreen';
+import chatchroomScreen from './src/screens/Chat/ChatchRoomScreen';
 import chatTestScreen from './src/screens/Chat/ChatTestScreen';
 import tradeTimerScreen from './src/screens/Chat/TradeTimerScreen';
 import userRateScreen from './src/screens/Chat/UserRateScreen';
@@ -120,6 +121,7 @@ const ChatStackScreen = () => {
       <ChatStack.Screen name="tradeTimer" component={tradeTimerScreen} />
       <ChatStack.Screen name="userRate" component={userRateScreen} />
       <ChatStack.Screen name="tradeset" component={tradeSetScreen} />
+      <ChatStack.Screen name="chatchroom" component={chatchroomScreen} />
  </Stack.Navigator>
   );
 };

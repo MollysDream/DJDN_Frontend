@@ -11,80 +11,109 @@ import request from '../../requestAPI';
 import {AnimatedAbsoluteButton} from 'react-native-animated-absolute-buttons';
 
 let socket;
-let messages;
-let host ;
-let roomID;
-let chatRoomId;
+let chatRoomId="";
 
 function ChatScreen(props) {
     const [messages, setMessages] = useState([]);
     const [postOwnerId, setPostOwnerId] = useState(
         props.route.params.postOwner._id
     );
-    const [hostId, sethostId] = useState();
+    const [hostId, sethostId] = useState("");
     const [roomId, setRoomId] = useState("");
     const [postOwnerNick, setPostOwnerNick] = useState(
         props.route.params.postOwner.nickname
     );
     const [postId, setpostid] = useState(props.route.params.item._id);
+    const [currentUserId, setCurrentUserId] = useState("");
 
-    useEffect(async () => {
-        AsyncStorage
-            .getItem('user_id')
-            .then((value) => {
-                sethostId(value);
-            });
+
+    const buttons = [
+        {
+            color: '#4672B8',
+            content: <View>
+                <Text>
+                    ⌚ 🗺️</Text>
+                <Text>시간 장소</Text>
+            </View>,
+            action: () => {
+                props
+                    .navigation
+                    .navigate('tradeset')
+            }
+        }
+    ];
     
-    }, []);
-
-    let hostNick = "";
-
- 
 
     useEffect(() => {
-        async function createChat() {
-            host = await requestUser.getUserData(hostId);
-            hostNick = host.nickname;
+      loadingUserId();
+      // console.log("첫번쨰 useEffect, hostId!! "+hostId);
+      // console.log("첫번쨰 useEffect, currentUserId!! "+currentUserId);
 
-            //  채팅방 조회 -> 연결 -> 채팅방 존재 여부 확인 -> 해당 채팅방의 채팅기록 가져오기
+    }, []);
+
+    useEffect(() => {
+        async function workBeforeChat() {
+          // console.log("workBeforeChat 실행 / 2번쨰 useEffect, hostId!! "+hostId);
+          // console.log("workBeforeChat 실행 / 2번쨰 useEffect, currentUserId!! "+currentUserId);
+
+          socket = io("http://10.0.2.2:3002");
+          // socket.emit("searchChatRoom", postOwnerId, postOwnerNick, hostId);
+
             const roomData = await request.getChatRoom();
-
-
-            socket = io("http://10.0.2.2:3002");
-            socket.emit("searchChatRoom", postOwnerId, postOwnerNick, hostId);
-           
-            Room(roomData);
+            await Room(roomData);
 
             const preData = await request.getChat(chatRoomId);
             checkChat(preData);
-          
+
 
             return() => {
-                socket.emit('leaveRoom', 'room1');
+                socket.emit('leaveRoom', chatRoomId);
+
                 socket.disconnect();
             };
         }
-        createChat();
-    }, [hostId]);
+        if(currentUserId){
+          workBeforeChat();
+        }
+    }, [currentUserId]);
 
-    function onSend(newMessages = []) {  
+    function onSend(newMessages = []) {
         socket.emit("chat message to server", newMessages);
         setMessages((prevMessages) => GiftedChat.append(prevMessages, newMessages));
         onSendDB(newMessages);
     };
 
-    async function Room(roomData){ // 받아온 채팅방들 중에서 있으면 그거로, 없으면 생성 ... 설명이 너무 구린가..? 죄송함다.. 
+   async function loadingUserId(){
+      await AsyncStorage
+      .getItem('user_id')
+      .then((value) => {
+        sethostId(value);
+        setCurrentUserId(value);
+      })
+
+  };
+
+
+    async function Room(roomData){ // 받아온 채팅방들 중에서 있으면 그거로, 없으면 생성 ... 설명이 너무 구린가..? 죄송함다..
       let flag = 0;
+      // 받아온 roomData에서 조건문 실행해서 값이 존재하면 flag = 1 로 바꾸고, 채팅방 입장.
       roomData.map((data)=>{
-        if(data.postOwnerId == postOwnerId && data.hostId == hostId && data.postId == postId){
+
+        if(data.postOwnerId == postOwnerId && data.hostId == hostId && data.postId == postId ){
           chatRoomId = data._id;
+          // console.log("roomData.map에서 찾은 postOwnerId : "+ postOwnerId);
+          // console.log("roomData.map에서 찾은 hostId : ", hostId);
+          // console.log("roomData.map에서 찾은 currentUserId : ", currentUserId);
           console.log("조회중 찾았다! : ", chatRoomId);
           socket.emit('joinRoom', chatRoomId);
           flag = 1;
           return false;
         }
       })
+
+      // flag = 0이면 채팅방 새로 생성
       if(flag == 0){
+        console.log('flag가 0이어서 채팅방 새로 생성한다.');
         let newChatRoom = {
           hostId : hostId,
           postOwnerId : postOwnerId,
@@ -93,12 +122,12 @@ function ChatScreen(props) {
         let roomInfo;
         await axios.post("http://10.0.2.2:3000/chat/createChatRoom", newChatRoom)
           .then((data)=>{
-            console.log(data);
+            // console.log(data);
             roomInfo = data.data;
             chatRoomId = roomInfo._id;
             socket.emit("joinRoom", chatRoomId);
            })
-       
+
       }
     }
 
@@ -144,7 +173,6 @@ function ChatScreen(props) {
         let senderId = hostId;
         let roomId = chatRoomId;
 
-      
 
         let newChat = {
             beforeTime: time,
@@ -155,7 +183,6 @@ function ChatScreen(props) {
             roomId: chatRoomId
         }
         console.log("chatRoomId : ", chatRoomId);
-        
         console.log("roomId : ", roomId);
         axios
             .post("http://10.0.2.2:3000/chat/createChat", newChat)
