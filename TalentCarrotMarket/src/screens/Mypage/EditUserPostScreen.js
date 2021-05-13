@@ -276,7 +276,8 @@ export default class EditUserPostScreen extends Component {
                                                     nestedScrollEnabled={true}
                                                     keyExtractor={item => item.name}
                                                     renderItem={({item}) => (
-                                                        <Image style={styles.post} source={{uri: item.uri}} /> )}
+
+                                                        <Image style={styles.image} source={{uri: item.uri}} /> )}
                                                 />
                                             </Item>
                                         }
@@ -335,6 +336,14 @@ const styles = StyleSheet.create({
         marginVertical: '0%',
         marginLeft:'0%',
 
-    }
+    },
+    image:{
+        width: wp(28),
+        overflow:"hidden",
+        height: hp(28),
+        aspectRatio: 1,
+        borderRadius: 9,
+        marginRight:10
+    },
 
 });
