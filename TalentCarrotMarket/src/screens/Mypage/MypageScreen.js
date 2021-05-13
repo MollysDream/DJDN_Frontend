@@ -4,7 +4,7 @@ import {
     Text,
     StyleSheet,
     TouchableOpacity,
-    Button
+    Button, Image
 } from 'react-native';
 import {
     widthPercentageToDP as wp,
@@ -13,47 +13,44 @@ import {
 import axios from "axios";
 
 import AsyncStorage from '@react-native-community/async-storage';
+import requestUserAPI from "../../requestUserAPI";
+import requestAddressAPI from "../../requestAddressAPI";
 
 const MypageScreen = ({navigation}) => {
 
   const [address, setAddress] = useState([]);
+  const [userId, setUserId]= useState('');
+  const [userData, setUserData] = useState('');
+  const [userAddress, setUserAddress] = useState('');
+
     
     const handleLogoutButton = () => {
         AsyncStorage.clear();
         navigation.replace('Auth'); 
     };
 
-    const addChatListButton = () =>{
-
-    }
-
     //인증한 동네 확인 - 사용자
     useEffect(() => {
-      AsyncStorage.getItem('user_id')
-      .then((value) => {
-        console.log('name is ', value);
+        async function getUserData(){
+            let userId = await AsyncStorage.getItem('user_id');
+            setUserId(userId);
 
-        const send_param = {
-          userId:value,
-        };
+            let userData = await requestUserAPI.getUserData(userId);
+            setUserData(userData);
 
-        axios
-        .post("http://10.0.2.2:3000/address/checkAddress", send_param)
-          //정상 수행
-          .then(returnData => {
-            if (returnData.data.address) {
-              console.log(returnData.data.address)
-              setAddress(returnData.data.address)
-            } else {
-              setAddress('')
-            }
-          })
-          //에러
-          .catch(err => {
-            console.log(err);
-          });
-        });
+            let userAddressDataList = await requestAddressAPI.getUserAddress(userId);
+            setUserAddress(userAddressDataList);
 
+            userAddressDataList.address.map((address)=>{
+                if(address.addressIndex == userData.addressIndex){
+                    setUserAddress(address);
+                    return;
+                }
+            })
+
+        }
+        console.log("마이페이지 불러옴");
+        let result = getUserData();
     }, []);
 
     const certifyAddress=address.map(list=>
@@ -64,29 +61,59 @@ const MypageScreen = ({navigation}) => {
         navigation.navigate('userPostScreen');
     }
 
+    const editProfileButton = ()=>{
+        console.log('프로필 수정!!');
+
+    }
+
     return (
       <View style={styles.container}>
-            <View style={styles.btnArea2}>
-                <TouchableOpacity style={styles.btn2} onPress={handleLogoutButton}>
-                    <Text style={(styles.Text, {color: 'white'})}>로그아웃</Text>
-                    
-                    <TouchableOpacity style={styles.btn, {flex:0.35}} onPress={addChatListButton}>
-                        <Text style={(styles.Text, {color: 'black', paddingLeft:20})}>❌</Text>
-                    </TouchableOpacity>
-                  
-                </TouchableOpacity>
-            </View>
-            <View
-              style={{
-                borderBottomColor: 'black',
-                borderBottomWidth: StyleSheet.hairlineWidth,
-              }}
-              />
 
-            <View>
+          <View style={styles.profileBox}>
+
+              {
+                  userData=='' ?null:
+                      (
+                          <View style={styles.user}>
+                              <Image style={styles.profileImage} source={{uri:userData.profileImage}}/>
+                              <Text style={{marginTop:5, color:'grey'}}>{`${userAddress.addressName}의`}</Text>
+                              <Text style={styles.nickname}>{userData.nickname}</Text>
+                          </View>
+
+                      )
+
+              }
+
+              <View style={styles.editArea}>
+                  <TouchableOpacity style={styles.editButton} onPress={editProfileButton}>
+                      <Text style={(styles.Text, {color: 'black'})}>프로필 수정</Text>
+                  </TouchableOpacity>
+              </View>
+
+
+          </View>
+
+
+
+          <View
+              style={{
+                  borderBottomColor: 'black',
+                  borderBottomWidth: StyleSheet.hairlineWidth,
+              }}
+          />
+
+          <View>
               {certifyAddress}
-            </View>
+          </View>
           <Button title={'재능거래 내역'} onPress={goToUserPostScreen}/>
+
+          <View style={styles.logoutArea}>
+              <TouchableOpacity style={styles.logoutButton} onPress={handleLogoutButton}>
+                  <Text style={(styles.Text, {color: 'black'})}>로그아웃</Text>
+              </TouchableOpacity>
+          </View>
+
+
       </View>
 
         
@@ -102,33 +129,55 @@ const styles = StyleSheet.create({
       paddingLeft: wp(7),
       paddingRight: wp(7),
     },
-    btnArea2: {
+    user:{
+      alignItems:'center'
+    },
+    profileBox:{
+        alignItems: 'center',
+        flexDirection:'column',
+        paddingTop:10,
+        marginBottom:10
+    },
+    profileImage:{
+        width: 150,
+        height: 150,
+        borderRadius: 150 / 2,
+        overflow: "hidden",
+        borderWidth: 1,
+        borderColor: "#6fceff"
+    },
+    nickname:{
+      fontSize: 27,
+    },
+    editArea:{
+        height:20,
+        margin:5,
+    },
+    editButton:{
+        flex: 1,
+        width: 150,
+        height: 50,
+        borderRadius: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#d4fbff',
+    },
+    logoutArea: {
       height: hp(8),
-      // backgroundColor: 'orange',
+        paddingRight: wp(2),
       paddingBottom: hp(1.5),
+        position: "absolute", bottom: 0, right: 0
     },
-    Text: {
-      fontSize: wp('4%'),
-    },
-    btn: {
-        width: 10,
-        height: 25,
-        borderRadius: 117,
-        
-        borderWidth: 0.5,
-        backgroundColor: 'white',
-        borderColor: 'black',
-        
-      },
-    btn2: {
+    logoutButton: {
       flex: 1,
-      width: 150,
+      width: 100,
       height: 50,
-      borderRadius: 7,
+      borderRadius: 10,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: '#4672B8',
+      backgroundColor: '#fd7a7a',
       flexDirection: "row",
+
     },
   });
 

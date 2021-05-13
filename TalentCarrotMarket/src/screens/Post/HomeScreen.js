@@ -208,6 +208,7 @@ const styles = StyleSheet.create({
     iconBox:{
         height:67,
         alignItems: 'center',
+        marginTop:3
     },
     icon:{
         width: wp(9),
