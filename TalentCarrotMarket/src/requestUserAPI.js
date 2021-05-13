@@ -21,9 +21,17 @@ export async function updateUserAddressIndex(userId, addressIndex){
     return result.data;
 }
 
+export async function updateUserProfile(userId, editNickname, editImage) {
+    console.log(`updateUserProfile함수 호출됨 // 닉네임: ${editNickname} ID: ${userId}`);
+    console.log(editImage);
+    const result = await axi.post("/user/updateUserProfile", {userId,editNickname, editImage});
+    return result.data;
+}
 
 export default{
     getUserData,
     updateUserCategoryAndSort,
-    updateUserAddressIndex
+    updateUserAddressIndex,
+    updateUserProfile
+
 }

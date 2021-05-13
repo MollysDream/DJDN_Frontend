@@ -162,15 +162,19 @@ export default class HomeScreen extends Component{
             <View style={{flex:1, backgroundColor:'white'}}>
             <View style={{flex:1, backgroundColor:'white'}} >
 
-                <View style={{flexDirection:'row', backgroundColor:'white'}}>
+                <View style={{height:67, flexDirection:'row', backgroundColor:'white'}}>
+                    <View style={styles.iconBox}>
+                        <Image style={styles.icon} source={{uri:'https://mollysdreampostdata.s3.ap-northeast-2.amazonaws.com/%EC%95%84%EC%9D%B4%EC%BD%98/KakaoTalk_20210326_202400941_03.png'}}/>
+                    </View>
                     <SearchBar
+                        searchIcon={null}
                         placeholder="   검색어를 입력해주세요"
                         onChangeText={this.updateSearch}
                         value={search}
                         onSubmitEditing={this.searchPost}
                         lightTheme
                         inputContainerStyle={{backgroundColor:'#edffff', borderRadius:15}}
-                        containerStyle={{width:'85%', borderRadius:10, backgroundColor:'#ffffff'}}
+                        containerStyle={{borderWidth:0, width:'70%', borderRadius:10, backgroundColor:'#ffffff'}}
                     />
                     <TouchableOpacity onPress={()=>this.filterOption()}
                                       style={{alignItems:'center'}}>
@@ -201,6 +205,18 @@ export default class HomeScreen extends Component{
 
 
 const styles = StyleSheet.create({
+    iconBox:{
+        height:67,
+        alignItems: 'center',
+        marginTop:3
+    },
+    icon:{
+        width: wp(9),
+        overflow:"hidden",
+        height: hp(9),
+        aspectRatio: 1,
+        borderRadius: 9,
+    },
     image:{
         width: wp(28),
         overflow:"hidden",
