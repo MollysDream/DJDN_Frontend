@@ -15,6 +15,7 @@ import axios from "axios";
 import AsyncStorage from '@react-native-community/async-storage';
 import requestUserAPI from "../../requestUserAPI";
 import requestAddressAPI from "../../requestAddressAPI";
+import {useIsFocused} from "@react-navigation/native";
 
 const MypageScreen = ({navigation}) => {
 
@@ -23,7 +24,8 @@ const MypageScreen = ({navigation}) => {
   const [userData, setUserData] = useState('');
   const [userAddress, setUserAddress] = useState('');
 
-    
+    const isFocused = useIsFocused();
+
     const handleLogoutButton = () => {
         AsyncStorage.clear();
         navigation.replace('Auth'); 
@@ -51,7 +53,7 @@ const MypageScreen = ({navigation}) => {
         }
         console.log("마이페이지 불러옴");
         let result = getUserData();
-    }, []);
+    }, [isFocused]);
 
     const certifyAddress=address.map(list=>
       <Text>내가 인증한 동네 : {list.addressName}</Text>
@@ -143,7 +145,7 @@ const styles = StyleSheet.create({
         height: 150,
         borderRadius: 150 / 2,
         overflow: "hidden",
-        borderWidth: 1,
+        borderWidth: 3,
         borderColor: "#6fceff"
     },
     nickname:{

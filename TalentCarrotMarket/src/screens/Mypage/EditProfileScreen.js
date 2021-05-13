@@ -29,6 +29,9 @@ const EditProfileScreen = ({navigation, route}) => {
 
     const [deviceImage, setDeviceImage] = useState();
 
+    //default image number
+    const [num, setNum] = useState(1);
+
 
     function writeNickname(text) {
         setEditNickname(text);
@@ -100,6 +103,21 @@ const EditProfileScreen = ({navigation, route}) => {
         })
     }
 
+    function defaultImageButton() {
+        setDeviceImage(null);
+
+        if(num==1){
+            setEditImage('https://mollysdreampostdata.s3.ap-northeast-2.amazonaws.com/%EC%95%84%EC%9D%B4%EC%BD%98/default-image.jpg')
+            setNum(2);
+        }else if(num==2){
+            setEditImage('https://mollysdreampostdata.s3.ap-northeast-2.amazonaws.com/%EC%95%84%EC%9D%B4%EC%BD%98/default2.jpg')
+            setNum(3);
+        }else if(num==3){
+            setEditImage('https://mollysdreampostdata.s3.ap-northeast-2.amazonaws.com/%EC%95%84%EC%9D%B4%EC%BD%98/default3.jpg')
+            setNum(1);
+        }
+    }
+
     return (
         <View style={styles.container}>
 
@@ -109,6 +127,12 @@ const EditProfileScreen = ({navigation, route}) => {
                         <Image style={styles.profileImage} source={{uri:editImage}}/>
                         <TouchableOpacity style={styles.editImage} onPress={selectImage}>
                             <Icon name="images"  size={40} color="black" />
+                        </TouchableOpacity>
+                    </View>
+
+                    <View style={styles.defaultArea}>
+                        <TouchableOpacity style={styles.defaultButton} onPress={defaultImageButton}>
+                            <Text style={(styles.Text, {color: 'black'})}>{`기본 이미지 - ${num}`}</Text>
                         </TouchableOpacity>
                     </View>
 
@@ -125,8 +149,8 @@ const EditProfileScreen = ({navigation, route}) => {
 
             </View>
 
-            <View style={styles.editArea}>
-                <TouchableOpacity style={styles.editButton} onPress={saveProfile}>
+            <View style={styles.saveArea}>
+                <TouchableOpacity style={styles.saveButton} onPress={saveProfile}>
                     <Text style={(styles.Text, {color: 'black'})}>수정 완료</Text>
                 </TouchableOpacity>
             </View>
@@ -162,19 +186,19 @@ const styles = StyleSheet.create({
         height: 150,
         borderRadius: 150 / 2,
         overflow: "hidden",
-        borderWidth: 1,
+        borderWidth: 3,
         borderColor: "#6fceff"
     },
     nickname:{
         fontSize: 27,
     },
-    editArea:{
+    saveArea:{
 
         height:50,
         marginTop:100,
         alignItems:'center'
     },
-    editButton:{
+    saveButton:{
         flex: 1,
         width: 150,
         height: 50,
@@ -189,7 +213,21 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 0,
         right: 0
-    }
+    },
+
+    defaultArea:{
+        height:20,
+        margin:5,
+    },
+    defaultButton:{
+        flex: 1,
+        width: 150,
+        height: 50,
+        borderRadius: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#d4fbff',
+    },
 
 });
 
