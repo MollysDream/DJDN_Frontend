@@ -63,7 +63,7 @@ const MypageScreen = ({navigation}) => {
 
     const editProfileButton = ()=>{
         console.log('프로필 수정!!');
-
+        navigation.navigate('editProfileScreen',{userId:userId, userData:userData});
     }
 
     return (
