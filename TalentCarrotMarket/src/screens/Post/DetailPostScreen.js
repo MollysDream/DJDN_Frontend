@@ -17,7 +17,8 @@ import {getDate, getPrice} from "../../function";
 
 
 
-export default class SearchPostScreen extends Component{
+export default class DetailPostScreen extends Component{
+
     constructor(props) {
         super(props);
         this.state = {
@@ -25,7 +26,8 @@ export default class SearchPostScreen extends Component{
             postOwner:this.props.route.params.postOwner,
             postImages:this.props.route.params.detailPost.image,
             modalVisible:false,
-            modalImage:0
+            modalImage:0,
+            userId:''
         }
     }
 
@@ -36,8 +38,10 @@ export default class SearchPostScreen extends Component{
             view: ++this.state.detailPost.view
         });
 
-        const userId = AsyncStorage.getItem('user_id');
-        this.setState({userId:userId});
+
+        const userId = await AsyncStorage.getItem('user_id');
+        this.setState({userId:userId})
+
 
         //post 스키마에 저장된 user_id 값으로 사용자 정보 받아와야 됨
         /*const userData = await requestUser.getUserData(this.state.detailPost.user_id);
@@ -55,8 +59,9 @@ export default class SearchPostScreen extends Component{
         })
     }
 
+
     async onChatPress(){
-        let currentUserId = await AsyncStorage.getItem('user_id');
+        let currentUserId = await AsyncStorage.getItem('user_id'); //this.state.userId
         let postOwnerId = this.state.postOwner._id
         const postOwner = this.state.postOwner;
         const item = this.state.detailPost;
@@ -71,6 +76,13 @@ export default class SearchPostScreen extends Component{
             this.props.navigation.navigate('chat',{postOwner,item})
         }
     }
+
+    reportPost(){
+        console.log("신고!!");
+        this.props.navigation.navigate('Report',{detailPost: this.state.detailPost, postOwner: this.state.postOwner});
+    }
+
+
 
     render(){
         const item = this.state.detailPost;
@@ -110,10 +122,20 @@ export default class SearchPostScreen extends Component{
                                     />
                                 </View>
                             </Item>
-                            <Item >
+                            <Item style={{flexDirection:'row'}} >
                                 <Text style={{fontSize:15, marginBottom : "3%", marginTop : "3%" ,marginLeft : "3%"}}>
                                     {`${item.addressName}의 ${postOwner.nickname}님`}
                                 </Text>
+                                <View style={styles.btnArea1}>
+                                    {
+                                        this.state.userId == this.state.postOwner._id || this.state.userId == '' ?
+                                            null:
+                                            <TouchableOpacity style={styles.btn1} onPress={()=>this.reportPost()}>
+                                                <Text>신고</Text>
+                                            </TouchableOpacity>
+                                    }
+                                </View>
+
                             </Item>
 
                             <Text style={{fontSize:20, fontWeight : 'bold', marginLeft : '3%', marginTop : '3%',  marginBottom : '3%'}}>
@@ -177,6 +199,20 @@ const styles = StyleSheet.create({
         height: 150,
         width: 150,
     },
+
+    btn1: {
+        width: 45,
+        height: 40,
+        borderRadius: 7,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#ffefef',
+    },
+    btnArea1: {
+        flex:1,
+        alignItems: 'flex-end',
+        paddingRight:10
+    },
     btn2: {
         flex: 1,
         width: 300,
@@ -184,7 +220,7 @@ const styles = StyleSheet.create({
         borderRadius: 7,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#4672B8',
+        backgroundColor: '#38b9ff',
       },
     btnArea2: {
         height: hp(10),

@@ -31,6 +31,7 @@ const TradeSetScreen =({navigation})=>{
       const [detailLocate,setDetailLocate]=useState('');
       const [isSuggest,setIsSuggest]=useState(false);
       const [isSave,setIsSave]=useState(false);
+      const [tradeId, setTradeId]=useState('');
 
       // 거래 시간 설정
       const [startDate, setStartDate] = useState(new Date());
@@ -182,12 +183,14 @@ const TradeSetScreen =({navigation})=>{
           if (returnData.data.message) {
             console.log("거래 장소 및 시간 설정 완료")
             setIsSave(true)
-            console.log("거래"+returnData.data.tradeId)
+            console.log("거래 번호 "+returnData.data.tradeId)
 
             navigation.navigate('tradeTimer',{
               tradeId: returnData.data.tradeId,
               endSet: sendEndDate
             })
+
+            setTradeId(returnData.data.tradeId);
           } else {
             console.log('거래 장소 및 시간 설정 실패');
           }
@@ -197,6 +200,21 @@ const TradeSetScreen =({navigation})=>{
           console.log(err);
         });
     }
+
+    //남은 시간 확인 버튼
+    const timeCheckButton = () =>{
+
+      const sendEndSet = sendFormatDate(endDate,endTime)
+      var sendEndDate = parse(sendEndSet);
+
+      console.log("남은 시간은 "+sendEndDate)
+
+      navigation.navigate('tradeTimer',{
+        tradeId: tradeId,
+        endSet: sendEndDate
+      })
+    }
+    
 
     //재제안 버튼
     const resuggestButton = () =>{
@@ -303,10 +321,17 @@ const TradeSetScreen =({navigation})=>{
         </View>
         ):
         
-        <View style={styles.btnArea}>
-          <TouchableOpacity style={styles.btn} onPress={resuggestButton}>
-            <Text style={{color:'white'}}>다시 제안하기</Text>
-          </TouchableOpacity>
+        <View style={styles.rowbtnArea}> 
+          <View style={styles.btnArea,{paddingRight: wp('1')}}>
+              <TouchableOpacity style={styles.btn} onPress={timeCheckButton}>
+                <Text style={{color:'white'}}>남은 시간 확인</Text>
+              </TouchableOpacity>
+            </View>
+          <View style={styles.btnArea,{paddingLeft: wp('1')}}>
+            <TouchableOpacity style={styles.btn} onPress={resuggestButton}>
+              <Text style={{color:'white'}}>다시 제안하기</Text>
+            </TouchableOpacity>
+          </View>
         </View>
         
         }

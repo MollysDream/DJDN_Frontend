@@ -236,13 +236,7 @@ export default class MakePostScreen extends Component {
 
                                             }
                                         </Picker>
-                                        {/*<Item inlinelabel>
-                                            <Label style={{width:'18%'}}>카테고리</Label>
 
-                                            <Input autoCapitalize='none'
-                                                   onChangeText={(text) => this.writePost(text, "category")} />
-
-                                        </Item>*/}
                                         <Item inlinelabel >
                                             <Label style={{width:'18%'}}>가격</Label>
                                             <Input autoCapitalize='none'
@@ -251,7 +245,7 @@ export default class MakePostScreen extends Component {
                                             />
 
                                         </Item>
-                                        <Item  inlinelabel style={{ marginTop: '5%' }} >
+                                        <Item  inlinelabel >
                                             <TouchableOpacity
                                                 onPress={this.selectImage}
                                                 style={styles.imageArea}>
@@ -270,7 +264,7 @@ export default class MakePostScreen extends Component {
                                                keyExtractor={item => item.name}
                                                renderItem={({item}) => (
                                                    
-                                                <Image style={styles.post} source={{uri: item.uri}} /> )}
+                                                <Image style={styles.image} source={{uri: item.uri}} /> )}
                                                 />  
                                             </Item>
                                         }
@@ -293,6 +287,14 @@ export default class MakePostScreen extends Component {
 
 
 const styles = StyleSheet.create({
+    image:{
+        width: wp(28),
+        overflow:"hidden",
+        height: hp(28),
+        aspectRatio: 1,
+        borderRadius: 9,
+        marginRight:10
+    },
     post:{
         flexDirection: "row",
         alignItems : "center",

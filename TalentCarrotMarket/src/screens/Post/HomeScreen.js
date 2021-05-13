@@ -103,7 +103,7 @@ export default class HomeScreen extends Component{
             userData = await requestUser.getUserData(item.user_id);
         }catch(err){
             console.log('게시글이 존재하지 않습니다');
-            Alert.alert("수정 완료", "게시글이 존재하지 않습니다.",
+            Alert.alert("오류", "게시글이 존재하지 않습니다.",
                 [{ text: '확인', style: 'cancel',
                     onPress : ()=> this.refreshPage()}])
         }
@@ -146,9 +146,9 @@ export default class HomeScreen extends Component{
     filterOption = async () =>{
         console.log('필터 옵션 설정!!')
 
-        const userId = await AsyncStorage.getItem('user_id');
+        //const userId = await AsyncStorage.getItem('user_id');
         //user_id 값으로 사용자 정보 받아와야 됨
-        const userData = await requestUser.getUserData(userId);
+        const userData = await requestUser.getUserData(this.state.userId);
 
         this.props.navigation.navigate('FilterOption',{
             userData:userData,
@@ -162,7 +162,7 @@ export default class HomeScreen extends Component{
             <View style={{flex:1, backgroundColor:'white'}}>
             <View style={{flex:1, backgroundColor:'white'}} >
 
-                <View style={{flexDirection:'row', backgroundColor:'white' ,borderColor:'black'}}>
+                <View style={{flexDirection:'row', backgroundColor:'white'}}>
                     <SearchBar
                         placeholder="   검색어를 입력해주세요"
                         onChangeText={this.updateSearch}
