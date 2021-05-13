@@ -36,6 +36,8 @@ export default class SearchPostScreen extends Component{
             view: ++this.state.detailPost.view
         });
 
+        const userId = AsyncStorage.getItem('user_id');
+        this.setState({userId:userId});
 
         //post 스키마에 저장된 user_id 값으로 사용자 정보 받아와야 됨
         /*const userData = await requestUser.getUserData(this.state.detailPost.user_id);
@@ -68,7 +70,6 @@ export default class SearchPostScreen extends Component{
         if(postOwnerId !== currentUserId){
             this.props.navigation.navigate('chat',{postOwner,item})
         }
-
     }
 
     render(){

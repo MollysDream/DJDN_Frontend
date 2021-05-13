@@ -40,11 +40,11 @@ function ChatChScreen({navigation}) {
 
       useEffect(()=>{
         async function loadingRoom(){
-        console.log("현재 사용자 ID : ",currentId);
-        const roomInfo = await request.getChatRoomById(currentId);
-        userData = await requestUser.getUserData(currentId);
-        console.log("uuuuuuuusssssssseeerrr : " , userData);
-        setRoomById(roomInfo);
+          console.log("현재 사용자 ID : ",currentId);
+          const roomInfo = await request.getChatRoomById(currentId);
+          userData = await requestUser.getUserData(currentId);
+          console.log("uuuuuuuusssssssseeerrr : " , userData);
+          setRoomById(roomInfo);
 
         }
         loadingRoom();

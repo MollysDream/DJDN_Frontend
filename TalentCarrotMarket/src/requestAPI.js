@@ -37,7 +37,7 @@ export async function getChat(chatRoomId){
 export async function getChatRoom(){
 
     console.log("getroom, requestAPI, room정보 불러오는거");
-    const preData = await axi.get("/chat/getChatRoom");
+    const roomData = await axi.get("/chat/getChatRoom");
 
     //console.log(postData.data);
     return roomData.data;
