@@ -107,6 +107,13 @@ export async function getUserPost(userId){
     return userPostData.data;
 }
 
+export async function getUserTradingPost(userId) {
+    console.log('getUserTradingPost함수 호출됨');
+    const userTradingPostData = await axi.get("/data/getUserTradingPost", {params:{userId:userId}});
+    //console.log(userTradingPostData.data);
+    return userTradingPostData.data;
+}
+
 export async function deletePost(postId){
     console.log('deletePost함수 호출됨');
     const result = await axi.delete("/data/deletePost", {params:{postId:postId}});
@@ -150,5 +157,6 @@ export default{
     deletePost,
     getChat,
     getChatRoom,
-    getChatRoomById
+    getChatRoomById,
+    getUserTradingPost
 }

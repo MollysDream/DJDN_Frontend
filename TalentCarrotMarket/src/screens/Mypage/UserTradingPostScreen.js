@@ -15,17 +15,15 @@ import {
 } from 'react-native-responsive-screen';
 import request from '../../requestAPI';
 import requestUser from "../../requestUserAPI";
-import AsyncStorage from '@react-native-community/async-storage';
 import {getDate, getPrice} from "../../function";
 import Icon from "react-native-vector-icons/FontAwesome5";
 
 
-export default class UserPostScreen extends Component{
+export default class UserTradingPostScreen extends Component{
 
     constructor(props) {
         super(props);
         this.state = {
-            search:'',
             data:[],
             page:0,
             rerender: false,
@@ -35,12 +33,18 @@ export default class UserPostScreen extends Component{
     }
 
     async componentDidMount() {
-        const postData = await request.getUserPost(this.state.userId);
+
+        try{
+            const postData = await request.getUserTradingPost(this.state.userId);
+            this.setState({
+                data: this.state.data.concat(postData),
+                page : this.state.page + 1
+            });
+        }catch(err){
+            console.log(err)
+        }
         //console.log(postData);
-        this.setState({
-            data: this.state.data.concat(postData),
-            page : this.state.page + 1
-        });
+
     }
 
 
@@ -60,26 +64,6 @@ export default class UserPostScreen extends Component{
         this.props.navigation.navigate('DetailPost',{detailPost: item, postImages: postImages, postOwner: userData});
     }
 
-    goToEditPostScreen(item){
-        const postImages = []
-        item.image.map((image)=>{
-            postImages.push(image);
-        })
-
-        this.props.navigation.navigate('editUserPostScreen',
-            {
-                detailPost: item,
-                postImages: postImages,
-                onGoBack: ()=>this.refreshPage()
-            });
-
-    }
-
-    async deletePost(item){
-        console.log(item._id);
-        let result = await request.deletePost(item._id);
-        let result_refresh = await this.refreshPage();
-    }
 
     refreshPage = async() => {
         console.log('페이지 새로고침');
@@ -87,14 +71,19 @@ export default class UserPostScreen extends Component{
         this.state.page = 0;
         this.setState({page:this.state.page, refreshing: true});
 
-        const postData = await request.getUserPost(this.state.userId);
+        try{
+            const postData = await request.getUserTradingPost(this.state.userId);
+            this.setState({
+                data: postData,
+                page : this.state.page + 1,
+                rerender: !this.state.rerender,
+                refreshing: false
+            });
+        }catch(err){
+            console.log(err)
+        }
         //console.log(postData);
-        this.setState({
-            data: postData,
-            page : this.state.page + 1,
-            rerender: !this.state.rerender,
-            refreshing: false
-        });
+
 
     }
 
@@ -115,11 +104,7 @@ export default class UserPostScreen extends Component{
                         </View>
                     </View>
                 </TouchableHighlight>
-                <Button title={'수정'} onPress={()=>this.goToEditPostScreen(item)}/>
-                <Button title={'삭제'} onPress={()=>this.deletePost(item)}/>
             </View>
-
-
 
         );
     }
@@ -130,8 +115,8 @@ export default class UserPostScreen extends Component{
             <View style={{flex:1}}>
                 <View style={{flex:1}} >
                     <View style={styles.buttonList}>
-                        <Icon style={styles.iconPlace} name="hand-holding-usd"  size={40} color="#37CEFF" />
-                        <Text style={styles.buttonText}>재능구매 내역</Text>
+                        <Icon style={styles.iconPlace} name="hands-helping"  size={40} color="#37CEFF" />
+                        <Text style={styles.buttonText}>재능판매 내역</Text>
                     </View>
                     <FlatList
                         data={this.state.data}
@@ -185,7 +170,7 @@ const styles = StyleSheet.create({
     postTitle:{fontSize:18, fontWeight: "bold", width:280, height:80, paddingTop:9},
     postAddressTime: {fontSize:13, textAlign:'right', width:'30%', marginRight:10},
     postPrice: {width:'50%',fontSize:17 , color:"#0088ff" ,paddingTop: 9}
-,
+    ,
     buttonList: {
         //borderWidth:1,
         height:55,

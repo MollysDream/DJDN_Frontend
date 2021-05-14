@@ -68,6 +68,10 @@ const MypageScreen = ({navigation}) => {
         navigation.navigate('editProfileScreen',{userId:userId, userData:userData});
     }
 
+    const goToUserTradingPostScreen = ()=>{
+        navigation.navigate('userTradingPostScreen', {userId:userId});
+    }
+
     return (
       <View style={styles.container}>
 
@@ -112,7 +116,7 @@ const MypageScreen = ({navigation}) => {
                   <Text style={styles.buttonText}>재능구매 내역</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.buttonList} onPress={goToUserPostScreen}>
+              <TouchableOpacity style={styles.buttonList} onPress={goToUserTradingPostScreen}>
                   <Icon style={[styles.iconPlace, {marginTop:3}]} name="hands-helping"  size={36} color="#37CEFF" />
                   <Text style={styles.buttonText}>재능판매 내역</Text>
               </TouchableOpacity>
