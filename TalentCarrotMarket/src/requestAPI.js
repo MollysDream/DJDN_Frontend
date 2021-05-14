@@ -99,6 +99,12 @@ export async function updatePostView({postId, view}){
     return result.data;
 }
 
+export async function updatePostTradeStatus(postId, status){
+    console.log("updatePostTradeStatus함수 호출됨");
+    console.log(`거래 상태: ${status}로 변경`);
+    const result = await axi.post("/data/updatePostTradeStatus", {postId, status});
+    return result.data;
+}
 
 export async function getUserPost(userId){
     console.log('getUserPost함수 호출됨');
@@ -120,7 +126,6 @@ export async function deletePost(postId){
 
     return result.data;
 }
-
 
 // location = 거래장소 ex) 경기도 수원시 영통구 중부대로271번길, 27-9 104-1402
 export async function createTradeTime({ startTime, endTime, workTime, location, userId1, userId2, postId }){
@@ -152,6 +157,7 @@ export default{
     postImageToS3,
     getCategoryList,
     updatePostView,
+    updatePostTradeStatus,
     getUserPost,
     updatePost,
     deletePost,
