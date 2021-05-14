@@ -17,6 +17,9 @@ import request from '../../requestAPI';
 import requestUser from "../../requestUserAPI";
 import {getDate, getPrice} from "../../function";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import Icon2 from "react-native-vector-icons/Ionicons";
+import AsyncStorage from "@react-native-community/async-storage";
+import requestUserAPI from "../../requestUserAPI";
 
 
 export default class UserTradingPostScreen extends Component{
@@ -87,6 +90,17 @@ export default class UserTradingPostScreen extends Component{
 
     }
 
+    async onChatPress(item){
+        let currentUserId = this.state.userId
+        let postOwnerId = item.user_id
+        const postOwner = await requestUserAPI.getUserData(item.user_id);
+
+        console.log('onChatPress 눌림! currentUserId : '+currentUserId,' postOwner : '+ postOwner._id);
+
+        this.props.navigation.navigate('chat',{postOwner,item})
+
+    }
+
     returnFlatListItem(item,index){
         let time = getDate(item.date);
         let price = getPrice(item.price);
@@ -104,6 +118,10 @@ export default class UserTradingPostScreen extends Component{
                         </View>
                     </View>
                 </TouchableHighlight>
+                <TouchableHighlight style={styles.chatButton} onPress={()=>this.onChatPress(item)}>
+                    <Icon2 name="chatbubbles-outline" size={40} color={"black"}></Icon2>
+                </TouchableHighlight>
+
             </View>
 
         );
@@ -195,5 +213,10 @@ const styles = StyleSheet.create({
         paddingTop:13,
         //borderWidth:1,
         marginLeft: 13
+    },
+    chatButton: {
+        position: 'absolute',
+        top: 15,
+        right: 15,
     }
 });
