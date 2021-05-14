@@ -10,7 +10,7 @@ import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
   } from 'react-native-responsive-screen';
-import axios from "axios";
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 import AsyncStorage from '@react-native-community/async-storage';
 import requestUserAPI from "../../requestUserAPI";
@@ -55,12 +55,12 @@ const MypageScreen = ({navigation}) => {
         let result = getUserData();
     }, [isFocused]);
 
-    const certifyAddress=address.map(list=>
+    /*const certifyAddress=address.map(list=>
       <Text>내가 인증한 동네 : {list.addressName}</Text>
-    )
+    )*/
 
     const goToUserPostScreen = ()=>{
-        navigation.navigate('userPostScreen');
+        navigation.navigate('userPostScreen', {userId:userId});
     }
 
     const editProfileButton = ()=>{
@@ -104,13 +104,29 @@ const MypageScreen = ({navigation}) => {
               }}
           />
 
-          <View>
-              {certifyAddress}
+          <View style={styles.tradeBox}>
+              
+
+              <TouchableOpacity style={styles.buttonList} onPress={goToUserPostScreen}>
+                  <Icon style={styles.iconPlace} name="hand-holding-usd"  size={40} color="#37CEFF" />
+                  <Text style={styles.buttonText}>재능구매 내역</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.buttonList} onPress={goToUserPostScreen}>
+                  <Icon style={[styles.iconPlace, {marginTop:3}]} name="hands-helping"  size={36} color="#37CEFF" />
+                  <Text style={styles.buttonText}>재능판매 내역</Text>
+              </TouchableOpacity>
+
+
           </View>
-          <Button title={'재능거래 내역'} onPress={goToUserPostScreen}/>
+
+          {/*<View>
+              {certifyAddress}
+          </View>*/}
 
           <View style={styles.logoutArea}>
               <TouchableOpacity style={styles.logoutButton} onPress={handleLogoutButton}>
+                  
                   <Text style={(styles.Text, {color: 'black'})}>로그아웃</Text>
               </TouchableOpacity>
           </View>
@@ -177,10 +193,41 @@ const styles = StyleSheet.create({
       borderRadius: 10,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: '#fd7a7a',
+      backgroundColor: '#ffc6c6',
       flexDirection: "row",
 
+    }, tradeBox: {
+        //borderWidth: 1,
+        flexDirection:'column',
+        marginTop:7
+
     },
-  });
+    buttonList: {
+        //borderWidth:1,
+        height:55,
+        flexDirection:'row',
+        backgroundColor: '#ecfeff',
+        borderRadius: 20,
+        marginBottom:7,
+
+
+
+    },
+    iconPlace: {
+        height:'100%',
+        marginLeft:10,
+        paddingTop: 5
+
+    },
+    buttonText:{
+        fontSize: 20,
+        color:'black',
+        height:'100%',
+        paddingTop:13,
+        //borderWidth:1,
+        marginLeft: 13
+    }
+
+});
 
   export default MypageScreen;

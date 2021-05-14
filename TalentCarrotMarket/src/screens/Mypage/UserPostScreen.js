@@ -7,7 +7,7 @@ import {
     FlatList,
     Button,
     RefreshControl,
-    TouchableHighlight
+    TouchableHighlight, TouchableOpacity
 } from 'react-native';
 import {
     widthPercentageToDP as wp,
@@ -17,6 +17,7 @@ import request from '../../requestAPI';
 import requestUser from "../../requestUserAPI";
 import AsyncStorage from '@react-native-community/async-storage';
 import {getDate, getPrice} from "../../function";
+import Icon from "react-native-vector-icons/FontAwesome5";
 
 
 export default class UserPostScreen extends Component{
@@ -29,14 +30,14 @@ export default class UserPostScreen extends Component{
             page:0,
             rerender: false,
             refreshing: false,
-            userId: undefined
+            userId: this.props.route.params.userId
         }
     }
 
     async componentDidMount() {
-        const userId = await AsyncStorage.getItem('user_id');
-        this.setState({userId:userId})
-        const postData = await request.getUserPost(userId);
+        /*const userId = await AsyncStorage.getItem('user_id');
+        this.setState({userId:userId})*/
+        const postData = await request.getUserPost(this.state.userId);
         //console.log(postData);
         this.setState({
             data: this.state.data.concat(postData),
@@ -130,7 +131,10 @@ export default class UserPostScreen extends Component{
         return (
             <View style={{flex:1}}>
                 <View style={{flex:1}} >
-                    <Text>사용자의 거래 게시물</Text>
+                    <View style={styles.buttonList}>
+                        <Icon style={styles.iconPlace} name="hand-holding-usd"  size={40} color="#37CEFF" />
+                        <Text style={styles.buttonText}>재능구매 내역</Text>
+                    </View>
                     <FlatList
                         data={this.state.data}
                         keyExtractor={(item,index) => String(item._id)}
@@ -183,5 +187,30 @@ const styles = StyleSheet.create({
     postTitle:{fontSize:18, fontWeight: "bold", width:280, height:80, paddingTop:9},
     postAddressTime: {fontSize:13, textAlign:'right', width:'30%', marginRight:10},
     postPrice: {width:'50%',fontSize:17 , color:"#0088ff" ,paddingTop: 9}
+,
+    buttonList: {
+        //borderWidth:1,
+        height:55,
+        flexDirection:'row',
+        backgroundColor: '#ecfeff',
+        borderRadius: 20,
+        marginBottom:7,
 
+
+
+    },
+    iconPlace: {
+        height:'100%',
+        marginLeft:10,
+        paddingTop: 5
+
+    },
+    buttonText:{
+        fontSize: 20,
+        color:'black',
+        height:'100%',
+        paddingTop:13,
+        //borderWidth:1,
+        marginLeft: 13
+    }
 });
