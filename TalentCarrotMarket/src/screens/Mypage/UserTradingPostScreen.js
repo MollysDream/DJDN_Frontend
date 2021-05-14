@@ -104,6 +104,16 @@ export default class UserTradingPostScreen extends Component{
     returnFlatListItem(item,index){
         let time = getDate(item.date);
         let price = getPrice(item.price);
+        let status = null
+        let statusStyle = styles.status_none
+        if(item.tradeStatus === 1){
+            status = '거래중';
+            statusStyle = styles.status_ing
+        }
+        else if(item.tradeStatus ===2){
+            status = '거래완료';
+            statusStyle = styles.status_complete
+        }
         return(
             <View>
                 <TouchableHighlight onPress={() => this.goToDetailPostScreen(item)}>
@@ -111,6 +121,9 @@ export default class UserTradingPostScreen extends Component{
                         <Image style={styles.image} source={{ uri: item.image[0]}} />
                         <View>
                             <Text style={styles.postTitle}>{item.title}</Text>
+                            <View style={statusStyle}>
+                                <Text>{status}</Text>
+                            </View>
                             <View style={{flexDirection:'row'}}>
                                 <Text style={styles.postPrice}>{`${price}원`}</Text>
                                 <Text style={styles.postAddressTime}>{`${item.addressName}\n${time}`}</Text>
@@ -188,7 +201,7 @@ const styles = StyleSheet.create({
         alignSelf : "center",
         padding:20
     },
-    postTitle:{fontSize:18, fontWeight: "bold", width:280, height:80, paddingTop:9},
+    postTitle:{fontSize:18, fontWeight: "bold", width:250, height:80, paddingTop:9},
     postAddressTime: {fontSize:13, textAlign:'right', width:'30%', marginRight:10},
     postPrice: {width:'50%',fontSize:17 , color:"#0088ff" ,paddingTop: 9}
     ,
@@ -221,5 +234,22 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 15,
         right: 15,
+    },
+    status_ing:{
+        backgroundColor:'#b4e6ff',
+        position: 'absolute',
+        top: 40,
+        padding: 3,
+        borderRadius: 7
+    },
+    status_complete:{
+        backgroundColor:'#98afbf',
+        position: 'absolute',
+        top: 40,
+        padding: 3,
+        borderRadius: 7
+    },
+    status_none:{
+        position: 'absolute'
     }
 });
