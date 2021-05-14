@@ -129,12 +129,15 @@ export default class UserTradingPostScreen extends Component{
 
 
     render() {
+        let noData = "";
+        if(this.state.data.length==0)
+            noData = "이 없습니다...";
         return (
             <View style={{flex:1}}>
                 <View style={{flex:1}} >
                     <View style={styles.buttonList}>
                         <Icon style={styles.iconPlace} name="hands-helping"  size={40} color="#37CEFF" />
-                        <Text style={styles.buttonText}>재능판매 내역</Text>
+                        <Text style={styles.buttonText}>{`재능판매 내역${noData}`}</Text>
                     </View>
                     <FlatList
                         data={this.state.data}
