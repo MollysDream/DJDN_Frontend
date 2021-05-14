@@ -48,6 +48,7 @@ import aroundCertifyScreen from './src/screens/Around/AroundCertifyScreen';
 //MyPageStack
 import mypageScreen from './src/screens/Mypage/MypageScreen';
 import userPostScreen from './src/screens/Mypage/UserPostScreen';
+import userTradingPostScreen from './src/screens/Mypage/UserTradingPostScreen';
 import editUserPostScreen from './src/screens/Mypage/EditUserPostScreen';
 import editProfileScreen from './src/screens/Mypage/EditProfileScreen';
 
@@ -133,6 +134,7 @@ const SettingStackScreen = () => {
     <Stack.Navigator>
       <SettingStack.Screen name="Home" component={mypageScreen} />
       <SettingStack.Screen name="userPostScreen" component={userPostScreen}/>
+        <SettingStack.Screen name="userTradingPostScreen" component={userTradingPostScreen}/>
       <SettingStack.Screen name="editUserPostScreen" component={editUserPostScreen}/>
         <SettingStack.Screen name="editProfileScreen" component={editProfileScreen}/>
     </Stack.Navigator>

@@ -23,7 +23,7 @@ function getDate(date){
 
 
 
-    ret = String(second-parseInt(S)+16)+'초 전';
+    ret = String(second-parseInt(S))+'초 전';
     if(parseInt(HM[1]) != parseInt(minutes))
         ret = String(minutes- HM[1])+'분 전';
     if((parseInt(HM[0])+9)%24 != parseInt(hour))

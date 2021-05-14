@@ -15,38 +15,39 @@ import {
 } from 'react-native-responsive-screen';
 import request from '../../requestAPI';
 import requestUser from "../../requestUserAPI";
-import AsyncStorage from '@react-native-community/async-storage';
 import {getDate, getPrice} from "../../function";
 import Icon from "react-native-vector-icons/FontAwesome5";
-import Icon2 from "react-native-vector-icons/Entypo";
+import Icon2 from "react-native-vector-icons/Ionicons";
+import AsyncStorage from "@react-native-community/async-storage";
 import requestUserAPI from "../../requestUserAPI";
 
-import Modal from 'react-native-modal';
 
-
-export default class UserPostScreen extends Component{
+export default class UserTradingPostScreen extends Component{
 
     constructor(props) {
         super(props);
         this.state = {
-            search:'',
             data:[],
             page:0,
             rerender: false,
             refreshing: false,
-            userId: this.props.route.params.userId,
-            modalVisible: false,
-            currentItem:{}
+            userId: this.props.route.params.userId
         }
     }
 
     async componentDidMount() {
-        const postData = await request.getUserPost(this.state.userId);
+
+        try{
+            const postData = await request.getUserTradingPost(this.state.userId);
+            this.setState({
+                data: this.state.data.concat(postData),
+                page : this.state.page + 1
+            });
+        }catch(err){
+            console.log(err)
+        }
         //console.log(postData);
-        this.setState({
-            data: this.state.data.concat(postData),
-            page : this.state.page + 1
-        });
+
     }
 
 
@@ -66,28 +67,6 @@ export default class UserPostScreen extends Component{
         this.props.navigation.navigate('DetailPost',{detailPost: item, postImages: postImages, postOwner: userData});
     }
 
-    goToEditPostScreen(item){
-        this.toggleModal();
-        const postImages = []
-        item.image.map((image)=>{
-            postImages.push(image);
-        })
-
-        this.props.navigation.navigate('editUserPostScreen',
-            {
-                detailPost: item,
-                postImages: postImages,
-                onGoBack: ()=>this.refreshPage()
-            });
-
-    }
-
-    async deletePost(item){
-        this.toggleModal();
-        console.log(item._id);
-        let result = await request.deletePost(item._id);
-        let result_refresh = await this.refreshPage();
-    }
 
     refreshPage = async() => {
         console.log('페이지 새로고침');
@@ -95,32 +74,31 @@ export default class UserPostScreen extends Component{
         this.state.page = 0;
         this.setState({page:this.state.page, refreshing: true});
 
-        const postData = await request.getUserPost(this.state.userId);
+        try{
+            const postData = await request.getUserTradingPost(this.state.userId);
+            this.setState({
+                data: postData,
+                page : this.state.page + 1,
+                rerender: !this.state.rerender,
+                refreshing: false
+            });
+        }catch(err){
+            console.log(err)
+        }
         //console.log(postData);
-        this.setState({
-            data: postData,
-            page : this.state.page + 1,
-            rerender: !this.state.rerender,
-            refreshing: false
-        });
+
 
     }
 
-    async changeTradeStatus(item, status){ //status 0:없음, 1:거래중, 2:거래완료
-        this.toggleModal();
+    async onChatPress(item){
+        let currentUserId = this.state.userId
+        let postOwnerId = item.user_id
+        const postOwner = await requestUserAPI.getUserData(item.user_id);
 
-        let result = await request.updatePostTradeStatus(item._id, status);
+        console.log('onChatPress 눌림! currentUserId : '+currentUserId,' postOwner : '+ postOwner._id);
 
-        let result_refresh = await this.refreshPage();
-    }
+        this.props.navigation.navigate('chat',{postOwner,item})
 
-    toggleModal(){
-        this.setState({modalVisible:!this.state.modalVisible});
-    }
-
-    async onOptionPress(item){
-        this.setState({currentItem:item});
-        this.toggleModal();
     }
 
     returnFlatListItem(item,index){
@@ -136,7 +114,6 @@ export default class UserPostScreen extends Component{
             status = '거래완료';
             statusStyle = styles.status_complete
         }
-
         return(
             <View>
                 <TouchableHighlight onPress={() => this.goToDetailPostScreen(item)}>
@@ -154,13 +131,11 @@ export default class UserPostScreen extends Component{
                         </View>
                     </View>
                 </TouchableHighlight>
-                <TouchableHighlight style={styles.optionButton} onPress={()=>this.onOptionPress(item)}>
-                    <Icon2 name="dots-three-vertical" size={25} color={"black"}></Icon2>
+                <TouchableHighlight style={styles.chatButton} onPress={()=>this.onChatPress(item)}>
+                    <Icon2 name="chatbubbles-outline" size={40} color={"black"}></Icon2>
                 </TouchableHighlight>
 
             </View>
-
-
 
         );
     }
@@ -174,8 +149,8 @@ export default class UserPostScreen extends Component{
             <View style={{flex:1}}>
                 <View style={{flex:1}} >
                     <View style={styles.buttonList}>
-                        <Icon style={styles.iconPlace} name="hand-holding-usd"  size={40} color="#37CEFF" />
-                        <Text style={styles.buttonText}>{`재능구매 내역${noData}`}</Text>
+                        <Icon style={styles.iconPlace} name="hands-helping"  size={40} color="#37CEFF" />
+                        <Text style={styles.buttonText}>{`재능판매 내역${noData}`}</Text>
                     </View>
                     <FlatList
                         data={this.state.data}
@@ -187,43 +162,6 @@ export default class UserPostScreen extends Component{
                         refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.refreshPage} />}
                     />
                 </View>
-
-                <Modal isVisible={this.state.modalVisible} onBackdropPress={()=>this.toggleModal()}>
-                    <View style={styles.optionBox}>
-                        {
-                            this.state.currentItem.tradeStatus==1 || this.state.currentItem.tradeStatus==2?
-                                <TouchableOpacity style={styles.buttonList} onPress={()=>this.changeTradeStatus(this.state.currentItem, 0)}>
-                                    <Icon style={styles.iconPlace} name="exchange-alt"  size={40} color="#37CEFF" />
-                                    <Text style={styles.buttonText}>"재능꾼 찾는중"으로 변경</Text>
-                                </TouchableOpacity> : null
-                        }
-                        {
-                            this.state.currentItem.tradeStatus==0 || this.state.currentItem.tradeStatus==2?
-                                <TouchableOpacity style={styles.buttonList} onPress={()=>this.changeTradeStatus(this.state.currentItem, 1)}>
-                                    <Icon style={styles.iconPlace} name="exchange-alt"  size={40} color="#37CEFF" />
-                                    <Text style={styles.buttonText}>"재능 거래중"으로 변경</Text>
-                                </TouchableOpacity> : null
-                        }
-                        {
-                            this.state.currentItem.tradeStatus==0 || this.state.currentItem.tradeStatus==1?
-                                <TouchableOpacity style={styles.buttonList} onPress={()=>this.changeTradeStatus(this.state.currentItem, 2)}>
-                                    <Icon style={styles.iconPlace} name="exchange-alt"  size={40} color="#37CEFF" />
-                                    <Text style={styles.buttonText}>"재능 거래완료"로 변경</Text>
-                                </TouchableOpacity> : null
-                        }
-
-                        <TouchableOpacity style={styles.buttonList} onPress={()=>this.goToEditPostScreen(this.state.currentItem)}>
-                            <Icon style={styles.iconPlace} name="edit"  size={40} color="#37CEFF" />
-                            <Text style={styles.buttonText}>거래 게시글 수정</Text>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity style={styles.buttonList} onPress={()=>this.deletePost(this.state.currentItem)}>
-                            <Icon2 style={styles.iconPlace} name="cross"  size={45} color="#37CEFF" />
-                            <Text style={styles.buttonText}>삭제</Text>
-                        </TouchableOpacity>
-                    </View>
-
-                </Modal>
 
 
             </View>
@@ -266,7 +204,7 @@ const styles = StyleSheet.create({
     postTitle:{fontSize:18, fontWeight: "bold", width:250, height:80, paddingTop:9},
     postAddressTime: {fontSize:13, textAlign:'right', width:'30%', marginRight:10},
     postPrice: {width:'50%',fontSize:17 , color:"#0088ff" ,paddingTop: 9}
-,
+    ,
     buttonList: {
         //borderWidth:1,
         height:55,
@@ -274,6 +212,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#ecfeff',
         borderRadius: 20,
         marginBottom:7,
+
+
 
     },
     iconPlace: {
@@ -290,16 +230,10 @@ const styles = StyleSheet.create({
         //borderWidth:1,
         marginLeft: 13
     },
-    optionButton: {
+    chatButton: {
         position: 'absolute',
-        top: 19,
+        top: 15,
         right: 15,
-    },
-    optionBox: {
-        //borderWidth: 1,
-        flexDirection:'column',
-        marginTop:7
-
     },
     status_ing:{
         backgroundColor:'#b4e6ff',

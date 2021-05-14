@@ -242,10 +242,10 @@ export default class EditUserPostScreen extends Component {
                                             placeholder='카테고리'
                                             selectedValue={this.props.route.params.detailPost.category[0]}
                                         >
-                                            <PickerItem color={'grey'} label={'카테고리 선택'} value={''}/>
+                                            <Picker.Item color={'grey'} label={'카테고리 선택'} value={''}/>
                                             {
                                                 this.state.categoryList.map((category, key)=>(
-                                                    <PickerItem label={category} value={category} key={key}/>
+                                                    <Picker.Item label={category} value={category} key={key}/>
                                                 ))
 
                                             }
