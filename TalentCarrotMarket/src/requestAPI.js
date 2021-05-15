@@ -19,6 +19,17 @@ export async function postInfo({title, content, category, tag, view, date}){
     return info.data;
 }
 
+
+//////
+export async function getPostTitle(postId){
+    console.log("getpostTitle");
+    const postTitleData = await axi.get("/data/getPostTitle", {params:{postId:postId}});
+    return postTitleData.data;
+}
+
+
+
+
 //HomeScreen 컴포넌트로 게시물 데이터 GET
 export async function getPost(page, userId){
     console.log(`getPost함수 ${page} 페이지 호출됨/ 사용자 ID: ${userId}`);
@@ -164,5 +175,6 @@ export default{
     getChat,
     getChatRoom,
     getChatRoomById,
-    getUserTradingPost
+    getUserTradingPost,
+    getPostTitle
 }
