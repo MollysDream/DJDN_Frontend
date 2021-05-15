@@ -15,6 +15,8 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Icon2 from 'react-native-vector-icons/Entypo';
 import requestUserAPI from "../../requestUserAPI";
+import FlashMessage, {showMessage} from "react-native-flash-message";
+
 
 
 const KeywordScreen = ({navigation, route}) => {
@@ -26,14 +28,25 @@ const KeywordScreen = ({navigation, route}) => {
         setEditKeyword(text);
     }
 
+    function message(text){
+        showMessage({message:text, type:'info'});
+    }
+
     async function saveKeyword() {
 
+        if(keywordList.length>=10){
+            message('키워드는 최대 10개까지 등록 가능합니다!')
+            return;
+        }
         if(keywordList.includes(editKeyword)){
+            message('이미 등록한 키워드입니다!')
+            return;
+        }
+        if(editKeyword.length > 8){
+            message('키워드는 8자까지 등록 가능합니다!')
             return;
         }
 
-        if(editKeyword.length > 8)
-            return;
 
         let result = await requestUserAPI.addKeyword(userId, editKeyword);
         //console.log(keywordList);
@@ -48,6 +61,7 @@ const KeywordScreen = ({navigation, route}) => {
 
     return (
         <View style={{flex:1, backgroundColor:'white'}}>
+            <FlashMessage position="top"/>
 
             <View style={styles.buttonList}>
                 <Icon style={styles.iconPlace} name="tags"  size={40} color="#37CEFF" />
