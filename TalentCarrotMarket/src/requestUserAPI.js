@@ -28,10 +28,24 @@ export async function updateUserProfile(userId, editNickname, editImage) {
     return result.data;
 }
 
+export async function addKeyword(userId, keyword){
+    console.log(`addKeyword함수 호출됨 아이디: ${userId} // 키워드: ${keyword}`);
+    const result = await axi.post("/user/addKeyword", {userId,keyword});
+    return result.data;
+}
+
+export async function deleteKeyword(userId, keyword){
+    console.log(`deleteKeyword함수 호출됨 아이디: ${userId} // 키워드: ${keyword}`);
+    const result = await axi.post("/user/deleteKeyword", {userId,keyword});
+    return result.data;
+}
+
+
 export default{
     getUserData,
     updateUserCategoryAndSort,
     updateUserAddressIndex,
-    updateUserProfile
-
+    updateUserProfile,
+    addKeyword,
+    deleteKeyword
 }
