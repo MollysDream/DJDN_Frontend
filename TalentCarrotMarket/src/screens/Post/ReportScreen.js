@@ -30,10 +30,10 @@ export default class ReportScreen extends Component {
         userCategoryList:['비매너', '욕설', '성희롱', '또라이', '기타'],
         text:'',
 
-        userId:''
+        userId:this.props.route.params.userId
     }
 
-    componentDidMount() {
+    /*componentDidMount() {
         AsyncStorage.getItem('user_id')
             .then((value) => {
                 this.setState({userId:value})
@@ -42,7 +42,7 @@ export default class ReportScreen extends Component {
                 console.log('사용자 ID 못 가져옴');
         })
 
-    }
+    }*/
 
     writeText = (text, type)=>{
         this.setState({text:text})

@@ -72,6 +72,10 @@ const MypageScreen = ({navigation}) => {
         navigation.navigate('userTradingPostScreen', {userId:userId});
     }
 
+    const goToKeywordScreen = ()=>{
+        navigation.navigate('keywordScreen', {userId:userId, keywordList:userData.keyword});
+    }
+
     return (
       <View style={styles.container}>
 
@@ -119,6 +123,11 @@ const MypageScreen = ({navigation}) => {
               <TouchableOpacity style={styles.buttonList} onPress={goToUserTradingPostScreen}>
                   <Icon style={[styles.iconPlace, {marginTop:3}]} name="hands-helping"  size={36} color="#37CEFF" />
                   <Text style={styles.buttonText}>재능판매 내역</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.buttonList} onPress={goToKeywordScreen}>
+                  <Icon style={[styles.iconPlace, {marginTop:3}]} name="tags"  size={36} color="#37CEFF" />
+                  <Text style={styles.buttonText}>키워드 알림</Text>
               </TouchableOpacity>
 
 

@@ -51,6 +51,7 @@ import userPostScreen from './src/screens/Mypage/UserPostScreen';
 import userTradingPostScreen from './src/screens/Mypage/UserTradingPostScreen';
 import editUserPostScreen from './src/screens/Mypage/EditUserPostScreen';
 import editProfileScreen from './src/screens/Mypage/EditProfileScreen';
+import keywordScreen from './src/screens/Mypage/KeywordScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -132,11 +133,13 @@ const ChatStackScreen = () => {
 const SettingStackScreen = () => {
   return (
     <Stack.Navigator>
-      <SettingStack.Screen name="Home" component={mypageScreen} />
+      <SettingStack.Screen name="마이페이지" component={mypageScreen} />
       <SettingStack.Screen name="userPostScreen" component={userPostScreen}/>
-        <SettingStack.Screen name="userTradingPostScreen" component={userTradingPostScreen}/>
+      <SettingStack.Screen name="userTradingPostScreen" component={userTradingPostScreen}/>
       <SettingStack.Screen name="editUserPostScreen" component={editUserPostScreen}/>
-        <SettingStack.Screen name="editProfileScreen" component={editProfileScreen}/>
+      <SettingStack.Screen name="editProfileScreen" component={editProfileScreen}/>
+      <SettingStack.Screen name="keywordScreen" component={keywordScreen}/>
+
     </Stack.Navigator>
   );
 };

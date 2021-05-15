@@ -62,10 +62,10 @@ export async function getChatRoomById(currentUserId){
 }
 
 //////////////
-export async function getPostBySearch(search){
+export async function getPostBySearch(search ,userId){
     //console.log(search);
     console.log("getPostBySearch함수 호출됨");
-    const postData = await axi.get("/data/getPostBySearch", {params:{searchValue : search}});
+    const postData = await axi.get("/data/getPostBySearch", {params:{searchValue : search, userId: userId}});
     return postData.data;
 }
 
