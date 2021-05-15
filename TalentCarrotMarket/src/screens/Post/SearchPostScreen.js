@@ -18,6 +18,7 @@ export default class SearchPostScreen extends Component{
         super(props);
         this.state = {
             search:this.props.route.params.searchValue,
+            userId:this.props.route.params.userId,
             data:[],
             page:0,
             rerender: false
@@ -25,7 +26,7 @@ export default class SearchPostScreen extends Component{
     }
 
     async componentDidMount() {
-        const postData = await request.getPostBySearch(this.state.search);
+        const postData = await request.getPostBySearch(this.state.search, this.state.userId);
         console.log(postData);
         this.setState({
             data: this.state.data.concat(postData),
@@ -43,7 +44,7 @@ export default class SearchPostScreen extends Component{
 
     searchPost = async ()=>{
         console.log(this.state.search);
-        const postData = await request.getPostBySearch(this.state.search);
+        const postData = await request.getPostBySearch(this.state.search, this.state.userId);
         this.setState({
             data: postData,
             page : this.state.page + 1,

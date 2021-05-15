@@ -79,7 +79,7 @@ export default class DetailPostScreen extends Component{
 
     reportPost(){
         console.log("신고!!");
-        this.props.navigation.navigate('Report',{detailPost: this.state.detailPost, postOwner: this.state.postOwner});
+        this.props.navigation.navigate('Report',{detailPost: this.state.detailPost, postOwner: this.state.postOwner, userId:this.state.userId});
     }
 
 

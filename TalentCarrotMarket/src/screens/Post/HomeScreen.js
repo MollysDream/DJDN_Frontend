@@ -40,12 +40,13 @@ export default class HomeScreen extends Component{
         //console.log("홈스크린 componentDidMount");
         try{
             const userId = await AsyncStorage.getItem('user_id');
-            this.setState({userId:userId})
+            //this.setState({userId:userId})
             const postData = await request.getPost(this.state.page, userId);
 
             this.setState({
                 data: this.state.data.concat(postData),
-                page : this.state.page + 1
+                page : this.state.page + 1,
+                userId: userId,
             });
 
         }catch(err){
@@ -68,10 +69,10 @@ export default class HomeScreen extends Component{
     refreshPage = async() => {
         console.log('페이지 새로고침');
         try{
-            this.state.page = 0;
-            this.setState({page:this.state.page, refreshing: true});
+            //this.state.page = 0;
+            this.setState({page:0, refreshing: true});
 
-            const postData = await request.getPost(this.state.page, this.state.userId);
+            const postData = await request.getPost(0, this.state.userId);
             this.setState({
                 data: postData,
                 page : this.state.page + 1,
@@ -91,7 +92,7 @@ export default class HomeScreen extends Component{
 
     searchPost = () =>{
         console.log(`${this.state.search} 검색 시작!!`)
-        this.props.navigation.navigate('SearchPost', {searchValue: this.state.search});
+        this.props.navigation.navigate('SearchPost', {searchValue: this.state.search, userId:this.state.userId});
         this.setState({search:''});
     }
 
@@ -145,21 +146,9 @@ export default class HomeScreen extends Component{
         );
     }
 
-    categoryFilter = async() =>{
-        const category = ['운동','애견']
-        const postData = await request.getPostByCategory(category);
-        console.log(postData);
-        this.setState({
-            data: postData,
-            page : 0,
-            rerender: !this.state.rerender
-        });
-    }
-
     filterOption = async () =>{
         console.log('필터 옵션 설정!!')
 
-        //const userId = await AsyncStorage.getItem('user_id');
         //user_id 값으로 사용자 정보 받아와야 됨
         const userData = await requestUser.getUserData(this.state.userId);
 
@@ -170,6 +159,7 @@ export default class HomeScreen extends Component{
     }
 
     render() {
+        console.log('홈화면 렌더');
         const {search} = this.state;
         return (
             <View style={{flex:1, backgroundColor:'white'}}>
@@ -204,7 +194,7 @@ export default class HomeScreen extends Component{
                     extraData={this.state.rerender}
                     refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.refreshPage} />}
                 />
-                {console.log("이거", this.state.data)}
+
             </View>
                 <TouchableOpacity onPress={()=>this.props.navigation.navigate('MakePost',{onGoBack: ()=>this.refreshPage()})}
                                   style={{borderWidth:0,position:'absolute',bottom:5,alignSelf:'flex-end'}}>
