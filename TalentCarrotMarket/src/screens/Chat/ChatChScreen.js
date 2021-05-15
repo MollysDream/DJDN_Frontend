@@ -1,10 +1,13 @@
-import React, {useState,useEffect} from 'react';
+import React, {useState,useEffect, useCallback} from 'react';
+import { Content, Container, Header, Left, Right, Title, Body, Item, Label,
+  Input, Form, Textarea } from 'native-base';
 import {
     View,
     Text,
     StyleSheet,
     FlatList,
     TouchableOpacity,
+    RefreshControl,
     TouchableHighlight
 } from 'react-native';
 import { List, Divider } from 'react-native-paper';
@@ -23,10 +26,16 @@ import {
 
 // let roomById;
 let userData;
+let nick =[];
+let count = 0;
 
 function ChatChScreen({navigation}) {
       const [currentId, setCurrentId] = useState("");
       const [roomById, setRoomById] = useState([]);
+      //const [nickInfo, setNickInfo] = useState([]);
+      const [refreshing, setRefreshing] = useState(false);
+      const [rerender, setRerender] = useState(false);
+      const [nickInfo, setNickInfo] = useState([]);
       useEffect(()=>{
         async function loadingCurrentId(){
             AsyncStorage
@@ -41,79 +50,156 @@ function ChatChScreen({navigation}) {
       useEffect(()=>{
         async function loadingRoom(){
           console.log("현재 사용자 ID : ",currentId);
+
           if(currentId){
             const roomInfo = await request.getChatRoomById(currentId);
             userData = await requestUser.getUserData(currentId);
-          }
-          console.log("uuuuuuuusssssssseeerrr : " , userData);
-          setRoomById(roomInfo);
+            await setRoomById(roomInfo);
 
+            roomInfo.map(async (data)=>{
+              let hostid = await requestUser.getUserData(data.hostId);
+              let postOwnerid = await requestUser.getUserData(data.postOwnerId);
+              let postid = await request.getPostTitle(data.postId);
+              
+
+              nick = nick.concat({_id : data._id, hostNick : hostid.nickname , postOwnerNick : postOwnerid.nickname, postTitle : postid[0].title });
+              
+              await setNickInfo(nick);
+             
+             })
+           
+          }
         }
         loadingRoom();
       },[currentId]);
 
       function returnFlatListItem(item,index){
+        
         return(
             <TouchableHighlight onPress={() => {navigation.navigate('chatchroom', {postOwner: userData, roomInfo: item})}}>
-                <View style={styles.post}>
-                    <Text  style={styles.postTitle}>{item.postId}</Text>
+                 <View style={styles.post}>
+                     <View>
+                        <Text style={styles.postTitle}>{item.postTitle}</Text>
+                        
+                        <View style={{flexDirection:'row'}}>
+                            <Text style={styles.host}>{item.hostNick}</Text>
+                            <Text style={styles.postowner}>{item.postOwnerNick}</Text>
+                        </View>
+                    </View>
                 </View>
             </TouchableHighlight>
         );
     }
+   
+    onRefresh = async() => {
+      try{
+        setRefreshing(true);
+        console.log("setrefreshing", refreshing);
+        nick =[];
+        const roomInfo = await request.getChatRoomById(currentId);
+            userData = await requestUser.getUserData(currentId);
+            console.log("이게 뭔데 왜 자꾸 안 들어가",roomInfo);
+            setRoomById(roomInfo);
 
+            roomInfo.map(async (data)=>{
+              let hostid = await requestUser.getUserData(data.hostId);
+              let postOwnerid = await requestUser.getUserData(data.postOwnerId);
+              nick = nick.concat({_id : data._id, hostNick : hostid.nickname , postOwnerNick : postOwnerid.nickname });
+              setNickInfo(nick);
+      
+            })
+        setRefreshing(false);
+        setRerender(!rerender);
+        
+      }
+      catch(err){
+        console.log("DB에러")
+        console.log(err);
+      }
+    }
 
-
+    
       return (
         <View style={styles.container}>
             <FlatList
-                    data={roomById}
+                    data={nickInfo}
                     keyExtractor={(item,index) => String(item._id)}
                     renderItem={({item,index})=>returnFlatListItem(item,index)}
                     //onEndReached={this.morePage}
                     onEndReachedThreshold={1}
-                    //extraData={this.state.rerender}
-                    //refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.refreshPage} />}
+                    extraData ={rerender}
+                    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
                 />
       </View>
       );
 }
 
+
+
 const styles = StyleSheet.create({
-    container: {
-      backgroundColor: '#f5f5f5',
-      flex: 1
-    },    btn2: {
-      flex: 1,
-      width: 300,
-      height: 50,
-      borderRadius: 7,
-      justifyContent: 'center',
+  iconBox:{
+      height:67,
       alignItems: 'center',
-      backgroundColor: '#4672B8',
-    },
-    post:{
-      flexDirection: "row",
-      alignItems : "center",
-      backgroundColor: "#FFFFFF",
-      borderBottomColor: "#AAAAAA",
-      borderBottomWidth: 1,
-      padding: 5,
-      height: 150
+      marginTop:3
   },
-  btnArea2: {
-      height: hp(10),
-      // backgroundColor: 'orange',
-      paddingTop: hp(1.5),
-      paddingBottom: hp(1.5),
-      alignItems: 'center',
-    },
-    listDescription: {
-      fontSize: 16
-    },
-    container: {
+  icon:{
+      width: wp(9),
+      overflow:"hidden",
+      height: hp(9),
+      aspectRatio: 1,
+      borderRadius: 9,
+  },
+  image:{
+      width: wp(28),
+      overflow:"hidden",
+      height: hp(28),
+      aspectRatio: 1,
+      borderRadius: 9,
+      marginRight:12
+  },
+  post:{
+      flexDirection: "row",
+      //borderRadius: 15,
+      backgroundColor: "white",
+      borderBottomColor: "#a6e5ff",
+      borderBottomWidth: 1,
+      padding: 10,
+      height: 100
+  },
+  cover:{
       flex: 1,
-      height:400,
-      },
-  });
+      width: 200,
+      height:200,
+      resizeMode: "contain"
+  },
+  postDetail:{
+      flex:3,
+      alignItems :"flex-start",
+      flexDirection : "column",
+      alignSelf : "center",
+      padding:20
+  },
+  postTitle:{fontSize:18, fontWeight: "bold", flex : 1, height:50, paddingTop:9},
+  host: {fontSize:17, textAlign:'right', width:'30%', paddingTop: 9, marginRight:10},
+  postowner: {width:'30%',fontSize:17, textAlign:'right',paddingTop: 9, marginRight:10}
+  ,
+  status_ing:{
+      backgroundColor:'#b4e6ff',
+      position: 'absolute',
+      top: 40,
+      padding: 3,
+      borderRadius: 7
+  },
+  status_complete:{
+      backgroundColor:'#98afbf',
+      position: 'absolute',
+      top: 40,
+      padding: 3,
+      borderRadius: 7
+  },
+  status_none:{
+      position: 'absolute'
+  }
+});
+
 export default ChatChScreen;
