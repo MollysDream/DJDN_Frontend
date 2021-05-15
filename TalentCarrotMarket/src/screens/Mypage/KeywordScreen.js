@@ -16,6 +16,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import Icon2 from 'react-native-vector-icons/Entypo';
 import requestUserAPI from "../../requestUserAPI";
 import FlashMessage, {showMessage} from "react-native-flash-message";
+import {backgroundColor} from "react-native-tab-view/lib/typescript/example/src/CoverflowExample";
 
 
 
@@ -23,6 +24,8 @@ const KeywordScreen = ({navigation, route}) => {
     const [userId, setUserId]= useState(route.params.userId);
     const [editKeyword, setEditKeyword] = useState('');
     const [keywordList, setKeywordList] = useState(route.params.keywordList);
+
+    const MAXKEYWORD = 15;
 
     function writeKeyword(text) {
         setEditKeyword(text);
@@ -34,8 +37,8 @@ const KeywordScreen = ({navigation, route}) => {
 
     async function saveKeyword() {
 
-        if(keywordList.length>=10){
-            message('키워드는 최대 10개까지 등록 가능합니다!')
+        if(keywordList.length>=MAXKEYWORD){
+            message(`키워드는 최대 ${MAXKEYWORD}개까지 등록 가능합니다!`)
             return;
         }
         if(keywordList.includes(editKeyword)){
@@ -66,6 +69,8 @@ const KeywordScreen = ({navigation, route}) => {
             <View style={styles.buttonList}>
                 <Icon style={styles.iconPlace} name="tags"  size={40} color="#37CEFF" />
                 <Text style={styles.buttonText}>{`키워드 알림`}</Text>
+                <Text style={[styles.buttonText, {color:'#006BFF'}]}>{keywordList.length}</Text>
+                <Text style={[styles.buttonText, {marginLeft:1}]}>{`/${MAXKEYWORD}`}</Text>
             </View>
 
             <Form style={styles.formBox}>
@@ -95,7 +100,7 @@ const KeywordScreen = ({navigation, route}) => {
                     keywordList.map(keyword=>
                         <View style={styles.keyword} key={keyword}>
                             <Text style={{fontSize:17}}>{keyword}</Text>
-                            <TouchableOpacity style={styles.deleteButton} onPress={()=>deleteKeyword(keyword)}>
+                            <TouchableOpacity onPress={()=>deleteKeyword(keyword)}>
                                 <Icon2 name="cross"  size={22} color="#505a84" />
                             </TouchableOpacity>
                         </View>
@@ -191,10 +196,6 @@ const styles = StyleSheet.create({
 
 
     },
-    deleteButton: {
-
-    },
-    deleteIcon: undefined
 
 
 });
