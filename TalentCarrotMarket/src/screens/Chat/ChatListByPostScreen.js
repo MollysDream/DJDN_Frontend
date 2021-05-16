@@ -25,9 +25,8 @@ import {
 } from 'react-native-responsive-screen';
 
 
-// let roomById;
 let userData;
-let nick =[];
+let roomInfo;
 let count = 0;
 
 function ChatListByPostScreen(props) {
@@ -39,40 +38,36 @@ function ChatListByPostScreen(props) {
 	const [nickInfo, setNickInfo] = useState([]);
 	const [postId, setPostId] = useState(props.route.params.item._id);
 	useEffect(()=>{
-		async function loadingCurrentId(){
-			AsyncStorage
-				.getItem('user_id')
-				.then((value) => {
-					setCurrentId(value);
-				});
-
-		}
 		loadingCurrentId();
 	},[]);
 
 	useEffect(()=>{
-		async function loadingRoom(){
-			console.log("현재 사용자 ID 겸 postOwnerId : ",currentId);
-			console.log("\n 중요! PostId : 출력: ",postId);
-			console.log(`지금 useEffect ${count++}: 번 실행됐다!`);
-			// setPostId(this.props.route.params.item._id);
-
-			if(currentId){
-				let roomInfo = await requestChat.getChatRoomByPost(currentId,postId);
-				userData = await requestUser.getUserData(currentId);
-				await setRoomById(roomInfo);
-
-				roomInfo.map(async (data)=>{
-					let hostid = await requestUser.getUserData(data.hostId);
-					let postOwnerid = await requestUser.getUserData(data.postOwnerId);
-					let postid = await request.getPostTitle(data.postId);
-					nick = nick.concat({_id : data._id, hostNick : hostid.nickname , postOwnerNick : postOwnerid.nickname, postTitle : postid[0].title });
-					await setNickInfo(nick);
-				})
-			}
-		}
 		loadingRoom();
 	},[currentId]);
+
+	async function loadingCurrentId(){
+		AsyncStorage
+			.getItem('user_id')
+			.then((value) => {
+				setCurrentId(value);
+			});
+	}
+	async function loadingRoom(){
+		if(currentId){
+			let nick =[];
+			roomInfo = await requestChat.getChatRoomByPost(currentId,postId);
+			await setRoomById(roomInfo);
+			console.log(`지금 랜더링 ${count++}: 번 실행됐다!`);
+			console.log(roomInfo);
+			roomInfo.map(async (data)=>{
+				let hostid = await requestUser.getUserData(data.hostId);
+				let postOwnerid = await requestUser.getUserData(data.postOwnerId);
+				let postid = await request.getPostTitle(data.postId);
+				nick = nick.concat({_id : data._id, hostNick : hostid.nickname , postOwnerNick : postOwnerid.nickname, postTitle : postid[0].title });
+				await setNickInfo(nick);
+			})
+		}
+	}
 
 	function returnFlatListItem(item,index){
 
@@ -105,7 +100,8 @@ function ChatListByPostScreen(props) {
 			roomInfo.map(async (data)=>{
 				let hostid = await requestUser.getUserData(data.hostId);
 				let postOwnerid = await requestUser.getUserData(data.postOwnerId);
-				nick = nick.concat({_id : data._id, hostNick : hostid.nickname , postOwnerNick : postOwnerid.nickname });
+				let postid = await request.getPostTitle(data.postId);
+				nick = nick.concat({_id : data._id, hostNick : hostid.nickname , postOwnerNick : postOwnerid.nickname, postTitle : postid[0].title });
 				setNickInfo(nick);
 
 			})

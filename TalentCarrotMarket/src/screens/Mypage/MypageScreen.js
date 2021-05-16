@@ -27,8 +27,9 @@ const MypageScreen = ({navigation}) => {
     const isFocused = useIsFocused();
 
     const handleLogoutButton = () => {
-        AsyncStorage.clear();
-        navigation.replace('Auth');
+      navigation.replace('Auth');
+      AsyncStorage.clear();
+
     };
 
     //인증한 동네 확인 - 사용자
@@ -85,7 +86,7 @@ const MypageScreen = ({navigation}) => {
                   userData=='' ?null:
                       (
                           <View style={styles.user}>
-                            {userData.image ==null?null:<Image style={styles.profileImage} source={{uri: userData.profileImage}}/>}
+                              <Image style={styles.profileImage} source={{uri:userData.profileImage}}/>
                               <Text style={{marginTop:5, color:'grey'}}>{`${userAddress.addressName}의`}</Text>
                               <Text style={styles.nickname}>{userData.nickname}</Text>
                           </View>

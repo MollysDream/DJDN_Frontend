@@ -98,13 +98,13 @@ function ChatChScreen({navigation}) {
         nick =[];
         const roomInfo = await request.getChatRoomById(currentId);
             userData = await requestUser.getUserData(currentId);
-            console.log("이게 뭔데 왜 자꾸 안 들어가",roomInfo);
             setRoomById(roomInfo);
 
             roomInfo.map(async (data)=>{
               let hostid = await requestUser.getUserData(data.hostId);
               let postOwnerid = await requestUser.getUserData(data.postOwnerId);
-              nick = nick.concat({_id : data._id, hostNick : hostid.nickname , postOwnerNick : postOwnerid.nickname });
+              let postid = await request.getPostTitle(data.postId);
+              nick = nick.concat({_id : data._id, hostNick : hostid.nickname , postOwnerNick : postOwnerid.nickname, postTitle : postid[0].title });
               setNickInfo(nick);
 
             })
