@@ -21,14 +21,14 @@ const MypageScreen = ({navigation}) => {
 
   const [address, setAddress] = useState([]);
   const [userId, setUserId]= useState('');
-  const [userData, setUserData] = useState('');
+  const [userData, setUserData] = useState();
   const [userAddress, setUserAddress] = useState('');
 
     const isFocused = useIsFocused();
 
     const handleLogoutButton = () => {
         AsyncStorage.clear();
-        navigation.replace('Auth'); 
+        navigation.replace('Auth');
     };
 
     //인증한 동네 확인 - 사용자
@@ -52,6 +52,7 @@ const MypageScreen = ({navigation}) => {
 
         }
         console.log("마이페이지 불러옴");
+
         let result = getUserData();
     }, [isFocused]);
 
@@ -82,7 +83,7 @@ const MypageScreen = ({navigation}) => {
           <View style={styles.profileBox}>
 
               {
-                  userData=='' ?null:
+                  userData==undefined ?null:
                       (
                           <View style={styles.user}>
                               <Image style={styles.profileImage} source={{uri:userData.profileImage}}/>
