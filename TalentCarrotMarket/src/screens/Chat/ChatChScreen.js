@@ -60,27 +60,27 @@ function ChatChScreen({navigation}) {
               let hostid = await requestUser.getUserData(data.hostId);
               let postOwnerid = await requestUser.getUserData(data.postOwnerId);
               let postid = await request.getPostTitle(data.postId);
-              
+
 
               nick = nick.concat({_id : data._id, hostNick : hostid.nickname , postOwnerNick : postOwnerid.nickname, postTitle : postid[0].title });
-              
+
               await setNickInfo(nick);
-             
+
              })
-           
+
           }
         }
         loadingRoom();
       },[currentId]);
 
       function returnFlatListItem(item,index){
-        
+
         return(
             <TouchableHighlight onPress={() => {navigation.navigate('chatchroom', {postOwner: userData, roomInfo: item})}}>
                  <View style={styles.post}>
                      <View>
                         <Text style={styles.postTitle}>{item.postTitle}</Text>
-                        
+
                         <View style={{flexDirection:'row'}}>
                             <Text style={styles.host}>{item.hostNick}</Text>
                             <Text style={styles.postowner}>{item.postOwnerNick}</Text>
@@ -90,8 +90,8 @@ function ChatChScreen({navigation}) {
             </TouchableHighlight>
         );
     }
-   
-    onRefresh = async() => {
+
+    async function onRefresh(){
       try{
         setRefreshing(true);
         console.log("setrefreshing", refreshing);
@@ -106,11 +106,11 @@ function ChatChScreen({navigation}) {
               let postOwnerid = await requestUser.getUserData(data.postOwnerId);
               nick = nick.concat({_id : data._id, hostNick : hostid.nickname , postOwnerNick : postOwnerid.nickname });
               setNickInfo(nick);
-      
+
             })
         setRefreshing(false);
         setRerender(!rerender);
-        
+
       }
       catch(err){
         console.log("DB에러")
@@ -118,7 +118,7 @@ function ChatChScreen({navigation}) {
       }
     }
 
-    
+
       return (
         <View style={styles.container}>
             <FlatList

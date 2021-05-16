@@ -28,7 +28,7 @@ const MypageScreen = ({navigation}) => {
 
     const handleLogoutButton = () => {
         AsyncStorage.clear();
-        navigation.replace('Auth'); 
+        navigation.replace('Auth');
     };
 
     //인증한 동네 확인 - 사용자
@@ -85,7 +85,7 @@ const MypageScreen = ({navigation}) => {
                   userData=='' ?null:
                       (
                           <View style={styles.user}>
-                              <Image style={styles.profileImage} source={{uri:userData.profileImage}}/>
+                            {userData.image ==null?null:<Image style={styles.profileImage} source={{uri: userData.profileImage}}/>}
                               <Text style={{marginTop:5, color:'grey'}}>{`${userAddress.addressName}의`}</Text>
                               <Text style={styles.nickname}>{userData.nickname}</Text>
                           </View>
@@ -113,7 +113,7 @@ const MypageScreen = ({navigation}) => {
           />
 
           <View style={styles.tradeBox}>
-              
+
 
               <TouchableOpacity style={styles.buttonList} onPress={goToUserPostScreen}>
                   <Icon style={styles.iconPlace} name="hand-holding-usd"  size={40} color="#37CEFF" />
@@ -139,7 +139,7 @@ const MypageScreen = ({navigation}) => {
 
           <View style={styles.logoutArea}>
               <TouchableOpacity style={styles.logoutButton} onPress={handleLogoutButton}>
-                  
+
                   <Text style={(styles.Text, {color: 'black'})}>로그아웃</Text>
               </TouchableOpacity>
           </View>
@@ -147,7 +147,7 @@ const MypageScreen = ({navigation}) => {
 
       </View>
 
-        
+
     );
  }
 
