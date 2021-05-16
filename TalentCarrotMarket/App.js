@@ -34,6 +34,8 @@ import reportScreen from './src/screens/Post/ReportScreen'
 //chatStack
 import chatchScreen from './src/screens/Chat/ChatChScreen';
 import chatScreen from './src/screens/Chat/ChatScreen';
+import chatListByPostScreen from './src/screens/Chat/ChatListByPostScreen';
+import chatListRoomScreen from './src/screens/Chat/ChatListRoomScreen';
 import chatchroomScreen from './src/screens/Chat/ChatchRoomScreen';
 import chatTestScreen from './src/screens/Chat/ChatTestScreen';
 import tradeTimerScreen from './src/screens/Chat/TradeTimerScreen';
@@ -87,6 +89,9 @@ const HomeStackScreen = () => {
       <HomeStack.Screen name="FilterOption" component={filterOptionScreen}/>
       <HomeStack.Screen name="DetailPost" component={detailPostScreen}/>
       <HomeStack.Screen name="chat" component={chatScreen} />
+      <ChatStack.Screen name="게시글별 채팅리스트" component={chatListByPostScreen} />
+      <ChatStack.Screen name="게시글별 채팅리스트 채팅방" component={chatListRoomScreen} />
+
       <HomeStack.Screen name="tradeset" component={tradeSetScreen} />
       <HomeStack.Screen name="Report" component={reportScreen} />
     </Stack.Navigator>
@@ -121,6 +126,7 @@ const ChatStackScreen = () => {
       <ChatStack.Screen name="chatch" component={chatchScreen} />
       <ChatStack.Screen name="chat" component={chatScreen} />
       <ChatStack.Screen name="chatTest" component={chatTestScreen} />
+      <ChatStack.Screen name="게시글별 채팅리스트" component={chatListByPostScreen} />
       <ChatStack.Screen name="tradeTimer" component={tradeTimerScreen} />
       <ChatStack.Screen name="userRate" component={userRateScreen} />
       <ChatStack.Screen name="tradeset" component={tradeSetScreen} />

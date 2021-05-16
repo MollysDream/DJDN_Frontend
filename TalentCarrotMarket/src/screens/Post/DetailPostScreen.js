@@ -27,7 +27,8 @@ export default class DetailPostScreen extends Component{
             postImages:this.props.route.params.detailPost.image,
             modalVisible:false,
             modalImage:0,
-            userId:''
+            userId:'',
+            currentUserId:''
         }
     }
 
@@ -41,6 +42,7 @@ export default class DetailPostScreen extends Component{
 
         const userId = await AsyncStorage.getItem('user_id');
         this.setState({userId:userId})
+        this.setState({currentUserId:userId})
 
 
         //post 스키마에 저장된 user_id 값으로 사용자 정보 받아와야 됨
@@ -60,6 +62,9 @@ export default class DetailPostScreen extends Component{
     }
 
 
+    /*
+    * 삭제예정
+    * */
     async onChatPress(){
         let currentUserId = await AsyncStorage.getItem('user_id'); //this.state.userId
         let postOwnerId = this.state.postOwner._id
@@ -88,6 +93,8 @@ export default class DetailPostScreen extends Component{
         const item = this.state.detailPost;
         var slice_date = item.date.split("T");
         const postOwner = this.state.postOwner;
+        const postOwnerId = this.state.postOwner._id;
+        const currentUserId = this.state.currentUserId;
         const images = this.state.postImages;
         let time = getDate(item.date);
         let price = getPrice(item.price);
@@ -170,9 +177,17 @@ export default class DetailPostScreen extends Component{
                                 </Right>
                             </Item>
                             <View style={styles.btnArea2} >
-                                <TouchableOpacity style={styles.btn2} onPress={() => this.onChatPress()}>
-                                    <Text style={(styles.Text, {color: 'white'})}>채팅</Text>
-                                </TouchableOpacity>
+                                {
+                                    (postOwnerId !== currentUserId)?(<TouchableOpacity style={styles.btn2} onPress={() => this.props.navigation.navigate('chat',{postOwner,item})}>
+                                        <Text style={(styles.Text, {color: 'white'})}>채팅</Text>
+                                    </TouchableOpacity>):null
+                                }
+                                {
+                                    (postOwnerId === currentUserId)?(<TouchableOpacity style={styles.btn2} onPress={() => this.props.navigation.navigate('게시글별 채팅리스트',{postOwner,item})}>
+                                        <Text style={(styles.Text, {color: 'white'})}>게시글별 채팅 보기</Text>
+                                    </TouchableOpacity>):null
+                                }
+
                             </View>
                         </Content>
                     </Container>

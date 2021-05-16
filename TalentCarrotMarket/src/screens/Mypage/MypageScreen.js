@@ -114,7 +114,7 @@ const MypageScreen = ({navigation}) => {
           />
 
           <View style={styles.tradeBox}>
-              
+
 
               <TouchableOpacity style={styles.buttonList} onPress={goToUserPostScreen}>
                   <Icon style={styles.iconPlace} name="hand-holding-usd"  size={40} color="#37CEFF" />
@@ -140,7 +140,7 @@ const MypageScreen = ({navigation}) => {
 
           <View style={styles.logoutArea}>
               <TouchableOpacity style={styles.logoutButton} onPress={handleLogoutButton}>
-                  
+
                   <Text style={(styles.Text, {color: 'black'})}>로그아웃</Text>
               </TouchableOpacity>
           </View>
@@ -148,7 +148,7 @@ const MypageScreen = ({navigation}) => {
 
       </View>
 
-        
+
     );
  }
 
