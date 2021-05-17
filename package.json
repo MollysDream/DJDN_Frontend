@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "lodash": "^4.17.21",
-    "react-native-image-crop-picker": "^0.36.0"
+    "react-native-image-crop-picker": "^0.36.0",
+    "react-native-star-rating": "^1.1.0"
   }
 }

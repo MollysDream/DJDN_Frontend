@@ -165,7 +165,7 @@ const AroundSetScreen = ({navigation}) => {
         }
 
         let result = refreshData();
-    },[])
+    },[isFocused, userAddressIndex])
 
     const setMapRadius= (endLocation)=>{
 
@@ -219,7 +219,7 @@ const AroundSetScreen = ({navigation}) => {
             setRadius(distance);
 
         }
-        
+
     },[distance])
 
     const circleClick = ()=>{
@@ -370,7 +370,7 @@ const AroundSetScreen = ({navigation}) => {
                       {chooseState1 !=''?(
                       <TouchableOpacity onPress={()=>console.log("이미 선택됨")} style={styles.btnAroundChoose}>
                         <Text style={(styles.Text, {color: 'white'})}>{address1}</Text>
-                      
+
 
                           <TouchableOpacity onPress={addressOneDeleteButton} style={styles.btn}>
                               <Text style={{paddingLeft:20}}>❌</Text>
@@ -387,7 +387,7 @@ const AroundSetScreen = ({navigation}) => {
                     </TouchableOpacity>
                       }
                     </View>
-                    
+
                   ):
                   <View style={styles.btnArea2}>
                     <TouchableOpacity style={styles.btnNoAround} onPress={addressOneAddButton}>
@@ -402,7 +402,7 @@ const AroundSetScreen = ({navigation}) => {
               }
 
               {address2 !=''?(
-                
+
                   <View style={styles.btnArea2}>
                   {chooseState2 !=''?(
                   <TouchableOpacity onPress={()=>console.log("이미 선택됨")} style={styles.btnAroundChoose}>
@@ -421,7 +421,7 @@ const AroundSetScreen = ({navigation}) => {
                   </TouchableOpacity>
                 </TouchableOpacity>}
                 </View>
-                
+
               ):
               <View style={styles.btnArea2}>
                 <TouchableOpacity style={styles.btnNoAround} onPress={addressTwoAddButton}>
@@ -479,7 +479,7 @@ const AroundSetScreen = ({navigation}) => {
 
         </View>
     );
-    
+
 }
 
 const styles = StyleSheet.create({
@@ -513,7 +513,7 @@ const styles = StyleSheet.create({
       // backgroundColor: 'orange',
       paddingBottom: hp(1.5),
       paddingRight:15
-      
+
     },
     btnNoAround: {
         flex: 1,
