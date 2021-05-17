@@ -23,6 +23,7 @@ function ChatListRoomScreen(props) {
 	const [messages, setMessages] = useState([]);
 	const [chatroomId, setRoomId] = useState(props.route.params.roomInfo._id);
 
+
 	useEffect(() => {
 		async function settingChat() {
 

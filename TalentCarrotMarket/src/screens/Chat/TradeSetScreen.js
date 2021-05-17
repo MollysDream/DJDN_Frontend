@@ -17,21 +17,52 @@ import {
 
 import NaverMapView, {Marker} from "react-native-nmap";
 import DateTimePicker from '@react-native-community/datetimepicker';
+import AsyncStorage from '@react-native-community/async-storage';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 //글자 강조
 const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{props.children}</Text>
 
+let userId ;
 
-const TradeSetScreen =({navigation})=>{
+const TradeSetScreen =({navigation,route})=>{
+
+      const {user1,user2}=route.params;
 
       const locateInputRef = createRef();
+ 
+      AsyncStorage.getItem('user_id').then((value) =>
+        userId=value
+      );
 
       const [locate,setLocate]=useState('')
       const [detailLocate,setDetailLocate]=useState('');
       const [isSuggest,setIsSuggest]=useState(false);
       const [isSave,setIsSave]=useState(false);
+      const [sender, setSender]=useState('');
+      const [receiver, setReceiver]=useState('');
       const [tradeId, setTradeId]=useState('');
+
+      useEffect(()=>{
+        const send_param={
+          tradeId:tradeId
+        }
+
+        axios
+        .post("http://10.0.2.2:3000/address/getTrade",send_param)
+          .then(returnData => {
+            if(returnData.data.message){
+              setIsSuggest(true)
+            } else{
+              console.log("거래가 존재하지 않습니다.")
+            }
+          })
+          //에러
+          .catch(err => {
+            console.log(err);
+          });
+
+      },[])
 
       // 거래 시간 설정
       const [startDate, setStartDate] = useState(new Date());
@@ -154,7 +185,16 @@ const TradeSetScreen =({navigation})=>{
 
       } else{
         setIsSuggest(true)
-        console.log('설정된 시작시간'+startTime)
+        console.log('설정된 시작시간 ' + startTime);
+        console.log('현재 접속자 ' + userId);
+
+        if(user1==userId){
+          setSender(user1)
+          setReceiver(user2)
+        } else{
+          setSender(user2)
+          setReceiver(user1)
+        }
       }
     }
 
@@ -174,6 +214,8 @@ const TradeSetScreen =({navigation})=>{
         startTime: startSet,
         endTime: endSet,
         location: entireLocate,
+        sender: sender,
+        receiver: receiver,
       };
   
       axios
@@ -187,7 +229,9 @@ const TradeSetScreen =({navigation})=>{
 
             navigation.navigate('tradeTimer',{
               tradeId: returnData.data.tradeId,
-              endSet: sendEndDate
+              endSet: sendEndDate,
+              user1: user1,
+              user2: user2
             })
 
             setTradeId(returnData.data.tradeId);
@@ -211,7 +255,9 @@ const TradeSetScreen =({navigation})=>{
 
       navigation.navigate('tradeTimer',{
         tradeId: tradeId,
-        endSet: sendEndDate
+        endSet: sendEndDate,
+        user1: user1,
+        user2: user2
       })
     }
     
@@ -306,7 +352,7 @@ const TradeSetScreen =({navigation})=>{
       </View>
     
       
-      {isSuggest==true && isSave==false?
+      {isSuggest==true && isSave==false && userId!=sender?
         (<View style={styles.rowbtnArea}> 
           <View style={styles.btnArea,{paddingRight: wp('1')}}>
               <TouchableOpacity style={styles.btn} onPress={agreeButton}>

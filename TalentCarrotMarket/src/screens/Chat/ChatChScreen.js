@@ -26,7 +26,6 @@ import {
 
 // let roomById;
 let userData;
-let nick =[];
 let count = 0;
 
 function ChatChScreen({navigation}) {
@@ -50,6 +49,7 @@ function ChatChScreen({navigation}) {
       useEffect(()=>{
         async function loadingRoom(){
           console.log("현재 사용자 ID : ",currentId);
+          let nick =[];
 
           if(currentId){
             const roomInfo = await request.getChatRoomById(currentId);
