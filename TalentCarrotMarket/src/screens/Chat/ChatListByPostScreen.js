@@ -41,7 +41,7 @@ function ChatListByPostScreen(props) {
 	const [rerender, setRerender] = useState(false);
 	const [nickInfo, setNickInfo] = useState([]);
 	const [postId, setPostId] = useState(props.route.params.item._id);
-	
+
 
 	useEffect(()=>{
 		loadingCurrentId();

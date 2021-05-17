@@ -127,7 +127,8 @@ export default class UserPostScreen extends Component{
     onChatPress(item){
         console.log("시방?")
         let postOwner = 'await getUserData( userId)'
-        this.props.navigation.navigate('게시글별 채팅리스트', {postOwner,item})
+        this.props.navigation.push('게시글별 채팅리스트', {postOwner,item})
+        this.props.navigation.navigate('게시글별 채팅리스트');
     }
 
 
@@ -166,7 +167,7 @@ export default class UserPostScreen extends Component{
                     <Icon2 name="dots-three-vertical" size={25} color={"black"}></Icon2>
                 </TouchableHighlight>
                 <TouchableHighlight style={styles.chatRoomButton} onPress={()=>this.onChatPress(item)}>
-                    <Icon3 name="chatbubbles-outline" size={35} color={"black"}></Icon3>
+                    <Icon3 name="chatbubbles-outline" size={32} color={"black"}></Icon3>
                 </TouchableHighlight>
 
             </View>
@@ -278,7 +279,7 @@ const styles = StyleSheet.create({
         alignSelf : "center",
         padding:20
     },
-    postTitle:{fontSize:18, fontWeight: "bold", width:250, height:80, paddingTop:9},
+    postTitle:{fontSize:18, fontWeight: "bold", width:200, height:80, paddingTop:9},
     postAddressTime: {fontSize:13, textAlign:'right', width:'30%', marginRight:10},
     postPrice: {width:'50%',fontSize:17 , color:"#0088ff" ,paddingTop: 9}
 ,
