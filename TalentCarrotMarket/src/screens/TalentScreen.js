@@ -8,7 +8,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import * as SMS from 'expo-sms';
+
 import {Container, Content, Form, Header, Input, Item, Label, Left, Right, Textarea} from "native-base";
 import { SliderBox } from "react-native-image-slider-box";
 import AsyncStorage from "@react-native-community/async-storage";
