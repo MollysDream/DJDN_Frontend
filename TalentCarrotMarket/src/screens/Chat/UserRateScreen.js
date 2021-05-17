@@ -7,7 +7,6 @@ import {
     StyleSheet,
     Image
 } from 'react-native';
-import { RadioButton } from 'react-native-paper';
 
 import axios from "axios";
 
@@ -16,12 +15,12 @@ import {
     heightPercentageToDP as hp,
   } from 'react-native-responsive-screen';
 
+import StarRating from 'react-native-star-rating';
+
 //글자 강조
 const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{props.children}</Text>
 
 const UserRateScreen = ({navigation}) => {
-
-        const [value, setValue] = useState('')
 
         //평가 취소 버튼
         const cancelButton=()=>{
@@ -53,63 +52,148 @@ const UserRateScreen = ({navigation}) => {
                 console.log(err);
               });
             }
+          
+          //각 카테고리별 별점
+          const [rate,setRate]=useState(3);
+          const [starPriceCount,setPriceStarCount]=useState(3);
+          const [starKindCount,setKindStarCount]=useState(3);
+          const [starSpeedCount,setSpeedStarCount]=useState(3);
+          const [starRetradeCount,setRetradeStarCount]=useState(3);
+          const [starQualCount,setQualStarCount]=useState(3);
+
+          const onStarPriceRatingPress = (rating) =>{
+            setPriceStarCount(rating);
+          }
+
+          const onStarKindRatingPress = (rating) =>{
+            setKindStarCount(rating);
+          }
+
+          const onStarSpeedRatingPress = (rating) =>{
+            setSpeedStarCount(rating);
+          }
+
+          const onStarRetradeRatingPress = (rating) =>{
+            setRetradeStarCount(rating);
+          }
+
+          const onStarQualRatingPress = (rating) =>{
+            setQualStarCount(rating);
+          }
 
 
         return (
-            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-              <View style={styles.topArea}>
-                <View style={styles.rowArea}>
-                  <Image
+            <View style={styles.container}>
+              <View style={styles.rowTopArea}>
+                  <View style={styles.titleArea}>   
+                    <Image
                     source={require('../../login.png')}
-                    style={{width: wp(10), resizeMode: 'contain'}}
-                  />
-                  <Text style={{paddingRight:wp(3)}}>
-                    사용자 이름
-                  </Text>
-                  <Text>
-                    사용자 평가온도
-                  </Text> 
-                </View>
+                    style={{width: wp(10),height:hp(10), resizeMode: 'contain'}}
+                    />
+                  </View>
+                  <Text style={{paddingRight:wp(10)}}>사용자 이름</Text>
+                  <Text>{rate}</Text>
               </View>
+
+              <View
+              style={{
+                borderBottomColor: 'black',
+                borderBottomWidth: StyleSheet.hairlineWidth,
+                
+              }}
+              />
 
               <View style={styles.bottomArea}>
                 <View style={{paddingBottom:hp(3)}}>
-                  <Text style={{paddingBottom:hp(3)}}><B>남기고 싶은 칭찬을 선택해주세요</B></Text>
-                  <RadioButton.Group onValueChange={newValue => setValue(newValue)} value={value}>
-                    <View style={styles.rowArea}>
+                  <Text style={{paddingBottom:hp(3)}}><B>각 카테고리에 별점을 매겨주세요</B></Text>
+
+                  {/* <RadioButton.Group onValueChange={newValue => setValue(newValue)} value={value}>
+                    <View style={styles.rowRateArea}>
                         <RadioButton value="first" />
-                        <Text>친절하고 매너가 좋아요.</Text>
+                        <Text style={{paddingTop:hp(1)}}>친절하고 매너가 좋아요.</Text>
                         
                     </View>
-                    <View style={styles.rowArea}>
+                    <View style={styles.rowRateArea}>
                         <RadioButton value="second" />
-                        <Text>시간 약속을 잘 지켜요.</Text>
+                        <Text style={{paddingTop:hp(1)}}>시간 약속을 잘 지켜요.</Text>
                     </View>
-                    <View style={styles.rowArea}>
+                    <View style={styles.rowRateArea}>
                         <RadioButton value="third" />
-                        <Text>응답이 빨라요.</Text>
+                        <Text style={{paddingTop:hp(1)}}>응답이 빨라요.</Text>
                     </View>
-                  </RadioButton.Group>
-                      
-                </View>
+                  </RadioButton.Group> */}
 
-                <View style={{paddingBottom:hp(3)}}>
-                  <Text style={{paddingBottom:hp(3)}}><B>불편했던 점을 선택해주세요</B></Text>
-
-                  <RadioButton.Group onValueChange={newValue => setValue(newValue)} value={value}>
-                    <View style={styles.rowArea}>
-                        <RadioButton value="forth" />
-                        <Text>불친절해요.</Text>
-                    </View>
-                    <View style={styles.rowArea}>
-                        <RadioButton value="fifth" />
-                        <Text>시간 약속을 안 지켜요.</Text>
-                    </View>
-                    <View style={styles.rowArea}>
-                        <RadioButton value="sixth" />
-                        <Text>응답이 느려요.</Text>
-                    </View>
-                  </RadioButton.Group>
+                  <View style={styles.rowRateArea}>
+                    <Text style={{paddingLeft:wp(4),paddingRight:wp(21)}}><B>가격</B></Text>
+                    <StarRating 
+                      disabled={false}
+                      // emptyStar={'ios-star-outline'}
+                      // fullStar={'ios-star'}
+                      // halfStar={'ios-star-half'}
+                      // iconSet={'Ionicons'}
+                      maxStars={5}
+                      rating={starPriceCount}
+                      selectedStar={(rating)=>onStarPriceRatingPress(rating)}
+                      fullStarColor={'red'}
+                    />
+                  </View>
+                  <View style={styles.rowRateArea}>
+                    <Text style={{paddingLeft:wp(4),paddingRight:wp(16)}}><B>친절함</B></Text>
+                    <StarRating 
+                      disabled={false}
+                      // emptyStar={'ios-star-outline'}
+                      // fullStar={'ios-star'}
+                      // halfStar={'ios-star-half'}
+                      // iconSet={'Ionicons'}
+                      maxStars={5}
+                      rating={starKindCount}
+                      selectedStar={(rating)=>onStarKindRatingPress(rating)}
+                      fullStarColor={'red'}
+                    />
+                  </View>
+                  <View style={styles.rowRateArea}>
+                    <Text style={{paddingLeft:wp(4),paddingRight:wp(11)}}><B>응답속도</B></Text>
+                    <StarRating 
+                      disabled={false}
+                      // emptyStar={'ios-star-outline'}
+                      // fullStar={'ios-star'}
+                      // halfStar={'ios-star-half'}
+                      // iconSet={'Ionicons'}
+                      maxStars={5}
+                      rating={starSpeedCount}
+                      selectedStar={(rating)=>onStarSpeedRatingPress(rating)}
+                      fullStarColor={'red'}
+                    />
+                  </View>
+                  <View style={styles.rowRateArea}>
+                    <Text style={{paddingLeft:wp(4),paddingRight:wp(4)}}><B>재거래 희망</B></Text>
+                    <StarRating 
+                      disabled={false}
+                      // emptyStar={'ios-star-outline'}
+                      // fullStar={'ios-star'}
+                      // halfStar={'ios-star-half'}
+                      // iconSet={'Ionicons'}
+                      maxStars={5}
+                      rating={starRetradeCount}
+                      selectedStar={(rating)=>onStarRetradeRatingPress(rating)}
+                      fullStarColor={'red'}
+                    />
+                  </View>
+                  <View style={styles.rowRateArea}>
+                    <Text style={{paddingLeft:wp(4),paddingRight:wp(16)}}><B>전문성</B></Text>
+                    <StarRating 
+                      disabled={false}
+                      // emptyStar={'ios-star-outline'}
+                      // fullStar={'ios-star'}
+                      // halfStar={'ios-star-half'}
+                      // iconSet={'Ionicons'}
+                      maxStars={5}
+                      rating={starQualCount}
+                      selectedStar={(rating)=>onStarQualRatingPress(rating)}
+                      fullStarColor={'red'}
+                    />
+                  </View>
+                  
                 </View>
 
                 <View style={styles.rowArea}> 
@@ -131,18 +215,39 @@ const UserRateScreen = ({navigation}) => {
 }
 
 const styles = StyleSheet.create({
-    topArea: {
+    container: {
+        backgroundColor: '#f5f5f5',
+        flex: 1,
+      },
+    rowTopArea: {
         flex: 0.125,
-        paddingTop: wp(3),
+        paddingTop: hp(3),
+        paddingLeft: wp(10),
+        flexDirection: "row",
         alignItems: 'center',
+        // borderWidth: 0.5,
+        // borderColor: 'black',
+    },
+    rowRateArea:{
+        flexDirection: "row",
+        borderWidth: 0.5,
+        borderColor: 'gray',
+        // justifyContent: 'center',
     },
     rowArea:{
         flexDirection: "row",
         justifyContent: 'center',
+        paddingTop: hp(3)
     },
+    titleArea: {
+        justifyContent: 'center',
+        paddingRight:wp(5),
+        // borderWidth: 0.5,
+        // borderColor: 'red',
+      },
     bottomArea: {
         flex: 0.65,
-        paddingTop: wp(3),
+        paddingTop: wp(10),
         alignItems: 'center',
     },
     btnArea: {
