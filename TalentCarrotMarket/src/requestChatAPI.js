@@ -10,7 +10,15 @@ export async function getChatRoomByPost(currentUserId, postId){
 	return RoomByPostData.data;
 }
 
+export async function getLatestChat(chatRoomId){
+	console.log("getLatestChat함수 실행!:");
+	const chatData = await axi.post('/chat/getLatestChat', {chatRoomId:chatRoomId});
+	//console.log(chatData.data)
+	return chatData.data;
+}
+
 
 export default{
-	getChatRoomByPost
+	getChatRoomByPost,
+	getLatestChat
 }

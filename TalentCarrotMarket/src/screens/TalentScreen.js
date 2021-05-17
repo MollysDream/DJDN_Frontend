@@ -27,7 +27,7 @@ export default class TalentScreen extends Component{
         return (
           <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Text>Talent!</Text>
-            <Button title={'SMS 보내기!'} onPress={this.SMS}/>
+            {/*<Button title={'SMS 보내기!'} onPress={this.SMS}/>*/}
           </View>
 
 

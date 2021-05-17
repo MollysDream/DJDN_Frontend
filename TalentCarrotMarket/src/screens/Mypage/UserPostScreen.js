@@ -19,6 +19,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {getDate, getPrice} from "../../function";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import Icon2 from "react-native-vector-icons/Entypo";
+import Icon3 from "react-native-vector-icons/Ionicons";
 import requestUserAPI from "../../requestUserAPI";
 
 import Modal from 'react-native-modal';
@@ -123,6 +124,14 @@ export default class UserPostScreen extends Component{
         this.toggleModal();
     }
 
+    onChatPress(item){
+        console.log("시방?")
+        let postOwner = 'await getUserData( userId)'
+        this.props.navigation.push('게시글별 채팅리스트', {postOwner,item})
+        this.props.navigation.navigate('게시글별 채팅리스트');
+    }
+
+
     returnFlatListItem(item,index){
         let time = getDate(item.date);
         let price = getPrice(item.price);
@@ -156,6 +165,9 @@ export default class UserPostScreen extends Component{
                 </TouchableHighlight>
                 <TouchableHighlight style={styles.optionButton} onPress={()=>this.onOptionPress(item)}>
                     <Icon2 name="dots-three-vertical" size={25} color={"black"}></Icon2>
+                </TouchableHighlight>
+                <TouchableHighlight style={styles.chatRoomButton} onPress={()=>this.onChatPress(item)}>
+                    <Icon3 name="chatbubbles-outline" size={32} color={"black"}></Icon3>
                 </TouchableHighlight>
 
             </View>
@@ -229,6 +241,10 @@ export default class UserPostScreen extends Component{
             </View>
         );
     }
+
+    onChatRoomPress(item) {
+        return undefined;
+    }
 }
 
 
@@ -263,7 +279,7 @@ const styles = StyleSheet.create({
         alignSelf : "center",
         padding:20
     },
-    postTitle:{fontSize:18, fontWeight: "bold", width:250, height:80, paddingTop:9},
+    postTitle:{fontSize:18, fontWeight: "bold", width:200, height:80, paddingTop:9},
     postAddressTime: {fontSize:13, textAlign:'right', width:'30%', marginRight:10},
     postPrice: {width:'50%',fontSize:17 , color:"#0088ff" ,paddingTop: 9}
 ,
@@ -295,6 +311,11 @@ const styles = StyleSheet.create({
         top: 19,
         right: 15,
     },
+    chatRoomButton: {
+        position: 'absolute',
+        top: 15,
+        right: 48,
+    },
     optionBox: {
         //borderWidth: 1,
         flexDirection:'column',
@@ -317,5 +338,6 @@ const styles = StyleSheet.create({
     },
     status_none:{
         position: 'absolute'
-    }
+    },
+
 });

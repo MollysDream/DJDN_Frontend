@@ -8,21 +8,25 @@ import {
 	FlatList,
 	TouchableOpacity,
 	RefreshControl,
-	TouchableHighlight
+	TouchableHighlight, Image
 } from 'react-native';
 import { List, Divider } from 'react-native-paper';
 import firestore from '@react-native-firebase/firestore';
 import {AnimatedAbsoluteButton} from 'react-native-animated-absolute-buttons';
 
+import Icon from 'react-native-vector-icons/MaterialIcons';
+
 import AsyncStorage from '@react-native-community/async-storage';
 import requestUser from "../../requestUserAPI";
 import request from '../../requestAPI';
-import requestChat from '../../requsetChatAPI';
+import requestChat from '../../requestChatAPI';
 
 import {
 	widthPercentageToDP as wp,
 	heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import requestChatAPI from "../../requestChatAPI";
+import {useIsFocused} from "@react-navigation/native";
 
 
 let userData;
@@ -37,6 +41,8 @@ function ChatListByPostScreen(props) {
 	const [rerender, setRerender] = useState(false);
 	const [nickInfo, setNickInfo] = useState([]);
 	const [postId, setPostId] = useState(props.route.params.item._id);
+
+
 	useEffect(()=>{
 		loadingCurrentId();
 	},[]);
@@ -52,6 +58,8 @@ function ChatListByPostScreen(props) {
 				setCurrentId(value);
 			});
 	}
+
+
 	async function loadingRoom(){
 		if(currentId){
 			let nick =[];
@@ -60,48 +68,54 @@ function ChatListByPostScreen(props) {
 			console.log(`지금 랜더링 ${count++}: 번 실행됐다!`);
 			console.log(roomInfo);
 			roomInfo.map(async (data)=>{
-				let hostid = await requestUser.getUserData(data.hostId);
-				let postOwnerid = await requestUser.getUserData(data.postOwnerId);
-				let postid = await request.getPostTitle(data.postId);
-				nick = nick.concat({_id : data._id, hostNick : hostid.nickname , postOwnerNick : postOwnerid.nickname, postTitle : postid[0].title });
+				let latestChat = await requestChatAPI.getLatestChat(data._id);
+				//console.log(latestChat);
+				let partnerUserData;
+				//let myUserData;
+				if(currentId == data.hostId){
+					//myUserData = await requestUser.getUserData(data.hostId);
+					partnerUserData = await requestUser.getUserData(data.postOwnerId);
+				}else{
+					partnerUserData = await requestUser.getUserData(data.hostId);
+					//myUserData = await requestUser.getUserData(data.postOwnerId);
+				}
+
+				let postData = await request.getPostTitle(data.postId);
+
+
+
+				nick = nick.concat({_id : data._id/*, myUserData : myUserData*/ , partnerUserData : partnerUserData, postData : postData[0], latestChat:latestChat });
 				await setNickInfo(nick);
 			})
 		}
-	}
-
-	function returnFlatListItem(item,index){
-
-		return(
-			<TouchableHighlight onPress={() => props.navigation.navigate('게시글별 채팅리스트 채팅방', {postOwner: userData, roomInfo: item})}>
-				<View style={styles.post}>
-					<View>
-						<Text style={styles.postTitle}>{item.postTitle}</Text>
-
-						<View style={{flexDirection:'row'}}>
-							<Text style={styles.host}>{item.hostNick}</Text>
-							<Text style={styles.postowner}>{item.postOwnerNick}</Text>
-						</View>
-					</View>
-				</View>
-			</TouchableHighlight>
-		);
 	}
 
 	async function onRefresh(){
 		try{
 			setRefreshing(true);
 			console.log("setrefreshing", refreshing);
-			nick =[];
-			const roomInfo = await request.getChatRoomById(currentId);
-			userData = await requestUser.getUserData(currentId);
-
-			setRoomById(roomInfo);
+			let nick =[];
+			roomInfo = await requestChat.getChatRoomByPost(currentId,postId);
+			//const roomInfo = await request.getChatRoomById(currentId);
+			//userData = await requestUser.getUserData(currentId);
+			await setRoomById(roomInfo);
 
 			roomInfo.map(async (data)=>{
-				let hostid = await requestUser.getUserData(data.hostId);
-				let postOwnerid = await requestUser.getUserData(data.postOwnerId);
-				let postid = await request.getPostTitle(data.postId);
-				nick = nick.concat({_id : data._id, hostNick : hostid.nickname , postOwnerNick : postOwnerid.nickname, postTitle : postid[0].title });
+				let latestChat = await requestChatAPI.getLatestChat(data._id);
+
+				let partnerUserData;
+				//let myUserData;
+				if(currentId == data.hostId){
+					//myUserData = await requestUser.getUserData(data.hostId);
+					partnerUserData = await requestUser.getUserData(data.postOwnerId);
+				}else{
+					partnerUserData = await requestUser.getUserData(data.hostId);
+					//myUserData = await requestUser.getUserData(data.postOwnerId);
+				}
+
+				let postData = await request.getPostTitle(data.postId);
+
+				nick = nick.concat({_id : data._id/*, myUserData : myUserData */, partnerUserData : partnerUserData, postData : postData[0], latestChat:latestChat });
 				setNickInfo(nick);
 
 			})
@@ -115,6 +129,38 @@ function ChatListByPostScreen(props) {
 		}
 	}
 
+	function returnFlatListItem(item,index){
+		//let myUserData = item.myUserData;
+		let partnerUserData = item.partnerUserData;
+		let postData = item.postData;
+		let chat = '';
+		let chatTime = '';
+		if(item.latestChat != null){
+			chat = item.latestChat.text;
+			chatTime = item.latestChat.createdAt;
+		}
+		return(
+			<TouchableHighlight onPress={() => props.navigation.navigate('게시글별 채팅리스트 채팅방', {postOwner: userData, roomInfo: item})}>
+				<View style={styles.chatRoomBox}>
+
+					<View style={styles.userDataBox}>
+						<Image style={styles.user_image} source={{uri:partnerUserData.profileImage}}/>
+						<View style={styles.user_data_text}>
+							<Text style={{fontSize:12, color:'grey'}}>{postData.addressName}</Text>
+							<Text style={{fontWeight:'bold',fontSize:20}}>{partnerUserData.nickname}</Text>
+							<View style={{flexDirection:'row'}}>
+								<Icon style={styles.chat_text} name="sms" size={20}/>
+								<Text style={styles.chat_text}>{` ${chat}`}</Text>
+							</View>
+						</View>
+
+					</View>
+					<Text style={styles.chatTime_text}>{chatTime}</Text>
+
+				</View>
+			</TouchableHighlight>
+		);
+	}
 
 	return (
 		<View style={styles.container}>
@@ -134,69 +180,53 @@ function ChatListByPostScreen(props) {
 
 
 const styles = StyleSheet.create({
-	iconBox:{
-		height:67,
-		alignItems: 'center',
-		marginTop:3
+	container:{
+		//borderWidth:1,
+		flex:1,
+		paddingTop:5
+
 	},
-	icon:{
-		width: wp(9),
+	chatRoomBox:{
+		//borderBottomWidth: 1,
+		marginRight:10,
+		marginLeft:10,
+		marginBottom:5,
+		backgroundColor:'#c2ebff',
+		borderRadius:10,
+		flexDirection:'row'
+
+	},
+	userDataBox:{
+		flexDirection:'row',
+		paddingTop: 5,
+		paddingLeft: 5,
+		paddingBottom: 5
+	},
+	user_image:{
+		width: wp(20),
 		overflow:"hidden",
-		height: hp(9),
+		height: hp(20),
 		aspectRatio: 1,
-		borderRadius: 9,
+		borderRadius: 40,
+		marginRight:12,
+		marginTop:1
 	},
-	image:{
-		width: wp(28),
-		overflow:"hidden",
-		height: hp(28),
-		aspectRatio: 1,
-		borderRadius: 9,
-		marginRight:12
+	user_data_text:{
+		marginTop: 2
 	},
-	post:{
-		flexDirection: "row",
-		//borderRadius: 15,
-		backgroundColor: "white",
-		borderBottomColor: "#a6e5ff",
-		borderBottomWidth: 1,
-		padding: 10,
-		height: 100
+	chat_text:{
+		//borderWidth: 1,
+		paddingTop: 8,
+		color:'grey',
 	},
-	cover:{
-		flex: 1,
-		width: 200,
-		height:200,
-		resizeMode: "contain"
-	},
-	postDetail:{
-		flex:3,
-		alignItems :"flex-start",
-		flexDirection : "column",
-		alignSelf : "center",
-		padding:20
-	},
-	postTitle:{fontSize:18, fontWeight: "bold", flex : 1, height:50, paddingTop:9},
-	host: {fontSize:17, textAlign:'right', width:'30%', paddingTop: 9, marginRight:10},
-	postowner: {width:'30%',fontSize:17, textAlign:'right',paddingTop: 9, marginRight:10}
-	,
-	status_ing:{
-		backgroundColor:'#b4e6ff',
-		position: 'absolute',
-		top: 40,
-		padding: 3,
-		borderRadius: 7
-	},
-	status_complete:{
-		backgroundColor:'#98afbf',
-		position: 'absolute',
-		top: 40,
-		padding: 3,
-		borderRadius: 7
-	},
-	status_none:{
-		position: 'absolute'
+	chatTime_text:{
+		position:'absolute',
+		right: 14,
+		top: 10,
+		color:'grey',
+		fontSize: 15
 	}
+
 });
 
 export default ChatListByPostScreen;
