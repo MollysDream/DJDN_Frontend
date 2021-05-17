@@ -26,6 +26,7 @@ import {
 	heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import requestChatAPI from "../../requestChatAPI";
+import {useIsFocused} from "@react-navigation/native";
 
 
 let userData;
@@ -40,6 +41,8 @@ function ChatListByPostScreen(props) {
 	const [rerender, setRerender] = useState(false);
 	const [nickInfo, setNickInfo] = useState([]);
 	const [postId, setPostId] = useState(props.route.params.item._id);
+	
+
 	useEffect(()=>{
 		loadingCurrentId();
 	},[]);
@@ -55,6 +58,8 @@ function ChatListByPostScreen(props) {
 				setCurrentId(value);
 			});
 	}
+
+
 	async function loadingRoom(){
 		if(currentId){
 			let nick =[];
@@ -90,9 +95,10 @@ function ChatListByPostScreen(props) {
 			setRefreshing(true);
 			console.log("setrefreshing", refreshing);
 			let nick =[];
-			const roomInfo = await request.getChatRoomById(currentId);
-			userData = await requestUser.getUserData(currentId);
-			setRoomById(roomInfo);
+			roomInfo = await requestChat.getChatRoomByPost(currentId,postId);
+			//const roomInfo = await request.getChatRoomById(currentId);
+			//userData = await requestUser.getUserData(currentId);
+			await setRoomById(roomInfo);
 
 			roomInfo.map(async (data)=>{
 				let latestChat = await requestChatAPI.getLatestChat(data._id);
