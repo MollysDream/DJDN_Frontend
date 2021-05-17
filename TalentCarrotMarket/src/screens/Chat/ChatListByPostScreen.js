@@ -8,7 +8,7 @@ import {
 	FlatList,
 	TouchableOpacity,
 	RefreshControl,
-	TouchableHighlight
+	TouchableHighlight, Image
 } from 'react-native';
 import { List, Divider } from 'react-native-paper';
 import firestore from '@react-native-firebase/firestore';
@@ -17,7 +17,7 @@ import {AnimatedAbsoluteButton} from 'react-native-animated-absolute-buttons';
 import AsyncStorage from '@react-native-community/async-storage';
 import requestUser from "../../requestUserAPI";
 import request from '../../requestAPI';
-import requestChat from '../../requsetChatAPI';
+import requestChat from '../../requestChatAPI';
 
 import {
 	widthPercentageToDP as wp,
@@ -60,48 +60,48 @@ function ChatListByPostScreen(props) {
 			console.log(`지금 랜더링 ${count++}: 번 실행됐다!`);
 			console.log(roomInfo);
 			roomInfo.map(async (data)=>{
-				let hostid = await requestUser.getUserData(data.hostId);
-				let postOwnerid = await requestUser.getUserData(data.postOwnerId);
-				let postid = await request.getPostTitle(data.postId);
-				nick = nick.concat({_id : data._id, hostNick : hostid.nickname , postOwnerNick : postOwnerid.nickname, postTitle : postid[0].title });
+				let partnerUserData;
+				let myUserData;
+				if(currentId == data.hostId){
+					myUserData = await requestUser.getUserData(data.hostId);
+					partnerUserData = await requestUser.getUserData(data.postOwnerId);
+				}else{
+					partnerUserData = await requestUser.getUserData(data.hostId);
+					myUserData = await requestUser.getUserData(data.postOwnerId);
+				}
+
+				let postData = await request.getPostTitle(data.postId);
+
+
+				nick = nick.concat({_id : data._id, myUserData : myUserData , partnerUserData : partnerUserData, postData : postData[0] });
 				await setNickInfo(nick);
 			})
 		}
-	}
-
-	function returnFlatListItem(item,index){
-
-		return(
-			<TouchableHighlight onPress={() => props.navigation.navigate('게시글별 채팅리스트 채팅방', {postOwner: userData, roomInfo: item})}>
-				<View style={styles.post}>
-					<View>
-						<Text style={styles.postTitle}>{item.postTitle}</Text>
-
-						<View style={{flexDirection:'row'}}>
-							<Text style={styles.host}>{item.hostNick}</Text>
-							<Text style={styles.postowner}>{item.postOwnerNick}</Text>
-						</View>
-					</View>
-				</View>
-			</TouchableHighlight>
-		);
 	}
 
 	async function onRefresh(){
 		try{
 			setRefreshing(true);
 			console.log("setrefreshing", refreshing);
-			nick =[];
+			let nick =[];
 			const roomInfo = await request.getChatRoomById(currentId);
 			userData = await requestUser.getUserData(currentId);
-
 			setRoomById(roomInfo);
 
 			roomInfo.map(async (data)=>{
-				let hostid = await requestUser.getUserData(data.hostId);
-				let postOwnerid = await requestUser.getUserData(data.postOwnerId);
-				let postid = await request.getPostTitle(data.postId);
-				nick = nick.concat({_id : data._id, hostNick : hostid.nickname , postOwnerNick : postOwnerid.nickname, postTitle : postid[0].title });
+				let partnerUserData;
+				let myUserData;
+				if(currentId == data.hostId){
+					myUserData = await requestUser.getUserData(data.hostId);
+					partnerUserData = await requestUser.getUserData(data.postOwnerId);
+				}else{
+					partnerUserData = await requestUser.getUserData(data.hostId);
+					myUserData = await requestUser.getUserData(data.postOwnerId);
+				}
+
+				let postData = await request.getPostTitle(data.postId);
+
+				nick = nick.concat({_id : data._id, myUserData : myUserData , partnerUserData : partnerUserData, postData : postData[0] });
 				setNickInfo(nick);
 
 			})
@@ -115,6 +115,30 @@ function ChatListByPostScreen(props) {
 		}
 	}
 
+	function returnFlatListItem(item,index){
+		let myUserData = item.myUserData;
+		let partnerUserData = item.partnerUserData;
+		let postData = item.postData;
+		return(
+			<TouchableHighlight onPress={() => props.navigation.navigate('게시글별 채팅리스트 채팅방', {postOwner: userData, roomInfo: item})}>
+				<View style={styles.chatRoomBox}>
+					<Image style={styles.post_image} source={{ uri: postData.image[0]}} />
+					<View style={{flexDirection:'column'}}>
+						<Text style={styles.postTitle}>{postData.title}</Text>
+						<View style={styles.userDataBox}>
+							<Image style={styles.user_image} source={{uri:partnerUserData.profileImage}}/>
+							<View style={styles.user_data_text}>
+								<Text style={{fontSize:11, color:'grey'}}>{postData.addressName}</Text>
+								<Text style={{fontWeight:'bold',fontSize:15}}>{partnerUserData.nickname}</Text>
+							</View>
+
+						</View>
+					</View>
+
+				</View>
+			</TouchableHighlight>
+		);
+	}
 
 	return (
 		<View style={styles.container}>
@@ -134,25 +158,49 @@ function ChatListByPostScreen(props) {
 
 
 const styles = StyleSheet.create({
-	iconBox:{
-		height:67,
-		alignItems: 'center',
-		marginTop:3
+	container:{
+		//borderWidth:1,
+		flex:1,
+		paddingTop:5
+
 	},
-	icon:{
-		width: wp(9),
-		overflow:"hidden",
-		height: hp(9),
-		aspectRatio: 1,
-		borderRadius: 9,
+	chatRoomBox:{
+		//borderBottomWidth: 1,
+		marginRight:10,
+		marginLeft:10,
+		marginBottom:5,
+		backgroundColor:'#c2ebff',
+		borderRadius:10,
+		flexDirection:'row'
+
 	},
-	image:{
-		width: wp(28),
+	postTitle:{
+		fontSize:15,
+		paddingTop:7
+	},
+	userDataBox:{
+		flexDirection:'row',
+		paddingTop: 5
+	},
+	post_image:{
+		width: wp(20),
 		overflow:"hidden",
-		height: hp(28),
+		height: hp(20),
 		aspectRatio: 1,
 		borderRadius: 9,
 		marginRight:12
+	},
+	user_image:{
+		width: wp(10),
+		overflow:"hidden",
+		height: hp(10),
+		aspectRatio: 1,
+		borderRadius: 40,
+		marginRight:12,
+		marginTop:1
+	},
+	user_data_text:{
+		marginTop: 2
 	},
 	post:{
 		flexDirection: "row",
@@ -163,40 +211,6 @@ const styles = StyleSheet.create({
 		padding: 10,
 		height: 100
 	},
-	cover:{
-		flex: 1,
-		width: 200,
-		height:200,
-		resizeMode: "contain"
-	},
-	postDetail:{
-		flex:3,
-		alignItems :"flex-start",
-		flexDirection : "column",
-		alignSelf : "center",
-		padding:20
-	},
-	postTitle:{fontSize:18, fontWeight: "bold", flex : 1, height:50, paddingTop:9},
-	host: {fontSize:17, textAlign:'right', width:'30%', paddingTop: 9, marginRight:10},
-	postowner: {width:'30%',fontSize:17, textAlign:'right',paddingTop: 9, marginRight:10}
-	,
-	status_ing:{
-		backgroundColor:'#b4e6ff',
-		position: 'absolute',
-		top: 40,
-		padding: 3,
-		borderRadius: 7
-	},
-	status_complete:{
-		backgroundColor:'#98afbf',
-		position: 'absolute',
-		top: 40,
-		padding: 3,
-		borderRadius: 7
-	},
-	status_none:{
-		position: 'absolute'
-	}
 });
 
 export default ChatListByPostScreen;
