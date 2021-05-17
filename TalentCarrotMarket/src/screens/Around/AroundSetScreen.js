@@ -165,7 +165,7 @@ const AroundSetScreen = ({navigation}) => {
         }
 
         let result = refreshData();
-    },[isFocused, userAddressIndex])
+    },[])
 
     const setMapRadius= (endLocation)=>{
 

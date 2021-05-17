@@ -22,7 +22,7 @@ const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{pr
 let diffTime;
 const TradeTimerScreen = ({navigation, route}) =>{
 
-  const {tradeId,endSet}=route.params;
+  const {tradeId,endSet,user1,user2}=route.params;
   const [endDateTime, setEndDateTime] = useState(endSet);
   const nowDate = new Date();
   diffTime= (endDateTime.getTime() - nowDate.getTime())/1000;
@@ -31,7 +31,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
 
   const [page, setPage] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
-
+  
   const [newEndDate, setNewEndDate] = useState(new Date());
   const [newEndTime, setNewEndTime] = useState(new Date());
 
@@ -117,7 +117,10 @@ const TradeTimerScreen = ({navigation, route}) =>{
         if(returnData.data.message){
           //async.getitem(userId)-value
           //if(returnData.data.userId(1)==value --> returnData.data.userId(2)평가, 아니면 반대
-          navigation.navigate('userRate')
+          navigation.navigate('userRate',{
+            user1: user1,
+            user2: user2
+          })
         } else{
           alert('거래 완료가 실패했습니다.')
         }
@@ -178,7 +181,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
           <TouchableOpacity style={styles.btnDate} onPress={showDatepicker} >
             <Text style={{color: 'black', paddingBottom:hp(1)}}><B>연장할 종료 날짜 및 시간을 설정하세요 ⌚</B></Text>
             <Text style={{color: 'black'}}>연장을 하실 경우, 연장할 종료 날짜 및 시간을 설정한 후,</Text>
-            <Text style={{color: 'black'}}>연장완료 버튼을 눌러야 연장 시간이 저장됩니다!</Text>
+            <Text style={{color: 'black'}}>연장완료 버튼을 눌러야 연장 시간이 저장됩니다! (리프레시 필요)</Text>
           </TouchableOpacity>
       </View>
 

@@ -15,12 +15,38 @@ import {
     heightPercentageToDP as hp,
   } from 'react-native-responsive-screen';
 
+import requestUserAPI from "../../requestUserAPI";
 import StarRating from 'react-native-star-rating';
 
 //글자 강조
 const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{props.children}</Text>
 
-const UserRateScreen = ({navigation}) => {
+const UserRateScreen = ({navigation, route}) => {
+
+        const {user1,user2}=route.params;
+  
+        const [userId, setUserId] = useState('');
+        const [userData, setUserData] = useState();
+        const [rating, setRating] = useState(0);
+
+
+        useEffect(() => {
+          async function getUserData(){
+            
+              let userId = await AsyncStorage.getItem('user_id');
+              setUserId(userId);
+
+              if (user1 == userId){
+              let userData = await requestUserAPI.getUserData(user1);
+              setUserData(userData);
+            } else{
+              let userData = await requestUserAPI.getUserData(user2);
+              setUserData(userData);
+            }
+          }
+
+          let result = getUserData();
+      },[]);
 
         //평가 취소 버튼
         const cancelButton=()=>{
@@ -29,16 +55,27 @@ const UserRateScreen = ({navigation}) => {
 
         //사용자 평가 버튼
         const rateButton=()=>{
+            let send_param;
+            const userRate = (starPriceCount+starKindCount+starSpeedCount+starRetradeCount+starQualCount)/5
+            setRating(userRate)
 
-            const send_param={
-
+            if(user1==userId){
+              send_param={
+                userId: user2,
+                rating: rating
+              }
+            } else{
+              send_param={
+                userId: user1,
+                rating: rating
+              }
             }
+
             axios
               .post("http://10.0.2.2:3000/trade/userRate", send_param)
             //정상 수행
               .then(returnData => {
                   if(returnData.data.message){
-                  //async.getitem(userId)-value
                   //if(returnData.data.userId(1)==value --> returnData.data.userId(2)평가, 아니면 반대
                   alert('사용자 평가를 완료했습니다.')
                   navigation.navigate('chatch')
@@ -54,7 +91,6 @@ const UserRateScreen = ({navigation}) => {
             }
           
           //각 카테고리별 별점
-          const [rate,setRate]=useState(3);
           const [starPriceCount,setPriceStarCount]=useState(3);
           const [starKindCount,setKindStarCount]=useState(3);
           const [starSpeedCount,setSpeedStarCount]=useState(3);
@@ -87,12 +123,12 @@ const UserRateScreen = ({navigation}) => {
               <View style={styles.rowTopArea}>
                   <View style={styles.titleArea}>   
                     <Image
-                    source={require('../../login.png')}
+                    source={{uri:userData.profileImage}}
                     style={{width: wp(10),height:hp(10), resizeMode: 'contain'}}
                     />
                   </View>
-                  <Text style={{paddingRight:wp(10)}}>사용자 이름</Text>
-                  <Text>{rate}</Text>
+                  <Text style={{paddingRight:wp(10)}}>{userData.nickname}</Text>
+                  <Text>{userData.averageRating}</Text>
               </View>
 
               <View
