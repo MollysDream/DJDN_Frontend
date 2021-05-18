@@ -96,6 +96,12 @@ const AroundSetScreen = ({navigation}) => {
             let userAddressDataList = await requestAddressAPI.getUserAddress(userId);
             console.log(userAddressDataList.address);
 
+            //인증한 동네가 없을경우...
+            if(userAddressDataList.address[0] == undefined){
+                navigation.navigate('aroundAdd',{chooseIndex: 1, userId:userId});
+                return;
+            }
+
             setNumberOfAddress(userAddressDataList.address.length);
 
             let add1
