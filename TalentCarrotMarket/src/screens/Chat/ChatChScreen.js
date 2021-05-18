@@ -36,6 +36,9 @@ function ChatChScreen({navigation}) {
       const [refreshing, setRefreshing] = useState(false);
       const [rerender, setRerender] = useState(false);
       const [nickInfo, setNickInfo] = useState([]);
+      const [host, setHost] = useState('');
+      const [post, setPost] = useState('');
+
       useEffect(()=>{
         async function loadingCurrentId(){
             AsyncStorage
@@ -58,7 +61,9 @@ function ChatChScreen({navigation}) {
 
             roomInfo.map(async (data)=>{
               let hostid = await requestUser.getUserData(data.hostId);
+              setHost(hostid);
               let postOwnerid = await requestUser.getUserData(data.postOwnerId);
+              setPost(postOwnerid);
               let postid = await request.getPostTitle(data.postId);
 
 
@@ -76,7 +81,7 @@ function ChatChScreen({navigation}) {
       function returnFlatListItem(item,index){
 
         return(
-            <TouchableHighlight onPress={() => {navigation.navigate('chatchroom', {postOwner: userData, roomInfo: item})}}>
+            <TouchableHighlight onPress={() => {navigation.navigate('chatchroom', {host: host, postOwner: post, roomInfo: item})}}>
                  <View style={styles.post}>
                      <View>
                         <Text style={styles.postTitle}>{item.postTitle}</Text>

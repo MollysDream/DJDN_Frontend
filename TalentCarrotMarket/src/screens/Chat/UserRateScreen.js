@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState,useEffect} from 'react';
 
 import {
     View,
@@ -17,35 +17,42 @@ import {
 
 import requestUserAPI from "../../requestUserAPI";
 import StarRating from 'react-native-star-rating';
+import AsyncStorage from '@react-native-community/async-storage';
 
 //글자 강조
 const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{props.children}</Text>
 
+
 const UserRateScreen = ({navigation, route}) => {
 
         const {user1,user2}=route.params;
-  
-        const [userId, setUserId] = useState('');
+        const [userId, setUserId] =  useState('');
         const [userData, setUserData] = useState();
-        const [rating, setRating] = useState(0);
+        // const [rating, setRating] = useState(0);
 
 
         useEffect(() => {
-          async function getUserData(){
-            
-              let userId = await AsyncStorage.getItem('user_id');
+          async function getData(){
+
+              let user= await AsyncStorage.getItem('user_id');
               setUserId(userId);
 
-              if (user1 == userId){
-              let userData = await requestUserAPI.getUserData(user1);
-              setUserData(userData);
+              console.log("현재 접속자는 "+ userId)
+
+              if (user1 == user){
+                console.log("user1이에요! "+ user1)
+                console.log("user2아니에요! "+ user2)
+                let userData = await requestUserAPI.getUserData(user2);
+                setUserData(userData);
             } else{
-              let userData = await requestUserAPI.getUserData(user2);
+              console.log("user2에요! "+ user2)
+              console.log("user1이 아니에요! "+ user1)
+              let userData = await requestUserAPI.getUserData(user1);
               setUserData(userData);
             }
           }
 
-          let result = getUserData();
+          let result = getData();
       },[]);
 
         //평가 취소 버튼
@@ -57,17 +64,19 @@ const UserRateScreen = ({navigation, route}) => {
         const rateButton=()=>{
             let send_param;
             const userRate = (starPriceCount+starKindCount+starSpeedCount+starRetradeCount+starQualCount)/5
-            setRating(userRate)
+            // setRating(userRate)
+
+            console.log("평가할 점수 "+userRate);
 
             if(user1==userId){
               send_param={
                 userId: user2,
-                rating: rating
+                rating: userRate
               }
             } else{
               send_param={
                 userId: user1,
-                rating: rating
+                rating: userRate
               }
             }
 
@@ -118,18 +127,23 @@ const UserRateScreen = ({navigation, route}) => {
           }
 
 
+
         return (
             <View style={styles.container}>
-              <View style={styles.rowTopArea}>
+              {userData ?
+                <View style={styles.rowTopArea}>
                   <View style={styles.titleArea}>   
                     <Image
                     source={{uri:userData.profileImage}}
-                    style={{width: wp(10),height:hp(10), resizeMode: 'contain'}}
+                    style={{width: wp(15),height:hp(15), resizeMode: 'contain'}}
                     />
                   </View>
-                  <Text style={{paddingRight:wp(10)}}>{userData.nickname}</Text>
-                  <Text>{userData.averageRating}</Text>
-              </View>
+                  <Text style={{paddingRight:wp(30),fontSize:wp('5.5')}}>{userData.nickname}</Text>
+                  <Text style={{fontSize:wp('5.5')}}>{userData.averageRating}</Text>
+                </View>
+                :
+                <Text>Loading....</Text>
+              }
 
               <View
               style={{
@@ -160,7 +174,7 @@ const UserRateScreen = ({navigation, route}) => {
                   </RadioButton.Group> */}
 
                   <View style={styles.rowRateArea}>
-                    <Text style={{paddingLeft:wp(4),paddingRight:wp(21)}}><B>가격</B></Text>
+                    <Text style={{paddingLeft:wp(4),paddingRight:wp(21),fontSize:wp('5.5')}}>가격</Text>
                     <StarRating 
                       disabled={false}
                       // emptyStar={'ios-star-outline'}
@@ -174,7 +188,7 @@ const UserRateScreen = ({navigation, route}) => {
                     />
                   </View>
                   <View style={styles.rowRateArea}>
-                    <Text style={{paddingLeft:wp(4),paddingRight:wp(16)}}><B>친절함</B></Text>
+                    <Text style={{paddingLeft:wp(4),paddingRight:wp(16),fontSize:wp('5.5')}}>친절함</Text>
                     <StarRating 
                       disabled={false}
                       // emptyStar={'ios-star-outline'}
@@ -188,7 +202,7 @@ const UserRateScreen = ({navigation, route}) => {
                     />
                   </View>
                   <View style={styles.rowRateArea}>
-                    <Text style={{paddingLeft:wp(4),paddingRight:wp(11)}}><B>응답속도</B></Text>
+                    <Text style={{paddingLeft:wp(4),paddingRight:wp(11),fontSize:wp('5.5')}}>응답속도</Text>
                     <StarRating 
                       disabled={false}
                       // emptyStar={'ios-star-outline'}
@@ -202,7 +216,7 @@ const UserRateScreen = ({navigation, route}) => {
                     />
                   </View>
                   <View style={styles.rowRateArea}>
-                    <Text style={{paddingLeft:wp(4),paddingRight:wp(4)}}><B>재거래 희망</B></Text>
+                    <Text style={{paddingLeft:wp(4),paddingRight:wp(4),fontSize:wp('5.5')}}>재거래 희망</Text>
                     <StarRating 
                       disabled={false}
                       // emptyStar={'ios-star-outline'}
@@ -216,7 +230,7 @@ const UserRateScreen = ({navigation, route}) => {
                     />
                   </View>
                   <View style={styles.rowRateArea}>
-                    <Text style={{paddingLeft:wp(4),paddingRight:wp(16)}}><B>전문성</B></Text>
+                    <Text style={{paddingLeft:wp(4),paddingRight:wp(16),fontSize:wp('5.5')}}>전문성</Text>
                     <StarRating 
                       disabled={false}
                       // emptyStar={'ios-star-outline'}
@@ -277,7 +291,7 @@ const styles = StyleSheet.create({
     },
     titleArea: {
         justifyContent: 'center',
-        paddingRight:wp(5),
+        paddingRight:wp(15),
         // borderWidth: 0.5,
         // borderColor: 'red',
       },

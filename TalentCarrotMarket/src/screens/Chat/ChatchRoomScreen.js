@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useLayoutEffect} from 'react';
 import {
     View,
     Text,
@@ -9,7 +9,8 @@ import {
 } from 'react-native';
 import {List, Divider} from 'react-native-paper';
 import firestore from '@react-native-firebase/firestore';
-import {AnimatedAbsoluteButton} from 'react-native-animated-absolute-buttons';
+// import {AnimatedAbsoluteButton} from 'react-native-animated-absolute-buttons';
+import {IconButton} from 'react-native-paper';
 import {GiftedChat} from 'react-native-gifted-chat'
 import io from "socket.io-client";
 import AsyncStorage from '@react-native-community/async-storage';
@@ -19,10 +20,34 @@ import axios from 'axios';
 
 let socket;
 let hostId;
+
 function ChatChRoomScreen(props) {
     const [messages, setMessages] = useState([]);
     const [chatroomId, setRoomId] = useState(props.route.params.roomInfo._id);
     const postOwnerId = props.route.params.postOwner._id
+    const host = props.route.params.host._id
+
+    // const buttons = [
+    //     {
+    //         color: '#4672B8',
+    //         content: <View>
+    //             <Text>
+    //                 ⌚ 🗺️</Text>
+    //             <Text>시간 장소</Text>
+    //         </View>,
+    //         action: () => {
+    //             console.log('user1은 '+postOwnerId);
+    //             console.log('user2는 '+host);
+    //             props
+    //                 .navigation
+    //                 .navigate('tradeset',{
+    //                     user1:postOwnerId,
+    //                     user2:host,
+    //                     chatRoom:chatroomId
+    //                 })
+    //         }
+    //     }
+    // ];
 
     
     useEffect(() => {
@@ -110,6 +135,19 @@ function ChatChRoomScreen(props) {
 
     return (
         <View style={styles.container}>
+            <View style={styles.clockButtonContainer}>
+                <IconButton
+                icon="clock"
+                size={36}
+                color="#6646ee"
+                onPress={()=>props.navigation
+                    .navigate('tradeset',{
+                        user1:postOwnerId,
+                        user2:host,
+                        chatRoom:chatroomId
+                    })}
+                />
+            </View>
             <GiftedChat
                 messages={messages}
                 onSend={(newMessages) => onSend(newMessages)}
@@ -117,7 +155,7 @@ function ChatChRoomScreen(props) {
                     _id: 1
                 }}/> 
                 
-                <AnimatedAbsoluteButton
+                {/* <AnimatedAbsoluteButton
                 buttonSize={100}
                 buttonColor='gray'
                 buttonShape='circular'
@@ -128,7 +166,7 @@ function ChatChRoomScreen(props) {
                 positionHorizontalMargin={10}
                 time={500}
                 easing='bounce'
-                buttons={buttons}/>
+                buttons={buttons}/> */}
         </View>
     )
 }
@@ -137,7 +175,13 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         height: 400
-    }
+    },
+    clockButtonContainer: {
+        position: 'absolute',
+        top: 1,
+        right: 0,
+        zIndex: 1
+      },
 });
 
 export default ChatChRoomScreen;

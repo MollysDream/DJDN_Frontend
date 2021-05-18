@@ -69,6 +69,10 @@ const MypageScreen = ({navigation}) => {
         navigation.navigate('editProfileScreen',{userId:userId, userData:userData});
     }
 
+    // const rateProfileButton = () =>{
+    //     navigation.navigate('rateProfileScreen',{userId:userId, userData:userData});
+    // }
+
     const goToUserTradingPostScreen = ()=>{
         navigation.navigate('userTradingPostScreen', {userId:userId});
     }
