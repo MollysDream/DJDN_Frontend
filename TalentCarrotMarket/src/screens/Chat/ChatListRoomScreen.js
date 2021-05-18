@@ -9,7 +9,8 @@ import {
 } from 'react-native';
 import {List, Divider} from 'react-native-paper';
 import firestore from '@react-native-firebase/firestore';
-import {AnimatedAbsoluteButton} from 'react-native-animated-absolute-buttons';
+import { IconButton } from 'react-native-paper';
+// import {AnimatedAbsoluteButton} from 'react-native-animated-absolute-buttons';
 import {GiftedChat} from 'react-native-gifted-chat'
 import io from "socket.io-client";
 import AsyncStorage from '@react-native-community/async-storage';
@@ -109,6 +110,20 @@ function ChatListRoomScreen(props) {
 
 	return (
 		<View style={styles.container}>
+			<View style={styles.clockButtonContainer}>
+                <IconButton
+                icon="clock"
+                size={36}
+                color="#6646ee"
+                onPress={()=>props.navigation
+                    .navigate('tradeset',{
+                        user1:postOwnerId,
+                        user2:host,
+                        chatRoom:chatroomId
+                    })}
+                />
+            </View>
+			
 			<GiftedChat
 				messages={messages}
 				onSend={(newMessages) => onSend(newMessages)}
@@ -136,7 +151,13 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		height: 400
-	}
+	},
+	clockButtonContainer: {
+        position: 'absolute',
+        top: 1,
+        right: 0,
+        zIndex: 1
+      },
 });
 
 export default ChatListRoomScreen;

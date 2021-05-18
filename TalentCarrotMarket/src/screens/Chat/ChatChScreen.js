@@ -38,6 +38,8 @@ function ChatChScreen({navigation}) {
       const [refreshing, setRefreshing] = useState(false);
       const [rerender, setRerender] = useState(false);
       const [nickInfo, setNickInfo] = useState([]);
+      const [host, setHost] = useState('');
+      const [post, setPost] = useState('');
 
       useEffect(()=>{
         async function loadingCurrentId(){
@@ -64,6 +66,11 @@ function ChatChScreen({navigation}) {
 
                 let latestChat = await requestChatAPI.getLatestChat(data._id);
                 //console.log(latestChat);
+                let hostData = await requestUser.getUserData(data.hostId);
+                setHost(hostData);
+                let postOwnerData = await requestUser.getUserData(data.postOwnerId);
+                setPost(postOwnerData);
+
                 let partnerUserData;
                 //let myUserData;
                 if(currentId == data.hostId){
@@ -71,6 +78,7 @@ function ChatChScreen({navigation}) {
                     partnerUserData = await requestUser.getUserData(data.postOwnerId);
                 }else{
                     partnerUserData = await requestUser.getUserData(data.hostId);
+
                     //myUserData = await requestUser.getUserData(data.postOwnerId);
                 }
 
@@ -141,7 +149,7 @@ function ChatChScreen({navigation}) {
         }
 
         return(
-            <TouchableHighlight onPress={() => {navigation.navigate('chatchroom', {postOwner: userData, roomInfo: item})}}>
+            <TouchableHighlight onPress={() => {navigation.navigate('chatchroom', {host:host, postOwner: post, roomInfo: item})}}>
                 <View style={styles.chatRoomBox}>
                     <Image style={styles.post_image} source={{ uri: postData.image[0]}} />
                      <View style={{flexDirection:'column'}}>
