@@ -8,7 +8,8 @@ import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 import requestUser from "../../requestUserAPI";
 import request from '../../requestAPI';
-import {AnimatedAbsoluteButton} from 'react-native-animated-absolute-buttons';
+import { IconButton } from 'react-native-paper';
+// import {AnimatedAbsoluteButton} from 'react-native-animated-absolute-buttons';
 
 let socket;
 let chatRoomId="";
@@ -27,24 +28,24 @@ function ChatScreen(props) {
     const [currentUserId, setCurrentUserId] = useState("");
 
 
-    const buttons = [
-        {
-            color: '#4672B8',
-            content: <View>
-                <Text>
-                    ⌚ 🗺️</Text>
-                <Text>시간 장소</Text>
-            </View>,
-            action: () => {
-                props
-                    .navigation
-                    .navigate('tradeset',{
-                        user1:postOwnerId,
-                        user2:hostId
-                    })
-            }
-        }
-    ];
+    // const buttons = [
+    //     {
+    //         color: '#4672B8',
+    //         content: <View>
+    //             <Text>
+    //                 ⌚ 🗺️</Text>
+    //             <Text>시간 장소</Text>
+    //         </View>,
+    //         action: () => {
+    //             props
+    //                 .navigation
+    //                 .navigate('tradeset',{
+    //                     user1:postOwnerId,
+    //                     user2:hostId
+    //                 })
+    //         }
+    //     }
+    // ];
 
 
     useEffect(() => {
@@ -194,6 +195,20 @@ function ChatScreen(props) {
 
     return (
         <View style={styles.container}>
+            <View style={styles.clockButtonContainer}>
+                <IconButton
+                icon="clock"
+                size={36}
+                color="#6646ee"
+                onPress={()=>props.navigation
+                    .navigate('tradeset',{
+                        user1:postOwnerId,
+                        user2:host,
+                        chatRoom:chatroomId
+                    })}
+                />
+            </View>
+
             <GiftedChat
                 messages={messages}
                 onSend={(newMessages) => onSend(newMessages)}
@@ -201,7 +216,7 @@ function ChatScreen(props) {
                     _id: 1
                 }}/>
 
-            { <AnimatedAbsoluteButton
+            {/* <AnimatedAbsoluteButton
                 buttonSize={100}
                 buttonColor='gray'
                 buttonShape='circular'
@@ -212,7 +227,7 @@ function ChatScreen(props) {
                 positionHorizontalMargin={10}
                 time={500}
                 easing='bounce'
-                buttons={buttons}/> }
+                buttons={buttons}/>  */}
         </View>
     )
 
@@ -222,7 +237,13 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         height: 400
-    }
+    },
+    clockButtonContainer: {
+        position: 'absolute',
+        top: 1,
+        right: 0,
+        zIndex: 1
+      },
 });
 
 export default ChatScreen;

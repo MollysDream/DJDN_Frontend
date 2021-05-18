@@ -27,7 +27,7 @@ let userId ;
 
 const TradeSetScreen =({navigation,route})=>{
 
-      const {user1,user2}=route.params;
+      const {user1,user2,chatRoom}=route.params;
 
       const locateInputRef = createRef();
  
@@ -43,18 +43,39 @@ const TradeSetScreen =({navigation,route})=>{
       const [receiver, setReceiver]=useState('');
       const [tradeId, setTradeId]=useState('');
 
+      // 제안된 장소, 시간 확인
+      const [proLocate, setProLocate]=useState('');
+      const [start, setStart]=useState('');
+      const [end, setEnd]=useState('');
+
       useEffect(()=>{
+
+        console.log("채팅방 번호 "+chatRoom)
         const send_param={
-          tradeId:tradeId
+          chatRoom:chatRoom
         }
 
         axios
-        .post("http://10.0.2.2:3000/address/getTrade",send_param)
+        .post("http://10.0.2.2:3000/trade/getTrade",send_param)
           .then(returnData => {
             if(returnData.data.message){
-              setIsSuggest(true)
+
+              console.log("거래 정보는 "+returnData.data.trade);
+              setIsSuggest(true);
+              setProLocate(returnData.data.trade.location);
+              setStart(returnData.data.trade.startTime);
+              setEnd(returnData.data.trade.endTime);
+              setTradeId(returnData.data.trade._id);
+
+              if(returnData.data.trade.sender==userId){
+                console.log("현재 접속자는 거래 제안자임 "+ returnData.data.trade.sender);
+                setSender(userId);
+              } else{
+                console.log("현재 접속자는 거래 제안받은사람임 "+ returnData.data.trade.receiver);
+                setReceiver(userId);
+              }
             } else{
-              console.log("거래가 존재하지 않습니다.")
+              console.log("거래가 존재하지 않습니다.");
             }
           })
           //에러
@@ -178,80 +199,91 @@ const TradeSetScreen =({navigation,route})=>{
 
     // 설정 완료 후, 제안 버튼
     const suggestButton = () =>{
+      
+      if(user1==userId){
+        setSender(user1)
+        setReceiver(user2)
+      } else{
+        setSender(user2)
+        setReceiver(user1)
+      }
+
+      
+      const entireLocate = locate + detailLocate;
+      console.log("전체주소는 "+entireLocate)
 
       if(!detailLocate){
         alert('상세 주소를 입력해주세요');
         return;
 
       } else{
-        setIsSuggest(true)
         console.log('설정된 시작시간 ' + startTime);
         console.log('현재 접속자 ' + userId);
+        
+        const startSet = formatDate(startDate,startTime);
+        const endSet = formatDate(endDate,endTime);
 
-        if(user1==userId){
-          setSender(user1)
-          setReceiver(user2)
-        } else{
-          setSender(user2)
-          setReceiver(user1)
-        }
+        setProLocate(entireLocate);
+        setStart(startSet);
+        setEnd(endSet);
+
+
+        const send_param = {
+          startTime: startSet,
+          endTime: endSet,
+          location: entireLocate,
+          sender: sender,
+          receiver: receiver,
+          chatRoom: chatRoom
+        };
+    
+        axios
+        .post("http://10.0.2.2:3000/trade/createTradeTime", send_param)
+          //정상 수행
+          .then(returnData => {
+            if (returnData.data.message) {
+              console.log("거래 장소 및 시간 설정 완료")
+              console.log("거래 번호 "+returnData.data.tradeId)
+              setTradeId(returnData.data.tradeId);
+              setIsSuggest(true);
+            } else {
+              console.log('거래 장소 및 시간 설정 실패');
+            }
+          })
+          //에러
+          .catch(err => {
+            console.log(err);
+          });
+
       }
     }
 
     //동의 버튼
     const agreeButton = () =>{
 
-      const startSet = formatDate(startDate,startTime)
-      const endSet = formatDate(endDate,endTime)
-      const sendEndSet = sendFormatDate(endDate,endTime)
-      var sendEndDate = parse(sendEndSet);
+      // const sendEndSet = sendFormatDate(endDate,endTime)
+      var sendEndDate = parse2(end);
+      console.log("저장된 시간은 "+sendEndDate)
 
-      const entireLocate = locate + detailLocate;
+      setIsSave(true)
+
+      navigation.navigate('tradeTimer',{
+        tradeId: tradeId,
+        endSet: sendEndDate,
+        user1: user1,
+        user2: user2
+      })
 
       console.log(endDate)
-
-      const send_param = {
-        startTime: startSet,
-        endTime: endSet,
-        location: entireLocate,
-        sender: sender,
-        receiver: receiver,
-      };
   
-      axios
-      .post("http://10.0.2.2:3000/trade/createTradeTime", send_param)
-        //정상 수행
-        .then(returnData => {
-          if (returnData.data.message) {
-            console.log("거래 장소 및 시간 설정 완료")
-            setIsSave(true)
-            console.log("거래 번호 "+returnData.data.tradeId)
-
-            navigation.navigate('tradeTimer',{
-              tradeId: returnData.data.tradeId,
-              endSet: sendEndDate,
-              user1: user1,
-              user2: user2
-            })
-
-            setTradeId(returnData.data.tradeId);
-          } else {
-            console.log('거래 장소 및 시간 설정 실패');
-          }
-        })
-        //에러
-        .catch(err => {
-          console.log(err);
-        });
     }
 
     //남은 시간 확인 버튼
     const timeCheckButton = () =>{
 
-      const sendEndSet = sendFormatDate(endDate,endTime)
-      var sendEndDate = parse(sendEndSet);
-
-      console.log("남은 시간은 "+sendEndDate)
+      // const sendEndSet = sendFormatDate(endDate,endTime)
+      var sendEndDate = parse2(end);
+      console.log("저장된 시간은 "+sendEndDate)
 
       navigation.navigate('tradeTimer',{
         tradeId: tradeId,
@@ -345,10 +377,10 @@ const TradeSetScreen =({navigation,route})=>{
       </NaverMapView>
         
       <View style={{justifyContent: 'center',alignItems: 'center', paddingBottom: hp('3')}}> 
-        <Text style={{fontSize: wp('4'), paddingTop: hp('2'), paddingBottom: hp('2')}}>시작 시간: {formatDate(startDate,startTime)}</Text>
-        <Text style={{fontSize: wp('4'), paddingBottom: hp('2')}}>종료 시간: {formatDate(endDate,endTime)}</Text>
+        <Text style={{fontSize: wp('4'), paddingTop: hp('2'), paddingBottom: hp('2')}}>시작 시간: {start}</Text>
+        <Text style={{fontSize: wp('4'), paddingBottom: hp('2')}}>종료 시간: {end} </Text>
         {/* <Text>예상시간 : {workTime}</Text> */}
-        <Text style={{fontSize: wp('4')}}>선택된 장소: {locate} {detailLocate}</Text>
+        <Text style={{fontSize: wp('4')}}>선택된 장소: {proLocate}</Text>
       </View>
     
       
@@ -408,8 +440,8 @@ const TradeSetScreen =({navigation,route})=>{
 
 
 const formatDate = (date,time)=>{
-  const setDate= `${date.getFullYear()}/${date.getMonth() +
-    1}/${date.getDate()} ${time.getHours()}:${time.getMinutes()}`;
+  const setDate= `${date.getFullYear()}-${date.getMonth() +
+    1}-${date.getDate()} ${time.getHours()}:${time.getMinutes()}`;
   return setDate;
   };
 
@@ -420,9 +452,20 @@ const sendFormatDate = (date,time)=>{
   return setDate;
   };
 
-  //str-->date
+//str-->date
 function parse(str){
   var newDd=str.split('/');
+  var y = newDd[0];
+  var m = newDd[1];
+  var d= newDd[2];
+  var h = newDd[3];
+  var minute = newDd[4];
+  return new Date(y,m-1,d,h,minute);
+}
+
+//str-->date
+function parse2(str){
+  var newDd=str.split(/-| |:/);
   var y = newDd[0];
   var m = newDd[1];
   var d= newDd[2];
