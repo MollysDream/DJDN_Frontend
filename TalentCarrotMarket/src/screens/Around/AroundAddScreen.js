@@ -15,7 +15,7 @@ import Postcode from '@actbase/react-daum-postcode';
 import axios from "axios";
 import AsyncStorage from '@react-native-community/async-storage';
 import requestAddressAPI from "../../requestAddressAPI";
-
+import FlashMessage, {showMessage} from "react-native-flash-message";
 //글자 강조
 const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{props.children}</Text>
 
@@ -28,32 +28,14 @@ const AroundAddScreen = ({navigation,route}) => {
     const [geoAddress, setGeoAddress] = useState('');
     const userId=route.params.userId;
 
+    const message = (text)=>{
+        showMessage({message:text, type:'info'});
+    }
+
     const addAddressButton = () =>{
+
         setChosenAddress(geoAddress);
-        /*Geolocation.getCurrentPosition(
-            position =>{
-                const {latitude,longitude}=position.coords;
-
-                const send_param = {
-                    currentX: longitude,
-                    currentY: latitude
-                }
-
-                axios
-                    .post("http://10.0.2.2:3000/address/currentLocation", send_param)
-                    //정상 수행
-                    .then(returnData => {
-                        console.log(returnData.data);
-                        setChosenAddress(returnData.data.address)
-                    })
-                    //에러
-                    .catch(err => {
-                        console.log(err);
-                    });
-            },
-            error => {console.log(error.code,error.message)},
-            { enableHighAccuracy:true, timeout: 20000, maximumAge:1000},
-        );*/
+        message(`현재 위치는 '${geoAddress}'입니다.`);
 
     }
 
@@ -85,11 +67,9 @@ const AroundAddScreen = ({navigation,route}) => {
     },[]);
 
     const selectByPostcode = (data)=>{
-        //console.log(data.bname);
         setChosenAddress(data.bname);
+        message(`선택한 위치는 '${data.bname}'입니다.`);
 
-        /*Alert.alert("동네 검색 완료", `${data.bname}으로 동네 선택함`,
-            [{ text: '확인', style: 'cancel'}])*/
     }
 
     const saveChosenAddress = async() =>{
@@ -102,19 +82,12 @@ const AroundAddScreen = ({navigation,route}) => {
             addressIndex: chooseIndex,
             userId: userId
         })
-       /* Alert.alert("동네 저장 완료", `${chosenAddress}으로 동네 저장함`,
-            [{ text: '확인', style: 'cancel',
-            onPress:()=>{
-                navigation.navigate('aroundCertify',{
-                    chosenAddress:chosenAddress,
-                    addressIndex: chooseIndex,
-                    userId: userId
-                })
-            }}])*/
+
     }
 
     return (
         <View style={styles.container}>
+            <FlashMessage position="bottom"/>
             {
                 chosenAddress == ''? null:
                     <Button title={`${chosenAddress} 인증하기`} onPress={()=>saveChosenAddress()}/>

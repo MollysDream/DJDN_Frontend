@@ -20,6 +20,7 @@ import request from '../../requestAPI';
 import requestUser from "../../requestUserAPI";
 import AsyncStorage from '@react-native-community/async-storage';
 import {getDate, getPrice} from '../../function';
+import requestAddressAPI from "../../requestAddressAPI";
 
 export default class HomeScreen extends Component{
 
@@ -40,13 +41,23 @@ export default class HomeScreen extends Component{
         //console.log("홈스크린 componentDidMount");
         try{
             const userId = await AsyncStorage.getItem('user_id');
+
+            this.setState({userId:userId});
+
+            let userAddressDataList = await requestAddressAPI.getUserAddress(userId);
+            if(userAddressDataList.address[0] == undefined){
+                Alert.alert("알림","동네 인증을 먼저 해주세요", [{ text: '확인', style: 'cancel' },
+                    this.props.navigation.navigate('TabThird',{screen:'aroundSet'})
+                ])
+                return;
+            }
+
             //this.setState({userId:userId})
             const postData = await request.getPost(this.state.page, userId);
 
             this.setState({
                 data: this.state.data.concat(postData),
                 page : this.state.page + 1,
-                userId: userId,
             });
 
         }catch(err){
@@ -113,6 +124,19 @@ export default class HomeScreen extends Component{
         this.props.navigation.navigate('DetailPost',{detailPost: item, postOwner: userData});
     }
 
+    filterOption = async () =>{
+        console.log('필터 옵션 설정!!')
+
+        //user_id 값으로 사용자 정보 받아와야 됨
+        const userData = await requestUser.getUserData(this.state.userId);
+
+        this.props.navigation.navigate('FilterOption',{
+            userData:userData,
+            onGoBack: ()=>this.refreshPage()
+        });
+    }
+
+
     returnFlatListItem(item,index){
         let time = getDate(item.date);
         let price = getPrice(item.price);
@@ -146,17 +170,6 @@ export default class HomeScreen extends Component{
         );
     }
 
-    filterOption = async () =>{
-        console.log('필터 옵션 설정!!')
-
-        //user_id 값으로 사용자 정보 받아와야 됨
-        const userData = await requestUser.getUserData(this.state.userId);
-
-        this.props.navigation.navigate('FilterOption',{
-            userData:userData,
-            onGoBack: ()=>this.refreshPage()
-        });
-    }
 
     render() {
         console.log('홈화면 렌더');

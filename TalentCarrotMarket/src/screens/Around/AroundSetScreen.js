@@ -96,6 +96,12 @@ const AroundSetScreen = ({navigation}) => {
             let userAddressDataList = await requestAddressAPI.getUserAddress(userId);
             console.log(userAddressDataList.address);
 
+            //인증한 동네가 없을경우...
+            if(userAddressDataList.address[0] == undefined){
+                navigation.navigate('aroundAdd',{chooseIndex: 1, userId:userId});
+                return;
+            }
+
             setNumberOfAddress(userAddressDataList.address.length);
 
             let add1
@@ -457,7 +463,7 @@ const AroundSetScreen = ({navigation}) => {
             <NaverMapView
                 style={{flex: 0.5, width: '100%', height: '100%'}}
                 showsMyLocationButton={true}
-                center={{...P1, zoom:16}}
+                center={{...P1, zoom:14}}
                 onMapClick={e => setMapRadius(e)}>
                 {
                     location.latitude == null ? null :
