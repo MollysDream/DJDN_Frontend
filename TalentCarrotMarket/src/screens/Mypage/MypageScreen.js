@@ -35,6 +35,11 @@ const MypageScreen = ({navigation}) => {
     useEffect(() => {
         async function getUserData(){
             let userId = await AsyncStorage.getItem('user_id');
+
+            //로그아웃 시 에러 방지
+            if(userId == undefined)
+                return;
+
             setUserId(userId);
 
             let userData = await requestUserAPI.getUserData(userId);
