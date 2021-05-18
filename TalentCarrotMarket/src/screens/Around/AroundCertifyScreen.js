@@ -173,12 +173,12 @@ const AroundCertifyScreen = ({navigation,route}) => {
             {address != currentLocation ? (
             <View>
               <View style={styles.errText}>
-                <Text style={{color:'white',fontWeight: 'bold'}}>잠깐만요! 현재 위치가 {currentLocation} 이에요!</Text>
+                <Text style={{fontSize:17,color:'white',fontWeight: 'bold'}}>잠깐만요! 현재 위치가 '{currentLocation}' 이에요!</Text>
               </View>
-              <Text style={styles.textValidation}> 현재 내 동네로 설정되어 있는 <B>{address}</B>에서만 {"\n"} 동네인증을 할 수 있어요.</Text>
+              <Text style={styles.textValidation}> 현재 내 동네로 설정되어 있는 <B>'{address}'</B>에서만 {"\n"} 동네인증을 할 수 있어요.</Text>
               <View style={styles.btnArea}>
                 <TouchableOpacity style={styles.btnAround} onPress={changeAroundButton}>
-                  <Text style={(styles.Text, {color: 'black'})}>현재 위치로 동네 변경하기</Text>
+                  <Text style={[styles.Text, {color:'black'}]}>{`현재 위치( ${address} )로 동네 변경하기`}</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -187,7 +187,7 @@ const AroundCertifyScreen = ({navigation,route}) => {
               <Text style={styles.textValidation}>현재 위치가 내 동네로 설정한 <B>{address}</B>에 있습니다.</Text>
               <View style={styles.btnArea}>
                 <TouchableOpacity style={styles.btnAroundChoose} onPress={certifyAroundButton}>
-                  <Text style={(styles.Text, {color: 'white'})}>동네 인증 완료하기</Text>
+                  <Text style={[styles.Text, {color: 'white'}]}>동네 인증 완료하기</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
       borderRadius: 7,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: '#4672B8',
+      backgroundColor: '#8bb6ff',
       flexDirection: "row",
     },
     btnAround: {
@@ -241,11 +241,11 @@ const styles = StyleSheet.create({
       borderRadius: 7,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: '#4672B8',
+      backgroundColor: '#4bb7ff',
       flexDirection: "row",
     },
     Text: {
-      fontSize: wp('4%'),
+      fontSize: wp('4%')
     },
     textValidation: {
       fontSize: wp('4%'),
@@ -255,7 +255,8 @@ const styles = StyleSheet.create({
     errText:{
       backgroundColor:'red',
       justifyContent: 'center',
-      alignItems: 'center'
+      alignItems: 'center',
+        height:30
     },
     btn: {
       flex: 1,

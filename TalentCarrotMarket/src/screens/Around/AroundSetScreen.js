@@ -463,7 +463,7 @@ const AroundSetScreen = ({navigation}) => {
             <NaverMapView
                 style={{flex: 0.5, width: '100%', height: '100%'}}
                 showsMyLocationButton={true}
-                center={{...P1, zoom:16}}
+                center={{...P1, zoom:14}}
                 onMapClick={e => setMapRadius(e)}>
                 {
                     location.latitude == null ? null :
