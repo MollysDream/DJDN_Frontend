@@ -33,11 +33,11 @@ const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{pr
 const AroundSetScreen = ({navigation}) => {
 
     //현재 위치값 저장
-    const [location,setLocation]= useState({
+    /*const [location,setLocation]= useState({
         locations:[
             {latitude:null,longitude:null}
         ]
-    });
+    });*/
 
     const [isLoading, setIsLoading] = useState(false);
     //navermap에서 보여줄 초기 위치
@@ -65,8 +65,14 @@ const AroundSetScreen = ({navigation}) => {
     //지정한 동네 갯수
     const [numberOfAddress, setNumberOfAddress] = useState(0);
 
+    function setNmapLocation(address){
+        let latitude = Number(address.latitude);
+        let longitude = Number(address.longitude);
+        setP1({latitude, longitude});
+    }
+
     // 실제 안드로이드 폰에서 되는지 확인 필요
-    useEffect(() =>{
+    /*useEffect(() =>{
         Geolocation.getCurrentPosition(
             position =>{
                 const {latitude,longitude}=position.coords;
@@ -83,8 +89,10 @@ const AroundSetScreen = ({navigation}) => {
             { enableHighAccuracy:true, timeout: 20000, maximumAge:1000},
         );
     },[]);
+*/
 
     const isFocused = useIsFocused();
+
     useEffect( ()=>{
         async function refreshData(){
             setIsLoading(true);
@@ -116,6 +124,7 @@ const AroundSetScreen = ({navigation}) => {
                     setAddress1(add1.addressName);
                     setChooseState1('choose')
                     userRadius = add1.radius;
+                    setNmapLocation(userAddressDataList.address[0])
                 }else{
                     console.log("인덱스2 일때 1개")
                     add2 = userAddressDataList.address[0]
@@ -123,7 +132,7 @@ const AroundSetScreen = ({navigation}) => {
                     setAddress2(add2.addressName);
                     setChooseState2('choose');
                     userRadius = add2.radius;
-
+                    setNmapLocation(userAddressDataList.address[0])
                 }
 
                 setRadius(userRadius);
@@ -159,10 +168,12 @@ const AroundSetScreen = ({navigation}) => {
                 setChooseState1('choose')
                 setChooseState2('')
                 userRadius = add1.radius;
+                setNmapLocation(add1);
             }else{
                 setChooseState1('')
                 setChooseState2('choose');
                 userRadius = add2.radius;
+                setNmapLocation(add2);
             }
 
             setRadius(userRadius);
@@ -180,8 +191,8 @@ const AroundSetScreen = ({navigation}) => {
             return;
 
         const start = {
-            latitude: location.latitude,
-            longitude: location.longitude
+            latitude: P1.latitude,
+            longitude: P1.longitude
         }
         const end ={
             latitude: endLocation.latitude,
@@ -191,7 +202,7 @@ const AroundSetScreen = ({navigation}) => {
         setDistance(Math.floor(haversine(start,end ,{unit:'meter'})));
     }
 
-    //근처 동네 갯수 설정
+
     const selectSwitchRadius = (value) => {
         console.log(`${value}m의 재능 구매 게시글 찾기`)
 
@@ -325,6 +336,9 @@ const AroundSetScreen = ({navigation}) => {
             return
         setChooseState1('choose');
         setChooseState2('');
+
+        setNmapLocation(address1Full);
+
         let result = await requestUserAPI.updateUserAddressIndex(userId, 1);
         setUserAddressIndex(1);
     };
@@ -333,6 +347,9 @@ const AroundSetScreen = ({navigation}) => {
             return
         setChooseState1('');
         setChooseState2('choose');
+
+        setNmapLocation(address2Full);
+
         let result = await requestUserAPI.updateUserAddressIndex(userId, 2);
         setUserAddressIndex(2);
     };
@@ -462,14 +479,15 @@ const AroundSetScreen = ({navigation}) => {
 
             <NaverMapView
                 style={{flex: 0.5, width: '100%', height: '100%'}}
-                showsMyLocationButton={true}
+                /*showsMyLocationButton={true}*/
                 center={{...P1, zoom:14}}
                 onMapClick={e => setMapRadius(e)}>
                 {
-                    location.latitude == null ? null :
-                        <Circle coordinate={location} color={"rgba(0,199,249,0.2)"} radius={distance} onClick={circleClick}/>
+                    P1.latitude == null ? null :
+                        <Circle coordinate={P1} color={"rgba(0,199,249,0.2)"} radius={distance} onClick={circleClick}/>
 
                 }
+                <Marker coordinate={P1} pinColor="blue"/>
             </NaverMapView>
             <SwitchSelector style={{paddingTop:10, paddingBottom:4}}
                 options={options}
