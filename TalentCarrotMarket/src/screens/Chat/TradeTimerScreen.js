@@ -70,7 +70,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
 
   const extendButton = () =>{
 
-    const newEndSet = sendFormatDate(newEndDate,newEndTime);
+    const newEndSet = newFormatDate(newEndDate,newEndTime);
     const newEndDateTime = parse(newEndSet);
     console.log("현재 시간은 "+nowDate);
     console.log("남은 시간은 "+diffTime);
@@ -218,7 +218,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
 }
 
 //타이머 설정용 시간
-const sendFormatDate = (date,time)=>{
+const newFormatDate = (date,time)=>{
   const setDate= `${date.getFullYear()}/${date.getMonth() +
     1}/${date.getDate()}/${time.getHours()}/${time.getMinutes()}`;
   return setDate;

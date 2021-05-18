@@ -24,6 +24,26 @@ function ChatChRoomScreen(props) {
     const [chatroomId, setRoomId] = useState(props.route.params.roomInfo._id);
     const postOwnerId = props.route.params.postOwner._id
 
+    const buttons = [
+        {
+            color: '#4672B8',
+            content: <View>
+                <Text>
+                    ⌚ 🗺️</Text>
+                <Text>시간 장소</Text>
+            </View>,
+            action: () => {
+                props
+                    .navigation
+                    .navigate('tradeset',{
+                        user1:postOwnerId,
+                        user2:hostId,
+                        chatRoom:chatroomId
+                    })
+            }
+        }
+    ];
+
     
     useEffect(() => {
         async function settingChat() {

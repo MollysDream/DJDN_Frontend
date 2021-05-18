@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState,useEffect} from 'react';
 
 import {
     View,
@@ -17,6 +17,7 @@ import {
 
 import requestUserAPI from "../../requestUserAPI";
 import StarRating from 'react-native-star-rating';
+import AsyncStorage from '@react-native-community/async-storage';
 
 //글자 강조
 const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{props.children}</Text>
@@ -27,25 +28,30 @@ const UserRateScreen = ({navigation, route}) => {
   
         const [userId, setUserId] = useState('');
         const [userData, setUserData] = useState();
-        const [rating, setRating] = useState(0);
+        // const [rating, setRating] = useState(0);
 
 
         useEffect(() => {
-          async function getUserData(){
-            
+          async function getData(){
+
               let userId = await AsyncStorage.getItem('user_id');
               setUserId(userId);
 
+              console.log("현재 접속자는 "+ userId)
+
               if (user1 == userId){
-              let userData = await requestUserAPI.getUserData(user1);
-              setUserData(userData);
+
+                console.log("user1이에요! "+ user1)
+                let userData = await requestUserAPI.getUserData(user2);
+                setUserData(userData);
             } else{
-              let userData = await requestUserAPI.getUserData(user2);
+              console.log("user2에요! "+ user2)
+              let userData = await requestUserAPI.getUserData(user1);
               setUserData(userData);
             }
           }
 
-          let result = getUserData();
+          let result = getData();
       },[]);
 
         //평가 취소 버튼
@@ -57,17 +63,19 @@ const UserRateScreen = ({navigation, route}) => {
         const rateButton=()=>{
             let send_param;
             const userRate = (starPriceCount+starKindCount+starSpeedCount+starRetradeCount+starQualCount)/5
-            setRating(userRate)
+            // setRating(userRate)
+
+            console.log("평가할 점수 "+userRate);
 
             if(user1==userId){
               send_param={
                 userId: user2,
-                rating: rating
+                rating: userRate
               }
             } else{
               send_param={
                 userId: user1,
-                rating: rating
+                rating: userRate
               }
             }
 
@@ -121,14 +129,14 @@ const UserRateScreen = ({navigation, route}) => {
         return (
             <View style={styles.container}>
               <View style={styles.rowTopArea}>
-                  <View style={styles.titleArea}>   
+                  {/* <View style={styles.titleArea}>   
                     <Image
                     source={{uri:userData.profileImage}}
                     style={{width: wp(10),height:hp(10), resizeMode: 'contain'}}
                     />
                   </View>
                   <Text style={{paddingRight:wp(10)}}>{userData.nickname}</Text>
-                  <Text>{userData.averageRating}</Text>
+                  <Text>{userData.averageRating}</Text> */}
               </View>
 
               <View

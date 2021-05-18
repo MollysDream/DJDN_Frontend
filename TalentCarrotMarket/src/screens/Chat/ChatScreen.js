@@ -40,7 +40,8 @@ function ChatScreen(props) {
                     .navigation
                     .navigate('tradeset',{
                         user1:postOwnerId,
-                        user2:hostId
+                        user2:hostId,
+                        chatRoom:chatRoomId
                     })
             }
         }
