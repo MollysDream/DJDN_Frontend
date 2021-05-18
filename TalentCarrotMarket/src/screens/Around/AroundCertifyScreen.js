@@ -178,7 +178,7 @@ const AroundCertifyScreen = ({navigation,route}) => {
               <Text style={styles.textValidation}> 현재 내 동네로 설정되어 있는 <B>'{address}'</B>에서만 {"\n"} 동네인증을 할 수 있어요.</Text>
               <View style={styles.btnArea}>
                 <TouchableOpacity style={styles.btnAround} onPress={changeAroundButton}>
-                  <Text style={[styles.Text, {color:'black'}]}>{`현재 위치( ${address} )로 동네 변경하기`}</Text>
+                  <Text style={[styles.Text, {color:'black'}]}>{`현재 위치( ${currentLocation} )로 동네 변경하기`}</Text>
                 </TouchableOpacity>
               </View>
             </View>

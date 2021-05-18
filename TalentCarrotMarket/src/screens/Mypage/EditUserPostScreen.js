@@ -40,7 +40,6 @@ export default class EditUserPostScreen extends Component {
         imageTemp:[], //디바이스에서 불러온 이미지 정보 임시 저장
         countImage:0, //선택한 이미지 개수
         user_id:"",
-        userAddress:{},
         categoryList:[]
     }
 
@@ -55,8 +54,7 @@ export default class EditUserPostScreen extends Component {
 
         //게시글 작성 사용자의 userId값을 저장하기 위해 요청
         const userId = await AsyncStorage.getItem('user_id');
-        //게시글 작성시 게시글의 위치정보 저장을 위해 요청
-        const addressData = await requestAddressAPI.getUserAddress(userId);
+
 
         //이미 설정된 이미지를 보여주기 위해 imageTemp로 값 넣기
         const changeToImageTemp = []
@@ -73,19 +71,10 @@ export default class EditUserPostScreen extends Component {
 
         this.setState({
             user_id:userId,
-            userAddress:addressData.address[0],
             categoryList:categoryList
         })
-        console.log(this.state.categoryList);
-        //console.log(this.state.userAddress);
 
-        //동네 인증이 되었는지 확인 (안되어 있으면 작성 불가 => 홈 화면으로 이동)
-        if(this.state.userAddress == undefined || !this.state.userAddress['isAuth']){
-            this.props.navigation.navigate('Home');
-            Alert.alert("알림","게시글을 작성하기 위해\n동네 인증을 먼저 해주세요", [{ text: '확인', style: 'cancel' }])
-            return;
 
-        }
     }
 
 

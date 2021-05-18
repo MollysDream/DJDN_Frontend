@@ -28,6 +28,7 @@ import {Picker} from '@react-native-picker/picker';
 import {PickerItem} from "react-native/Libraries/Components/Picker/Picker";
 
 import {S3Key} from "../../Key";
+import requestUserAPI from "../../requestUserAPI";
 
 export default class MakePostScreen extends Component {
     state = {
@@ -54,12 +55,22 @@ export default class MakePostScreen extends Component {
 
         //게시글 작성 사용자의 userId값을 저장하기 위해 요청
         const userId = await AsyncStorage.getItem('user_id');
+
+        let userData = await requestUserAPI.getUserData(userId);
+
         //게시글 작성시 게시글의 위치정보 저장을 위해 요청
-        const addressData = await requestAddressAPI.getUserAddress(userId);
+        const userAddressDataList = await requestAddressAPI.getUserAddress(userId);
+        let userAddress;
+
+        userAddressDataList.address.map((address)=>{
+            if(address.addressIndex == userData.addressIndex){
+                userAddress = address;
+            }
+        })
 
         this.setState({
             user_id:userId,
-            userAddress:addressData.address[0],
+            userAddress:userAddress,
             categoryList:categoryList
         })
         console.log(this.state.categoryList);
