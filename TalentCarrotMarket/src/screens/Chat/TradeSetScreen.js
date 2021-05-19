@@ -146,9 +146,8 @@ const TradeSetScreen =({navigation,route})=>{
         }
       }
       
-
       // 거래 장소 설정
-      const [currentLocation, setCurrentLocation] = useState({latitude: 37.564362, longitude: 126.977011});
+      const [currentLocation, setCurrentLocation] = useState({latitude: 37.27886373711404, longitude: 127.04245001890514});
 
       useEffect(()=>{
         console.log(currentLocation)
@@ -160,13 +159,13 @@ const TradeSetScreen =({navigation,route})=>{
         .post("http://10.0.2.2:3000/address/currentAddress", send_param)
           //정상 수행
           .then(returnData => {
-            setLocate(returnData.data.address)
+            setLocate(returnData.data.address);
           })
           //에러
           .catch(err => {
             console.log(err);
           });
-      },[])
+      },[locate])
       
       const locationHandler = (e) => {
         
@@ -185,7 +184,7 @@ const TradeSetScreen =({navigation,route})=>{
                     .post("http://10.0.2.2:3000/address/currentAddress", send_param)
                       //정상 수행
                       .then(returnData => {
-                        setLocate(returnData.data.address)
+                        setLocate(returnData.data.address);
                       })
                       //에러
                       .catch(err => {

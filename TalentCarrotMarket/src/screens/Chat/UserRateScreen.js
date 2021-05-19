@@ -71,12 +71,12 @@ const UserRateScreen = ({navigation, route}) => {
             if(user1==userId){
               send_param={
                 userId: user2,
-                rating: userRate
+                rate: userRate
               }
             } else{
               send_param={
                 userId: user1,
-                rating: userRate
+                rate: userRate
               }
             }
 
