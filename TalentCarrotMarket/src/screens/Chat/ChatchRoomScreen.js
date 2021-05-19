@@ -23,8 +23,8 @@ let hostId;
 function ChatChRoomScreen(props) {
     const [messages, setMessages] = useState([]);
     const [chatroomId, setRoomId] = useState(props.route.params.roomInfo._id);
-    const postOwnerId = props.route.params.postOwner._id
-    const host = props.route.params.host._id
+    const postOwnerId = props.route.params.postOwner._id;
+    const host = props.route.params.host._id;
 
     useEffect(() => {
         async function settingChat() {
