@@ -41,7 +41,8 @@ function ChatListByPostScreen(props) {
 	const [rerender, setRerender] = useState(false);
 	const [nickInfo, setNickInfo] = useState([]);
 	const [postId, setPostId] = useState(props.route.params.item._id);
-
+	const [host, setHost] = useState('');
+    const [post, setPost] = useState('');
 
 	useEffect(()=>{
 		loadingCurrentId();
@@ -67,6 +68,11 @@ function ChatListByPostScreen(props) {
 			await setRoomById(roomInfo);
 			console.log(`지금 랜더링 ${count++}: 번 실행됐다!`);
 			console.log(roomInfo);
+			let hostData = await requestUser.getUserData(data.hostId);
+            setHost(hostData);
+            let postOwnerData = await requestUser.getUserData(data.postOwnerId);
+            setPost(postOwnerData);
+
 			roomInfo.map(async (data)=>{
 				let latestChat = await requestChatAPI.getLatestChat(data._id);
 				//console.log(latestChat);
@@ -140,7 +146,7 @@ function ChatListByPostScreen(props) {
 			chatTime = item.latestChat.createdAt;
 		}
 		return(
-			<TouchableHighlight onPress={() => props.navigation.navigate('게시글별 채팅리스트 채팅방', {postOwner: userData, roomInfo: item})}>
+			<TouchableHighlight onPress={() => props.navigation.navigate('게시글별 채팅리스트 채팅방',  {host:host, postOwner: post, roomInfo: item})}>
 				<View style={styles.chatRoomBox}>
 
 					<View style={styles.userDataBox}>

@@ -196,7 +196,7 @@ function ChatScreen(props) {
     return (
         <View style={styles.container}>
             <View style={styles.clockButtonContainer}>
-                <IconButton
+                {/* <IconButton
                 icon="clock"
                 size={36}
                 color="#6646ee"
@@ -206,7 +206,7 @@ function ChatScreen(props) {
                         user2:host,
                         chatRoom:chatroomId
                     })}
-                />
+                /> */}
             </View>
 
             <GiftedChat

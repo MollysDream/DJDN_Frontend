@@ -24,6 +24,8 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{props.children}</Text>
 
 let userId ;
+let sender;
+let receiver;
 
 const TradeSetScreen =({navigation,route})=>{
 
@@ -39,8 +41,8 @@ const TradeSetScreen =({navigation,route})=>{
       const [detailLocate,setDetailLocate]=useState('');
       const [isSuggest,setIsSuggest]=useState(false);
       const [isSave,setIsSave]=useState(false);
-      const [sender, setSender]=useState('');
-      const [receiver, setReceiver]=useState('');
+      // const [sender, setSender]=useState('');
+      // const [receiver, setReceiver]=useState('');
       const [tradeId, setTradeId]=useState('');
 
       // 제안된 장소, 시간 확인
@@ -69,10 +71,10 @@ const TradeSetScreen =({navigation,route})=>{
 
               if(returnData.data.trade.sender==userId){
                 console.log("현재 접속자는 거래 제안자임 "+ returnData.data.trade.sender);
-                setSender(userId);
+                sender=userId;
               } else{
                 console.log("현재 접속자는 거래 제안받은사람임 "+ returnData.data.trade.receiver);
-                setReceiver(userId);
+                receiver=userId;
               }
             } else{
               console.log("거래가 존재하지 않습니다.");
@@ -200,14 +202,17 @@ const TradeSetScreen =({navigation,route})=>{
     // 설정 완료 후, 제안 버튼
     const suggestButton = () =>{
       
+      
       if(user1==userId){
-        setSender(user1)
-        setReceiver(user2)
+        sender = user1;
+        receiver = user2;
       } else{
-        setSender(user2)
-        setReceiver(user1)
+        sender = user2;
+        receiver = user1;
       }
 
+      console.log("sender는 "+sender);
+      console.log("receiver는 "+receiver);
       
       const entireLocate = locate + detailLocate;
       console.log("전체주소는 "+entireLocate)
@@ -298,6 +303,26 @@ const TradeSetScreen =({navigation,route})=>{
     const resuggestButton = () =>{
       setIsSuggest(false)
       setIsSave(false)
+
+      //거래취소(삭제) 통신
+      const send_param = {
+        tradeId:tradeId
+      }
+      axios
+      .post("http://10.0.2.2:3000/trade/deleteTrade", send_param)
+        //정상 수행
+        .then(returnData => {
+          if(returnData.data.message){
+            alert('거래를 다시 제안합니다.')
+          } else{
+            alert('거래 취소 실패!')
+          }
+          
+        })
+        //에러
+        .catch(err => {
+          console.log(err);
+        });
     }
 
 
