@@ -40,6 +40,12 @@ export async function deleteKeyword(userId, keyword){
     return result.data;
 }
 
+export async function addCertificate(userId, title, text, certificateImage) {
+    console.log(`addCertificate함수 호출됨 // 자격증: ${title} ID: ${userId}`);
+    const result = await axi.post("/user/addCertificate", {userId,title, text, certificateImage});
+    return result.data;
+}
+
 
 export default{
     getUserData,
@@ -47,5 +53,6 @@ export default{
     updateUserAddressIndex,
     updateUserProfile,
     addKeyword,
-    deleteKeyword
+    deleteKeyword,
+    addCertificate
 }

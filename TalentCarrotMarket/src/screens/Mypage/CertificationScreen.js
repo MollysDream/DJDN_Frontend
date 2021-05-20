@@ -26,7 +26,9 @@ import {RNCamera} from 'react-native-camera';
 import {S3Key} from "../../Key";
 import request from "../../requestAPI";
 
-const CertificationScreen = ({navigation}) => {
+const CertificationScreen = ({navigation, route}) => {
+
+    const [userId, setUserId]= useState(route.params.userId);
 
     const [addModalVisible, setAddModalVisible] = useState(false);
     const [title,setTitle] = useState('');
@@ -65,7 +67,7 @@ const CertificationScreen = ({navigation}) => {
                         name: '',
                         type: ''});
                     setTitle('');
-                    setTitle('');
+                    setText('');
                 }
             },
             {text:'아니요', style:'cancel'}
@@ -75,10 +77,10 @@ const CertificationScreen = ({navigation}) => {
     function writeCertificate(text, type) {
 
         if(type == 'title'){
-            setTitle({title:text})
+            setTitle(text)
         }
         else if(type == 'text'){
-            setText({text:text})
+            setText(text)
         }
     }
 
@@ -111,12 +113,19 @@ const CertificationScreen = ({navigation}) => {
     }
 
     async function completeAdd() {
-        if(title.length===0)
+        if(title.length===0){
             message('자격증 명을 입력해주세요!');
-        else if(text.length===0)
+            return;
+        }
+        else if(text.length===0){
             message('간단한 설명을 입력해주세요!');
-        else if(deviceImage.uri=='')
+            return;
+        }
+        else if(deviceImage.uri==''){
             message('자격증을 인증할 사진을 찍어주세요');
+            return;
+        }
+
 
         const options = {
             keyPrefix: `---자격증---/${title}/`,  //제목 뒤에 user_id 값 추가해야 됨.
@@ -135,6 +144,17 @@ const CertificationScreen = ({navigation}) => {
             console.log(err);
         }
 
+        try{
+            await requestUserAPI.addCertificate(userId, title, text, deviceImage.uri);
+            Alert.alert("추가 완료", "자격증 추가가 완료되었습니다.",
+                [{ text: '확인', style: 'cancel',
+                    onPress : ()=> {
+                        setAddModalVisible(!addModalVisible);
+                    }}])
+
+        }catch(err){
+            console.log(`프로필 수정 실패 ${err}`);
+        }
 
     }
 
