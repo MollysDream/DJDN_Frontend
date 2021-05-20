@@ -41,8 +41,8 @@ function ChatListByPostScreen(props) {
 	const [rerender, setRerender] = useState(false);
 	const [nickInfo, setNickInfo] = useState([]);
 	const [postId, setPostId] = useState(props.route.params.item._id);
-	const [host, setHost] = useState('');
-    const [post, setPost] = useState('');
+	/*const [host, setHost] = useState('');
+    const [post, setPost] = useState('');*/
 
 	useEffect(()=>{
 		loadingCurrentId();
@@ -68,29 +68,26 @@ function ChatListByPostScreen(props) {
 			await setRoomById(roomInfo);
 			console.log(`지금 랜더링 ${count++}: 번 실행됐다!`);
 			console.log(roomInfo);
-			let hostData = await requestUser.getUserData(data.hostId);
-            setHost(hostData);
-            let postOwnerData = await requestUser.getUserData(data.postOwnerId);
-            setPost(postOwnerData);
+
 
 			roomInfo.map(async (data)=>{
 				let latestChat = await requestChatAPI.getLatestChat(data._id);
 				//console.log(latestChat);
 				let partnerUserData;
-				//let myUserData;
+				let myUserData;
 				if(currentId == data.hostId){
-					//myUserData = await requestUser.getUserData(data.hostId);
+					myUserData = await requestUser.getUserData(data.hostId);
 					partnerUserData = await requestUser.getUserData(data.postOwnerId);
 				}else{
 					partnerUserData = await requestUser.getUserData(data.hostId);
-					//myUserData = await requestUser.getUserData(data.postOwnerId);
+					myUserData = await requestUser.getUserData(data.postOwnerId);
 				}
 
 				let postData = await request.getPostTitle(data.postId);
 
 
 
-				nick = nick.concat({_id : data._id/*, myUserData : myUserData*/ , partnerUserData : partnerUserData, postData : postData[0], latestChat:latestChat });
+				nick = nick.concat({_id : data._id, myUserData : myUserData , partnerUserData : partnerUserData, postData : postData[0], latestChat:latestChat });
 				await setNickInfo(nick);
 			})
 		}
@@ -110,18 +107,18 @@ function ChatListByPostScreen(props) {
 				let latestChat = await requestChatAPI.getLatestChat(data._id);
 
 				let partnerUserData;
-				//let myUserData;
+				let myUserData;
 				if(currentId == data.hostId){
-					//myUserData = await requestUser.getUserData(data.hostId);
+					myUserData = await requestUser.getUserData(data.hostId);
 					partnerUserData = await requestUser.getUserData(data.postOwnerId);
 				}else{
 					partnerUserData = await requestUser.getUserData(data.hostId);
-					//myUserData = await requestUser.getUserData(data.postOwnerId);
+					myUserData = await requestUser.getUserData(data.postOwnerId);
 				}
 
 				let postData = await request.getPostTitle(data.postId);
 
-				nick = nick.concat({_id : data._id/*, myUserData : myUserData */, partnerUserData : partnerUserData, postData : postData[0], latestChat:latestChat });
+				nick = nick.concat({_id : data._id, myUserData : myUserData , partnerUserData : partnerUserData, postData : postData[0], latestChat:latestChat });
 				setNickInfo(nick);
 
 			})
@@ -136,7 +133,7 @@ function ChatListByPostScreen(props) {
 	}
 
 	function returnFlatListItem(item,index){
-		//let myUserData = item.myUserData;
+		let myUserData = item.myUserData;
 		let partnerUserData = item.partnerUserData;
 		let postData = item.postData;
 		let chat = '';
@@ -146,7 +143,7 @@ function ChatListByPostScreen(props) {
 			chatTime = item.latestChat.createdAt;
 		}
 		return(
-			<TouchableHighlight onPress={() => props.navigation.navigate('게시글별 채팅리스트 채팅방',  {host:host, postOwner: post, roomInfo: item})}>
+			<TouchableHighlight onPress={() => props.navigation.navigate('게시글별 채팅리스트 채팅방',  {host:myUserData, postOwner: partnerUserData, roomInfo: item})}>
 				<View style={styles.chatRoomBox}>
 
 					<View style={styles.userDataBox}>
