@@ -162,7 +162,7 @@ function ChatChScreen({navigation}) {
                             </View>
                             <View style={{flexDirection:'row'}}>
                                 <Icon style={styles.chat_text} name="sms" size={20}/>
-                                <Text style={styles.chat_text}>{` ${chat}`}</Text>
+                                <Text style={[styles.chat_text,{width:140}]}>{` ${chat}`}</Text>
                             </View>
 
                         </View>
@@ -210,7 +210,10 @@ const styles = StyleSheet.create({
     },
     postTitle:{
         fontSize:15,
-        paddingTop:7
+        paddingTop:7,
+        //borderWidth:1,
+        width:170,
+
     },
     userDataBox:{
         flexDirection:'row',
@@ -238,7 +241,6 @@ const styles = StyleSheet.create({
         marginRight: 13
     },
     chat_text:{
-      //borderWidth: 1,
         paddingTop: 18,
         color:'grey'
     },
