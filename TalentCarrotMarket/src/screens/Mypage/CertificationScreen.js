@@ -57,17 +57,22 @@ const CertificationScreen = ({navigation, route}) => {
         setAddModalVisible(!addModalVisible);
     }
 
+    function resetData(){
+        setDeviceImage({uri: '',
+            name: '',
+            type: ''});
+        setTitle('');
+        setText('');
+        setS3url('');
+    }
+
     function cancelAdd(){
         console.log('취소');
         Alert.alert("확인","자격증 추가를 취소 하실건가요?",[
             {text:'네', style:'cancel',
                 onPress:()=>{
                     setAddModalVisible(!addModalVisible);
-                    setDeviceImage({uri: '',
-                        name: '',
-                        type: ''});
-                    setTitle('');
-                    setText('');
+                    resetData();
                 }
             },
             {text:'아니요', style:'cancel'}
@@ -136,8 +141,9 @@ const CertificationScreen = ({navigation, route}) => {
             successActionStatus: 201,
         }
 
+        let imageUrl
         try{
-            let imageUrl = await request.postImageToS3(deviceImage,options);
+            imageUrl = await request.postImageToS3(deviceImage,options);
             console.log(imageUrl);
             setS3url(imageUrl);
         }catch(err){
@@ -145,11 +151,12 @@ const CertificationScreen = ({navigation, route}) => {
         }
 
         try{
-            await requestUserAPI.addCertificate(userId, title, text, deviceImage.uri);
+            await requestUserAPI.addCertificate(userId, title, text, imageUrl);
             Alert.alert("추가 완료", "자격증 추가가 완료되었습니다.",
                 [{ text: '확인', style: 'cancel',
                     onPress : ()=> {
                         setAddModalVisible(!addModalVisible);
+                        resetData();
                     }}])
 
         }catch(err){

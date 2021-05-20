@@ -42,6 +42,7 @@ export async function deleteKeyword(userId, keyword){
 
 export async function addCertificate(userId, title, text, certificateImage) {
     console.log(`addCertificate함수 호출됨 // 자격증: ${title} ID: ${userId}`);
+    //console.log(certificateImage);
     const result = await axi.post("/user/addCertificate", {userId,title, text, certificateImage});
     return result.data;
 }
