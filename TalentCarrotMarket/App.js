@@ -54,6 +54,7 @@ import userTradingPostScreen from './src/screens/Mypage/UserTradingPostScreen';
 import editUserPostScreen from './src/screens/Mypage/EditUserPostScreen';
 import editProfileScreen from './src/screens/Mypage/EditProfileScreen';
 import keywordScreen from './src/screens/Mypage/KeywordScreen';
+import certificationScreen from './src/screens/Mypage/CertificationScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -145,7 +146,7 @@ const SettingStackScreen = () => {
       <SettingStack.Screen name="editUserPostScreen" component={editUserPostScreen}/>
       <SettingStack.Screen name="editProfileScreen" component={editProfileScreen}/>
       <SettingStack.Screen name="keywordScreen" component={keywordScreen}/>
-
+      <SettingStack.Screen name="자격증 증명" component={certificationScreen}/>
     </Stack.Navigator>
   );
 };
