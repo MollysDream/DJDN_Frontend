@@ -38,8 +38,8 @@ function ChatChScreen({navigation}) {
       const [refreshing, setRefreshing] = useState(false);
       const [rerender, setRerender] = useState(false);
       const [nickInfo, setNickInfo] = useState([]);
-      const [host, setHost] = useState('');
-      const [post, setPost] = useState('');
+      /*const [host, setHost] = useState('');
+      const [post, setPost] = useState('');*/
 
       useEffect(()=>{
         async function loadingCurrentId(){
@@ -66,27 +66,26 @@ function ChatChScreen({navigation}) {
 
                 let latestChat = await requestChatAPI.getLatestChat(data._id);
                 //console.log(latestChat);
-                let hostData = await requestUser.getUserData(data.hostId);
+                /*let hostData = await requestUser.getUserData(data.hostId);
                 setHost(hostData);
                 let postOwnerData = await requestUser.getUserData(data.postOwnerId);
-                setPost(postOwnerData);
+                setPost(postOwnerData);*/
 
                 let partnerUserData;
-                //let myUserData;
+                let myUserData;
                 if(currentId == data.hostId){
-                    //myUserData = await requestUser.getUserData(data.hostId);
+                    myUserData = await requestUser.getUserData(data.hostId);
                     partnerUserData = await requestUser.getUserData(data.postOwnerId);
                 }else{
                     partnerUserData = await requestUser.getUserData(data.hostId);
-
-                    //myUserData = await requestUser.getUserData(data.postOwnerId);
+                    myUserData = await requestUser.getUserData(data.postOwnerId);
                 }
 
               let postData = await request.getPostTitle(data.postId);
 
 
 
-              nick = nick.concat({_id : data._id/*, myUserData : myUserData*/ , partnerUserData : partnerUserData, postData : postData[0], latestChat:latestChat });
+              nick = nick.concat({_id : data._id, myUserData : myUserData , partnerUserData : partnerUserData, postData : postData[0], latestChat:latestChat });
               await setNickInfo(nick);
 
              })
@@ -110,18 +109,18 @@ function ChatChScreen({navigation}) {
                 let latestChat = await requestChatAPI.getLatestChat(data._id);
 
                 let partnerUserData;
-                //let myUserData;
+                let myUserData;
                 if(currentId == data.hostId){
-                    //myUserData = await requestUser.getUserData(data.hostId);
+                    myUserData = await requestUser.getUserData(data.hostId);
                     partnerUserData = await requestUser.getUserData(data.postOwnerId);
                 }else{
                     partnerUserData = await requestUser.getUserData(data.hostId);
-                    //myUserData = await requestUser.getUserData(data.postOwnerId);
+                    myUserData = await requestUser.getUserData(data.postOwnerId);
                 }
 
                 let postData = await request.getPostTitle(data.postId);
 
-                nick = nick.concat({_id : data._id/*, myUserData : myUserData */, partnerUserData : partnerUserData, postData : postData[0], latestChat:latestChat });
+                nick = nick.concat({_id : data._id, myUserData : myUserData , partnerUserData : partnerUserData, postData : postData[0], latestChat:latestChat });
                 setNickInfo(nick);
 
             })
@@ -138,7 +137,7 @@ function ChatChScreen({navigation}) {
 
 
     function returnFlatListItem(item,index){
-        //let myUserData = item.myUserData;
+        let myUserData = item.myUserData;
         let partnerUserData = item.partnerUserData;
         let postData = item.postData;
         let chat = '';
@@ -149,7 +148,7 @@ function ChatChScreen({navigation}) {
         }
 
         return(
-            <TouchableHighlight onPress={() => {navigation.navigate('chatchroom', {host:host, postOwner: post, roomInfo: item})}}>
+            <TouchableHighlight onPress={() => {navigation.navigate('chatchroom', {host:myUserData, postOwner: partnerUserData, roomInfo: item})}}>
                 <View style={styles.chatRoomBox}>
                     <Image style={styles.post_image} source={{ uri: postData.image[0]}} />
                      <View style={{flexDirection:'column'}}>
