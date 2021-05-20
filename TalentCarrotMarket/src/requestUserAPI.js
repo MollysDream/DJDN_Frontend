@@ -47,6 +47,14 @@ export async function addCertificate(userId, title, text, certificateImage) {
     return result.data;
 }
 
+export async function getUserCertificate(userId){
+    console.log('getUserCertificate 호출됨');
+    const certificateData = await axi.get("/user/getUserCertificate", {params:{userId:userId}});
+    //console.log(categoryData.data);
+    return certificateData.data;
+}
+
+
 
 export default{
     getUserData,
@@ -55,5 +63,6 @@ export default{
     updateUserProfile,
     addKeyword,
     deleteKeyword,
-    addCertificate
+    addCertificate,
+    getUserCertificate
 }

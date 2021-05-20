@@ -3,7 +3,7 @@ import {
     View,
     Text,
     StyleSheet,
-    Button, Image, TouchableHighlight, Alert, TouchableOpacity, TextInput, ScrollView
+    Button, Image, TouchableHighlight, Alert, TouchableOpacity, TextInput, ScrollView, RefreshControl, FlatList
 } from 'react-native';
 import {Form, Input, Item, Label, Textarea} from 'native-base';
 import {
@@ -25,6 +25,7 @@ import Modal from 'react-native-modal';
 import {RNCamera} from 'react-native-camera';
 import {S3Key} from "../../Key";
 import request from "../../requestAPI";
+import {getDate, getPrice} from "../../function";
 
 const CertificationScreen = ({navigation, route}) => {
 
@@ -42,10 +43,19 @@ const CertificationScreen = ({navigation, route}) => {
     });
 
     const [S3url, setS3url] = useState('');
+    ///////////////////////////////////
+    const [certificateData, setCertificateData] = useState([]);
 
 
 
     useEffect(() => {
+        async function getData(){
+            let certificate = await requestUserAPI.getUserCertificate(userId);
+            console.log(certificate);
+            setCertificateData(certificateData.concat(certificate));
+        }
+
+        getData();
 
     }, []);
 
@@ -162,8 +172,33 @@ const CertificationScreen = ({navigation, route}) => {
         }catch(err){
             console.log(`프로필 수정 실패 ${err}`);
         }
-
     }
+
+    function returnFlatListItem(item,index){
+
+        return(
+            <TouchableOpacity style={styles.dataBox}>
+                <View style={{width:'95%', height:'95%'}}>
+                    <Image style={styles.dataImage} source={{ uri: item.certificateImage}} />
+                    <View style={{alignItems:'center'}}>
+                        <Text style={{fontSize:20, fontWeight:'bold'}}>{item.title}</Text>
+                        <View
+                            style={{
+                                borderBottomColor: '#93E3FF',
+                                borderBottomWidth: 1,
+                                width:'90%'
+                            }}
+                        />
+                        <Text>{item.text}</Text>
+
+                    </View>
+                </View>
+
+            </TouchableOpacity>
+
+        );
+    }
+
 
     return (
         <View style={styles.container}>
@@ -223,12 +258,22 @@ const CertificationScreen = ({navigation, route}) => {
                 <Icon2 style={[styles.iconPlace, {marginTop:3}]} name="certificate"  size={46} color="#37CEFF" />
                 <Text style={styles.titleText}>자격증 증명</Text>
             </View>
-
+            <TouchableOpacity style={styles.addButton} onPress={addCertificateModal}>
+                <Icon style={[styles.iconPlace, {marginTop:3}]} name="plus"  size={46} color="#00C0FF" />
+            </TouchableOpacity>
             <View style={styles.certificateBox}>
 
-                <TouchableOpacity style={styles.addButton} onPress={addCertificateModal}>
-                    <Icon style={[styles.iconPlace, {marginTop:3}]} name="plus"  size={46} color="#00C0FF" />
-                </TouchableOpacity>
+                <FlatList
+                    numColumns={2}
+                    data={certificateData}
+                    keyExtractor={(item,index) => String(item._id)}
+                    renderItem={({item,index})=>returnFlatListItem(item,index)}
+                    //extraData={this.state.rerender}
+                    //refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.refreshPage} />}
+                />
+
+
+
 
             </View>
 
@@ -240,6 +285,22 @@ const CertificationScreen = ({navigation, route}) => {
 
 
 const styles = StyleSheet.create({
+    dataImage:{
+        width: '100%',
+        overflow:"hidden",
+        height: '80%',
+        borderRadius: 9,
+    },
+    dataBox:{
+        alignItems:'center',
+        borderRadius: 10,
+        width:'45%',
+        height: 300,
+        marginLeft: 15,
+        marginBottom: 10,
+        backgroundColor:'#c5f1ff',
+        paddingTop:4
+    },
     completeButton:{
         backgroundColor:'#bce2ff',
         borderRadius:8,
@@ -318,15 +379,16 @@ const styles = StyleSheet.create({
         marginLeft: 13
     },
     certificateBox: {
-        paddingLeft:wp(3),
-        paddingRight:wp(3)
-
-    }, addButton: {
+        flex:1
+        //borderWidth:1
+    },
+    addButton: {
         borderRadius: 10,
-        height: 80,
+        height: 20,
         backgroundColor:'#c5f1ff',
         alignItems:'center',
         justifyContent:'center',
+        marginBottom: 10
 
     }
 
