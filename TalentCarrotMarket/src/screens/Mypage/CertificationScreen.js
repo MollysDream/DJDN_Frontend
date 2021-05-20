@@ -23,6 +23,8 @@ import FlashMessage, {showMessage} from "react-native-flash-message";
 import Modal from 'react-native-modal';
 
 import {RNCamera} from 'react-native-camera';
+import {S3Key} from "../../Key";
+import request from "../../requestAPI";
 
 const CertificationScreen = ({navigation}) => {
 
@@ -30,7 +32,16 @@ const CertificationScreen = ({navigation}) => {
     const [title,setTitle] = useState('');
     const [text,setText] = useState('');
     
-    const [imagePath, setImagePath] = useState('');
+    //const [deviceImage.uri, setImageDevicePath] = useState('');
+    const [deviceImage, setDeviceImage] = useState({
+        uri: '',
+        name: '',
+        type: ''
+    });
+
+    const [S3url, setS3url] = useState('');
+
+
 
     useEffect(() => {
 
@@ -50,6 +61,11 @@ const CertificationScreen = ({navigation}) => {
             {text:'네', style:'cancel',
                 onPress:()=>{
                     setAddModalVisible(!addModalVisible);
+                    setDeviceImage({uri: '',
+                        name: '',
+                        type: ''});
+                    setTitle('');
+                    setTitle('');
                 }
             },
             {text:'아니요', style:'cancel'}
@@ -68,9 +84,10 @@ const CertificationScreen = ({navigation}) => {
 
     const cameraRef = React.useRef(null);
     async function takePicture() {
-        if(imagePath!=''){
+        if(deviceImage.uri!=''){
             console.log('사진 다시 찍기!');
-            setImagePath('');
+            //setImageDevicePath('');
+            setDeviceImage({uri: '', name: '', type: ''});
             return
         }
 
@@ -82,14 +99,43 @@ const CertificationScreen = ({navigation}) => {
                 quality: 1,
                 exif: true,
             });
-            console.log(data);
+            //console.log(data);
             message('사진을 찍었습니다!');
-            setImagePath(data.uri);
+            const file ={
+                uri: data.uri,
+                name: title,
+                type: 'image/jpeg'
+            }
+            setDeviceImage(file);
         }
     }
 
-    function completeAdd() {
-        console.log('완료!');
+    async function completeAdd() {
+        if(title.length===0)
+            message('자격증 명을 입력해주세요!');
+        else if(text.length===0)
+            message('간단한 설명을 입력해주세요!');
+        else if(deviceImage.uri=='')
+            message('자격증을 인증할 사진을 찍어주세요');
+
+        const options = {
+            keyPrefix: `---자격증---/${title}/`,  //제목 뒤에 user_id 값 추가해야 됨.
+            bucket: 'mollysdreampostdata',
+            region: 'ap-northeast-2',
+            accessKey: S3Key.accessKey,
+            secretKey: S3Key.secretKey,
+            successActionStatus: 201,
+        }
+
+        try{
+            let imageUrl = await request.postImageToS3(deviceImage,options);
+            console.log(imageUrl);
+            setS3url(imageUrl);
+        }catch(err){
+            console.log(err);
+        }
+
+
     }
 
     return (
@@ -101,20 +147,20 @@ const CertificationScreen = ({navigation}) => {
                     <View style={styles.imageBox}>
                         <View style={styles.blankImage}>
                             {
-                                imagePath == '' ?
+                                deviceImage.uri == '' ?
                                     <RNCamera
                                         ref={cameraRef}
                                         style={styles.cameraBox}
                                         captureAudio={false} />
                                         :
-                                    <Image style={styles.blankImage} source={{uri:imagePath}}/>
+                                    <Image style={styles.blankImage} source={{uri:deviceImage.uri}}/>
                             }
                             
                         </View>
                         <View style={{flex:1,alignItems:'center',justifyContent:'center',}}>
                             <TouchableOpacity onPress={takePicture}>
                                 {
-                                    imagePath == '' ?
+                                    deviceImage.uri == '' ?
                                         <Icon2 name="camera"  size={40} color="#37CEFF" />
                                         :
                                         <Icon2 name="camera-retake-outline"  size={40} color="#37CEFF" />
