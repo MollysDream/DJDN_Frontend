@@ -165,7 +165,7 @@ const TradeSetScreen =({navigation,route})=>{
           .catch(err => {
             console.log(err);
           });
-      },[locate])
+      },[locate, currentLocation])
       
       const locationHandler = (e) => {
         
