@@ -19,21 +19,29 @@ import requestUserAPI from "../../requestUserAPI";
 import requestAddressAPI from "../../requestAddressAPI";
 import {useIsFocused} from "@react-navigation/native";
 
+import FlashMessage, {showMessage} from "react-native-flash-message";
 import Modal from 'react-native-modal';
+
+import {RNCamera} from 'react-native-camera';
 
 const CertificationScreen = ({navigation}) => {
 
-    const [addModalVisibel, setAddModalVisible] = useState(false);
+    const [addModalVisible, setAddModalVisible] = useState(false);
     const [title,setTitle] = useState('');
     const [text,setText] = useState('');
+    
+    const [imagePath, setImagePath] = useState('');
 
     useEffect(() => {
 
     }, []);
 
+    function message(text){
+        showMessage({message:text, type:'info'});
+    }
 
     function addCertificateModal() {
-        setAddModalVisible(!addModalVisibel);
+        setAddModalVisible(!addModalVisible);
     }
 
     function cancelAdd(){
@@ -41,7 +49,7 @@ const CertificationScreen = ({navigation}) => {
         Alert.alert("확인","자격증 추가를 취소 하실건가요?",[
             {text:'네', style:'cancel',
                 onPress:()=>{
-                    setAddModalVisible(!addModalVisibel);
+                    setAddModalVisible(!addModalVisible);
                 }
             },
             {text:'아니요', style:'cancel'}
@@ -58,22 +66,59 @@ const CertificationScreen = ({navigation}) => {
         }
     }
 
-    function takePicture() {
+    const cameraRef = React.useRef(null);
+    async function takePicture() {
+        if(imagePath!=''){
+            console.log('사진 다시 찍기!');
+            setImagePath('');
+            return
+        }
+
         console.log('사진 찍기!');
+
+        console.log('cameraRef', cameraRef);
+        if (cameraRef) {
+            const data = await cameraRef.current.takePictureAsync({
+                quality: 1,
+                exif: true,
+            });
+            console.log(data);
+            message('사진을 찍었습니다!');
+            setImagePath(data.uri);
+        }
+    }
+
+    function completeAdd() {
+        console.log('완료!');
     }
 
     return (
         <View style={styles.container}>
 
-            <Modal isVisible={addModalVisibel} KeyboardAvoidingView ={false}>
+            <Modal isVisible={addModalVisible} KeyboardAvoidingView ={false}>
+
                 <ScrollView style={styles.addModalBox}>
                     <View style={styles.imageBox}>
                         <View style={styles.blankImage}>
-
+                            {
+                                imagePath == '' ?
+                                    <RNCamera
+                                        ref={cameraRef}
+                                        style={styles.cameraBox}
+                                        captureAudio={false} />
+                                        :
+                                    <Image style={styles.blankImage} source={{uri:imagePath}}/>
+                            }
+                            
                         </View>
                         <View style={{flex:1,alignItems:'center',justifyContent:'center',}}>
                             <TouchableOpacity onPress={takePicture}>
-                                <Icon name="camera"  size={35} color="#37CEFF" />
+                                {
+                                    imagePath == '' ?
+                                        <Icon2 name="camera"  size={40} color="#37CEFF" />
+                                        :
+                                        <Icon2 name="camera-retake-outline"  size={40} color="#37CEFF" />
+                                }
                             </TouchableOpacity>
                         </View>
 
@@ -84,12 +129,19 @@ const CertificationScreen = ({navigation}) => {
                         <Textarea placeholderTextColor={'grey'} style={styles.textBox} placeholder={'간단 설명'}
                                   rowSpan={4} onChangeText={(text) => writeCertificate(text, 'text')}/>
                     </View>
+                    <View style={{alignItems:'flex-end'}}>
+                        <TouchableOpacity style={styles.completeButton} onPress={completeAdd}>
+                            <Text style={{fontSize:16}}>추가</Text>
+                        </TouchableOpacity>
+                    </View>
 
 
 
                     <TouchableOpacity style={styles.cancleIcon} onPress={cancelAdd}>
                         <Icon3 name="circle-with-cross"  size={35} color="#37CEFF" />
                     </TouchableOpacity>
+
+                    <FlashMessage position="top"/>
                 </ScrollView>
 
             </Modal>
@@ -107,9 +159,6 @@ const CertificationScreen = ({navigation}) => {
 
             </View>
 
-
-
-
         </View>
 
 
@@ -118,18 +167,36 @@ const CertificationScreen = ({navigation}) => {
 
 
 const styles = StyleSheet.create({
-    blankImage:{
+    completeButton:{
+        backgroundColor:'#bce2ff',
+        borderRadius:8,
+        width:80,
+        height:40,
+        alignItems: 'center',
+        justifyContent:'center',
+        marginRight: 7
+    },
+    cameraBox:{
         borderWidth: 2,
         borderRadius:20,
         width:260,
+        height:349,
+        borderColor:'#7DCBFF',
+    },
+    blankImage:{
+        borderWidth: 2,
+        width:260,
+        borderRadius:20,
         height:350,
-        borderColor:'#7DCBFF'
+        borderColor:'#7DCBFF',
+        overflow:'hidden'
     },
     imageBox:{
         //borderWidth:1,
         marginLeft: 7,
         marginRight: 7,
-        flexDirection:'row'
+        flexDirection:'row',
+        marginTop: 8
     },
     textBox:{
         marginTop:5,
@@ -154,8 +221,7 @@ const styles = StyleSheet.create({
         margin:20,
         flex:1,
         backgroundColor:'white',
-        borderRadius:10,
-        paddingTop: 8
+        borderRadius:10
     },
     container: {
         flex: 1, //전체의 공간을 차지한다는 의미
