@@ -40,6 +40,27 @@ export async function deleteKeyword(userId, keyword){
     return result.data;
 }
 
+export async function addCertificate(userId, title, text, certificateImage) {
+    console.log(`addCertificate함수 호출됨 // 자격증: ${title} ID: ${userId}`);
+    //console.log(certificateImage);
+    const result = await axi.post("/user/addCertificate", {userId,title, text, certificateImage});
+    return result.data;
+}
+
+export async function getUserCertificate(userId){
+    console.log('getUserCertificate 호출됨');
+    const certificateData = await axi.get("/user/getUserCertificate", {params:{userId:userId}});
+    //console.log(categoryData.data);
+    return certificateData.data;
+}
+
+export async function deleteCertificate(userId, certificateId){
+    console.log(`deleteCertificate함수 호출됨 아이디: ${userId} // 자격증 ID: ${certificateId}`);
+    const result = await axi.post("/user/deleteCertificate", {userId,certificateId});
+    return result.data;
+}
+
+
 
 export default{
     getUserData,
@@ -47,5 +68,8 @@ export default{
     updateUserAddressIndex,
     updateUserProfile,
     addKeyword,
-    deleteKeyword
+    deleteKeyword,
+    addCertificate,
+    getUserCertificate,
+    deleteCertificate
 }

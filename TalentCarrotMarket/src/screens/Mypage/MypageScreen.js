@@ -11,6 +11,7 @@ import {
     heightPercentageToDP as hp,
   } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import AsyncStorage from '@react-native-community/async-storage';
 import requestUserAPI from "../../requestUserAPI";
@@ -68,18 +69,19 @@ const MypageScreen = ({navigation}) => {
     const goToUserPostScreen = ()=>{
         navigation.navigate('userPostScreen', {userId:userId});
     }
-
     const editProfileButton = ()=>{
         console.log('프로필 수정!!');
         navigation.navigate('editProfileScreen',{userId:userId, userData:userData});
     }
-
     const goToUserTradingPostScreen = ()=>{
         navigation.navigate('userTradingPostScreen', {userId:userId});
     }
-
     const goToKeywordScreen = ()=>{
         navigation.navigate('keywordScreen', {userId:userId, keywordList:userData.keyword});
+    }
+    const goToCertificationScreen = ()=>{
+        console.log('자격증 증명');
+        navigation.navigate('자격증 증명', {userId:userId});
     }
 
     return (
@@ -134,6 +136,11 @@ const MypageScreen = ({navigation}) => {
               <TouchableOpacity style={styles.buttonList} onPress={goToKeywordScreen}>
                   <Icon style={[styles.iconPlace, {marginTop:3}]} name="tags"  size={36} color="#37CEFF" />
                   <Text style={styles.buttonText}>키워드 알림</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.buttonList} onPress={goToCertificationScreen}>
+                  <Icon2 style={[styles.iconPlace, {marginTop:3}]} name="certificate"  size={46} color="#37CEFF" />
+                  <Text style={styles.buttonText}>자격증 증명</Text>
               </TouchableOpacity>
 
 

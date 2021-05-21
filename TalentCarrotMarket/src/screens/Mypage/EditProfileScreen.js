@@ -38,7 +38,7 @@ const EditProfileScreen = ({navigation, route}) => {
     }
 
     const options = {
-        keyPrefix: `${editNickname}/`,  //제목 뒤에 user_id 값 추가해야 됨.
+        keyPrefix: `---프로필 이미지---/${editNickname}/`,  //제목 뒤에 user_id 값 추가해야 됨.
         bucket: 'mollysdreampostdata',
         region: 'ap-northeast-2',
         accessKey: S3Key.accessKey,
