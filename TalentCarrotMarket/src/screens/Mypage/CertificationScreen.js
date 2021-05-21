@@ -33,6 +33,14 @@ const CertificationScreen = ({navigation, route}) => {
     const [addModalVisible, setAddModalVisible] = useState(false);
     const [title,setTitle] = useState('');
     const [text,setText] = useState('');
+
+    const [detailModalVisible, setDetailModalVisible] = useState(false);
+    const [selectedData ,setSelectedData]= useState({
+        _id:'',
+        title:'',
+        text:'',
+        certificateImage:''
+    });
     
     //const [deviceImage.uri, setImageDevicePath] = useState('');
     const [deviceImage, setDeviceImage] = useState({
@@ -163,10 +171,19 @@ const CertificationScreen = ({navigation, route}) => {
 
         try{
             await requestUserAPI.addCertificate(userId, title, text, imageUrl);
+
             Alert.alert("추가 완료", "자격증 추가가 완료되었습니다.",
                 [{ text: '확인', style: 'cancel',
                     onPress : ()=> {
                         setAddModalVisible(!addModalVisible);
+                        let newData = {
+                            _id:userId,
+                            title:title,
+                            text:text,
+                            certificateImage:imageUrl
+                        }
+                        setCertificateData(certificateData.concat(newData));
+                        setRerender(!rerender);
                         resetData();
                     }}])
 
@@ -180,44 +197,49 @@ const CertificationScreen = ({navigation, route}) => {
         Alert.alert("확인","자격을 삭제 하실건가요?",[
             {text:'네', style:'cancel',
                 onPress:async()=>{
+                    //delete API 호출하고// certificateData에서 item 찾아서 삭제하고 flatlist refresh하자.
                     await requestUserAPI.deleteCertificate(userId,item._id);
                     let updateData = certificateData.filter(obj=>{
                         return obj._id !== item._id
                     })
                     setCertificateData(updateData);
                     setRerender(!rerender);
-                    //delete API 호출하고// certificateData에서 item 찾아서 삭제하고 flatlist refresh하자.
                 }
             },
             {text:'아니요', style:'cancel'}
         ])
 
     }
+    //자격증 자세히보기
+    function seeDetail(item){
+        setSelectedData(item);
+        setDetailModalVisible(!detailModalVisible);
+    }
 
     //FlatList 렌더
     function returnFlatListItem(item,index){
 
         return(
-            <TouchableOpacity style={styles.dataBox}>
+            <TouchableOpacity style={styles.dataBox} onPress={()=>seeDetail(item)}>
                 <View style={{width:'95%', height:'95%'}}>
                     <Image style={styles.dataImage} source={{ uri: item.certificateImage}} />
                     <View style={{alignItems:'center'}}>
                         <Text style={{fontSize:20, fontWeight:'bold'}}>{item.title}</Text>
                         <View
                             style={{
-                                borderBottomColor: '#93E3FF',
+                                borderBottomColor: '#ace9ff',
                                 borderBottomWidth: 1,
                                 width:'90%'
                             }}
                         />
-                        <Text>{item.text}</Text>
+                        <Text style={{height:40}}>{item.text}</Text>
 
                     </View>
                 </View>
                 <TouchableOpacity style={styles.deleteButton} onPress={()=>deleteCertificate(item)}>
-                    <Icon name="trash-o"  size={25} color="#37CEFF" />
+                    <Icon name="trash-o"  size={25} color="#FFBDA4" />
                 </TouchableOpacity>
-
+                <Icon style={{position:'absolute',left:-5, top:-5}} name="certificate" size={35} color="#ABC6FF" />
 
             </TouchableOpacity>
 
@@ -279,11 +301,29 @@ const CertificationScreen = ({navigation, route}) => {
 
             </Modal>
 
+            {/*상세정보 모달*/}
+            <Modal isVisible={detailModalVisible} KeyboardAvoidingView ={false}>
+                <TouchableOpacity style={[styles.addModalBox, {backgroundColor:'#ecfbff'}]} onPress={()=>setDetailModalVisible(!detailModalVisible)}>
+                    <View style={[styles.imageBox]}>
+                        <Image style={[styles.blankImage,{width:'100%', height:450}]} source={{uri:selectedData.certificateImage}}/>
+                    </View>
+
+                    <View style={{margin:9,flexDirection:'column', alignItems:'center'}}>
+                        <Text style={[styles.titleBox, {paddingLeft:0, fontSize:23, fontWeight:'bold'}]}>{selectedData.title}</Text>
+                        <View style={{borderBottomColor: '#93E3FF', borderBottomWidth: 1, width:'90%'}}/>
+                        <Text style={[styles.titleBox, {paddingLeft:0, marginTop:5}]}>{selectedData.text}</Text>
+                    </View>
+
+                    <Icon style={{position:'absolute',left:-10, top:-15}} name="certificate" size={65} color="#ABC6FF" />
+                </TouchableOpacity>
+            </Modal>
+
+
             <View style={styles.TitleView}>
                 <Icon2 style={[styles.iconPlace, {marginTop:3}]} name="certificate"  size={46} color="#37CEFF" />
                 <Text style={styles.titleText}>자격 증명</Text>
                 <TouchableOpacity style={styles.addButton} onPress={addCertificateModal}>
-                    <Icon style={[styles.iconPlace, {marginTop:3}]} name="plus"  size={46} color="#00C0FF" />
+                    <Icon style={[styles.iconPlace, {marginTop:3}]} name="plus"  size={40} color="#00C0FF" />
                 </TouchableOpacity>
             </View>
 
@@ -329,8 +369,9 @@ const styles = StyleSheet.create({
         height: 300,
         marginLeft: 15,
         marginBottom: 10,
-        backgroundColor:'#c5f1ff',
-        paddingTop:4
+        backgroundColor:'#d7f2ff',
+        paddingTop:4,
+        marginTop:2
     },
     completeButton:{
         backgroundColor:'#bce2ff',
@@ -414,14 +455,14 @@ const styles = StyleSheet.create({
         //borderWidth:1
     },
     addButton: {
-        borderRadius: 10,
+        borderRadius: 100,
         backgroundColor:'#c5f1ff',
         alignItems:'center',
         justifyContent:'center',
         //borderWidth:1,
         position:'absolute',
         right:13,
-        width:70,
+        width:55,
         height: 55,
 
     }
