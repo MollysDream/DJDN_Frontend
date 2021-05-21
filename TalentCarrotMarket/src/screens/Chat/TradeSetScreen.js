@@ -64,6 +64,7 @@ const TradeSetScreen =({navigation,route})=>{
 
               console.log("거래 정보는 "+returnData.data.trade);
               setIsSuggest(true);
+              setIsSave(returnData.data.trade.isSave);
               setProLocate(returnData.data.trade.location);
               setStart(returnData.data.trade.startTime);
               setEnd(returnData.data.trade.endTime);
@@ -265,21 +266,25 @@ const TradeSetScreen =({navigation,route})=>{
     //동의 버튼
     const agreeButton = () =>{
 
-      // const sendEndSet = sendFormatDate(endDate,endTime)
-      var sendEndDate = parse2(end);
-      console.log("저장된 시간은 "+sendEndDate)
+      const send_param = {
+        tradeId: tradeId
+      };
 
-      setIsSave(true)
-
-      navigation.navigate('tradeTimer',{
-        tradeId: tradeId,
-        endSet: sendEndDate,
-        user1: user1,
-        user2: user2
-      })
-
-      console.log(endDate)
-  
+      axios
+      .post("http://10.0.2.2:3000/trade/agreeTrade", send_param)
+        //정상 수행
+        .then(returnData => {
+          if (returnData.data.message) {
+            console.log("거래 동의 완료")
+            setIsSave(true);
+          } else {
+            console.log('거래 장소 및 시간 설정 실패');
+          }
+        })
+        //에러
+        .catch(err => {
+          console.log(err);
+        });
     }
 
     //남은 시간 확인 버튼
@@ -404,7 +409,7 @@ const TradeSetScreen =({navigation,route})=>{
         <Text style={{fontSize: wp('4'), paddingTop: hp('2'), paddingBottom: hp('2')}}>시작 시간: {start}</Text>
         <Text style={{fontSize: wp('4'), paddingBottom: hp('2')}}>종료 시간: {end} </Text>
         {/* <Text>예상시간 : {workTime}</Text> */}
-        <Text style={{fontSize: wp('4')}}>선택된 장소: {proLocate}</Text>
+        <Text style={{fontSize: wp('4')}}>장소: {proLocate}</Text>
       </View>
     
       
