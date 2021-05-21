@@ -16,7 +16,6 @@ import Icon3 from 'react-native-vector-icons/Entypo';
 
 import AsyncStorage from '@react-native-community/async-storage';
 import requestUserAPI from "../../requestUserAPI";
-import requestAddressAPI from "../../requestAddressAPI";
 import {useIsFocused} from "@react-navigation/native";
 
 import FlashMessage, {showMessage} from "react-native-flash-message";
@@ -42,9 +41,11 @@ const CertificationScreen = ({navigation, route}) => {
         type: ''
     });
 
-    const [S3url, setS3url] = useState('');
+    //const [S3url, setS3url] = useState('');
     ///////////////////////////////////
     const [certificateData, setCertificateData] = useState([]);
+
+    const [rerender, setRerender] = useState(false);
 
 
 
@@ -73,7 +74,7 @@ const CertificationScreen = ({navigation, route}) => {
             type: ''});
         setTitle('');
         setText('');
-        setS3url('');
+        //setS3url('');
     }
 
     function cancelAdd(){
@@ -155,7 +156,7 @@ const CertificationScreen = ({navigation, route}) => {
         try{
             imageUrl = await request.postImageToS3(deviceImage,options);
             console.log(imageUrl);
-            setS3url(imageUrl);
+            //setS3url(imageUrl);
         }catch(err){
             console.log(err);
         }
@@ -174,6 +175,26 @@ const CertificationScreen = ({navigation, route}) => {
         }
     }
 
+    //자격증 삭제 버튼
+    function deleteCertificate(item) {
+        Alert.alert("확인","자격을 삭제 하실건가요?",[
+            {text:'네', style:'cancel',
+                onPress:async()=>{
+                    await requestUserAPI.deleteCertificate(userId,item._id);
+                    let updateData = certificateData.filter(obj=>{
+                        return obj._id !== item._id
+                    })
+                    setCertificateData(updateData);
+                    setRerender(!rerender);
+                    //delete API 호출하고// certificateData에서 item 찾아서 삭제하고 flatlist refresh하자.
+                }
+            },
+            {text:'아니요', style:'cancel'}
+        ])
+
+    }
+
+    //FlatList 렌더
     function returnFlatListItem(item,index){
 
         return(
@@ -193,6 +214,10 @@ const CertificationScreen = ({navigation, route}) => {
 
                     </View>
                 </View>
+                <TouchableOpacity style={styles.deleteButton} onPress={()=>deleteCertificate(item)}>
+                    <Icon name="trash-o"  size={25} color="#37CEFF" />
+                </TouchableOpacity>
+
 
             </TouchableOpacity>
 
@@ -256,11 +281,12 @@ const CertificationScreen = ({navigation, route}) => {
 
             <View style={styles.TitleView}>
                 <Icon2 style={[styles.iconPlace, {marginTop:3}]} name="certificate"  size={46} color="#37CEFF" />
-                <Text style={styles.titleText}>자격증 증명</Text>
+                <Text style={styles.titleText}>자격 증명</Text>
+                <TouchableOpacity style={styles.addButton} onPress={addCertificateModal}>
+                    <Icon style={[styles.iconPlace, {marginTop:3}]} name="plus"  size={46} color="#00C0FF" />
+                </TouchableOpacity>
             </View>
-            <TouchableOpacity style={styles.addButton} onPress={addCertificateModal}>
-                <Icon style={[styles.iconPlace, {marginTop:3}]} name="plus"  size={46} color="#00C0FF" />
-            </TouchableOpacity>
+
             <View style={styles.certificateBox}>
 
                 <FlatList
@@ -268,7 +294,7 @@ const CertificationScreen = ({navigation, route}) => {
                     data={certificateData}
                     keyExtractor={(item,index) => String(item._id)}
                     renderItem={({item,index})=>returnFlatListItem(item,index)}
-                    //extraData={this.state.rerender}
+                    extraData={rerender}
                     //refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.refreshPage} />}
                 />
 
@@ -285,6 +311,11 @@ const CertificationScreen = ({navigation, route}) => {
 
 
 const styles = StyleSheet.create({
+    deleteButton:{
+        position:'absolute',
+        bottom:6,
+        right:7
+    },
     dataImage:{
         width: '100%',
         overflow:"hidden",
@@ -379,16 +410,19 @@ const styles = StyleSheet.create({
         marginLeft: 13
     },
     certificateBox: {
-        flex:1
+        flex:1,
         //borderWidth:1
     },
     addButton: {
         borderRadius: 10,
-        height: 20,
         backgroundColor:'#c5f1ff',
         alignItems:'center',
         justifyContent:'center',
-        marginBottom: 10
+        //borderWidth:1,
+        position:'absolute',
+        right:13,
+        width:70,
+        height: 55,
 
     }
 

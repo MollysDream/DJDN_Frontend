@@ -54,6 +54,12 @@ export async function getUserCertificate(userId){
     return certificateData.data;
 }
 
+export async function deleteCertificate(userId, certificateId){
+    console.log(`deleteCertificate함수 호출됨 아이디: ${userId} // 자격증 ID: ${certificateId}`);
+    const result = await axi.post("/user/deleteCertificate", {userId,certificateId});
+    return result.data;
+}
+
 
 
 export default{
@@ -64,5 +70,6 @@ export default{
     addKeyword,
     deleteKeyword,
     addCertificate,
-    getUserCertificate
+    getUserCertificate,
+    deleteCertificate
 }
