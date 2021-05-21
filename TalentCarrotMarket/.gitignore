@@ -60,3 +60,6 @@ buck-out/
 
 #Key
 /src/Key.js
+
+#smsKey
+/src/smsKey.js

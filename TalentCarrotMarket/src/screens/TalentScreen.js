@@ -2,39 +2,115 @@ import React, {Component} from 'react';
 import {
   View,
   Text,
-  StyleSheet, Image, TouchableOpacity, TouchableWithoutFeedback, Modal, TouchableHighlight
+  StyleSheet, Image, TouchableOpacity, TouchableWithoutFeedback, Modal, TouchableHighlight, Button
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-
-import {Container, Content, Form, Header, Input, Item, Label, Left, Right, Textarea} from "native-base";
-import { SliderBox } from "react-native-image-slider-box";
-import AsyncStorage from "@react-native-community/async-storage";
-// import {getDate, getPrice} from "../../function";
+import axios from 'axios';
+import smsKey from '../smsKey';
+import Base64 from 'crypto-js/enc-base64';
+const CryptoJS =require ('crypto-js');
 
 export default class TalentScreen extends Component{
 
+  /*
+	https://code.google.com/archive/p/crypto-js/
+	https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/crypto-js/CryptoJS%20v3.1.2.zip
+	*/
 
-    SMS = async () => {
+  /*
+	CryptoJS v3.1.2
+	code.google.com/p/crypto-js
+	(c) 2009-2013 by Jeff Mott. All rights reserved.
+	code.google.com/p/crypto-js/wiki/License
+	*/
+
+  /*
+  <script type="text/javascript" src="./CryptoJS/rollups/hmac-sha256.js"></script>
+  <script type="text/javascript" src="./CryptoJS/components/enc-base64.js"></script>
+  */
+  async sendSMS(){
+    // console.log("확인!!");
+    // console.log("확인"+SENS.phoneNumber);
+    console.log("확인 accesskey: "+smsKey.accessKey);
+    console.log("확인 secretkey: "+smsKey.secretKey);
+    console.log("확인 serviceId: "+smsKey.serviceId);
+    console.log("확인 phoneNumber: "+smsKey.phoneNumber);
+    console.log("확인 timestamp: "+Date.now() + " 타입 : " + typeof Date.now().toString());
 
 
-    }
 
-
+    const body = {
+      type: 'SMS',
+      contentType: 'COMM',
+      countryCode: '82',
+      from: smsKey.phoneNumber, // 발신자 번호
+      content: `안녕하세요!!! 됐습니다!!!`,
+      messages: [
+        {
+          to: '01038007363', // 수신자 번호
+        },
+      ],
+    };
+    const options = {
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'x-ncp-apigw-timestamp': Date.now().toString(),
+        'x-ncp-iam-access-key': smsKey.accessKey,
+        'x-ncp-apigw-signature-v2': makeSignature(),
+      },
+    };
+    axios
+      .post(`https://sens.apigw.ntruss.com/sms/v2/services/${smsKey.serviceId}/messages`, body, options)
+      .then(async (res) => {
+        // 성공 이벤트
+        console.log("sms 발신 성공");
+        console.log(res);
+      })
+      .catch((err) => {
+        console.error(err.response.data);
+      });
+    return 1;
+  }
     render(){
         return (
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Text>Talent!</Text>
-            {/*<Button title={'SMS 보내기!'} onPress={this.SMS}/>*/}
-          </View>
-
-
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+              <Text>Talent!</Text>
+              <TouchableOpacity>
+                <Button title={'SMS 보내기!'} onPress={this.sendSMS}/>
+              </TouchableOpacity>
+            </View>
         );
     }
 };
 
+function makeSignature(){
+  var space = " ";				// one space
+  var newLine = "\n";				// new line
+  var method = "POST";				// method
+  var url = `/sms/v2/services/${smsKey.serviceId}/messages`;	// url (include query string)
+  var timestamp = Date.now().toString();			// current timestamp (epoch)
+  var accessKey = smsKey.accessKey;			// access key id (from portal or Sub Account)
+  var secretKey = smsKey.secretKey;			// secret key (from portal or Sub Account)
+
+  var hmac = CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA256, secretKey);
+  hmac.update(method);
+  hmac.update(space);
+  hmac.update(url);
+  hmac.update(newLine);
+  hmac.update(timestamp);
+  hmac.update(newLine);
+  hmac.update(accessKey);
+
+  var hash = hmac.finalize();
+  var result = Base64.stringify(hash);
+
+  console.log(result + " 타입 : " + typeof(result))
+
+  return result;
+};
 const styles = StyleSheet.create({
   iconBox:{
     height:67,
