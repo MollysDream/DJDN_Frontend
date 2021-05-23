@@ -89,10 +89,8 @@ export default class DetailPostScreen extends Component{
 
     checkUserProfile(){
         console.log("사용자 프로필 확인!!");
-        //this.props.navigation.navigate('')
+        this.props.navigation.navigate('사용자 프로필',{postOwnerData:this.state.postOwner});
     }
-
-
 
     render(){
         const item = this.state.detailPost;
