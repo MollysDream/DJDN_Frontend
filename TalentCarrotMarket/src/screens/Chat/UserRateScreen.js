@@ -25,7 +25,7 @@ const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{pr
 
 const UserRateScreen = ({navigation, route}) => {
 
-        const {user1,user2}=route.params;
+        const {user1,user2,tradeId}=route.params;
         const [userId, setUserId] =  useState('');
         const [userData, setUserData] = useState();
         // const [rating, setRating] = useState(0);
@@ -71,12 +71,14 @@ const UserRateScreen = ({navigation, route}) => {
             if(user1==userId){
               send_param={
                 userId: user2,
-                rate: userRate
+                rate: userRate,
+                tradeId: tradeId
               }
             } else{
               send_param={
                 userId: user1,
-                rate: userRate
+                rate: userRate,
+                tradeId: tradeId
               }
             }
 
