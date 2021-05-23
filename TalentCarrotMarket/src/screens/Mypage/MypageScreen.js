@@ -94,7 +94,7 @@ const MypageScreen = ({navigation}) => {
                       (
                           <View style={styles.user}>
                               <Image style={styles.profileImage} source={{uri:userData.profileImage}}/>
-                              <Text style={{marginTop:5, color:'grey'}}>{`${userAddress.addressName}의`}</Text>
+                              <Text style={{fontSize:15,marginTop:5, color:'grey'}}>{`${userAddress.addressName}의`}</Text>
                               <Text style={styles.nickname}>{userData.nickname}</Text>
                           </View>
 

@@ -12,14 +12,12 @@ import {
 } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon3 from "react-native-vector-icons/Entypo";
 
 import Modal from 'react-native-modal';
 
-import AsyncStorage from '@react-native-community/async-storage';
 import requestUserAPI from "../../requestUserAPI";
 import requestAddressAPI from "../../requestAddressAPI";
-import {useIsFocused} from "@react-navigation/native";
-import Icon3 from "react-native-vector-icons/Entypo";
 import requestAPI from "../../requestAPI";
 import {getDate, getPrice} from "../../function";
 
@@ -73,7 +71,6 @@ const UserProfileScreen = ({navigation,route}) => {
 
     const checkCertification = async()=>{
         let certificate = await requestUserAPI.getUserCertificate(userId);
-        console.log(certificate);
         setCertificateData(certificateData.concat(certificate));
 
         setCertificateModal(!certificateModal);
@@ -103,7 +100,7 @@ const UserProfileScreen = ({navigation,route}) => {
 
                     </View>
                 </View>
-                <Icon style={{position:'absolute',left:-5, top:-5}} name="certificate" size={35} color="#ABC6FF" />
+                <Icon style={{position:'absolute',left:-5, top:-5}} name="certificate" size={35} color="#FFB294" />
 
             </TouchableOpacity>
         );
@@ -199,7 +196,7 @@ const UserProfileScreen = ({navigation,route}) => {
                     setPostModal(!postModal);
                     setPostData([]);
                 }}>
-                    <Icon3 name="circle-with-cross"  size={35} color="#39BFFF" />
+                    <Icon3 name="back"  size={40} color="#8DAAFF" />
                 </TouchableOpacity>
 
             </Modal>
@@ -207,6 +204,10 @@ const UserProfileScreen = ({navigation,route}) => {
             {/*자격 확인*/}
             <Modal isVisible={certificateModal}>
                 <View style={styles.certificateBox}>
+                    <View style={styles.buttonList} >
+                        <Icon2 style={[styles.iconPlace, {marginTop:3}]} name="certificate"  size={46} color="#37CEFF" />
+                        <Text style={styles.buttonText}>{`'${userData.nickname}'님의 자격증`}</Text>
+                    </View>
 
                     <FlatList
                         numColumns={2}
@@ -220,7 +221,7 @@ const UserProfileScreen = ({navigation,route}) => {
                     setCertificateModal(!certificateModal)
                     setCertificateData([])
                 }}>
-                    <Icon3 name="circle-with-cross"  size={35} color="#39BFFF" />
+                    <Icon3 name="back"  size={40} color="#8DAAFF" />
                 </TouchableOpacity>
 
                 {/*자격 상세 확인*/}
@@ -236,7 +237,7 @@ const UserProfileScreen = ({navigation,route}) => {
                             <Text style={[styles.titleBox, {paddingLeft:0, marginTop:5}]}>{selectedData.text}</Text>
                         </View>
 
-                        <Icon style={{position:'absolute',left:-10, top:-15}} name="certificate" size={65} color="#ABC6FF" />
+                        <Icon style={{position:'absolute',left:-10, top:-15}} name="certificate" size={65} color="#FFB294" />
                     </TouchableOpacity>
                 </Modal>
             </Modal>
@@ -246,12 +247,12 @@ const UserProfileScreen = ({navigation,route}) => {
 
                 <View style={styles.user}>
                     <Image style={styles.profileImage} source={{uri:userData.profileImage}}/>
-                    {/*{
+                    {
                         userAddress.length==1?
-                            <Text style={{marginTop:5, color:'grey'}}>{`${userAddress[0].addressName}의`}</Text>
+                            <Text style={{fontSize:15, marginTop:5, color:'grey'}}>{`${userAddress[0].addressName}의`}</Text>
                             :
-                            <Text style={{marginTop:5, color:'grey'}}>{`${userAddress[0].addressName}/${userAddress[1].addressName}의`}</Text>
-                    }*/}
+                            <Text style={{fontSize:15, color:'grey'}}>{`${userAddress[0].addressName}/${userAddress[1].addressName}의`}</Text>
+                    }
                     <Text style={styles.nickname}>{userData.nickname}</Text>
                 </View>
 
@@ -382,8 +383,8 @@ const styles = StyleSheet.create({
     },
     cancleIcon:{
         position:'absolute',
-        top:-10,
-        right:-10
+        top:7,
+        right:12
     },
 
 
