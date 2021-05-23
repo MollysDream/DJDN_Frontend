@@ -27,7 +27,9 @@ import filterOptionScreen from './src/screens/Post/FilterOptionScreen';
 
 import detailPostScreen from './src/screens/Post/DetailPostScreen';
 import tradeSetScreen from './src/screens/Chat/TradeSetScreen';
-import reportScreen from './src/screens/Post/ReportScreen'
+import reportScreen from './src/screens/Post/ReportScreen';
+
+import userProfileScreen from './src/screens/Post/UserProfileScreen';
 
 
 
@@ -95,6 +97,9 @@ const HomeStackScreen = () => {
 
       <HomeStack.Screen name="tradeset" component={tradeSetScreen} />
       <HomeStack.Screen name="Report" component={reportScreen} />
+
+      <HomeStack.Screen name="사용자 프로필" component={userProfileScreen} />
+
     </Stack.Navigator>
   );
 };

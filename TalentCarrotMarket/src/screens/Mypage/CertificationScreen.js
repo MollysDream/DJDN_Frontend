@@ -239,7 +239,7 @@ const CertificationScreen = ({navigation, route}) => {
                 <TouchableOpacity style={styles.deleteButton} onPress={()=>deleteCertificate(item)}>
                     <Icon name="trash-o"  size={25} color="#FFBDA4" />
                 </TouchableOpacity>
-                <Icon style={{position:'absolute',left:-5, top:-5}} name="certificate" size={35} color="#ABC6FF" />
+                <Icon style={{position:'absolute',left:-5, top:-5}} name="certificate" size={35} color="#FFB294" />
 
             </TouchableOpacity>
 
@@ -314,7 +314,7 @@ const CertificationScreen = ({navigation, route}) => {
                         <Text style={[styles.titleBox, {paddingLeft:0, marginTop:5}]}>{selectedData.text}</Text>
                     </View>
 
-                    <Icon style={{position:'absolute',left:-10, top:-15}} name="certificate" size={65} color="#ABC6FF" />
+                    <Icon style={{position:'absolute',left:-10, top:-15}} name="certificate" size={65} color="#FFB294" />
                 </TouchableOpacity>
             </Modal>
 
