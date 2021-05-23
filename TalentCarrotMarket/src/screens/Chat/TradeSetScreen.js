@@ -297,6 +297,7 @@ const TradeSetScreen =({navigation,route})=>{
       navigation.navigate('tradeTimer',{
         tradeId: tradeId,
         endSet: sendEndDate,
+        proLocate:proLocate,
         user1: user1,
         user2: user2
       })
@@ -474,23 +475,23 @@ const formatDate = (date,time)=>{
   return setDate;
   };
 
-//타이머 설정용 전달 시간
-const sendFormatDate = (date,time)=>{
-  const setDate= `${date.getFullYear()}/${date.getMonth() +
-    1}/${date.getDate()}/${time.getHours()}/${time.getMinutes()}`;
-  return setDate;
-  };
+// //타이머 설정용 전달 시간
+// const sendFormatDate = (date,time)=>{
+//   const setDate= `${date.getFullYear()}/${date.getMonth() +
+//     1}/${date.getDate()}/${time.getHours()}/${time.getMinutes()}`;
+//   return setDate;
+//   };
 
-//str-->date
-function parse(str){
-  var newDd=str.split('/');
-  var y = newDd[0];
-  var m = newDd[1];
-  var d= newDd[2];
-  var h = newDd[3];
-  var minute = newDd[4];
-  return new Date(y,m-1,d,h,minute);
-}
+// //str-->date
+// function parse(str){
+//   var newDd=str.split('/');
+//   var y = newDd[0];
+//   var m = newDd[1];
+//   var d= newDd[2];
+//   var h = newDd[3];
+//   var minute = newDd[4];
+//   return new Date(y,m-1,d,h,minute);
+// }
 
 //str-->date
 function parse2(str){
