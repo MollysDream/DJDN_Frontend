@@ -4,7 +4,7 @@ import {
     Text,
     StyleSheet,
     TouchableOpacity,
-    Button, Image, FlatList
+    Button, Image, FlatList, RefreshControl, TouchableHighlight
 } from 'react-native';
 import {
     widthPercentageToDP as wp,
@@ -20,6 +20,8 @@ import requestUserAPI from "../../requestUserAPI";
 import requestAddressAPI from "../../requestAddressAPI";
 import {useIsFocused} from "@react-navigation/native";
 import Icon3 from "react-native-vector-icons/Entypo";
+import requestAPI from "../../requestAPI";
+import {getDate, getPrice} from "../../function";
 
 const UserProfileScreen = ({navigation,route}) => {
 
@@ -57,11 +59,7 @@ const UserProfileScreen = ({navigation,route}) => {
         let result = getUserData();
     }, []);
 
-
-    const checkPost = ()=>{
-        console.log('사용자의 게시글 확인')
-    }
-
+    //*************자격증 확인 함수*************
     const[certificateData, setCertificateData]=useState([]);
     const[certificateModal, setCertificateModal]=useState(false);
 
@@ -87,7 +85,7 @@ const UserProfileScreen = ({navigation,route}) => {
         setDetailCertificateModal(!detailCertificateModal);
     }
 
-    const returnFlatListItem = (item,index)=>{
+    const returnCertificateFlatListItem = (item,index)=>{
         return(
             <TouchableOpacity style={styles.dataBox} onPress={()=>seeDetail(item)}>
                 <View style={{width:'95%', height:'95%'}}>
@@ -111,21 +109,110 @@ const UserProfileScreen = ({navigation,route}) => {
         );
     }
 
+    //*************재능구매 내역 확인 함수*************
+
+    const[postModal, setPostModal]=useState(false);
+    const[postData, setPostData]=useState([]);
+
+    const checkPost = async ()=>{
+
+        let post = await requestAPI.getUserPost(userId);
+
+        setPostData(postData.concat(post));
+        setPostModal(!postModal);
+        console.log("사용자 재능거래 내역 확인!!");
+    }
+
+    const goToDetailPostScreen = (item)=> {
+        setPostModal(!postModal);
+        const postImages = []
+        item.image.map((image)=>{
+            let temp={
+                image:image,
+                desc:image,
+            }
+            postImages.push(temp);
+        })
+        navigation.push('DetailPost',{detailPost: item, postImages: postImages, postOwner: userData});
+
+    }
+
+    const returnPostFlatListItem = (item,index)=>{
+        let time = getDate(item.date);
+        let price = getPrice(item.price);
+        let status = null
+        let statusStyle = styles.status_none
+        if(item.tradeStatus === 1){
+            status = '거래중';
+            statusStyle = styles.status_ing
+        }
+        else if(item.tradeStatus ===2){
+            status = '거래완료';
+            statusStyle = styles.status_complete
+        }
+
+        return(
+            <View style={{marginBottom:10}}>
+                <TouchableOpacity onPress={()=>goToDetailPostScreen(item)}>
+                    <View style={styles.post}>
+                        <Image style={styles.image} source={{ uri: item.image[0]}} />
+                        <View>
+                            <Text style={styles.postTitle}>{item.title}</Text>
+                            <View style={statusStyle}>
+                                <Text>{status}</Text>
+                            </View>
+                            <View style={{flexDirection:'row'}}>
+                                <Text style={styles.postPrice}>{`${price}원`}</Text>
+                                <Text style={styles.postAddressTime}>{`${item.addressName}\n${time}`}</Text>
+                            </View>
+                        </View>
+                    </View>
+                </TouchableOpacity>
+            </View>
+        );
+    }
+
+
+
+
 
     if(dataFlag==false)
         return(<Text>Loading...</Text>)
     return (
         <View style={styles.container}>
 
+            {/*재능구매 확인*/}
+            <Modal isVisible={postModal}>
+                <View style={{flex:1}} >
+                    <View style={styles.buttonList}>
+                        <Icon style={styles.iconPlace} name="hand-holding-usd"  size={40} color="#37CEFF" />
+                        <Text style={styles.buttonText}>{`'${userData.nickname}'님의 재능구매 내역`}</Text>
+                    </View>
+                    <FlatList
+                        data={postData}
+                        keyExtractor={(item,index) => String(item._id)}
+                        renderItem={({item,index})=>returnPostFlatListItem(item,index)}
+                    />
+                </View>
+
+                <TouchableOpacity style={styles.cancleIcon} onPress={()=>{
+                    setPostModal(!postModal);
+                    setPostData([]);
+                }}>
+                    <Icon3 name="circle-with-cross"  size={35} color="#39BFFF" />
+                </TouchableOpacity>
+
+            </Modal>
+
             {/*자격 확인*/}
-            <Modal isVisible={certificateModal} KeyboardAvoidingView ={false}>
+            <Modal isVisible={certificateModal}>
                 <View style={styles.certificateBox}>
 
                     <FlatList
                         numColumns={2}
                         data={certificateData}
                         keyExtractor={(item,index) => String(item._id)}
-                        renderItem={({item,index})=>returnFlatListItem(item,index)}
+                        renderItem={({item,index})=>returnCertificateFlatListItem(item,index)}
                     />
 
                 </View>
@@ -137,7 +224,7 @@ const UserProfileScreen = ({navigation,route}) => {
                 </TouchableOpacity>
 
                 {/*자격 상세 확인*/}
-                <Modal isVisible={detailCertificateModal} KeyboardAvoidingView ={false}>
+                <Modal isVisible={detailCertificateModal}>
                     <TouchableOpacity style={[styles.addModalBox, {backgroundColor:'#ecfbff'}]} onPress={()=>setDetailCertificateModal(!detailCertificateModal)}>
                         <View style={[styles.imageBox]}>
                             <Image style={[styles.blankImage,{width:'100%', height:450}]} source={{uri:selectedData.certificateImage}}/>
@@ -179,7 +266,7 @@ const UserProfileScreen = ({navigation,route}) => {
 
             <View style={styles.tradeBox}>
 
-                <TouchableOpacity style={styles.buttonList} >
+                <TouchableOpacity style={styles.buttonList} onPress={()=>checkPost()} >
                     <Icon style={styles.iconPlace} name="hand-holding-usd"  size={40} color="#37CEFF" />
                     <Text style={styles.buttonText}>{`'${userData.nickname}'님의 재능구매 내역`}</Text>
                 </TouchableOpacity>
@@ -202,6 +289,46 @@ const UserProfileScreen = ({navigation,route}) => {
 
 
 const styles = StyleSheet.create({
+    /// 재능구매 내역 모달
+
+    post:{
+        flexDirection: "row",
+        borderRadius: 15,
+        backgroundColor: "white",
+        borderBottomColor: "#a6e5ff",
+        borderBottomWidth: 1,
+        padding: 10,
+        height: 136
+    },
+    postTitle:{fontSize:18, fontWeight: "bold", width:230, height:80, paddingTop:9},
+    postAddressTime: {fontSize:13, textAlign:'right', width:'30%', marginRight:3},
+    postPrice: {width:'50%',fontSize:17 , color:"#0088ff" ,paddingTop: 9},
+    image:{
+        width: wp(28),
+        overflow:"hidden",
+        height: hp(28),
+        aspectRatio: 1,
+        borderRadius: 9,
+        marginRight:12
+    },
+    status_ing:{
+        backgroundColor:'#b4e6ff',
+        position: 'absolute',
+        top: 40,
+        padding: 3,
+        borderRadius: 7
+    },
+    status_complete:{
+        backgroundColor:'#98afbf',
+        position: 'absolute',
+        top: 40,
+        padding: 3,
+        borderRadius: 7
+    },
+    status_none:{
+        position: 'absolute'
+    },
+
     //자격 상세 모달
     addModalBox:{
         margin:20,
@@ -258,7 +385,7 @@ const styles = StyleSheet.create({
         top:-10,
         right:-10
     },
-    /// 재능구매 내역 모달
+
 
     /// 메인 화면
     container: {
