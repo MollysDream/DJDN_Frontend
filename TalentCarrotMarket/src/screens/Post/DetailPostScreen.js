@@ -87,6 +87,11 @@ export default class DetailPostScreen extends Component{
         this.props.navigation.navigate('Report',{detailPost: this.state.detailPost, postOwner: this.state.postOwner, userId:this.state.userId});
     }
 
+    checkUserProfile(){
+        console.log("사용자 프로필 확인!!");
+        //this.props.navigation.navigate('')
+    }
+
 
 
     render(){
@@ -129,10 +134,17 @@ export default class DetailPostScreen extends Component{
                                     />
                                 </View>
                             </Item>
-                            <Item style={{flexDirection:'row'}} >
-                                <Text style={{fontSize:15, marginBottom : "3%", marginTop : "3%" ,marginLeft : "3%"}}>
-                                    {`${item.addressName}의 ${postOwner.nickname}님`}
-                                </Text>
+                            <Item style={{marginTop:10, paddingBottom:10, flexDirection:'row'}} >
+                                <TouchableOpacity style={{ flexDirection:'row'}} onPress={()=>this.checkUserProfile()}>
+                                    <Image style={styles.profileImage} source={{ uri: postOwner.profileImage}}/>
+                                    <View style={{flexDirection:'column', paddingTop:9}}>
+                                        <Text style={{color:'grey',fontSize:13}}>{`${item.addressName}의`}</Text>
+                                        <Text style={{fontSize:17, marginBottom : "3%", marginTop : "3%" }}>
+                                            {`${postOwner.nickname}님`}
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
+
                                 <View style={styles.btnArea1}>
                                     {
                                         this.state.userId == this.state.postOwner._id || this.state.userId == '' ?
@@ -200,6 +212,17 @@ export default class DetailPostScreen extends Component{
 }
 
 const styles = StyleSheet.create({
+    profileImage:{
+        borderWidth:2,
+        borderColor:'#65b7ff',
+        borderRadius:50,
+        height:60,
+        width:60,
+        overflow:"hidden",
+        aspectRatio: 1,
+        marginRight:12,
+        marginLeft:12,
+    },
     sliderImage:{
         paddingHorizontal: 15,
 
