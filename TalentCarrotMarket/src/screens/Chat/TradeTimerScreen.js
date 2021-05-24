@@ -2,14 +2,14 @@ import React, {useEffect, useState} from 'react';
 import CountDown from 'react-native-countdown-component';
 
 import {
-    View,
-    Text,
-    TouchableOpacity,
-    StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet, Button,
 } from 'react-native';
 
 import axios from "axios";
-import DateTimePicker from '@react-native-community/datetimepicker';
+// import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-community/async-storage';
 
 import {
@@ -24,7 +24,7 @@ const CryptoJS =require ('crypto-js');
 //글자 강조
 const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{props.children}</Text>
 
-let diffTime;
+// var diffTime;
 let userId ;
 let sender;
 let receiver;
@@ -36,27 +36,29 @@ const TradeTimerScreen = ({navigation, route}) =>{
         userId=value
       );
 
-  
-  const [endDateTime, setEndDateTime] = useState(endSet);
-  const nowDate = new Date();
-  diffTime= (endDateTime.getTime() - nowDate.getTime())/1000;
-  // const diffTime = (endDateTime.getTime() - nowDate.getTime())/1000;
-  // const [diffTime, setDiffTime] = useState((endDateTime.getTime() - nowDate.getTime())/1000);
-  
-  const [newEndDate, setNewEndDate] = useState(new Date());
-  const [newEndTime, setNewEndTime] = useState(new Date());
 
-  const [mode, setMode] = useState('date');
-  const [show, setShow] = useState(false);
+  const [endDateTime, setEndDateTime] = useState(endSet);
+  const [endDateChange, setEndDateChange] = useState(false);
+  const nowDate = Date.now();
+  // diffTime= 100;
+  // const diffTime = (endDateTime.getTime() - nowDate.getTime())/1000;
+  const [diffTime, setDiffTime] = useState((endDateTime.getTime()- nowDate)/1000);
+
+  // const [newEndDate, setNewEndDate] = useState(new Date());
+  // const [newEndTime, setNewEndTime] = useState(new Date());
+
+  // const [mode, setMode] = useState('date');
+  // const [show, setShow] = useState(false);
 
   const [isEndSuggest, setIsEndSuggest] = useState(false);
   const [isEnd, setIsEnd] = useState(false);
 
   useEffect(()=>{
     console.log("새로운 종료시간은 "+endDateTime)
-    diffTime=(endDateTime.getTime()- nowDate.getTime())/1000;
+    setDiffTime((endDateTime.getTime()-nowDate)/1000);
     console.log("새로운 연장시간은 "+diffTime);
-  },[endDateTime])
+    setEndDateChange(false)
+  },[endDateChange])
 
   useEffect(()=>{
     console.log("거래 번호 "+tradeId)
@@ -93,38 +95,38 @@ const TradeTimerScreen = ({navigation, route}) =>{
   },[])
 
 
-  const showMode = (currentMode) => {
-    setShow(true);
-    setMode(currentMode);
-  };
+  // const showMode = (currentMode) => {
+  //   setShow(true);
+  //   setMode(currentMode);
+  // };
 
-  const showDatepicker = () => {
-    showMode('date');
-  };
-  
-  const onChange = (event, selectedValue) =>{
-    setShow(Platform.OS === 'ios');
-    if(mode == 'date'){
-      const currentDate = selectedValue || new Date();
-      setNewEndDate(currentDate);
-      setMode('time');
-      setShow(Platform.OS !== 'ios'); 
-    }
-    else if(mode == 'time'){
-      const selectedTime = selectedValue || new Date();
-      setNewEndTime(selectedTime);
-      setShow(Platform.OS === 'ios');
-      setMode('date');
-    }
-  }
+  // const showDatepicker = () => {
+  //   showMode('date');
+  // };
+
+  // const onChange = (event, selectedValue) =>{
+  //   setShow(Platform.OS === 'ios');
+  //   if(mode == 'date'){
+  //     const currentDate = selectedValue || new Date();
+  //     setNewEndDate(currentDate);
+  //     setMode('time');
+  //     setShow(Platform.OS !== 'ios');
+  //   }
+  //   else if(mode == 'time'){
+  //     const selectedTime = selectedValue || new Date();
+  //     setNewEndTime(selectedTime);
+  //     setShow(Platform.OS === 'ios');
+  //     setMode('date');
+  //   }
+  // }
 
 
   const extendButton = () =>{
 
-    const newEndSet = newFormatDate(newEndDate,newEndTime);
-    const newEndDateTime = parse(newEndSet);
-    console.log("새로운 연장시간은 "+newEndDateTime);
-    console.log("원래 연장시간은 "+endDateTime);
+    endDateTime.setMinutes(endDateTime.getMinutes()+10)
+    console.log("연장 후 시간은ㅇㅇ "+endDateTime)
+    setEndDateChange(true)
+    const newEndSet = newFormatDate(endDateTime)
 
     //거래연장 통신
     const send_param = {
@@ -137,16 +139,15 @@ const TradeTimerScreen = ({navigation, route}) =>{
       .then(returnData => {
         if(returnData.data.message){
 
-        var compareDiffTime=(newEndDateTime.getTime()-nowDate.getTime())/1000;
+        var compareDiffTime=(endDateTime.getTime()-nowDate)/1000;
         console.log("차이는?? "+compareDiffTime)
 
           if(compareDiffTime>0){
-            setEndDateTime(newEndDateTime);
             alert("거래 연장에 성공했습니다!");
           } else{
             alert("거래 연장 시간이 현재시간보다 빠릅니다. 거래시간 재 설정을 해주세요")
           }
-          
+
         } else{
           alert('거래 연장에 실패하였습니다.');
         }
@@ -174,7 +175,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
         } else{
           alert('거래 완료 제안이 실패했습니다.')
         }
-        
+
       })
       //에러
       .catch(err => {
@@ -204,7 +205,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
         } else{
           alert('거래 완료가 실패했습니다.')
         }
-        
+
       })
       //에러
       .catch(err => {
@@ -229,16 +230,16 @@ const TradeTimerScreen = ({navigation, route}) =>{
         } else{
           alert('거래 취소 실패!')
         }
-        
+
       })
       //에러
       .catch(err => {
         console.log(err);
       });
-    
+
   }
 
-   const autoReport = async() =>{
+   async function autoReport(){
 
     console.log("신고된 주소 "+proLocate);
     console.log("확인 accesskey: "+smsKey.accessKey);
@@ -246,12 +247,12 @@ const TradeTimerScreen = ({navigation, route}) =>{
     console.log("확인 serviceId: "+smsKey.serviceId);
     console.log("확인 phoneNumber: "+smsKey.phoneNumber);
     console.log("확인 timestamp: "+Date.now() + " 타입 : " + typeof Date.now().toString());
-    
+
     const body = {
       type: 'SMS',
       contentType: 'COMM',
       countryCode: '82',
-      from: smsKey.phoneNumber, // 발신자 번호
+      from: smsKey.phoneNumber, // 발신자 번호, 바꾸지 X
       content: `${proLocate} 주소에서 신고가 들어왔습니다.`,
       messages: [
         {
@@ -277,28 +278,27 @@ const TradeTimerScreen = ({navigation, route}) =>{
       .catch((err) => {
         console.error(err.response.data);
       });
-    return 1;
-    
+
   }
 
   const tradeEndSuggest =
   <>
-    <View style={styles.dateArea}>
+    {/* <View style={styles.dateArea}>
             <TouchableOpacity style={styles.btnDate} onPress={showDatepicker} >
-              <Text style={{color: 'black', paddingBottom:hp(1)}}><B>연장할 종료 날짜 및 시간을 설정하세요 ⌚</B></Text>
+              <Text style={{color: 'black', paddingBottom:hp(2)}}><B>연장할 종료 날짜 및 시간을 설정하세요 ⌚</B></Text>
               <Text style={{color: 'black'}}>연장을 하실 경우, 연장할 종료 날짜 및 시간을 설정한 후,</Text>
-              <Text style={{color: 'black'}}>연장완료 버튼을 두 번 눌러야 연장 시간이 저장됩니다!</Text>
+              <Text style={{color: 'black'}}>연장완료 버튼을 눌러야 연장 시간이 저장됩니다!</Text>
             </TouchableOpacity>
-        </View>
+        </View> */}
 
         <View style={styles.rowbtnArea}>
           <View style={styles.btnArea,{paddingRight:wp('1')}}>
             <TouchableOpacity style={styles.btn} onPress={extendButton}>
-              <Text style={{color: 'white'}}>연장완료</Text>
+              <Text style={{color: 'white'}}>10분 연장</Text>
             </TouchableOpacity>
           </View>
 
-          {show && (
+          {/* {show && (
             <DateTimePicker
               testID="dateTimePicker"
               value={newEndDate}
@@ -306,7 +306,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
               is24Hour={true}
               display="default"
               onChange={onChange}
-            />)}
+            />)} */}
 
           <View style={styles.btnArea,{paddingLeft:wp('1')}}>
             <TouchableOpacity style={styles.btn} onPress={endSuggestButton}>
@@ -320,7 +320,6 @@ const TradeTimerScreen = ({navigation, route}) =>{
           </TouchableOpacity>
         </View>
   </>
-
 
   const senderView =
   <>
@@ -336,9 +335,9 @@ const TradeTimerScreen = ({navigation, route}) =>{
                 <Text style={{color: 'white'}}>사용자 평가하기</Text>
               </TouchableOpacity>
             </View>
-          </View>    
+          </View>
       }
-  </> 
+  </>
 
   const receiverView =
   <>
@@ -349,7 +348,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
                 <TouchableOpacity style={styles.btnEnd} onPress={()=>{setIsEnd(true)}}>
                   <Text style={{color: 'white'}}>거래종료확인</Text>
                 </TouchableOpacity>
-              </View>  
+              </View>
               <View style={styles.btnArea}>
                 <TouchableOpacity style={styles.btnCancel} onPress={cancelButton}>
                   <Text style={{color: 'white'}}>거래 취소하기</Text>
@@ -363,7 +362,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
               <Text style={{color: 'white'}}>사용자 평가하기</Text>
             </TouchableOpacity>
             </View>
-          </View>    
+          </View>
       }
   </>
 
@@ -384,7 +383,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
       <CountDown
           size={30}
           until={diffTime}
-          // onFinish={autoReport}
+          onFinish={autoReport}
           digitStyle={{backgroundColor: '#FFF', borderWidth: 2, borderColor: '#1CC625'}}
           digitTxtStyle={{color: '#1CC627'}}
           timeLabelStyle={{color: 'green', fontWeight: 'bold'}}
@@ -397,7 +396,11 @@ const TradeTimerScreen = ({navigation, route}) =>{
       {isEndSuggest==false?
       (<>{tradeEndSuggest}</>):
           <>{tradeEnd}</>}
-        
+
+      {/* <TouchableOpacity>
+        <Button title={'SMS 보내기!'} onPress={autoReport}/>
+      </TouchableOpacity> */}
+
     </View>
     )
 }
@@ -429,9 +432,9 @@ function makeSignature(){
 };
 
 //타이머 설정용 시간
-const newFormatDate = (date,time)=>{
+const newFormatDate = (date)=>{
   const setDate= `${date.getFullYear()}-${date.getMonth() +
-    1}-${date.getDate()} ${time.getHours()}:${time.getMinutes()}`;
+    1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
   return setDate;
   };
 
