@@ -16,6 +16,7 @@ import AsyncStorage from "@react-native-community/async-storage";
 import {Picker} from '@react-native-picker/picker';
 import {PickerItem} from "react-native/Libraries/Components/Picker/Picker";
 import requestReportAPI from "../../requestReportAPI";
+import FlashMessage, {showMessage} from "react-native-flash-message";
 
 export default class ReportScreen extends Component {
     state = {
@@ -33,16 +34,9 @@ export default class ReportScreen extends Component {
         userId:this.props.route.params.userId
     }
 
-    /*componentDidMount() {
-        AsyncStorage.getItem('user_id')
-            .then((value) => {
-                this.setState({userId:value})
-            }).catch(err => {
-                console.log(err);
-                console.log('사용자 ID 못 가져옴');
-        })
-
-    }*/
+    message=(text)=>{
+        showMessage({message:text, type:'info'});
+    }
 
     writeText = (text, type)=>{
         this.setState({text:text})
@@ -54,19 +48,22 @@ export default class ReportScreen extends Component {
         if(this.state.reportWhat == 0){
             categoryParam = this.state.postCategory
             if(this.state.postCategory == ''){
-                Alert.alert("경고","게시글 신고 사유를 설정해주세요", [{ text: '확인', style: 'cancel' }])
+                this.message(`게시글 신고 사유를 설정해주세요!`);
+                //Alert.alert("경고","게시글 신고 사유를 설정해주세요", [{ text: '확인', style: 'cancel' }])
                 return;
             }
         }else{
             categoryParam = this.state.userCategory
             if(this.state.userCategory == ''){
-                Alert.alert("경고","사용자 신고 사유를 설정해주세요", [{ text: '확인', style: 'cancel' }])
+                this.message(`사용자 신고 사유를 설정해주세요!`);
+                //Alert.alert("경고","사용자 신고 사유를 설정해주세요", [{ text: '확인', style: 'cancel' }])
                 return;
             }
         }
 
         if(this.state.text.length === 0){
-            Alert.alert("경고","신고 상세 내용을 작성해주세요", [{ text: '확인', style: 'cancel' }])
+            this.message(`신고 상세 내용을 작성해주세요!`);
+            //Alert.alert("경고","신고 상세 내용을 작성해주세요", [{ text: '확인', style: 'cancel' }])
             return;
         }
 
@@ -107,6 +104,7 @@ export default class ReportScreen extends Component {
 
                     <Container>
                         <Content>
+                            <FlashMessage position="top"/>
                             <View style={styles.title}>
                                 <TouchableOpacity style={{width:'50%', paddingLeft:10}} onPress={()=>this.setState({reportWhat:0})}>
                                     <Text style={this.state.reportWhat == 0 ? styles.text_on : styles.text_off}>
