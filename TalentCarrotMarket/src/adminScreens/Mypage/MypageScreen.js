@@ -20,16 +20,79 @@ import {useIsFocused} from "@react-navigation/native";
 
 const MypageScreen = ({navigation}) => {
 
+    const [userId, setUserId]= useState('');
+    const [userData, setUserData] = useState();
+
+    const isFocused = useIsFocused();
+
+    const handleLogoutButton = () => {
+        AsyncStorage.clear();
+        navigation.replace('Auth');
+    };
+
     //인증한 동네 확인 - 사용자
     useEffect(() => {
+        async function getUserData(){
+            let userId = await AsyncStorage.getItem('user_id');
 
-    }, []);
+            //로그아웃 시 에러 방지
+            if(userId == undefined)
+                return;
+
+            setUserId(userId);
+
+            let userData = await requestUserAPI.getUserData(userId);
+            setUserData(userData);
+
+
+        }
+        console.log("마이페이지 불러옴");
+
+        let result = getUserData();
+    }, [isFocused]);
+
+
 
 
     return (
         <View style={styles.container}>
 
-            <Text>어드민 마이페이지 화면</Text>
+            <View style={styles.profileBox}>
+
+                {
+                    userData==undefined ?null:
+                        (
+                            <View style={styles.user}>
+                                <Image style={styles.profileImage} source={{uri:userData.profileImage}}/>
+                                <Text style={{fontSize:17,marginTop:5, color:'#ff986f'}}>관리자</Text>
+                                <Text style={styles.nickname}>{userData.nickname}</Text>
+                            </View>
+
+                        )
+
+                }
+
+
+
+            </View>
+
+
+            <View
+                style={{
+                    borderBottomColor: 'black',
+                    borderBottomWidth: StyleSheet.hairlineWidth,
+                }}
+            />
+
+
+
+
+            <View style={styles.logoutArea}>
+                <TouchableOpacity style={styles.logoutButton} onPress={handleLogoutButton}>
+
+                    <Text style={(styles.Text, {color: 'black'})}>로그아웃</Text>
+                </TouchableOpacity>
+            </View>
 
 
         </View>
@@ -62,24 +125,12 @@ const styles = StyleSheet.create({
         borderRadius: 150 / 2,
         overflow: "hidden",
         borderWidth: 3,
-        borderColor: "#6fceff"
+        borderColor: "#ff986f"
     },
     nickname:{
         fontSize: 27,
     },
-    editArea:{
-        height:20,
-        margin:5,
-    },
-    editButton:{
-        flex: 1,
-        width: 150,
-        height: 50,
-        borderRadius: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#d4fbff',
-    },
+
     logoutArea: {
         height: hp(8),
         paddingRight: wp(2),
@@ -96,37 +147,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#ffc6c6',
         flexDirection: "row",
 
-    }, tradeBox: {
-        //borderWidth: 1,
-        flexDirection:'column',
-        marginTop:7
-
     },
-    buttonList: {
-        //borderWidth:1,
-        height:55,
-        flexDirection:'row',
-        backgroundColor: '#ecfeff',
-        borderRadius: 20,
-        marginBottom:7,
-
-
-
-    },
-    iconPlace: {
-        height:'100%',
-        marginLeft:10,
-        paddingTop: 5
-
-    },
-    buttonText:{
-        fontSize: 20,
-        color:'black',
-        height:'100%',
-        paddingTop:13,
-        //borderWidth:1,
-        marginLeft: 13
-    }
 
 });
 
