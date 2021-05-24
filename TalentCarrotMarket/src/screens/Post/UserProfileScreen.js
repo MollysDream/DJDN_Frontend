@@ -4,7 +4,7 @@ import {
     Text,
     StyleSheet,
     TouchableOpacity,
-    Button, Image, FlatList, RefreshControl, TouchableHighlight
+    Button, Image, FlatList, RefreshControl, TouchableHighlight, Alert
 } from 'react-native';
 import {
     widthPercentageToDP as wp,
@@ -15,13 +15,20 @@ import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon3 from "react-native-vector-icons/Entypo";
 
 import Modal from 'react-native-modal';
+import AsyncStorage from "@react-native-community/async-storage";
 
 import requestUserAPI from "../../requestUserAPI";
 import requestAddressAPI from "../../requestAddressAPI";
 import requestAPI from "../../requestAPI";
 import {getDate, getPrice} from "../../function";
+import {Content, Form, Textarea} from "native-base";
+import {Picker} from "@react-native-picker/picker";
+import requestReportAPI from "../../requestReportAPI";
+import FlashMessage, {showMessage} from "react-native-flash-message";
 
 const UserProfileScreen = ({navigation,route}) => {
+
+    const [myUserId, setMyUserId]=useState('');
 
     //이 스크린에서의 user는 postOwner이다.
     const [userId, setUserId]= useState(route.params.postOwnerData._id);
@@ -32,6 +39,10 @@ const UserProfileScreen = ({navigation,route}) => {
     const[dataFlag,setDataFlag]=useState(false);
 
     useEffect(() => {
+        async function getMyUserId(){
+            let id = await AsyncStorage.getItem('user_id');
+            setMyUserId(id);
+        }
         async function getUserData(){
 
             let userAddressDataList = await requestAddressAPI.getUserAddress(userId);
@@ -55,6 +66,7 @@ const UserProfileScreen = ({navigation,route}) => {
 
         console.log("사용자 프로필 불러옴");
         let result = getUserData();
+        let result2 = getMyUserId();
     }, []);
 
     //*************자격증 확인 함수*************
@@ -169,9 +181,58 @@ const UserProfileScreen = ({navigation,route}) => {
         );
     }
 
+    //*************신고 함수*************
 
+    const [reportModal, setReportModal] = useState(false);
+    const userCategoryList = ['비매너', '욕설', '성희롱', '또라이', '기타'];
+    const [reportCategory, setReportCategory] = useState('');
 
+    const [reportText, setReportText] = useState('');
 
+    const reportUser = async ()=>{
+        setReportModal(!reportModal);
+    }
+
+    const writeText = (text, type)=>{
+        setReportText(text)
+    }
+
+    const report = async ()=>{
+
+        let categoryParam = reportCategory;
+        if(reportCategory == ''){
+            showMessage({message:'사용자 신고 사유를 설정해주세요', type:'info'});
+            return;
+        }
+        if(reportText.length === 0){
+            showMessage({message:'신고 상세 내용을 작성해주세요', type:'info'});
+            return;
+        }
+
+        const reportDataParam ={
+            reportUser: myUserId,
+            targetUser: userId,
+            targetPost: undefined,
+            reportWhat: 1,
+            reportCategory: reportCategory,
+            text: reportText
+        }
+
+        try{
+            const resultData = await requestReportAPI.reportPostOrUser(reportDataParam);
+            Alert.alert("신고 완료", "신고가 정상적으로 접수 되었습니다.",
+                [{ text: '확인', style: 'cancel',
+                    onPress : ()=> {
+                        setReportCategory('');
+                        setReportText('');
+                        setReportModal(!reportModal);
+                    }}])
+        }
+        catch(err){
+            console.log(err);
+        }
+
+    }
 
     if(dataFlag==false)
         return(<Text>Loading...</Text>)
@@ -242,6 +303,57 @@ const UserProfileScreen = ({navigation,route}) => {
                 </Modal>
             </Modal>
 
+            {/*신고 모달*/}
+            <Modal isVisible={reportModal}>
+
+                <FlashMessage position="top"/>
+                <View style={{backgroundColor:'white'}}>
+                    <TouchableOpacity style={styles.cancleIcon} onPress={()=>{
+                        setReportModal(!reportModal);
+                        setReportCategory('');
+                        setReportText('');
+                    }}>
+                        <Icon3 name="back"  size={40} color="#8DAAFF" />
+                    </TouchableOpacity>
+                    <View style={{margin:10, flexDirection:'row'}}>
+                        <View style={{width: '50%', paddingRight:10, alignItems:'flex-end'}}>
+                            <Text style={{fontSize:18, fontWeight:'bold'}}>
+                                {`'${userData.nickname}' 사용자 신고`}
+                            </Text>
+                        </View>
+                    </View>
+
+
+                    <Form>
+                        <Picker
+                            selectedValue={userCategoryList}
+                            onValueChange={(value) => setReportCategory(value)}
+                        >
+                            <Picker.Item color={'grey'} label={'사용자 신고 사유'} value={''}/>
+                            {
+                                userCategoryList.map((category, key)=>(
+                                    <Picker.Item label={category} value={category} key={key}/>
+                                ))
+
+                            }
+                        </Picker>
+
+                        <Textarea rowSpan={8} placeholder="신고 상세 내용을 입력해주세요." autoCapitalize='none'
+                                  onChangeText={(text) => writeText(text, "text")}
+                                  style={styles.textAreaContainer} />
+                    </Form>
+
+                    <View style={[styles.btnArea1,{bottom:8}]}>
+                        <TouchableOpacity style={styles.btn1} onPress={()=>report()}>
+                            <Text style={{color: 'black', fontWeight:'bold'}}>신고</Text>
+
+                        </TouchableOpacity>
+                    </View>
+
+                </View>
+
+            </Modal>
+
             {/*메인 화면*/}
             <View style={styles.profileBox}>
 
@@ -254,6 +366,16 @@ const UserProfileScreen = ({navigation,route}) => {
                             <Text style={{fontSize:15, color:'grey'}}>{`${userAddress[0].addressName}/${userAddress[1].addressName}의`}</Text>
                     }
                     <Text style={styles.nickname}>{userData.nickname}</Text>
+                </View>
+
+                <View style={styles.btnArea1}>
+                    {
+                        myUserId == userId || myUserId == '' ?
+                            null:
+                            <TouchableOpacity style={styles.btn1} onPress={()=>reportUser()}>
+                                <Text>신고</Text>
+                            </TouchableOpacity>
+                    }
                 </View>
 
             </View>
@@ -443,7 +565,22 @@ const styles = StyleSheet.create({
         paddingTop:13,
         //borderWidth:1,
         marginLeft: 13
-    }
+    },
+    btn1: {
+        width: 45,
+        height: 30,
+        borderRadius: 7,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#ffefef',
+    },
+    btnArea1: {
+        flex:1,
+        position:'absolute',
+        bottom:0,
+        right:0,
+        paddingRight:10
+    },
 
 });
 

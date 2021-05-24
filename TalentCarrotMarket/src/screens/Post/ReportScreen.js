@@ -66,7 +66,7 @@ export default class ReportScreen extends Component {
         }
 
         if(this.state.text.length === 0){
-            Alert.alert("경고","게시글 내용을 작성해주세요", [{ text: '확인', style: 'cancel' }])
+            Alert.alert("경고","신고 상세 내용을 작성해주세요", [{ text: '확인', style: 'cancel' }])
             return;
         }
 
