@@ -8,7 +8,6 @@ import {
     Alert,
 } from 'react-native';
 
-import axios from "axios";
 
 import {
   widthPercentageToDP as wp,
@@ -83,39 +82,6 @@ const TradeSetScreen =({navigation,route})=>{
             console.log(err);
           });
           
-        // const send_param={
-        //   chatRoom:chatRoom
-        // }
-
-        // //체크완료
-        // axios
-        // .post("http://10.0.2.2:3000/trade/getTrade",send_param)
-        //   .then(returnData => {
-        //     if(returnData.data.message){
-
-        //       console.log("거래 정보는 "+returnData.data.trade);
-        //       setIsSuggest(true);
-        //       setIsSave(returnData.data.trade.isSave);
-        //       setProLocate(returnData.data.trade.location);
-        //       setStart(returnData.data.trade.startTime);
-        //       setEnd(returnData.data.trade.endTime);
-        //       setTradeId(returnData.data.trade._id);
-
-        //       if(returnData.data.trade.sender==userId){
-        //         console.log("현재 접속자는 거래 제안자임 "+ returnData.data.trade.sender);
-        //         sender=userId;
-        //       } else{
-        //         console.log("현재 접속자는 거래 제안받은사람임 "+ returnData.data.trade.receiver);
-        //         receiver=userId;
-        //       }
-        //     } else{
-        //       console.log("거래가 존재하지 않습니다.");
-        //     }
-        //   })
-        //   //에러
-        //   .catch(err => {
-        //     console.log(err);
-        //   });
 
       },[])
 
@@ -193,21 +159,6 @@ const TradeSetScreen =({navigation,route})=>{
                     console.log(err);
                 });
 
-        // const send_param = {
-        //   currentX: currentLocation.longitude,
-        //   currentY: currentLocation.latitude
-        // }
-        // //체크완료
-        // axios
-        // .post("http://10.0.2.2:3000/address/currentAddress", send_param)
-        //   //정상 수행
-        //   .then(returnData => {
-        //     setLocate(returnData.data.address);
-        //   })
-        //   //에러
-        //   .catch(err => {
-        //     console.log(err);
-        //   });
       },[locate, currentLocation])
       
       const locationHandler = (e) => {
@@ -228,20 +179,6 @@ const TradeSetScreen =({navigation,route})=>{
                         .catch(err => {
                             console.log(err);
                         });
-                    // const send_param = {
-                    //   currentX: currentLocation.longitude,
-                    //   currentY: currentLocation.latitude
-                    // }
-                    // axios
-                    // .post("http://10.0.2.2:3000/address/currentAddress", send_param)
-                    //   //정상 수행
-                    //   .then(returnData => {
-                    //     setLocate(returnData.data.address);
-                    //   })
-                    //   //에러
-                    //   .catch(err => {
-                    //     console.log(err);
-                    //   });
                 
                     console.log('onMapClick', JSON.stringify(e));
                 }}
@@ -299,34 +236,6 @@ const TradeSetScreen =({navigation,route})=>{
             console.log(err);
       }
 
-
-        // const send_param = {
-        //   startTime: startSet,
-        //   endTime: endSet,
-        //   location: entireLocate,
-        //   sender: sender,
-        //   receiver: receiver,
-        //   chatRoom: chatRoom
-        // };
-        // //체크완료
-        // axios
-        // .post("http://10.0.2.2:3000/trade/createTradeTime", send_param)
-        //   //정상 수행
-        //   .then(returnData => {
-        //     if (returnData.data.message) {
-        //       console.log("거래 장소 및 시간 설정 완료")
-        //       console.log("거래 번호 "+returnData.data.tradeId)
-        //       setTradeId(returnData.data.tradeId);
-        //       setIsSuggest(true);
-        //     } else {
-        //       console.log('거래 장소 및 시간 설정 실패');
-        //     }
-        //   })
-        //   //에러
-        //   .catch(err => {
-        //     console.log(err);
-        //   });
-
       }
     }
 
@@ -346,33 +255,13 @@ const TradeSetScreen =({navigation,route})=>{
       } catch(err){
           console.log(err);
     }
-
-      // const send_param = {
-      //   tradeId: tradeId
-      // };
-      // //체크완료
-      // axios
-      // .post("http://10.0.2.2:3000/trade/agreeTrade", send_param)
-      //   //정상 수행
-      //   .then(returnData => {
-      //     if (returnData.data.message) {
-      //       console.log("거래 동의 완료")
-      //       setIsSave(true);
-      //     } else {
-      //       console.log('거래 장소 및 시간 설정 실패');
-      //     }
-      //   })
-      //   //에러
-      //   .catch(err => {
-      //     console.log(err);
-      //   });
     }
 
     //남은 시간 확인 버튼
     const timeCheckButton = () =>{
 
       // const sendEndSet = sendFormatDate(endDate,endTime)
-      var sendEndDate = parse2(end);
+      var sendEndDate = parse(end);
       console.log("저장된 시간은 "+sendEndDate)
 
       navigation.navigate('tradeTimer',{
@@ -403,26 +292,6 @@ const TradeSetScreen =({navigation,route})=>{
       } catch(err){
           console.log(err);
     }
-
-
-      // const send_param = {
-      //   tradeId:tradeId
-      // }
-      // axios
-      // .post("http://10.0.2.2:3000/trade/deleteTrade", send_param)
-      //   //정상 수행
-      //   .then(returnData => {
-      //     if(returnData.data.message){
-      //       alert('거래를 다시 제안합니다.')
-      //     } else{
-      //       alert('거래 취소 실패!')
-      //     }
-          
-      //   })
-      //   //에러
-      //   .catch(err => {
-      //     console.log(err);
-      //   });
     }
 
 
@@ -548,12 +417,6 @@ const TradeSetScreen =({navigation,route})=>{
               <Text style={{paddingBottom:15}}>지도 마커를 통해 거래 장소를 설정해주세요!</Text>
           </View>
 
-          {/* <View
-            style={{
-              borderBottomColor: 'black',
-              borderBottomWidth: StyleSheet.hairlineWidth,
-            }}
-          /> */}
 
         {isSuggest == false ?(
           <View style={styles.bottomArea}>{proposeTrade}</View>
@@ -570,26 +433,9 @@ const formatDate = (date,time)=>{
   return setDate;
   };
 
-// //타이머 설정용 전달 시간
-// const sendFormatDate = (date,time)=>{
-//   const setDate= `${date.getFullYear()}/${date.getMonth() +
-//     1}/${date.getDate()}/${time.getHours()}/${time.getMinutes()}`;
-//   return setDate;
-//   };
-
-// //str-->date
-// function parse(str){
-//   var newDd=str.split('/');
-//   var y = newDd[0];
-//   var m = newDd[1];
-//   var d= newDd[2];
-//   var h = newDd[3];
-//   var minute = newDd[4];
-//   return new Date(y,m-1,d,h,minute);
-// }
 
 //str-->date
-function parse2(str){
+function parse(str){
   var newDd=str.split(/-| |:/);
   var y = newDd[0];
   var m = newDd[1];
