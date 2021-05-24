@@ -30,7 +30,7 @@ const SplashScreen = ({navigation}) => {
           navigation.replace('MainTab');
         }else{
           console.log("Admin 로그인!");
-          navigation.replace('MainTab');
+          navigation.replace('AdminTab');
         }
 
       }

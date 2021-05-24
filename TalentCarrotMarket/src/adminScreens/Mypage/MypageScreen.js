@@ -18,7 +18,7 @@ import requestUserAPI from "../../requestUserAPI";
 import requestAddressAPI from "../../requestAddressAPI";
 import {useIsFocused} from "@react-navigation/native";
 
-const ReportScreen = ({navigation}) => {
+const MypageScreen = ({navigation}) => {
 
     //인증한 동네 확인 - 사용자
     useEffect(() => {
@@ -29,7 +29,7 @@ const ReportScreen = ({navigation}) => {
     return (
         <View style={styles.container}>
 
-            <Text>어드민 화면</Text>
+            <Text>어드민 마이페이지 화면</Text>
 
 
         </View>
@@ -130,4 +130,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default ReportScreen;
+export default MypageScreen;
