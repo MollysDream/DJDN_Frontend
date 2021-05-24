@@ -135,8 +135,18 @@ function ChatScreen(props) {
       }
     }
 
-    function checkChat(preData){  //채팅 내용들 중에서 내가 보낸 것, 상대방이 보낸 것 구분
+    async function checkChat(preData){  //채팅 내용들 중에서 내가 보낸 것, 상대방이 보낸 것 구분
       if (preData.length != 0) {
+        let postOnwer = await requestUserAPI.getUserData(postOwnerId);
+        let postOnwerImage = postOnwer.profileImage;
+
+        console.log(postOnwer.nickname);
+
+        let host = await requestUserAPI.getUserData(hostId);
+        let hostImage = host.profileImage;
+        console.log("호스트Id : " +hostId);
+        console.log("호스트닉네임 : " +host.nickname);
+
         preData.map((data) => {
             if (data.senderId == hostId) {
                 setMessages((prevMessages) => GiftedChat.append(prevMessages, [
@@ -145,7 +155,8 @@ function ChatScreen(props) {
                         text: data.text,
                         createdAt: data.createdAt,
                         user: {
-                            _id: 1
+                            _id: 1,
+                            avatar: hostImage
                         }
                     }
                 ]));
@@ -156,7 +167,8 @@ function ChatScreen(props) {
                         text: data.text,
                         createdAt: data.createdAt,
                         user: {
-                            _id: 2
+                            _id: 2,
+                          avatar: postOnwerImage
                         }
                     }
                 ]));
