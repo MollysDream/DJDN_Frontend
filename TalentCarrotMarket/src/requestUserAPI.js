@@ -60,6 +60,12 @@ export async function deleteCertificate(userId, certificateId){
     return result.data;
 }
 
+export async function checkAdmin(userId){
+    console.log(`checkAdmin함수 호출됨 아이디: ${userId}`);
+    const result = await axi.post("/user/checkAdmin", {userId});
+    return result.data;
+}
+
 
 
 export default{
@@ -71,5 +77,6 @@ export default{
     deleteKeyword,
     addCertificate,
     getUserCertificate,
-    deleteCertificate
+    deleteCertificate,
+    checkAdmin
 }
