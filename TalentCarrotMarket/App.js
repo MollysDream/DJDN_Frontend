@@ -10,6 +10,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon2 from 'react-native-vector-icons/Foundation';
 import Icon3 from 'react-native-vector-icons/Ionicons';
 import Icon4 from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon5 from 'react-native-vector-icons/MaterialIcons';
+import Icon6 from 'react-native-vector-icons/FontAwesome5';
+
 
 import SplashScreen from './src/screens/SplashScreen';
 import talentScreen from './src/screens/TalentScreen';
@@ -65,6 +68,17 @@ const TalentStack = createStackNavigator();
 const AroundStack = createStackNavigator();
 const ChatStack = createStackNavigator();
 const SettingStack = createStackNavigator();
+
+//AdminReportStack
+import adminReportScreen from './src/adminScreens/Report/ReportScreen';
+//AdminAdvertisementStack
+import adminAdvertisementScreen from './src/adminScreens/Advertisement/AdvertisementScreen';
+//AdminMypageStack
+import adminMypageScreen from './src/adminScreens/Mypage/MypageScreen';
+
+const AdminReportStack = createStackNavigator();
+const AdminAdvertisementStack = createStackNavigator();
+const AdminMypageStack = createStackNavigator();
 
 //로그인, 회원가입
 const Auth = () =>{
@@ -212,6 +226,70 @@ const MainTabScreen =({}) => {
   )
 }
 
+// Admin 화면들
+const AdminReportStackScreen = () => {
+    return (
+        <Stack.Navigator>
+            <AdminReportStack.Screen name="신고 확인" component={adminReportScreen} />
+
+        </Stack.Navigator>
+    );
+};
+
+const AdminAdvertisementStackScreen = () => {
+    return (
+        <Stack.Navigator>
+            <AdminAdvertisementStack.Screen name="광고 확인" component={adminAdvertisementScreen} />
+
+        </Stack.Navigator>
+    );
+};
+
+const AdminMypageStackScreen = () => {
+    return (
+        <Stack.Navigator>
+            <AdminMypageStack.Screen name="관리자 페이지" component={adminMypageScreen} />
+
+        </Stack.Navigator>
+    );
+};
+
+const AdminTabScreen =({}) => {
+    return(
+        <Tab.Navigator>
+            <Tab.Screen
+                initialRouteName="AdminReportStack"
+                name="TabFirst"
+                component={AdminReportStackScreen}
+                options={{
+                    tabBarLabel: '신고',
+                    tabBarIcon: ({color}) => <Icon5 name="report" color={color} size={26} />,
+                }}
+            />
+            <Tab.Screen
+                name="TabSecond"
+                component={AdminAdvertisementStackScreen}
+                options={{
+                    tabBarLabel: '광고',
+                    tabBarIcon: ({color}) => (
+                        <Icon6 name="ad" color={color} size={26} />
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name="TabThird"
+                component={AdminMypageStackScreen}
+                options={{
+                    tabBarLabel: '마이페이지',
+                    tabBarIcon: ({color}) => (
+                        <Icon3 name="person" color={color} size={26} />
+                    ),
+                }}
+            />
+        </Tab.Navigator>
+    )
+}
+
 const App=()=> {
   return (
 
@@ -235,6 +313,11 @@ const App=()=> {
           component={MainTabScreen}
           options={{headerShown: false}}
         />
+        <Stack.Screen
+            name="AdminTab"
+            component={AdminTabScreen}
+            options={{headerShown: false}}
+            />
     </Stack.Navigator>
     </NavigationContainer>
   );

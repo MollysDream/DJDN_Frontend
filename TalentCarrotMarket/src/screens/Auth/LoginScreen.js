@@ -18,6 +18,7 @@ import { GoogleSignin,GoogleSigninButton,statusCodes } from '@react-native-commu
 import AsyncStorage from '@react-native-community/async-storage';
 // import auth from "@react-native-firebase/auth";
 import requestMemberAPI from "../../requestMemberAPI";
+import requestUserAPI from "../../requestUserAPI";
 
 //글자 강조
 const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{props.children}</Text>
@@ -94,12 +95,20 @@ const LoginScreen = ({navigation}) => {
 
        if (returnData.data.message) {
           if (returnData.data.message && returnData.data.login === "1") {
-          AsyncStorage.setItem('user_id', returnData.data.userId);
-          console.log(returnData.data.message);
-          navigation.replace('MainTab');
+            AsyncStorage.setItem('user_id', returnData.data.userId);
+            //console.log(returnData.data.message);
+            let admin = await requestUserAPI.checkAdmin(returnData.data.userId);
+
+            if(admin === null){
+              navigation.replace('MainTab');
+            }else{
+              console.log("Admin 로그인!");
+              navigation.replace('AdminTab');
+            }
+
         } else {
-          setErrortext('아이디와 비밀번호를 다시 확인해주세요');
-          console.log('Please check your id or password');
+            setErrortext('아이디와 비밀번호를 다시 확인해주세요');
+            console.log('Please check your id or password');
         }
        }
     } catch(err){
@@ -118,7 +127,7 @@ const LoginScreen = ({navigation}) => {
             />
           </View>
           <View style={styles.TextArea}>
-            <Text style={styles.Text,{paddingBottom:5}}>로그인하여 당신 주변 재능을 거래하는</Text>
+            <Text style={[styles.Text,{paddingBottom:5}]}>로그인하여 당신 주변 재능을 거래하는</Text>
             <Text style={{paddingLeft:20}}><B>다재다능</B>을 사용해보세요.</Text>
           </View>
         </View>
