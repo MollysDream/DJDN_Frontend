@@ -81,12 +81,12 @@ function ChatListRoomScreen(props) {
 	async function checkChat(preData) { //채팅 내용들 중에서 내가 보낸 것, 상대방이 보낸 것 구분
 		console.log("여기서 hostID : " , hostId);
 
-		let postOnwer = await requestUserAPI.getUserData(postOwnerId);
+		let postOnwer = await requestUser.getUserData(postOwnerId);
 		let postOnwerImage = postOnwer.profileImage;
 
 		console.log(postOnwer.nickname);
 
-		let host = await requestUserAPI.getUserData(hostId);
+		let host = await requestUser.getUserData(hostId);
 		let hostImage = host.profileImage;
 		console.log("호스트Id : " +hostId);
 		console.log("호스트닉네임 : " +host.nickname);
