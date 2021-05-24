@@ -4,7 +4,6 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
-import axios from "axios";
 import {
     View,
     Text,
@@ -54,21 +53,16 @@ const AroundCertifyScreen = ({navigation,route}) => {
                 latitude,
                 longitude
             });
-            const send_param = {
-              currentX: longitude,
-              currentY: latitude
-            }
-            axios
-            .post("http://10.0.2.2:3000/address/currentLocation", send_param)
-              //정상 수행
+
+            requestAddressAPI.currentLocation(longitude,latitude)
               .then(returnData => {
-                  console.log(returnData.data);
-                setCurrentLocation(returnData.data.address)
-              })
-              //에러
-              .catch(err => {
-                console.log(err);
-              });
+                    console.log(returnData.data);
+                    setCurrentLocation(returnData.data.address)
+                })
+                //에러
+                .catch(err => {
+                    console.log(err);
+                });
           },
           error => {console.log(error.code,error.message)},
           { enableHighAccuracy:true, timeout: 20000, maximumAge:1000},
