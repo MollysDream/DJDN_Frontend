@@ -8,20 +8,20 @@ import {
     Image
 } from 'react-native';
 
-import axios from "axios";
-
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
   } from 'react-native-responsive-screen';
 
 import requestUserAPI from "../../requestUserAPI";
+import requestTradeAPI from "../../requestTradeAPI";
+
 import StarRating from 'react-native-star-rating';
 import AsyncStorage from '@react-native-community/async-storage';
 
 //글자 강조
 const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{props.children}</Text>
-
+let oppoUser;
 
 const UserRateScreen = ({navigation, route}) => {
 
@@ -61,44 +61,33 @@ const UserRateScreen = ({navigation, route}) => {
         }
 
         //사용자 평가 버튼
-        const rateButton=()=>{
-            let send_param;
+        const rateButton = async()=>{
+
             const userRate = (starPriceCount+starKindCount+starSpeedCount+starRetradeCount+starQualCount)/5
             // setRating(userRate)
 
             console.log("평가할 점수 "+userRate);
 
             if(user1==userId){
-              send_param={
-                userId: user2,
-                rate: userRate,
-                tradeId: tradeId
-              }
+              oppoUser = user2;
             } else{
-              send_param={
-                userId: user1,
-                rate: userRate,
-                tradeId: tradeId
-              }
+              oppoUser = user1;
             }
 
-            axios
-              .post("http://10.0.2.2:3000/trade/userRate", send_param)
-            //정상 수행
-              .then(returnData => {
-                  if(returnData.data.message){
-                  //if(returnData.data.userId(1)==value --> returnData.data.userId(2)평가, 아니면 반대
-                  alert('사용자 평가를 완료했습니다.')
-                  navigation.navigate('chatch')
-                  } else{
+            try{
+              const returnData = await requestTradeAPI.userRate(oppoUser,userRate,tradeId);
+        
+              if (returnData.data.message) {
+                alert('사용자 평가를 완료했습니다.')
+                navigation.navigate('chatch')
+              }
+                else{
                   alert('사용자 평가를 실패하였습니다.')
-                  }
-                
-              })
-              //에러
-              .catch(err => {
-                console.log(err);
-              });
+                }
+        
+            } catch(err){
+               console.log(err);
+            }
             }
           
           //각 카테고리별 별점

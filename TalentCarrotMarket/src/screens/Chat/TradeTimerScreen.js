@@ -46,12 +46,6 @@ const TradeTimerScreen = ({navigation, route}) =>{
   // const diffTime = (endDateTime.getTime() - nowDate.getTime())/1000;
   const [diffTime, setDiffTime] = useState((endDateTime.getTime()- nowDate)/1000);
 
-  // const [newEndDate, setNewEndDate] = useState(new Date());
-  // const [newEndTime, setNewEndTime] = useState(new Date());
-
-  // const [mode, setMode] = useState('date');
-  // const [show, setShow] = useState(false);
-
   const [isEndSuggest, setIsEndSuggest] = useState(false);
   const [isEnd, setIsEnd] = useState(false);
 
@@ -91,63 +85,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
             console.log(err);
         });
 
-    // const send_param={
-    //   tradeId:tradeId
-    // }
-
-    // axios
-    // .post("http://10.0.2.2:3000/trade/getEndTrade",send_param)
-    //   .then(returnData => {
-    //     if(returnData.data.message){
-
-    //       setIsEndSuggest(returnData.data.trade.completeSuggest);
-    //       setIsEnd(returnData.data.trade.complete);
-
-    //       console.log("현재 종료 제안 상태는 "+isEndSuggest);
-    //       console.log("현재 종료 상태는 "+isEnd);
-
-    //       if(returnData.data.trade.sender==userId){
-    //         console.log("현재 접속자는 거래 제안자임 "+ returnData.data.trade.sender);
-    //         sender=userId;
-    //       } else{
-    //         console.log("현재 접속자는 거래 제안받은사람임 "+ returnData.data.trade.receiver);
-    //         receiver=userId;
-    //       }
-    //     } else{
-    //       console.log("거래가 존재하지 않습니다.");
-    //     }
-    //   })
-    //   //에러
-    //   .catch(err => {
-    //     console.log(err);
-    //   });
   },[])
-
-
-  // const showMode = (currentMode) => {
-  //   setShow(true);
-  //   setMode(currentMode);
-  // };
-
-  // const showDatepicker = () => {
-  //   showMode('date');
-  // };
-
-  // const onChange = (event, selectedValue) =>{
-  //   setShow(Platform.OS === 'ios');
-  //   if(mode == 'date'){
-  //     const currentDate = selectedValue || new Date();
-  //     setNewEndDate(currentDate);
-  //     setMode('time');
-  //     setShow(Platform.OS !== 'ios');
-  //   }
-  //   else if(mode == 'time'){
-  //     const selectedTime = selectedValue || new Date();
-  //     setNewEndTime(selectedTime);
-  //     setShow(Platform.OS === 'ios');
-  //     setMode('date');
-  //   }
-  // }
 
 
   const extendButton = async() =>{
@@ -176,35 +114,6 @@ const TradeTimerScreen = ({navigation, route}) =>{
     } catch(err){
         console.log(err);
   }
-
-
-    // const send_param = {
-    //   tradeId:tradeId,
-    //   endTime: newEndSet
-    // }
-    // axios
-    // .post("http://10.0.2.2:3000/trade/updateTradeTime", send_param)
-    //   //정상 수행
-    //   .then(returnData => {
-    //     if(returnData.data.message){
-
-    //     var compareDiffTime=(endDateTime.getTime()-nowDate)/1000;
-    //     console.log("차이는?? "+compareDiffTime)
-
-    //       if(compareDiffTime>0){
-    //         alert("거래 연장에 성공했습니다!");
-    //       } else{
-    //         alert("거래 연장 시간이 현재시간보다 빠릅니다. 거래시간 재 설정을 해주세요")
-    //       }
-
-    //     } else{
-    //       alert('거래 연장에 실패하였습니다.');
-    //     }
-    //   })
-    //   //에러
-    //   .catch(err => {
-    //     console.log(err);
-    //   });
   }
 
   const endSuggestButton = async() =>{
@@ -225,28 +134,6 @@ const TradeTimerScreen = ({navigation, route}) =>{
     } catch(err){
        console.log(err);
     }
-
-
-    // const send_param = {
-    //   tradeId:tradeId
-    // }
-    // axios
-    // .post("http://10.0.2.2:3000/trade/endSuggestTrade", send_param)
-    //   //정상 수행
-    //   .then(returnData => {
-    //     if(returnData.data.message){
-    //       alert('거래 완료 제안을 했습니다!')
-    //       sender=userId;
-    //       setIsEndSuggest(true);
-    //     } else{
-    //       alert('거래 완료 제안이 실패했습니다.')
-    //     }
-
-    //   })
-    //   //에러
-    //   .catch(err => {
-    //     console.log(err);
-    //   });
 
   }
 
@@ -271,55 +158,25 @@ const TradeTimerScreen = ({navigation, route}) =>{
        console.log(err);
     }
 
-    // const send_param = {
-    //   tradeId:tradeId
-    // }
-    // axios
-    // .post("http://10.0.2.2:3000/trade/endTrade", send_param)
-    //   //정상 수행
-    //   .then(returnData => {
-    //     if(returnData.data.message){
-    //       //async.getitem(userId)-value
-    //       //if(returnData.data.userId(1)==value --> returnData.data.userId(2)평가, 아니면 반대
-    //       navigation.navigate('userRate',{
-    //         user1: user1,
-    //         user2: user2,
-    //         tradeId: tradeId
-    //       })
-    //     } else{
-    //       alert('거래 완료가 실패했습니다.')
-    //     }
-
-    //   })
-    //   //에러
-    //   .catch(err => {
-    //     console.log(err);
-    //   });
-
   }
 
-  const cancelButton = () =>{
+  const cancelButton = async() =>{
 
     //거래취소(삭제) 통신
-    const send_param = {
-      tradeId:tradeId
-    }
-    axios
-    .post("http://10.0.2.2:3000/trade/deleteTrade", send_param)
-      //정상 수행
-      .then(returnData => {
-        if(returnData.data.message){
-          alert('거래가 취소되어 거래를 다시 제안합니다.')
-          navigation.navigate('chatch')
-        } else{
+    try{
+      const returnData = await requestTradeAPI.deleteTrade(tradeId);
+
+      if (returnData.data.message) {
+        alert('거래가 취소되어 거래를 다시 제안합니다.')
+        navigation.navigate('chatch')
+      }
+        else{
           alert('거래 취소 실패!')
         }
 
-      })
-      //에러
-      .catch(err => {
-        console.log(err);
-      });
+    } catch(err){
+       console.log(err);
+    }
 
   }
 
@@ -367,13 +224,6 @@ const TradeTimerScreen = ({navigation, route}) =>{
 
   const tradeEndSuggest =
   <>
-    {/* <View style={styles.dateArea}>
-            <TouchableOpacity style={styles.btnDate} onPress={showDatepicker} >
-              <Text style={{color: 'black', paddingBottom:hp(2)}}><B>연장할 종료 날짜 및 시간을 설정하세요 ⌚</B></Text>
-              <Text style={{color: 'black'}}>연장을 하실 경우, 연장할 종료 날짜 및 시간을 설정한 후,</Text>
-              <Text style={{color: 'black'}}>연장완료 버튼을 눌러야 연장 시간이 저장됩니다!</Text>
-            </TouchableOpacity>
-        </View> */}
 
         <View style={styles.rowbtnArea}>
           <View style={styles.btnArea,{paddingRight:wp('1')}}>
@@ -381,16 +231,6 @@ const TradeTimerScreen = ({navigation, route}) =>{
               <Text style={{color: 'white'}}>10분 연장</Text>
             </TouchableOpacity>
           </View>
-
-          {/* {show && (
-            <DateTimePicker
-              testID="dateTimePicker"
-              value={newEndDate}
-              mode={mode}
-              is24Hour={true}
-              display="default"
-              onChange={onChange}
-            />)} */}
 
           <View style={styles.btnArea,{paddingLeft:wp('1')}}>
             <TouchableOpacity style={styles.btn} onPress={endSuggestButton}>
