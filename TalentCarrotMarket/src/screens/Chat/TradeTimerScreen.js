@@ -21,6 +21,8 @@ import smsKey from '../../smsKey';
 import Base64 from 'crypto-js/enc-base64';
 const CryptoJS =require ('crypto-js');
 
+import requestTradeAPI from "../../requestTradeAPI";
+
 //글자 강조
 const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{props.children}</Text>
 
@@ -62,12 +64,8 @@ const TradeTimerScreen = ({navigation, route}) =>{
 
   useEffect(()=>{
     console.log("거래 번호 "+tradeId)
-    const send_param={
-      tradeId:tradeId
-    }
 
-    axios
-    .post("http://10.0.2.2:3000/trade/getEndTrade",send_param)
+    requestTradeAPI.getEndTrade(tradeId)
       .then(returnData => {
         if(returnData.data.message){
 
@@ -87,11 +85,42 @@ const TradeTimerScreen = ({navigation, route}) =>{
         } else{
           console.log("거래가 존재하지 않습니다.");
         }
-      })
-      //에러
-      .catch(err => {
-        console.log(err);
-      });
+        })
+        //에러
+        .catch(err => {
+            console.log(err);
+        });
+
+    // const send_param={
+    //   tradeId:tradeId
+    // }
+
+    // axios
+    // .post("http://10.0.2.2:3000/trade/getEndTrade",send_param)
+    //   .then(returnData => {
+    //     if(returnData.data.message){
+
+    //       setIsEndSuggest(returnData.data.trade.completeSuggest);
+    //       setIsEnd(returnData.data.trade.complete);
+
+    //       console.log("현재 종료 제안 상태는 "+isEndSuggest);
+    //       console.log("현재 종료 상태는 "+isEnd);
+
+    //       if(returnData.data.trade.sender==userId){
+    //         console.log("현재 접속자는 거래 제안자임 "+ returnData.data.trade.sender);
+    //         sender=userId;
+    //       } else{
+    //         console.log("현재 접속자는 거래 제안받은사람임 "+ returnData.data.trade.receiver);
+    //         receiver=userId;
+    //       }
+    //     } else{
+    //       console.log("거래가 존재하지 않습니다.");
+    //     }
+    //   })
+    //   //에러
+    //   .catch(err => {
+    //     console.log(err);
+    //   });
   },[])
 
 
@@ -121,7 +150,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
   // }
 
 
-  const extendButton = () =>{
+  const extendButton = async() =>{
 
     endDateTime.setMinutes(endDateTime.getMinutes()+10)
     console.log("연장 후 시간은ㅇㅇ "+endDateTime)
@@ -129,88 +158,143 @@ const TradeTimerScreen = ({navigation, route}) =>{
     const newEndSet = newFormatDate(endDateTime)
 
     //거래연장 통신
-    const send_param = {
-      tradeId:tradeId,
-      endTime: newEndSet
-    }
-    axios
-    .post("http://10.0.2.2:3000/trade/updateTradeTime", send_param)
-      //정상 수행
-      .then(returnData => {
-        if(returnData.data.message){
+    try{
+       const returnData = await requestTradeAPI.updateTradeTime(tradeId,newEndSet);
 
+       if (returnData.data.message) {
         var compareDiffTime=(endDateTime.getTime()-nowDate)/1000;
         console.log("차이는?? "+compareDiffTime)
 
-          if(compareDiffTime>0){
-            alert("거래 연장에 성공했습니다!");
-          } else{
-            alert("거래 연장 시간이 현재시간보다 빠릅니다. 거래시간 재 설정을 해주세요")
-          }
-
+        if(compareDiffTime>0){
+          alert("거래 연장에 성공했습니다!");
         } else{
-          alert('거래 연장에 실패하였습니다.');
+          alert("거래 연장 시간이 현재시간보다 빠릅니다. 거래시간 재 설정을 해주세요")
         }
-      })
-      //에러
-      .catch(err => {
+      } else {
+        alert('거래 연장에 실패하였습니다.')
+      }
+    } catch(err){
         console.log(err);
-      });
   }
 
-  const endSuggestButton = () =>{
 
-    //거래완료 통신
-    const send_param = {
-      tradeId:tradeId
-    }
-    axios
-    .post("http://10.0.2.2:3000/trade/endSuggestTrade", send_param)
-      //정상 수행
-      .then(returnData => {
-        if(returnData.data.message){
-          alert('거래 완료 제안을 했습니다!')
-          sender=userId;
-          setIsEndSuggest(true);
-        } else{
+    // const send_param = {
+    //   tradeId:tradeId,
+    //   endTime: newEndSet
+    // }
+    // axios
+    // .post("http://10.0.2.2:3000/trade/updateTradeTime", send_param)
+    //   //정상 수행
+    //   .then(returnData => {
+    //     if(returnData.data.message){
+
+    //     var compareDiffTime=(endDateTime.getTime()-nowDate)/1000;
+    //     console.log("차이는?? "+compareDiffTime)
+
+    //       if(compareDiffTime>0){
+    //         alert("거래 연장에 성공했습니다!");
+    //       } else{
+    //         alert("거래 연장 시간이 현재시간보다 빠릅니다. 거래시간 재 설정을 해주세요")
+    //       }
+
+    //     } else{
+    //       alert('거래 연장에 실패하였습니다.');
+    //     }
+    //   })
+    //   //에러
+    //   .catch(err => {
+    //     console.log(err);
+    //   });
+  }
+
+  const endSuggestButton = async() =>{
+
+    //거래완료제안 통신
+    try{
+      const returnData = await requestTradeAPI.endSuggestTrade(tradeId);
+
+      if (returnData.data.message) {
+        alert('거래 완료 제안을 했습니다!')
+        sender=userId;
+        setIsEndSuggest(true);
+      }
+        else{
           alert('거래 완료 제안이 실패했습니다.')
         }
 
-      })
-      //에러
-      .catch(err => {
-        console.log(err);
-      });
+    } catch(err){
+       console.log(err);
+    }
+
+
+    // const send_param = {
+    //   tradeId:tradeId
+    // }
+    // axios
+    // .post("http://10.0.2.2:3000/trade/endSuggestTrade", send_param)
+    //   //정상 수행
+    //   .then(returnData => {
+    //     if(returnData.data.message){
+    //       alert('거래 완료 제안을 했습니다!')
+    //       sender=userId;
+    //       setIsEndSuggest(true);
+    //     } else{
+    //       alert('거래 완료 제안이 실패했습니다.')
+    //     }
+
+    //   })
+    //   //에러
+    //   .catch(err => {
+    //     console.log(err);
+    //   });
 
   }
 
-  const endButton = () =>{
+  const endButton = async() =>{
 
     //거래완료 통신
-    const send_param = {
-      tradeId:tradeId
-    }
-    axios
-    .post("http://10.0.2.2:3000/trade/endTrade", send_param)
-      //정상 수행
-      .then(returnData => {
-        if(returnData.data.message){
-          //async.getitem(userId)-value
-          //if(returnData.data.userId(1)==value --> returnData.data.userId(2)평가, 아니면 반대
-          navigation.navigate('userRate',{
-            user1: user1,
-            user2: user2,
-            tradeId: tradeId
-          })
-        } else{
-          alert('거래 완료가 실패했습니다.')
+    try{
+      const returnData = await requestTradeAPI.endTrade(tradeId);
+
+      if (returnData.data.message) {
+        navigation.navigate('userRate',{
+          user1: user1,
+          user2: user2,
+          tradeId: tradeId
+        })
+      }
+        else{
+          alert('거래 완료 제안이 실패했습니다.')
         }
 
-      })
-      //에러
-      .catch(err => {
-        console.log(err);
-      });
+    } catch(err){
+       console.log(err);
+    }
+
+    // const send_param = {
+    //   tradeId:tradeId
+    // }
+    // axios
+    // .post("http://10.0.2.2:3000/trade/endTrade", send_param)
+    //   //정상 수행
+    //   .then(returnData => {
+    //     if(returnData.data.message){
+    //       //async.getitem(userId)-value
+    //       //if(returnData.data.userId(1)==value --> returnData.data.userId(2)평가, 아니면 반대
+    //       navigation.navigate('userRate',{
+    //         user1: user1,
+    //         user2: user2,
+    //         tradeId: tradeId
+    //       })
+    //     } else{
+    //       alert('거래 완료가 실패했습니다.')
+    //     }
+
+    //   })
+    //   //에러
+    //   .catch(err => {
+    //     console.log(err);
+    //   });
 
   }
 

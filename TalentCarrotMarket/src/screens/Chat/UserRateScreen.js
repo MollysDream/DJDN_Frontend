@@ -159,22 +159,6 @@ const UserRateScreen = ({navigation, route}) => {
                 <View style={{paddingBottom:hp(3)}}>
                   <Text style={{paddingBottom:hp(3)}}><B>각 카테고리에 별점을 매겨주세요</B></Text>
 
-                  {/* <RadioButton.Group onValueChange={newValue => setValue(newValue)} value={value}>
-                    <View style={styles.rowRateArea}>
-                        <RadioButton value="first" />
-                        <Text style={{paddingTop:hp(1)}}>친절하고 매너가 좋아요.</Text>
-                        
-                    </View>
-                    <View style={styles.rowRateArea}>
-                        <RadioButton value="second" />
-                        <Text style={{paddingTop:hp(1)}}>시간 약속을 잘 지켜요.</Text>
-                    </View>
-                    <View style={styles.rowRateArea}>
-                        <RadioButton value="third" />
-                        <Text style={{paddingTop:hp(1)}}>응답이 빨라요.</Text>
-                    </View>
-                  </RadioButton.Group> */}
-
                   <View style={styles.rowRateArea}>
                     <Text style={{paddingLeft:wp(4),paddingRight:wp(21),fontSize:wp('5.5')}}>가격</Text>
                     <StarRating 
@@ -193,10 +177,6 @@ const UserRateScreen = ({navigation, route}) => {
                     <Text style={{paddingLeft:wp(4),paddingRight:wp(16),fontSize:wp('5.5')}}>친절함</Text>
                     <StarRating 
                       disabled={false}
-                      // emptyStar={'ios-star-outline'}
-                      // fullStar={'ios-star'}
-                      // halfStar={'ios-star-half'}
-                      // iconSet={'Ionicons'}
                       maxStars={5}
                       rating={starKindCount}
                       selectedStar={(rating)=>onStarKindRatingPress(rating)}
@@ -207,10 +187,6 @@ const UserRateScreen = ({navigation, route}) => {
                     <Text style={{paddingLeft:wp(4),paddingRight:wp(11),fontSize:wp('5.5')}}>응답속도</Text>
                     <StarRating 
                       disabled={false}
-                      // emptyStar={'ios-star-outline'}
-                      // fullStar={'ios-star'}
-                      // halfStar={'ios-star-half'}
-                      // iconSet={'Ionicons'}
                       maxStars={5}
                       rating={starSpeedCount}
                       selectedStar={(rating)=>onStarSpeedRatingPress(rating)}
@@ -221,10 +197,6 @@ const UserRateScreen = ({navigation, route}) => {
                     <Text style={{paddingLeft:wp(4),paddingRight:wp(4),fontSize:wp('5.5')}}>재거래 희망</Text>
                     <StarRating 
                       disabled={false}
-                      // emptyStar={'ios-star-outline'}
-                      // fullStar={'ios-star'}
-                      // halfStar={'ios-star-half'}
-                      // iconSet={'Ionicons'}
                       maxStars={5}
                       rating={starRetradeCount}
                       selectedStar={(rating)=>onStarRetradeRatingPress(rating)}
@@ -235,10 +207,6 @@ const UserRateScreen = ({navigation, route}) => {
                     <Text style={{paddingLeft:wp(4),paddingRight:wp(16),fontSize:wp('5.5')}}>전문성</Text>
                     <StarRating 
                       disabled={false}
-                      // emptyStar={'ios-star-outline'}
-                      // fullStar={'ios-star'}
-                      // halfStar={'ios-star-half'}
-                      // iconSet={'Ionicons'}
                       maxStars={5}
                       rating={starQualCount}
                       selectedStar={(rating)=>onStarQualRatingPress(rating)}
@@ -277,14 +245,11 @@ const styles = StyleSheet.create({
         paddingLeft: wp(10),
         flexDirection: "row",
         alignItems: 'center',
-        // borderWidth: 0.5,
-        // borderColor: 'black',
     },
     rowRateArea:{
         flexDirection: "row",
         borderWidth: 0.5,
         borderColor: 'gray',
-        // justifyContent: 'center',
     },
     rowArea:{
         flexDirection: "row",
@@ -294,8 +259,6 @@ const styles = StyleSheet.create({
     titleArea: {
         justifyContent: 'center',
         paddingRight:wp(15),
-        // borderWidth: 0.5,
-        // borderColor: 'red',
       },
     bottomArea: {
         flex: 0.65,

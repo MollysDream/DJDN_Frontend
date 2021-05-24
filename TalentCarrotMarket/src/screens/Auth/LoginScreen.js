@@ -15,9 +15,9 @@ import {
 } from 'react-native';
 
 import { GoogleSignin,GoogleSigninButton,statusCodes } from '@react-native-community/google-signin';
-import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
 // import auth from "@react-native-firebase/auth";
+import requestMemberAPI from "../../requestMemberAPI";
 
 //글자 강조
 const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{props.children}</Text>
@@ -77,7 +77,7 @@ const LoginScreen = ({navigation}) => {
 
 
   //일반 로그인
-  const handleLoginButton = () => {
+  const handleLoginButton = async() => {
     setErrortext('');
     if (!userId) {
       alert('이메일 주소를 입력해주세요');
@@ -88,16 +88,12 @@ const LoginScreen = ({navigation}) => {
       return;
     }
 
-    const send_param = {
-      email: userId,
-      password: userPassword
-    };
+    try{
+      //로그인
+       const returnData = await requestMemberAPI.getLogin(userId,userPassword);
 
-    axios
-    .post("http://10.0.2.2:3000/member/login", send_param)
-      //정상 수행
-      .then(returnData => {
-        if (returnData.data.message && returnData.data.login === "1") {
+       if (returnData.data.message) {
+          if (returnData.data.message && returnData.data.login === "1") {
           AsyncStorage.setItem('user_id', returnData.data.userId);
           console.log(returnData.data.message);
           navigation.replace('MainTab');
@@ -105,11 +101,11 @@ const LoginScreen = ({navigation}) => {
           setErrortext('아이디와 비밀번호를 다시 확인해주세요');
           console.log('Please check your id or password');
         }
-      })
-      //에러
-      .catch(err => {
+       }
+    } catch(err){
         console.log(err);
-      });
+  }
+
   };
 
     return (

@@ -18,7 +18,8 @@ import {
 import NaverMapView, {Marker} from "react-native-nmap";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-community/async-storage';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import requestAddressAPI from "../../requestAddressAPI";
+import requestTradeAPI from "../../requestTradeAPI";
 
 //글자 강조
 const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{props.children}</Text>
@@ -53,14 +54,10 @@ const TradeSetScreen =({navigation,route})=>{
       useEffect(()=>{
 
         console.log("채팅방 번호 "+chatRoom)
-        const send_param={
-          chatRoom:chatRoom
-        }
 
-        axios
-        .post("http://10.0.2.2:3000/trade/getTrade",send_param)
+        requestTradeAPI.getTrade(chatRoom)
           .then(returnData => {
-            if(returnData.data.message){
+              if(returnData.data.message){
 
               console.log("거래 정보는 "+returnData.data.trade);
               setIsSuggest(true);
@@ -85,6 +82,40 @@ const TradeSetScreen =({navigation,route})=>{
           .catch(err => {
             console.log(err);
           });
+          
+        // const send_param={
+        //   chatRoom:chatRoom
+        // }
+
+        // //체크완료
+        // axios
+        // .post("http://10.0.2.2:3000/trade/getTrade",send_param)
+        //   .then(returnData => {
+        //     if(returnData.data.message){
+
+        //       console.log("거래 정보는 "+returnData.data.trade);
+        //       setIsSuggest(true);
+        //       setIsSave(returnData.data.trade.isSave);
+        //       setProLocate(returnData.data.trade.location);
+        //       setStart(returnData.data.trade.startTime);
+        //       setEnd(returnData.data.trade.endTime);
+        //       setTradeId(returnData.data.trade._id);
+
+        //       if(returnData.data.trade.sender==userId){
+        //         console.log("현재 접속자는 거래 제안자임 "+ returnData.data.trade.sender);
+        //         sender=userId;
+        //       } else{
+        //         console.log("현재 접속자는 거래 제안받은사람임 "+ returnData.data.trade.receiver);
+        //         receiver=userId;
+        //       }
+        //     } else{
+        //       console.log("거래가 존재하지 않습니다.");
+        //     }
+        //   })
+        //   //에러
+        //   .catch(err => {
+        //     console.log(err);
+        //   });
 
       },[])
 
@@ -152,20 +183,31 @@ const TradeSetScreen =({navigation,route})=>{
 
       useEffect(()=>{
         console.log(currentLocation)
-        const send_param = {
-          currentX: currentLocation.longitude,
-          currentY: currentLocation.latitude
-        }
-        axios
-        .post("http://10.0.2.2:3000/address/currentAddress", send_param)
-          //정상 수행
-          .then(returnData => {
-            setLocate(returnData.data.address);
-          })
-          //에러
-          .catch(err => {
-            console.log(err);
-          });
+
+        requestAddressAPI.currentAddress(currentLocation.longitude,currentLocation.latitude)
+              .then(returnData => {
+                setLocate(returnData.data.address);
+                })
+                //에러
+                .catch(err => {
+                    console.log(err);
+                });
+
+        // const send_param = {
+        //   currentX: currentLocation.longitude,
+        //   currentY: currentLocation.latitude
+        // }
+        // //체크완료
+        // axios
+        // .post("http://10.0.2.2:3000/address/currentAddress", send_param)
+        //   //정상 수행
+        //   .then(returnData => {
+        //     setLocate(returnData.data.address);
+        //   })
+        //   //에러
+        //   .catch(err => {
+        //     console.log(err);
+        //   });
       },[locate, currentLocation])
       
       const locationHandler = (e) => {
@@ -177,20 +219,29 @@ const TradeSetScreen =({navigation,route})=>{
                 { text: 'Cancel'},
                 { text: 'OK', onPress: () => {
                     setCurrentLocation(e);
-                    const send_param = {
-                      currentX: currentLocation.longitude,
-                      currentY: currentLocation.latitude
-                    }
-                    axios
-                    .post("http://10.0.2.2:3000/address/currentAddress", send_param)
-                      //정상 수행
+
+                    requestAddressAPI.currentAddress(currentLocation.longitude,currentLocation.latitude)
                       .then(returnData => {
                         setLocate(returnData.data.address);
-                      })
-                      //에러
-                      .catch(err => {
-                        console.log(err);
-                      });
+                        })
+                        //에러
+                        .catch(err => {
+                            console.log(err);
+                        });
+                    // const send_param = {
+                    //   currentX: currentLocation.longitude,
+                    //   currentY: currentLocation.latitude
+                    // }
+                    // axios
+                    // .post("http://10.0.2.2:3000/address/currentAddress", send_param)
+                    //   //정상 수행
+                    //   .then(returnData => {
+                    //     setLocate(returnData.data.address);
+                    //   })
+                    //   //에러
+                    //   .catch(err => {
+                    //     console.log(err);
+                    //   });
                 
                     console.log('onMapClick', JSON.stringify(e));
                 }}
@@ -200,7 +251,7 @@ const TradeSetScreen =({navigation,route})=>{
     };
 
     // 설정 완료 후, 제안 버튼
-    const suggestButton = () =>{
+    const suggestButton = async() =>{
       
       
       if(user1==userId){
@@ -232,59 +283,89 @@ const TradeSetScreen =({navigation,route})=>{
         setStart(startSet);
         setEnd(endSet);
 
-
-        const send_param = {
-          startTime: startSet,
-          endTime: endSet,
-          location: entireLocate,
-          sender: sender,
-          receiver: receiver,
-          chatRoom: chatRoom
-        };
+        try{
+          //거래제안
+           const returnData = await requestTradeAPI.createTradeTime(startSet,endSet,entireLocate,sender,receiver,chatRoom);
     
-        axios
-        .post("http://10.0.2.2:3000/trade/createTradeTime", send_param)
-          //정상 수행
-          .then(returnData => {
-            if (returnData.data.message) {
-              console.log("거래 장소 및 시간 설정 완료")
-              console.log("거래 번호 "+returnData.data.tradeId)
-              setTradeId(returnData.data.tradeId);
-              setIsSuggest(true);
+           if (returnData.data.message) {
+            console.log("거래 장소 및 시간 설정 완료")
+            console.log("거래 번호 "+returnData.data.tradeId)
+            setTradeId(returnData.data.tradeId);
+            setIsSuggest(true);
             } else {
               console.log('거래 장소 및 시간 설정 실패');
             }
-          })
-          //에러
-          .catch(err => {
+        } catch(err){
             console.log(err);
-          });
+      }
+
+
+        // const send_param = {
+        //   startTime: startSet,
+        //   endTime: endSet,
+        //   location: entireLocate,
+        //   sender: sender,
+        //   receiver: receiver,
+        //   chatRoom: chatRoom
+        // };
+        // //체크완료
+        // axios
+        // .post("http://10.0.2.2:3000/trade/createTradeTime", send_param)
+        //   //정상 수행
+        //   .then(returnData => {
+        //     if (returnData.data.message) {
+        //       console.log("거래 장소 및 시간 설정 완료")
+        //       console.log("거래 번호 "+returnData.data.tradeId)
+        //       setTradeId(returnData.data.tradeId);
+        //       setIsSuggest(true);
+        //     } else {
+        //       console.log('거래 장소 및 시간 설정 실패');
+        //     }
+        //   })
+        //   //에러
+        //   .catch(err => {
+        //     console.log(err);
+        //   });
 
       }
     }
 
     //동의 버튼
-    const agreeButton = () =>{
+    const agreeButton = async() =>{
 
-      const send_param = {
-        tradeId: tradeId
-      };
-
-      axios
-      .post("http://10.0.2.2:3000/trade/agreeTrade", send_param)
-        //정상 수행
-        .then(returnData => {
-          if (returnData.data.message) {
-            console.log("거래 동의 완료")
-            setIsSave(true);
+      try{
+        //거래제안동의
+         const returnData = await requestTradeAPI.agreeTrade(tradeId);
+  
+         if (returnData.data.message) {
+          console.log("거래 동의 완료")
+          setIsSave(true);
           } else {
             console.log('거래 장소 및 시간 설정 실패');
           }
-        })
-        //에러
-        .catch(err => {
+      } catch(err){
           console.log(err);
-        });
+    }
+
+      // const send_param = {
+      //   tradeId: tradeId
+      // };
+      // //체크완료
+      // axios
+      // .post("http://10.0.2.2:3000/trade/agreeTrade", send_param)
+      //   //정상 수행
+      //   .then(returnData => {
+      //     if (returnData.data.message) {
+      //       console.log("거래 동의 완료")
+      //       setIsSave(true);
+      //     } else {
+      //       console.log('거래 장소 및 시간 설정 실패');
+      //     }
+      //   })
+      //   //에러
+      //   .catch(err => {
+      //     console.log(err);
+      //   });
     }
 
     //남은 시간 확인 버튼
@@ -305,29 +386,43 @@ const TradeSetScreen =({navigation,route})=>{
     
 
     //재제안 버튼
-    const resuggestButton = () =>{
+    const resuggestButton = async() =>{
       setIsSuggest(false)
       setIsSave(false)
 
       //거래취소(삭제) 통신
-      const send_param = {
-        tradeId:tradeId
-      }
-      axios
-      .post("http://10.0.2.2:3000/trade/deleteTrade", send_param)
-        //정상 수행
-        .then(returnData => {
-          if(returnData.data.message){
-            alert('거래를 다시 제안합니다.')
-          } else{
+      try{
+        //거래삭제
+         const returnData = await requestTradeAPI.deleteTrade(tradeId);
+  
+         if (returnData.data.message) {
+          alert('거래를 다시 제안합니다.')
+          } else {
             alert('거래 취소 실패!')
           }
-          
-        })
-        //에러
-        .catch(err => {
+      } catch(err){
           console.log(err);
-        });
+    }
+
+
+      // const send_param = {
+      //   tradeId:tradeId
+      // }
+      // axios
+      // .post("http://10.0.2.2:3000/trade/deleteTrade", send_param)
+      //   //정상 수행
+      //   .then(returnData => {
+      //     if(returnData.data.message){
+      //       alert('거래를 다시 제안합니다.')
+      //     } else{
+      //       alert('거래 취소 실패!')
+      //     }
+          
+      //   })
+      //   //에러
+      //   .catch(err => {
+      //     console.log(err);
+      //   });
     }
 
 

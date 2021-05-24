@@ -7,7 +7,6 @@ import {
 
 import 'react-native-gesture-handler';
 
-import axios from "axios";
 import {
   StyleSheet,
   View,
@@ -17,6 +16,7 @@ import {
   TextInput,
 } from 'react-native';
 
+import requestMemberAPI from "../../requestMemberAPI";
 
 const RegisterScreen = ({navigation}) => {
   const [userName, setUserName] = useState('');
@@ -33,7 +33,7 @@ const RegisterScreen = ({navigation}) => {
   // const nameInputRef = createRef();
   // const nicknameInputRef = createRef();
 
-  const handleSubmitButton = () => {
+  const handleSubmitButton = async () => {
     const regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
     const regExp2 = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,16}$/;
 
@@ -66,34 +66,28 @@ const RegisterScreen = ({navigation}) => {
       return;
     }
 
-    const send_param = {
-      email: userId,
-      password: userPassword,
-      name: userName,
-      nickname: userNickName
-    };
-    axios
-      .post("http://10.0.2.2:3000/member/join", send_param)
-      //정상 수행
-      .then(returnData => {
-        setErrortext2('');
-        if (returnData.data.message) {
-          alert(returnData.data.message);
-          //이메일 중복 체크
-          if (returnData.data.dupYn === "1") {
-            setErrortext2('이미 존재하는 아이디입니다.');
-          } else {
-            setIsRegistraionSuccess(true);
-            console.log('Registration Successful. Please Login to proceed');
-          }
-        } else {
-          alert("회원가입 실패");
-        }
-      })
-      //에러
-      .catch(err => {
-        console.log(err);
-      });
+     try{
+        //회원 가입
+          const returnData = await requestMemberAPI.getRegister(userId,userPassword,userName,userNickName);
+          setErrortext2('');
+          if (returnData.data.message) {
+                alert(returnData.data.message);
+                //이메일 중복 체크
+                if (returnData.data.dupYn === "1") {
+                  setErrortext2('이미 존재하는 아이디입니다.');
+                } else {
+                  setIsRegistraionSuccess(true);
+                  console.log('Registration Successful. Please Login to proceed');
+                }
+
+            } else {
+                alert("회원가입 실패");
+              }
+
+        } catch(err){
+            console.log(err);
+      }
+
   };
 
   if (isRegistraionSuccess) {

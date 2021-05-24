@@ -38,10 +38,26 @@ export async function deleteAddress(userId, addressIndex){
     return result.data;
 }
 
+export async function currentLocation(currentX, currentY){
+    console.log(`currentLocation함수 호출됨 위경도:${currentY} ${currentX}`);
+    const returnData = await axi.post("/address/currentLocation", {currentX,currentY});
+
+    return returnData;
+}
+
+export async function currentAddress(currentX, currentY){
+    console.log(`currentLocation함수 호출됨 위경도:${currentY} ${currentX}`);
+    const returnData = await axi.post("/address/currentAddress", {currentX,currentY});
+
+    return returnData;
+}
+
 export default{
     getUserAddress,
     updateRadius,
     createAddress,
     certifyAddress,
-    deleteAddress
+    deleteAddress,
+    currentLocation,
+    currentAddress
 }

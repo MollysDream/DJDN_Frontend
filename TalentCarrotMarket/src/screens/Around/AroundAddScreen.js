@@ -12,7 +12,6 @@ import {
 
 import Geolocation from 'react-native-geolocation-service';
 import Postcode from '@actbase/react-daum-postcode';
-import axios from "axios";
 import AsyncStorage from '@react-native-community/async-storage';
 import requestAddressAPI from "../../requestAddressAPI";
 import FlashMessage, {showMessage} from "react-native-flash-message";
@@ -40,30 +39,27 @@ const AroundAddScreen = ({navigation,route}) => {
     }
 
     useEffect(() =>{
+      
         Geolocation.getCurrentPosition(
-            position =>{
-                const {latitude,longitude}=position.coords;
+          position =>{
+              const {latitude,longitude}=position.coords;
+            
+              requestAddressAPI.currentLocation(longitude,latitude)
+              .then(returnData => {
+                    console.log(returnData.data);
+                    setGeoAddress(returnData.data.address)
+                })
+                //에러
+                .catch(err => {
+                    console.log(err);
+                });
+        
+          },
+          error => {console.log(error.code,error.message)},
+          { enableHighAccuracy:true, timeout: 20000, maximumAge:1000},
+      );
+      
 
-                const send_param = {
-                    currentX: longitude,
-                    currentY: latitude
-                }
-
-                axios
-                    .post("http://10.0.2.2:3000/address/currentLocation", send_param)
-                    //정상 수행
-                    .then(returnData => {
-                        console.log(returnData.data);
-                        setGeoAddress(returnData.data.address)
-                    })
-                    //에러
-                    .catch(err => {
-                        console.log(err);
-                    });
-            },
-            error => {console.log(error.code,error.message)},
-            { enableHighAccuracy:true, timeout: 20000, maximumAge:1000},
-        );
     },[]);
 
     const selectByPostcode = (data)=>{
