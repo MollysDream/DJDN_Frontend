@@ -7,23 +7,40 @@ import {
 } from 'react-native-responsive-screen';
 
 import AsyncStorage from '@react-native-community/async-storage';
+import requestUserAPI from "../requestUserAPI";
 
 const SplashScreen = ({navigation}) => {
   //State for ActivityIndicator animation
   const [animating, setAnimating] = useState(true);
 
   useEffect(() => {
-    setTimeout(() => {
+    setTimeout(async () => {
       setAnimating(false);
       //Check if user_id is set or not
       //If not then send for Authentication
       //else send to Home Screen
+      let userId = await AsyncStorage.getItem('user_id');
 
-      AsyncStorage.getItem('user_id').then((value) =>
-        navigation.replace(
-          value === null ? 'Auth' : 'MainTab'
-        ),
-      );
+      if(userId === null){
+        navigation.replace('Auth');
+      }else{
+        let admin = await requestUserAPI.checkAdmin(userId);
+
+        if(admin === null){
+          navigation.replace('MainTab');
+        }else{
+          console.log("Admin 로그인!");
+          navigation.replace('MainTab');
+        }
+
+      }
+
+      /*AsyncStorage.getItem('user_id').then((value) =>{
+
+            navigation.replace(
+                value === null ? 'Auth' : 'MainTab'
+            )}
+            );*/
     }, 100);
   }, []);
 
