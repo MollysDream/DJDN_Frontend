@@ -18,18 +18,19 @@ import requestUserAPI from "../../requestUserAPI";
 import requestAddressAPI from "../../requestAddressAPI";
 import {useIsFocused} from "@react-navigation/native";
 
+import AllReportScreen from './AllReportScreen';
+
 const ReportScreen = ({navigation}) => {
 
     const [tab, setTab] = useState(0) // 0 -> 전체신고, 1 -> 게시물 신고, 2 -> 사용자 신고
 
-    //인증한 동네 확인 - 사용자
     useEffect(() => {
 
     }, []);
 
     let Screen = null;
     if(tab==0)
-        Screen = <Text>전체신고</Text>
+        Screen = <AllReportScreen/>
     else if(tab==1)
         Screen = <Text>게시물 신고</Text>
     else
@@ -81,7 +82,10 @@ text_off:{
 },
     title:{
         margin:10,
-        flexDirection:'row'
+        flexDirection:'row',
+        borderBottomWidth:5,
+        borderColor:'#ffd6c4',
+        paddingBottom:5
     },
     container: {
         flex: 1, //전체의 공간을 차지한다는 의미

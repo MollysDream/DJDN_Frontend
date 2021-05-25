@@ -17,8 +17,15 @@ export async function reportPostOrUser(reportDataParam){
     return result.data;
 }
 
+export async function getAllReport(){
+    console.log(`getAllReport함수 호출됨`);
+    const reportData = await axi.get("/report/getAllReport");
+    //console.log(reportData.data);
+    return reportData.data;
+}
 
 export default{
-    reportPostOrUser
+    reportPostOrUser,
+    getAllReport
 
 }
