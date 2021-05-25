@@ -44,28 +44,38 @@ const AllReportScreen = ({navigation}) => {
         let targetPost = item.targetPost;
         let status = null
         let title = null
+        let image = null
         let statusStyle = styles.status_none
         if(item.reportWhat === 0){
             status = '게시글 신고';
             statusStyle = styles.post_sign
-            title = <Text style={styles.postTitle}>{targetPost.title}</Text>
+            title = <Text style={[styles.postTitle, {color:'#ff9e51'}]}>{targetPost.title}</Text>
+            image = <Image style={[styles.profileImage, {borderRadius:10, borderColor:'orange'}]} source={{ uri: targetPost.image[0]}} />
+
         }
         else if(item.reportWhat ===1){
             status = '사용자 신고';
             statusStyle = styles.user_sign
-            title = <Text style={styles.postTitle}>{targetUser.title}</Text>
-
+            title = <Text style={[styles.postTitle, {color:'#ff7070'}]}>{targetUser.nickname}</Text>
+            image = <Image style={styles.profileImage} source={{ uri: targetUser.profileImage}} />
         }
 
         return(
             <View style={{marginBottom:10}}>
                 <TouchableOpacity>
                     <View style={styles.post}>
-                        <Image style={styles.profileImage} source={{ uri: targetUser.profileImage}} />
+                        <Text style={styles.Time}>{`${time}`}</Text>
+                        <Text style={[styles.Time,{top:70}]}>{`신고 by.${reportUser.nickname}`}</Text>
+
+                        {image}
                         <View style={{flexDirection:'column'}}>
                             <View style={{flexDirection:'row'}}>
                                 <View style={statusStyle}>
                                     <Text>{status}</Text>
+                                </View>
+                                <Text> - </Text>
+                                <View style={statusStyle}>
+                                    <Text>{item.reportCategory}</Text>
                                 </View>
                             </View>
 
@@ -75,7 +85,6 @@ const AllReportScreen = ({navigation}) => {
 
                             <View style={{flexDirection:'row'}}>
 
-                                <Text style={styles.postAddressTime}>{`${time}`}</Text>
                             </View>
                         </View>
                     </View>
@@ -106,14 +115,12 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         borderRadius: 15,
         backgroundColor: "white",
-        borderBottomColor: "#a6e5ff",
+        borderBottomColor: "orange",
         borderBottomWidth: 1,
         padding: 10,
-        height: 136
     },
-    postTitle:{fontSize:18, fontWeight: "bold", width:230, height:80, paddingTop:9},
-    postAddressTime: {fontSize:13, textAlign:'right', width:'30%', marginRight:3},
-    postPrice: {width:'50%',fontSize:17 , color:"#0088ff" ,paddingTop: 9},
+    postTitle:{fontSize:18, fontWeight: "bold", width:"75%", paddingTop:9},
+    Time: {fontSize:13, textAlign:'right', position:'absolute',right:5,top:8, marginRight:3},
     profileImage:{
         width: wp(20),
         overflow:"hidden",
@@ -122,10 +129,10 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         marginRight:12,
         borderWidth:2,
-        borderColor:'orange',
+        borderColor:'#ff8a8a',
     },
     post_sign:{
-        backgroundColor:'#ffbda6',
+        backgroundColor:'#ffb074',
         padding: 3,
         borderRadius: 7
     },
