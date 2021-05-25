@@ -38,10 +38,26 @@ export async function deletePostandReport(postId){
     return result.data;
 }
 
+export async function banUser(userId){
+    console.log("banUser함수 호출됨");
+    console.log(`밴 상태: True 로 변경`);
+    const result = await axi.post("/report/banUser", {userId});
+    return result.data;
+}
+
+export async function unBanUser(userId){
+    console.log("banUser함수 호출됨");
+    console.log(`밴 상태: false 로 변경`);
+    const result = await axi.post("/report/unBanUser", {userId});
+    return result.data;
+}
+
 export default{
     reportPostOrUser,
     getAllReport,
     deleteReport,
-    deletePostandReport
+    deletePostandReport,
+    banUser,
+    unBanUser
 
 }

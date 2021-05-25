@@ -96,6 +96,16 @@ const AllReportScreen = ({navigation}) => {
                             </View>
                         </View>
                     </View>
+
+                    {
+                        item.done?
+                            <View style={styles.done}>
+                                <Text>처리완료</Text>
+                            </View>
+                            :
+                            null
+                    }
+
                 </TouchableOpacity>
             </View>
         );
@@ -125,7 +135,7 @@ const AllReportScreen = ({navigation}) => {
         navigations.navigate('상세 게시물',{detailPost: currentData.targetPost, postImages: postImages, postOwner: currentData.targetUser});
     }
 
-    function deletePostScreen() {
+    function deletePost() {
 
         Alert.alert("게시글을 삭제 하실건가요?","삭제시 '신고완료' 처리됩니다.",[
             {text:'네', style:'cancel',
@@ -147,6 +157,51 @@ const AllReportScreen = ({navigation}) => {
             },
             {text:'아니요', style:'cancel'}
         ])
+
+    }
+
+    function deleteReport(){
+        Alert.alert("확인","신고를 삭제 하실건가요?",[
+            {text:'네', style:'cancel',
+                onPress:async()=>{
+                    await requestReportAPI.deleteReport(currentData._id);
+                    let updateData = reportData.filter(obj=>{
+
+                        return obj._id !== currentData._id
+                    })
+                    setReportData(updateData);
+                    setRerender(!rerender);
+                    setDetailModal(!detailModal);
+                }
+            },
+            {text:'아니요', style:'cancel'}
+        ])
+    }
+
+    async function blockUser(){
+        await requestReportAPI.banUser(currentData.targetUser._id);
+        let updateData = reportData.filter(obj=>{
+
+            if(obj.targetUser._id == currentData.targetUser._id){
+                obj.targetUser.ban = true;
+                obj.done = true;
+            }
+            return true
+        })
+        setReportData(updateData);
+    }
+
+    async function unBlockUser(){
+        await requestReportAPI.unBanUser(currentData.targetUser._id);
+        let updateData = reportData.filter(obj=>{
+
+            if(obj.targetUser._id == currentData.targetUser._id){
+                obj.targetUser.ban = false;
+                obj.done = false;
+            }
+            return true
+        })
+        setReportData(updateData);
 
     }
 
@@ -223,7 +278,7 @@ const AllReportScreen = ({navigation}) => {
                                         <TouchableOpacity style={styles.function} onPress={()=>goToDetailPostScreen()}>
                                             <Text style={styles.functionText}>게시글 확인</Text>
                                         </TouchableOpacity>
-                                        <TouchableOpacity style={styles.function} onPress={()=>deletePostScreen()}>
+                                        <TouchableOpacity style={styles.function} onPress={()=>deletePost()}>
                                             <Text style={styles.functionText}>게시글 삭제</Text>
                                         </TouchableOpacity>
                                     </View>
@@ -233,11 +288,19 @@ const AllReportScreen = ({navigation}) => {
 
                             }
 
-                            <TouchableOpacity style={styles.function}>
-                                <Text style={styles.functionText}>사용자 차단</Text>
-                            </TouchableOpacity>
+                            {
+                                currentData.targetUser.ban?
+                                    <TouchableOpacity style={[styles.function,{backgroundColor:'#ff6b58'}]} onPress={()=>unBlockUser()}>
+                                        <Text style={styles.functionText}>사용자 차단 해제</Text>
+                                    </TouchableOpacity>
+                                    :
+                                    <TouchableOpacity style={styles.function} onPress={()=>blockUser()}>
+                                        <Text style={styles.functionText}>사용자 차단</Text>
+                                    </TouchableOpacity>
+                            }
 
-                            <TouchableOpacity style={styles.function}>
+
+                            <TouchableOpacity style={styles.function} onPress={()=>deleteReport()}>
                                 <Text style={styles.functionText}>신고 삭제</Text>
                             </TouchableOpacity>
                         </View>
@@ -262,6 +325,14 @@ const AllReportScreen = ({navigation}) => {
 
 
 const styles = StyleSheet.create({
+    done:{
+        backgroundColor:'#ff2e2e',
+        borderRadius:3,
+        position:'absolute',
+        right:5,
+        top:35,
+        padding:3
+    },
     functionText:{
         fontSize:20,
 
