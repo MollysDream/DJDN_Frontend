@@ -28,16 +28,15 @@ import Modal from "react-native-modal";
 import request from "../../requestAPI";
 
 
-const AllReportScreen = ({navigation}) => {
+const UserReportScreen = ({navigation}) => {
 
     const [reportData, setReportData] = useState([]);
 
     async function getReportData(){
-        let data = await requestReportAPI.getAllReport();
+        let data = await requestReportAPI.getUserReport();
         setReportData(data);
     }
     useEffect(() => {
-
 
         getReportData();
     }, [rerender]);
@@ -49,23 +48,10 @@ const AllReportScreen = ({navigation}) => {
         let reportUser = item.reportUser;
         let targetUser = item.targetUser;
         let targetPost = item.targetPost;
-        let status = null
-        let title = null
-        let image = null
-        let statusStyle = styles.status_none
-        if(item.reportWhat === 0){
-            status = '게시글 신고';
-            statusStyle = styles.post_sign
-            title = <Text style={[styles.postTitle, {color:'#ff9e51'}]}>{targetPost.title}</Text>
-            image = <Image style={[styles.profileImage, {borderRadius:10, borderColor:'orange'}]} source={{ uri: targetPost.image[0]}} />
-
-        }
-        else if(item.reportWhat ===1){
-            status = '사용자 신고';
-            statusStyle = styles.user_sign
-            title = <Text style={[styles.postTitle, {color:'#ff7070'}]}>{targetUser.nickname}</Text>
-            image = <Image style={styles.profileImage} source={{ uri: targetUser.profileImage}} />
-        }
+        let status = '사용자 신고';
+        let title = <Text style={[styles.postTitle, {color:'#ff7070'}]}>{targetUser.nickname}</Text>
+        let image = <Image style={styles.profileImage} source={{ uri: targetUser.profileImage}} />
+        let statusStyle = styles.user_sign
 
         return(
             <View style={{marginBottom:10}}>
@@ -119,44 +105,6 @@ const AllReportScreen = ({navigation}) => {
     function detailReport(item) {
         setCurrentData(item);
         setDetailModal(!detailModal);
-    }
-
-    function goToDetailPostScreen() {
-        setDetailModal(!detailModal);
-        const postImages = []
-        currentData.targetPost.image.map((image)=>{
-            let temp={
-                image:image,
-                desc:image,
-            }
-            postImages.push(temp);
-        })
-        navigations.navigate('상세 게시물',{detailPost: currentData.targetPost, postImages: postImages, postOwner: currentData.targetUser});
-    }
-
-    function deletePost() {
-
-        Alert.alert("게시글을 삭제 하실건가요?","삭제시 '신고완료' 처리됩니다.",[
-            {text:'네', style:'cancel',
-                onPress:async()=>{
-                    await requestReportAPI.deletePostandReport(currentData.targetPost._id);
-                    let updateData = reportData.filter(obj=>{
-
-                        if(obj.reportWhat == 1)
-                            return true
-                        if(obj.targetPost._id == currentData.targetPost._id)
-                            return false
-
-                        return true
-                    })
-                    setReportData(updateData);
-                    setRerender(!rerender);
-                    setDetailModal(!detailModal);
-                }
-            },
-            {text:'아니요', style:'cancel'}
-        ])
-
     }
 
     function deleteReport(){
@@ -228,30 +176,18 @@ const AllReportScreen = ({navigation}) => {
                             </TouchableOpacity>
 
                             <Icon4 style={[styles.iconPlace]} name="report"  size={46} color="orange" />
-                            {
-                                currentData.reportWhat==0?
-                                    <Text style={styles.buttonText}>{`'${currentData.targetUser.nickname}'의 게시물 신고 내용`}</Text>
-                                    :
-                                    <Text style={styles.buttonText}>{`'${currentData.targetUser.nickname}' 사용자 신고 내용`}</Text>
-                            }
+
+                            <Text style={styles.buttonText}>{`'${currentData.targetUser.nickname}' 사용자 신고 내용`}</Text>
+
                         </View>
 
                         <View style={{flexDirection:'row', paddingLeft:5, paddingRight:5, width:'100%'}}>
                             <View >
 
-                                {
-                                    currentData.reportWhat==0?
-                                        <View style={styles.modal_profile}>
-                                            <Image style={[styles.profileImage, {borderRadius:10, borderColor:'orange'}]} source={{ uri: currentData.targetPost.image[0]}} />
-                                            <Text style={{fontSize:17, fontWeight:'bold'}}>{currentData.targetPost.title}</Text>
-                                        </View>
-                                        :
-                                        <View style={styles.modal_profile}>
-                                            <Image style={styles.profileImage} source={{ uri: currentData.targetUser.profileImage}} />
-                                            <Text style={{fontSize:20, fontWeight:'bold'}}>{currentData.targetUser.nickname}</Text>
-                                        </View>
-
-                                }
+                                <View style={styles.modal_profile}>
+                                    <Image style={styles.profileImage} source={{ uri: currentData.targetUser.profileImage}} />
+                                    <Text style={{fontSize:20, fontWeight:'bold'}}>{currentData.targetUser.nickname}</Text>
+                                </View>
 
                             </View>
 
@@ -271,21 +207,6 @@ const AllReportScreen = ({navigation}) => {
                         </View>
 
                         <View style={styles.functionBox}>
-                            {
-                                currentData.reportWhat==0?
-                                    <View style={styles.functionBox}>
-                                        <TouchableOpacity style={styles.function} onPress={()=>goToDetailPostScreen()}>
-                                            <Text style={styles.functionText}>게시글 확인</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity style={styles.function} onPress={()=>deletePost()}>
-                                            <Text style={styles.functionText}>게시글 삭제</Text>
-                                        </TouchableOpacity>
-                                    </View>
-
-                                    :
-                                    null
-
-                            }
 
                             {
                                 currentData.targetUser.ban?
@@ -298,15 +219,10 @@ const AllReportScreen = ({navigation}) => {
                                     </TouchableOpacity>
                             }
 
-
                             <TouchableOpacity style={styles.function} onPress={()=>deleteReport()}>
                                 <Text style={styles.functionText}>신고 삭제</Text>
                             </TouchableOpacity>
                         </View>
-
-
-
-
 
 
                     </View>
@@ -353,7 +269,7 @@ const styles = StyleSheet.create({
         width:135
     },
     modalBox:{
-      backgroundColor:'white',
+        backgroundColor:'white',
         borderRadius:10,
         paddingBottom:5,
         paddingLeft:3,
@@ -422,4 +338,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default AllReportScreen;
+export default UserReportScreen;

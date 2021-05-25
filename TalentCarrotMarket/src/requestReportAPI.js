@@ -24,6 +24,20 @@ export async function getAllReport(){
     return reportData.data;
 }
 
+export async function getPostReport(){
+    console.log(`getPostReport함수 호출됨`);
+    const reportData = await axi.get("/report/getPostReport");
+    //console.log(reportData.data);
+    return reportData.data;
+}
+
+export async function getUserReport(){
+    console.log(`getUserReport함수 호출됨`);
+    const reportData = await axi.get("/report/getUserReport");
+    //console.log(reportData.data);
+    return reportData.data;
+}
+
 export async function deleteReport(reportId){
     console.log('deleteReport함수 호출됨');
     const result = await axi.delete("/report/deleteReport", {params:{reportId:reportId}});
@@ -55,6 +69,8 @@ export async function unBanUser(userId){
 export default{
     reportPostOrUser,
     getAllReport,
+    getPostReport,
+    getUserReport,
     deleteReport,
     deletePostandReport,
     banUser,

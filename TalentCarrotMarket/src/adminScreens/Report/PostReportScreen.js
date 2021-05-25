@@ -28,12 +28,12 @@ import Modal from "react-native-modal";
 import request from "../../requestAPI";
 
 
-const AllReportScreen = ({navigation}) => {
+const PostReportScreen = ({navigation}) => {
 
     const [reportData, setReportData] = useState([]);
 
     async function getReportData(){
-        let data = await requestReportAPI.getAllReport();
+        let data = await requestReportAPI.getPostReport();
         setReportData(data);
     }
     useEffect(() => {
@@ -49,23 +49,11 @@ const AllReportScreen = ({navigation}) => {
         let reportUser = item.reportUser;
         let targetUser = item.targetUser;
         let targetPost = item.targetPost;
-        let status = null
-        let title = null
-        let image = null
-        let statusStyle = styles.status_none
-        if(item.reportWhat === 0){
-            status = '게시글 신고';
-            statusStyle = styles.post_sign
-            title = <Text style={[styles.postTitle, {color:'#ff9e51'}]}>{targetPost.title}</Text>
-            image = <Image style={[styles.profileImage, {borderRadius:10, borderColor:'orange'}]} source={{ uri: targetPost.image[0]}} />
+        let status = '게시글 신고';
+        let title = <Text style={[styles.postTitle, {color:'#ff9e51'}]}>{targetPost.title}</Text>
+        let image = <Image style={[styles.profileImage, {borderRadius:10, borderColor:'orange'}]} source={{ uri: targetPost.image[0]}} />
+        let statusStyle = styles.post_sign
 
-        }
-        else if(item.reportWhat ===1){
-            status = '사용자 신고';
-            statusStyle = styles.user_sign
-            title = <Text style={[styles.postTitle, {color:'#ff7070'}]}>{targetUser.nickname}</Text>
-            image = <Image style={styles.profileImage} source={{ uri: targetUser.profileImage}} />
-        }
 
         return(
             <View style={{marginBottom:10}}>
@@ -228,30 +216,18 @@ const AllReportScreen = ({navigation}) => {
                             </TouchableOpacity>
 
                             <Icon4 style={[styles.iconPlace]} name="report"  size={46} color="orange" />
-                            {
-                                currentData.reportWhat==0?
-                                    <Text style={styles.buttonText}>{`'${currentData.targetUser.nickname}'의 게시물 신고 내용`}</Text>
-                                    :
-                                    <Text style={styles.buttonText}>{`'${currentData.targetUser.nickname}' 사용자 신고 내용`}</Text>
-                            }
+
+                            <Text style={styles.buttonText}>{`'${currentData.targetUser.nickname}'의 게시물 신고 내용`}</Text>
+
                         </View>
 
                         <View style={{flexDirection:'row', paddingLeft:5, paddingRight:5, width:'100%'}}>
                             <View >
 
-                                {
-                                    currentData.reportWhat==0?
-                                        <View style={styles.modal_profile}>
-                                            <Image style={[styles.profileImage, {borderRadius:10, borderColor:'orange'}]} source={{ uri: currentData.targetPost.image[0]}} />
-                                            <Text style={{fontSize:17, fontWeight:'bold'}}>{currentData.targetPost.title}</Text>
-                                        </View>
-                                        :
-                                        <View style={styles.modal_profile}>
-                                            <Image style={styles.profileImage} source={{ uri: currentData.targetUser.profileImage}} />
-                                            <Text style={{fontSize:20, fontWeight:'bold'}}>{currentData.targetUser.nickname}</Text>
-                                        </View>
-
-                                }
+                                <View style={styles.modal_profile}>
+                                    <Image style={[styles.profileImage, {borderRadius:10, borderColor:'orange'}]} source={{ uri: currentData.targetPost.image[0]}} />
+                                    <Text style={{fontSize:17, fontWeight:'bold'}}>{currentData.targetPost.title}</Text>
+                                </View>
 
                             </View>
 
@@ -305,10 +281,6 @@ const AllReportScreen = ({navigation}) => {
                         </View>
 
 
-
-
-
-
                     </View>
 
 
@@ -353,7 +325,7 @@ const styles = StyleSheet.create({
         width:135
     },
     modalBox:{
-      backgroundColor:'white',
+        backgroundColor:'white',
         borderRadius:10,
         paddingBottom:5,
         paddingLeft:3,
@@ -422,4 +394,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default AllReportScreen;
+export default PostReportScreen;

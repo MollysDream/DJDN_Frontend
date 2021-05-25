@@ -19,6 +19,8 @@ import requestAddressAPI from "../../requestAddressAPI";
 import {useIsFocused} from "@react-navigation/native";
 
 import AllReportScreen from './AllReportScreen';
+import PostReportScreen from "./PostReportScreen";
+import UserReportScreen from "./UserReportScreen";
 
 const ReportScreen = ({navigation}) => {
 
@@ -32,9 +34,9 @@ const ReportScreen = ({navigation}) => {
     if(tab==0)
         Screen = <AllReportScreen/>
     else if(tab==1)
-        Screen = <Text>게시물 신고</Text>
+        Screen = <PostReportScreen/>
     else
-        Screen = <Text>사용자 신고</Text>
+        Screen = <UserReportScreen/>
 
     return (
         <View style={styles.container}>
