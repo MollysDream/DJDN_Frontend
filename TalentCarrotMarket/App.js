@@ -231,6 +231,7 @@ const AdminReportStackScreen = () => {
     return (
         <Stack.Navigator>
             <AdminReportStack.Screen name="신고 확인" component={adminReportScreen} />
+            <AdminReportStack.Screen name="DetailPost" component={detailPostScreen}/>
 
         </Stack.Navigator>
     );

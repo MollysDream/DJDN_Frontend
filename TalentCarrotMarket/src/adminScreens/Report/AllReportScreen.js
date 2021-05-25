@@ -106,6 +106,19 @@ const AllReportScreen = ({navigation}) => {
         setDetailModal(!detailModal);
     }
 
+    function goToDetailPostScreen() {
+        setDetailModal(!detailModal);
+        const postImages = []
+        currentData.targetPost.image.map((image)=>{
+            let temp={
+                image:image,
+                desc:image,
+            }
+            postImages.push(temp);
+        })
+        navigation.push('DetailPost',{detailPost: currentData.targetPost, postImages: postImages, postOwner: currentData.targetUser});
+    }
+
     return (
         <View style={{height:'95%'}}>
 
@@ -117,9 +130,17 @@ const AllReportScreen = ({navigation}) => {
 
             {currentData == undefined?null:
                 <Modal isVisible={detailModal}>
-                    <ScrollView style={styles.modalBox}>
+                    <View style={styles.modalBox}>
 
                         <View style={styles.buttonList} >
+
+                            <TouchableOpacity style={styles.cancleIcon} onPress={()=>{
+                                setDetailModal(!detailModal)
+                                setCurrentData();
+                            }}>
+                                <Icon3 name="back"  size={40} color="orange" />
+                            </TouchableOpacity>
+
                             <Icon4 style={[styles.iconPlace]} name="report"  size={46} color="orange" />
                             {
                                 currentData.reportWhat==0?
@@ -129,14 +150,14 @@ const AllReportScreen = ({navigation}) => {
                             }
                         </View>
 
-                        <View style={{flexDirection:'row', paddingLeft:5, paddingRight:5, borderWidth:1, width:'100%'}}>
+                        <View style={{flexDirection:'row', paddingLeft:5, paddingRight:5, width:'100%'}}>
                             <View >
 
                                 {
                                     currentData.reportWhat==0?
                                         <View style={styles.modal_profile}>
                                             <Image style={[styles.profileImage, {borderRadius:10, borderColor:'orange'}]} source={{ uri: currentData.targetPost.image[0]}} />
-                                            <Text style={{fontSize:20, fontWeight:'bold'}}>{currentData.targetPost.title}</Text>
+                                            <Text style={{fontSize:17, fontWeight:'bold'}}>{currentData.targetPost.title}</Text>
                                         </View>
                                         :
                                         <View style={styles.modal_profile}>
@@ -148,7 +169,7 @@ const AllReportScreen = ({navigation}) => {
 
                             </View>
 
-                            <View style={{flexDirection:'column', borderWidth:1, paddingTop:5, paddingLeft:10,paddingRight:8, width:'62%'}}>
+                            <View style={{flexDirection:'column', paddingTop:5, paddingLeft:10,paddingRight:8, width:'62%'}}>
                                 <Text style={{fontSize:17, fontWeight:'bold', color:'grey'}}>신고 유형</Text>
                                 <View style={[styles.post_sign,{alignSelf:'flex-start'}]}>
                                     <Text style={{fontSize:20, fontWeight:'bold'}}>{currentData.reportCategory}</Text>
@@ -157,21 +178,39 @@ const AllReportScreen = ({navigation}) => {
                                 <Text style={{fontSize:17, fontWeight:'bold', color:'grey'}}>신고 설명</Text>
                                 <Text style={{fontSize:20, fontWeight:'bold'}}>{currentData.text}</Text>
 
+                                <Text style={{fontSize:15, color:'grey', alignSelf:'flex-end'}}>{`신고 by.${currentData.reportUser.nickname}`}</Text>
                             </View>
 
+
+                        </View>
+
+                        <View style={styles.functionBox}>
+                            {
+                                currentData.reportWhat==0?
+                                    <TouchableOpacity style={styles.function} onPress={()=>goToDetailPostScreen()}>
+                                        <Text style={styles.functionText}>게시글 확인</Text>
+                                    </TouchableOpacity>
+                                    :
+                                    null
+
+                            }
+
+                            <TouchableOpacity style={styles.function}>
+                                <Text style={styles.functionText}>사용자 차단</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity style={styles.function}>
+                                <Text style={styles.functionText}>신고 삭제</Text>
+                            </TouchableOpacity>
                         </View>
 
 
 
 
 
-                    </ScrollView>
-                    <TouchableOpacity style={styles.cancleIcon} onPress={()=>{
-                        setDetailModal(!detailModal)
-                        setCurrentData();
-                    }}>
-                        <Icon3 name="back"  size={40} color="orange" />
-                    </TouchableOpacity>
+
+                    </View>
+
 
                 </Modal>
             }
@@ -185,12 +224,33 @@ const AllReportScreen = ({navigation}) => {
 
 
 const styles = StyleSheet.create({
+    functionText:{
+        fontSize:20,
+
+    },
+    function:{
+        backgroundColor:'#ffc19b',
+        alignItems: 'center',
+        width:'50%',
+        borderRadius:10,
+        marginTop:5
+
+    },
+    functionBox:{
+        flexDirection:'row',
+        flexWrap:'wrap'
+    },
     modal_profile:{
         flexDirection:'column', alignItems:'center',
         width:135
     },
     modalBox:{
       backgroundColor:'white',
+        borderRadius:10,
+        paddingBottom:5,
+        paddingLeft:3,
+        paddingRight:3
+
     },
     buttonList: {
         //borderWidth:1,
