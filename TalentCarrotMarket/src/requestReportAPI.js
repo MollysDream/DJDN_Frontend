@@ -24,8 +24,24 @@ export async function getAllReport(){
     return reportData.data;
 }
 
+export async function deleteReport(reportId){
+    console.log('deleteReport함수 호출됨');
+    const result = await axi.delete("/report/deleteReport", {params:{reportId:reportId}});
+
+    return result.data;
+}
+
+export async function deletePostandReport(postId){
+    console.log('deletePostandReport함수 호출됨');
+    const result = await axi.delete("/report/deletePostandReport", {params:{postId:postId}});
+
+    return result.data;
+}
+
 export default{
     reportPostOrUser,
-    getAllReport
+    getAllReport,
+    deleteReport,
+    deletePostandReport
 
 }

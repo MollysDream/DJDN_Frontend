@@ -4,7 +4,7 @@ import {
     Text,
     StyleSheet,
     TouchableOpacity,
-    Button, Image, FlatList, ScrollView
+    Button, Image, FlatList, ScrollView, Alert
 } from 'react-native';
 import {
     widthPercentageToDP as wp,
@@ -22,8 +22,10 @@ import {getDate, getPrice} from "../../function";
 import Icon3 from "react-native-vector-icons/Entypo";
 import Icon4 from "react-native-vector-icons/MaterialIcons";
 
+import { useNavigation } from '@react-navigation/native';
 
 import Modal from "react-native-modal";
+import request from "../../requestAPI";
 
 
 const AllReportScreen = ({navigation}) => {
@@ -31,14 +33,15 @@ const AllReportScreen = ({navigation}) => {
     const [reportData, setReportData] = useState([]);
     const [tab, setTab] = useState(0);
 
+    async function getReportData(){
+        let data = await requestReportAPI.getAllReport();
+        setReportData(data);
+    }
     useEffect(() => {
-        async function getReportData(){
-            let data = await requestReportAPI.getAllReport();
-            setReportData(data);
-        }
+
 
         getReportData();
-    }, []);
+    }, [rerender]);
 
 
     const returnReportFlatListItem = (item,index)=>{
@@ -100,6 +103,9 @@ const AllReportScreen = ({navigation}) => {
 
     const [detailModal, setDetailModal] = useState(0);
     const [currentData, setCurrentData] = useState();
+    const navigations = useNavigation();
+
+    const [rerender, setRerender] = useState(false);
 
     function detailReport(item) {
         setCurrentData(item);
@@ -116,7 +122,32 @@ const AllReportScreen = ({navigation}) => {
             }
             postImages.push(temp);
         })
-        navigation.push('DetailPost',{detailPost: currentData.targetPost, postImages: postImages, postOwner: currentData.targetUser});
+        navigations.navigate('상세 게시물',{detailPost: currentData.targetPost, postImages: postImages, postOwner: currentData.targetUser});
+    }
+
+    function deletePostScreen() {
+
+        Alert.alert("게시글을 삭제 하실건가요?","삭제시 '신고완료' 처리됩니다.",[
+            {text:'네', style:'cancel',
+                onPress:async()=>{
+                    await requestReportAPI.deletePostandReport(currentData.targetPost._id);
+                    let updateData = reportData.filter(obj=>{
+
+                        if(obj.reportWhat == 1)
+                            return true
+                        if(obj.targetPost._id == currentData.targetPost._id)
+                            return false
+
+                        return true
+                    })
+                    setReportData(updateData);
+                    setRerender(!rerender);
+                    setDetailModal(!detailModal);
+                }
+            },
+            {text:'아니요', style:'cancel'}
+        ])
+
     }
 
     return (
@@ -126,6 +157,7 @@ const AllReportScreen = ({navigation}) => {
                 data={reportData}
                 keyExtractor={(item,index) => String(item._id)}
                 renderItem={({item,index})=>returnReportFlatListItem(item,index)}
+                extraData={rerender}
             />
 
             {currentData == undefined?null:
@@ -187,9 +219,15 @@ const AllReportScreen = ({navigation}) => {
                         <View style={styles.functionBox}>
                             {
                                 currentData.reportWhat==0?
-                                    <TouchableOpacity style={styles.function} onPress={()=>goToDetailPostScreen()}>
-                                        <Text style={styles.functionText}>게시글 확인</Text>
-                                    </TouchableOpacity>
+                                    <View style={styles.functionBox}>
+                                        <TouchableOpacity style={styles.function} onPress={()=>goToDetailPostScreen()}>
+                                            <Text style={styles.functionText}>게시글 확인</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity style={styles.function} onPress={()=>deletePostScreen()}>
+                                            <Text style={styles.functionText}>게시글 삭제</Text>
+                                        </TouchableOpacity>
+                                    </View>
+
                                     :
                                     null
 
