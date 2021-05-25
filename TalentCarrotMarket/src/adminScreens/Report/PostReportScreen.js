@@ -26,20 +26,21 @@ import { useNavigation } from '@react-navigation/native';
 
 import Modal from "react-native-modal";
 import request from "../../requestAPI";
+import {Picker} from "@react-native-picker/picker";
 
 
 const PostReportScreen = ({navigation}) => {
 
     const [reportData, setReportData] = useState([]);
 
-    async function getReportData(){
-        let data = await requestReportAPI.getPostReport();
+    async function getReportData(category){
+        let data = await requestReportAPI.getPostReport(category);
         setReportData(data);
     }
+
     useEffect(() => {
 
-
-        getReportData();
+        getReportData('');
     }, [rerender]);
 
 
@@ -57,6 +58,7 @@ const PostReportScreen = ({navigation}) => {
 
         return(
             <View style={{marginBottom:10}}>
+
                 <TouchableOpacity onPress={()=>detailReport(item)}>
                     <View style={styles.post}>
                         <Text style={styles.Time}>{`${time}`}</Text>
@@ -189,11 +191,26 @@ const PostReportScreen = ({navigation}) => {
             return true
         })
         setReportData(updateData);
-
     }
+
+    // 카테고리 관련 함수
+    const [category, setCategory] = useState('');
+    const categoryList = ['사기 글', '불법 재능', '불법 광고', '미친놈','이상한 재능', '기타']
 
     return (
         <View style={{height:'95%'}}>
+            <Picker
+                onValueChange={(value) => getReportData(value)}
+                placeholder='카테고리'
+            >
+                <Picker.Item color={'grey'} label={'카테고리 선택'} value={''}/>
+                {
+                    categoryList.map((category, key)=>(
+                        <Picker.Item label={category} value={category} key={key}/>
+                    ))
+
+                }
+            </Picker>
 
             <FlatList
                 data={reportData}

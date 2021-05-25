@@ -26,19 +26,20 @@ import { useNavigation } from '@react-navigation/native';
 
 import Modal from "react-native-modal";
 import request from "../../requestAPI";
+import {Picker} from "@react-native-picker/picker";
 
 
 const UserReportScreen = ({navigation}) => {
 
     const [reportData, setReportData] = useState([]);
 
-    async function getReportData(){
-        let data = await requestReportAPI.getUserReport();
+    async function getReportData(category){
+        let data = await requestReportAPI.getUserReport(category);
         setReportData(data);
     }
     useEffect(() => {
 
-        getReportData();
+        getReportData('');
     }, [rerender]);
 
 
@@ -152,8 +153,24 @@ const UserReportScreen = ({navigation}) => {
 
     }
 
+    // 카테고리 관련 함수
+    const [category, setCategory] = useState('');
+    const categoryList = ['비매너', '욕설', '성희롱', '또라이', '기타']
+
     return (
         <View style={{height:'95%'}}>
+            <Picker
+                onValueChange={(value) => getReportData(value)}
+                placeholder='카테고리'
+            >
+                <Picker.Item color={'grey'} label={'카테고리 선택'} value={''}/>
+                {
+                    categoryList.map((category, key)=>(
+                        <Picker.Item label={category} value={category} key={key}/>
+                    ))
+
+                }
+            </Picker>
 
             <FlatList
                 data={reportData}

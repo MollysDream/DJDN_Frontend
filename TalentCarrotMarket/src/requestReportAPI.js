@@ -24,16 +24,17 @@ export async function getAllReport(){
     return reportData.data;
 }
 
-export async function getPostReport(){
+export async function getPostReport(category){
     console.log(`getPostReport함수 호출됨`);
-    const reportData = await axi.get("/report/getPostReport");
+    const reportData = await axi.get("/report/getPostReport", {params:{category:category}});
     //console.log(reportData.data);
     return reportData.data;
 }
 
-export async function getUserReport(){
+export async function getUserReport(category){
     console.log(`getUserReport함수 호출됨`);
-    const reportData = await axi.get("/report/getUserReport");
+    console.log(category);
+    const reportData = await axi.get("/report/getUserReport", {params:{category:category}});
     //console.log(reportData.data);
     return reportData.data;
 }
