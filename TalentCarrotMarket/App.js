@@ -71,6 +71,7 @@ const SettingStack = createStackNavigator();
 
 //AdminReportStack
 import adminReportScreen from './src/adminScreens/Report/ReportScreen';
+import detailReportPostScreen from './src/adminScreens/Report/DetailReportPostScreen';
 //AdminAdvertisementStack
 import adminAdvertisementScreen from './src/adminScreens/Advertisement/AdvertisementScreen';
 //AdminMypageStack
@@ -231,6 +232,7 @@ const AdminReportStackScreen = () => {
     return (
         <Stack.Navigator>
             <AdminReportStack.Screen name="신고 확인" component={adminReportScreen} />
+            <AdminReportStack.Screen name="상세 게시물" component={detailReportPostScreen}/>
 
         </Stack.Navigator>
     );
