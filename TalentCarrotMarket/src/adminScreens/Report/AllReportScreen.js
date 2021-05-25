@@ -4,7 +4,7 @@ import {
     Text,
     StyleSheet,
     TouchableOpacity,
-    Button, Image, FlatList
+    Button, Image, FlatList, ScrollView
 } from 'react-native';
 import {
     widthPercentageToDP as wp,
@@ -19,6 +19,11 @@ import requestAddressAPI from "../../requestAddressAPI";
 import {useIsFocused} from "@react-navigation/native";
 import requestReportAPI from "../../requestReportAPI";
 import {getDate, getPrice} from "../../function";
+import Icon3 from "react-native-vector-icons/Entypo";
+import Icon4 from "react-native-vector-icons/MaterialIcons";
+
+
+import Modal from "react-native-modal";
 
 
 const AllReportScreen = ({navigation}) => {
@@ -62,13 +67,13 @@ const AllReportScreen = ({navigation}) => {
 
         return(
             <View style={{marginBottom:10}}>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={()=>detailReport(item)}>
                     <View style={styles.post}>
                         <Text style={styles.Time}>{`${time}`}</Text>
                         <Text style={[styles.Time,{top:70}]}>{`신고 by.${reportUser.nickname}`}</Text>
 
                         {image}
-                        <View style={{flexDirection:'column'}}>
+                        <View style={{flexDirection:'column', marginLeft:10}}>
                             <View style={{flexDirection:'row'}}>
                                 <View style={statusStyle}>
                                     <Text>{status}</Text>
@@ -93,14 +98,83 @@ const AllReportScreen = ({navigation}) => {
         );
     }
 
+    const [detailModal, setDetailModal] = useState(0);
+    const [currentData, setCurrentData] = useState();
+
+    function detailReport(item) {
+        setCurrentData(item);
+        setDetailModal(!detailModal);
+    }
+
     return (
-        <View style={{height:'90%'}}>
+        <View style={{height:'95%'}}>
 
             <FlatList
                 data={reportData}
                 keyExtractor={(item,index) => String(item._id)}
                 renderItem={({item,index})=>returnReportFlatListItem(item,index)}
             />
+
+            {currentData == undefined?null:
+                <Modal isVisible={detailModal}>
+                    <ScrollView style={styles.modalBox}>
+
+                        <View style={styles.buttonList} >
+                            <Icon4 style={[styles.iconPlace]} name="report"  size={46} color="orange" />
+                            {
+                                currentData.reportWhat==0?
+                                    <Text style={styles.buttonText}>{`'${currentData.targetUser.nickname}'의 게시물 신고 내용`}</Text>
+                                    :
+                                    <Text style={styles.buttonText}>{`'${currentData.targetUser.nickname}' 사용자 신고 내용`}</Text>
+                            }
+                        </View>
+
+                        <View style={{flexDirection:'row', paddingLeft:5, paddingRight:5, borderWidth:1, width:'100%'}}>
+                            <View >
+
+                                {
+                                    currentData.reportWhat==0?
+                                        <View style={styles.modal_profile}>
+                                            <Image style={[styles.profileImage, {borderRadius:10, borderColor:'orange'}]} source={{ uri: currentData.targetPost.image[0]}} />
+                                            <Text style={{fontSize:20, fontWeight:'bold'}}>{currentData.targetPost.title}</Text>
+                                        </View>
+                                        :
+                                        <View style={styles.modal_profile}>
+                                            <Image style={styles.profileImage} source={{ uri: currentData.targetUser.profileImage}} />
+                                            <Text style={{fontSize:20, fontWeight:'bold'}}>{currentData.targetUser.nickname}</Text>
+                                        </View>
+
+                                }
+
+                            </View>
+
+                            <View style={{flexDirection:'column', borderWidth:1, paddingTop:5, paddingLeft:10,paddingRight:8, width:'62%'}}>
+                                <Text style={{fontSize:17, fontWeight:'bold', color:'grey'}}>신고 유형</Text>
+                                <View style={[styles.post_sign,{alignSelf:'flex-start'}]}>
+                                    <Text style={{fontSize:20, fontWeight:'bold'}}>{currentData.reportCategory}</Text>
+                                </View>
+
+                                <Text style={{fontSize:17, fontWeight:'bold', color:'grey'}}>신고 설명</Text>
+                                <Text style={{fontSize:20, fontWeight:'bold'}}>{currentData.text}</Text>
+
+                            </View>
+
+                        </View>
+
+
+
+
+
+                    </ScrollView>
+                    <TouchableOpacity style={styles.cancleIcon} onPress={()=>{
+                        setDetailModal(!detailModal)
+                        setCurrentData();
+                    }}>
+                        <Icon3 name="back"  size={40} color="orange" />
+                    </TouchableOpacity>
+
+                </Modal>
+            }
 
 
         </View>
@@ -111,6 +185,40 @@ const AllReportScreen = ({navigation}) => {
 
 
 const styles = StyleSheet.create({
+    modal_profile:{
+        flexDirection:'column', alignItems:'center',
+        width:135
+    },
+    modalBox:{
+      backgroundColor:'white',
+    },
+    buttonList: {
+        //borderWidth:1,
+        height:55,
+        flexDirection:'row',
+        backgroundColor: '#ffe8d8',
+        borderRadius: 20,
+        marginBottom:7,
+    },
+    iconPlace: {
+        height:'100%',
+        marginLeft:10,
+        paddingTop: 5
+
+    },
+    buttonText:{
+        fontSize: 20,
+        color:'black',
+        height:'100%',
+        paddingTop:13,
+        //borderWidth:1,
+        marginLeft: 13
+    },
+    cancleIcon:{
+        position:'absolute',
+        top:7,
+        right:12
+    },
     post:{
         flexDirection: "row",
         borderRadius: 15,
@@ -119,15 +227,15 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         padding: 10,
     },
-    postTitle:{fontSize:18, fontWeight: "bold", width:"75%", paddingTop:9},
+    postTitle:{fontSize:18, fontWeight: "bold", width:"75%", paddingTop:5},
     Time: {fontSize:13, textAlign:'right', position:'absolute',right:5,top:8, marginRight:3},
     profileImage:{
         width: wp(20),
         overflow:"hidden",
         height: hp(20),
         aspectRatio: 1,
-        borderRadius: 50,
-        marginRight:12,
+        borderRadius: 100,
+
         borderWidth:2,
         borderColor:'#ff8a8a',
     },

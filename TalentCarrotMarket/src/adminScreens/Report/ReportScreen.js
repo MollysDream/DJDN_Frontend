@@ -73,7 +73,9 @@ const styles = StyleSheet.create({
     text_on:{
     fontSize:18,
         fontWeight: 'bold',
-        color: '#ff5900'
+        color: '#ff5900',
+        borderBottomWidth: 2,
+        borderColor: '#ff5900'
 },
 text_off:{
     fontSize:18,
