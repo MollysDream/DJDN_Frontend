@@ -11,7 +11,7 @@ import {
   Text,
   Image,
   TouchableOpacity,
-  TextInput,
+  TextInput, Alert,
 } from 'react-native';
 
 import { GoogleSignin,GoogleSigninButton,statusCodes } from '@react-native-community/google-signin';
@@ -95,9 +95,16 @@ const LoginScreen = ({navigation}) => {
 
        if (returnData.data.message) {
           if (returnData.data.message && returnData.data.login === "1") {
-            AsyncStorage.setItem('user_id', returnData.data.userId);
             //console.log(returnData.data.message);
             let admin = await requestUserAPI.checkAdmin(returnData.data.userId);
+            let userData = await requestUserAPI.getUserData(returnData.data.userId);
+
+            if(userData.ban){
+              setErrortext('차단된 사용자입니다');
+              return;
+            }
+
+            AsyncStorage.setItem('user_id', returnData.data.userId);
 
             if(admin === null){
               navigation.replace('MainTab');
