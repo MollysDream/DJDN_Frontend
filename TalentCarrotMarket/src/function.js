@@ -42,7 +42,22 @@ function getPrice(price){
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function getPlusDate(plus){
+    Date.prototype.addDays = function(days) {
+        var date = new Date(this.valueOf());
+        date.setDate(date.getDate() + days);
+        return date;
+    }
+
+    var date = new Date()
+
+    let banDate = date.addDays(plus);
+
+    return banDate;
+}
+
 export {
     getDate,
-    getPrice
+    getPrice,
+    getPlusDate
 }

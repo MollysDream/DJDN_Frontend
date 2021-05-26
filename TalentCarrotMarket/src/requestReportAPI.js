@@ -53,10 +53,10 @@ export async function deletePostandReport(postId){
     return result.data;
 }
 
-export async function setBanUser(userId, TF){
+export async function setBanUser(userId, TF, banDate){
     console.log("setBanUser함수 호출됨");
     console.log(`밴 상태: ${TF} 로 변경`);
-    const result = await axi.post("/report/setBanUser", {userId, TF});
+    const result = await axi.post("/report/setBanUser", {userId, TF, banDate});
     return result.data;
 }
 

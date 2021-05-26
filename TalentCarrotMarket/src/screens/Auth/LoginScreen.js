@@ -100,8 +100,13 @@ const LoginScreen = ({navigation}) => {
             let userData = await requestUserAPI.getUserData(returnData.data.userId);
 
             if(userData.ban){
-              setErrortext('차단된 사용자입니다');
-              return;
+              let curDate = new Date();
+              let banDate = new Date(userData.banDate)
+              if(curDate<banDate){
+                setErrortext(`${userData.banDate}까지 차단된 사용자입니다`);
+                return;
+              }
+
             }
 
             AsyncStorage.setItem('user_id', returnData.data.userId);
