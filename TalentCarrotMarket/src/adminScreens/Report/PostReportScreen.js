@@ -257,6 +257,9 @@ const PostReportScreen = ({navigation}) => {
                                 <Text style={{fontSize:17, fontWeight:'bold', color:'grey'}}>신고 설명</Text>
                                 <Text style={{fontSize:20, fontWeight:'bold'}}>{currentData.text}</Text>
 
+                                <Text style={{fontSize:17, fontWeight:'bold', color:'grey'}}>사용자 닉네임</Text>
+                                <Text style={{fontSize:20, fontWeight:'bold'}}>{currentData.targetUser.nickname}</Text>
+
                                 <Text style={{fontSize:15, color:'grey', alignSelf:'flex-end'}}>{`신고 by.${currentData.reportUser.nickname}`}</Text>
                             </View>
 
