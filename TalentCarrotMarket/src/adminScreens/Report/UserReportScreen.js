@@ -18,7 +18,7 @@ import requestUserAPI from "../../requestUserAPI";
 import requestAddressAPI from "../../requestAddressAPI";
 import {useIsFocused} from "@react-navigation/native";
 import requestReportAPI from "../../requestReportAPI";
-import {getDate, getPrice} from "../../function";
+import {getDate, getPlusDate, getPrice} from "../../function";
 import Icon3 from "react-native-vector-icons/Entypo";
 import Icon4 from "react-native-vector-icons/MaterialIcons";
 
@@ -34,7 +34,7 @@ const UserReportScreen = ({navigation}) => {
     const [reportData, setReportData] = useState([]);
 
     async function getReportData(category){
-        let data = await requestReportAPI.getUserReport(category);
+        let data = await requestReportAPI.getPostOrUserReport(category, 1);
         setReportData(data);
     }
     useEffect(() => {
@@ -126,8 +126,18 @@ const UserReportScreen = ({navigation}) => {
         ])
     }
 
-    async function blockUser(){
-        await requestReportAPI.banUser(currentData.targetUser._id);
+    //사용자 차단 모달
+
+    const [banModal, setBanModal] = useState(false);
+
+    async function blockUser(plusDate){
+
+        let banDate = null;
+        //영구 차단 아닐경우
+        if(plusDate!=null)
+            banDate = getPlusDate(plusDate);
+
+        await requestReportAPI.setBanUser(currentData.targetUser._id, true, banDate);
         let updateData = reportData.filter(obj=>{
 
             if(obj.targetUser._id == currentData.targetUser._id){
@@ -137,10 +147,11 @@ const UserReportScreen = ({navigation}) => {
             return true
         })
         setReportData(updateData);
+        setBanModal(!banModal);
     }
 
     async function unBlockUser(){
-        await requestReportAPI.unBanUser(currentData.targetUser._id);
+        await requestReportAPI.setBanUser(currentData.targetUser._id, false);
         let updateData = reportData.filter(obj=>{
 
             if(obj.targetUser._id == currentData.targetUser._id){
@@ -163,7 +174,7 @@ const UserReportScreen = ({navigation}) => {
                 onValueChange={(value) => getReportData(value)}
                 placeholder='카테고리'
             >
-                <Picker.Item color={'grey'} label={'카테고리 선택'} value={''}/>
+                <Picker.Item color={'black'} label={'전체'} value={''}/>
                 {
                     categoryList.map((category, key)=>(
                         <Picker.Item label={category} value={category} key={key}/>
@@ -231,7 +242,7 @@ const UserReportScreen = ({navigation}) => {
                                         <Text style={styles.functionText}>사용자 차단 해제</Text>
                                     </TouchableOpacity>
                                     :
-                                    <TouchableOpacity style={styles.function} onPress={()=>blockUser()}>
+                                    <TouchableOpacity style={styles.function} onPress={()=>setBanModal(!banModal)}>
                                         <Text style={styles.functionText}>사용자 차단</Text>
                                     </TouchableOpacity>
                             }
@@ -241,6 +252,24 @@ const UserReportScreen = ({navigation}) => {
                             </TouchableOpacity>
                         </View>
 
+                        <Modal isVisible={banModal}>
+                            <View style={{alignItems:'center'}}>
+
+                                <TouchableOpacity style={{position:'absolute',right:40, top:33}} onPress={()=>{setBanModal(!banModal)}}>
+                                    <Icon4 name="cancel"  size={35} color="orange" />
+                                </TouchableOpacity>
+
+                                <TouchableOpacity style={styles.function} onPress={()=>blockUser(3)}>
+                                    <Text style={styles.functionText}>3일 차단</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.function} onPress={()=>blockUser(7)}>
+                                    <Text style={styles.functionText}>7일 차단</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.function} onPress={()=>blockUser(null)}>
+                                    <Text style={styles.functionText}>영구 차단</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </Modal>
 
                     </View>
 

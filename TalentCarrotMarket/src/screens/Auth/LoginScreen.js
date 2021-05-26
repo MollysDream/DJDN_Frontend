@@ -11,7 +11,7 @@ import {
   Text,
   Image,
   TouchableOpacity,
-  TextInput,
+  TextInput, Alert,
 } from 'react-native';
 
 import { GoogleSignin,GoogleSigninButton,statusCodes } from '@react-native-community/google-signin';
@@ -19,6 +19,8 @@ import AsyncStorage from '@react-native-community/async-storage';
 // import auth from "@react-native-firebase/auth";
 import requestMemberAPI from "../../requestMemberAPI";
 import requestUserAPI from "../../requestUserAPI";
+import requestReportAPI from "../../requestReportAPI";
+import {getBanDate} from "../../function";
 
 //글자 강조
 const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{props.children}</Text>
@@ -95,9 +97,31 @@ const LoginScreen = ({navigation}) => {
 
        if (returnData.data.message) {
           if (returnData.data.message && returnData.data.login === "1") {
-            AsyncStorage.setItem('user_id', returnData.data.userId);
             //console.log(returnData.data.message);
             let admin = await requestUserAPI.checkAdmin(returnData.data.userId);
+            let userData = await requestUserAPI.getUserData(returnData.data.userId);
+
+            if(userData.ban){
+
+              if(userData.banDate == null){
+                setErrortext(`영구 차단된 사용자입니다`);
+                return;
+              }
+
+              let curDate = new Date();
+              let banDate = new Date(userData.banDate)
+              if(curDate<banDate){
+                let returnDate = getBanDate(userData.banDate);
+                setErrortext(`${returnDate}까지 차단된 사용자입니다`);
+                return;
+              }else{
+                await requestReportAPI.setBanUser(returnData.data.userId, false, null);
+                console.log("밴 풀림");
+              }
+
+            }
+
+            AsyncStorage.setItem('user_id', returnData.data.userId);
 
             if(admin === null){
               navigation.replace('MainTab');

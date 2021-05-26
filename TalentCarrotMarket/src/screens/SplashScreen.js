@@ -1,6 +1,6 @@
 // Import React and Component
 import React, {useState, useEffect} from 'react';
-import {ActivityIndicator, View, StyleSheet, Image} from 'react-native';
+import {ActivityIndicator, View, StyleSheet, Image, Alert} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -8,6 +8,7 @@ import {
 
 import AsyncStorage from '@react-native-community/async-storage';
 import requestUserAPI from "../requestUserAPI";
+import requestReportAPI from "../requestReportAPI";
 
 const SplashScreen = ({navigation}) => {
   //State for ActivityIndicator animation
@@ -25,6 +26,27 @@ const SplashScreen = ({navigation}) => {
         navigation.replace('Auth');
       }else{
         let admin = await requestUserAPI.checkAdmin(userId);
+        let userData =await requestUserAPI.getUserData(userId);
+
+        //로그인한 사용자가 Ban됐을때.
+        if(userData.ban){
+
+          let curDate = new Date();
+          let banDate = new Date(userData.banDate)
+          if(curDate<banDate || userData.banDate == null){
+            Alert.alert("경고","차단된 사용자입니다.\n로그인 화면으로 돌아갑니다.",
+                [{text:'네', style:'cancel',
+                  onPress:()=>{
+                    AsyncStorage.clear();
+                    navigation.replace('Auth');
+                  } }])
+          }else{
+            await requestReportAPI.setBanUser(userId, false, null);
+            console.log("밴 풀림");
+          }
+
+
+        }
 
         if(admin === null){
           navigation.replace('MainTab');
