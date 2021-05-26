@@ -56,8 +56,18 @@ function getPlusDate(plus){
     return banDate;
 }
 
+function getBanDate(date){
+    let slice_date = date.split("T");
+    let YMD = slice_date[0].split("-");
+    let year = YMD[0];
+    let month = YMD[1];
+    let day = YMD[2];
+    return `${year}년-${month}월-${day}일`
+}
+
 export {
     getDate,
     getPrice,
-    getPlusDate
+    getPlusDate,
+    getBanDate
 }

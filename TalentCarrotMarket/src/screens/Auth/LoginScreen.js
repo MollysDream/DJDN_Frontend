@@ -19,6 +19,8 @@ import AsyncStorage from '@react-native-community/async-storage';
 // import auth from "@react-native-firebase/auth";
 import requestMemberAPI from "../../requestMemberAPI";
 import requestUserAPI from "../../requestUserAPI";
+import requestReportAPI from "../../requestReportAPI";
+import {getBanDate} from "../../function";
 
 //글자 강조
 const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{props.children}</Text>
@@ -100,11 +102,21 @@ const LoginScreen = ({navigation}) => {
             let userData = await requestUserAPI.getUserData(returnData.data.userId);
 
             if(userData.ban){
+
+              if(userData.banDate == null){
+                setErrortext(`영구 차단된 사용자입니다`);
+                return;
+              }
+
               let curDate = new Date();
               let banDate = new Date(userData.banDate)
               if(curDate<banDate){
-                setErrortext(`${userData.banDate}까지 차단된 사용자입니다`);
+                let returnDate = getBanDate(userData.banDate);
+                setErrortext(`${returnDate}까지 차단된 사용자입니다`);
                 return;
+              }else{
+                await requestReportAPI.setBanUser(returnData.data.userId, false, null);
+                console.log("밴 풀림");
               }
 
             }

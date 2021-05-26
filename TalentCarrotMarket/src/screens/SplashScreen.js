@@ -30,12 +30,22 @@ const SplashScreen = ({navigation}) => {
 
         //로그인한 사용자가 Ban됐을때.
         if(userData.ban){
-          Alert.alert("경고","차단된 사용자입니다.\n로그인 화면으로 돌아갑니다.",
-            [{text:'네', style:'cancel',
-              onPress:()=>{
-              AsyncStorage.clear();
-              navigation.replace('Auth');
-            } }])
+
+          let curDate = new Date();
+          let banDate = new Date(userData.banDate)
+          if(curDate<banDate || userData.banDate == null){
+            Alert.alert("경고","차단된 사용자입니다.\n로그인 화면으로 돌아갑니다.",
+                [{text:'네', style:'cancel',
+                  onPress:()=>{
+                    AsyncStorage.clear();
+                    navigation.replace('Auth');
+                  } }])
+          }else{
+            await requestReportAPI.setBanUser(userId, false, null);
+            console.log("밴 풀림");
+          }
+
+
         }
 
         if(admin === null){
