@@ -178,7 +178,7 @@ const AllReportScreen = ({navigation}) => {
     }
 
     async function blockUser(){
-        await requestReportAPI.banUser(currentData.targetUser._id);
+        await requestReportAPI.setBanUser(currentData.targetUser._id, true);
         let updateData = reportData.filter(obj=>{
 
             if(obj.targetUser._id == currentData.targetUser._id){
@@ -191,7 +191,7 @@ const AllReportScreen = ({navigation}) => {
     }
 
     async function unBlockUser(){
-        await requestReportAPI.unBanUser(currentData.targetUser._id);
+        await requestReportAPI.setBanUser(currentData.targetUser._id, false);
         let updateData = reportData.filter(obj=>{
 
             if(obj.targetUser._id == currentData.targetUser._id){

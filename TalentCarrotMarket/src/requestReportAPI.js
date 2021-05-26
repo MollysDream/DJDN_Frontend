@@ -24,20 +24,20 @@ export async function getAllReport(){
     return reportData.data;
 }
 
-export async function getPostReport(category){
-    console.log(`getPostReport함수 호출됨`);
-    const reportData = await axi.get("/report/getPostReport", {params:{category:category}});
+export async function getPostOrUserReport(category, postOrUser){
+    console.log(`getPostOrUserReport함수 호출됨`);
+    const reportData = await axi.get("/report/getPostOrUserReport", {params:{category:category, postOrUser:postOrUser}});
     //console.log(reportData.data);
     return reportData.data;
 }
 
-export async function getUserReport(category){
+/*export async function getUserReport(category){
     console.log(`getUserReport함수 호출됨`);
     console.log(category);
     const reportData = await axi.get("/report/getUserReport", {params:{category:category}});
     //console.log(reportData.data);
     return reportData.data;
-}
+}*/
 
 export async function deleteReport(reportId){
     console.log('deleteReport함수 호출됨');
@@ -53,28 +53,26 @@ export async function deletePostandReport(postId){
     return result.data;
 }
 
-export async function banUser(userId){
-    console.log("banUser함수 호출됨");
-    console.log(`밴 상태: True 로 변경`);
-    const result = await axi.post("/report/banUser", {userId});
+export async function setBanUser(userId, TF){
+    console.log("setBanUser함수 호출됨");
+    console.log(`밴 상태: ${TF} 로 변경`);
+    const result = await axi.post("/report/setBanUser", {userId, TF});
     return result.data;
 }
 
-export async function unBanUser(userId){
+/*export async function unBanUser(userId){
     console.log("banUser함수 호출됨");
     console.log(`밴 상태: false 로 변경`);
     const result = await axi.post("/report/unBanUser", {userId});
     return result.data;
-}
+}*/
 
 export default{
     reportPostOrUser,
     getAllReport,
-    getPostReport,
-    getUserReport,
+    getPostOrUserReport,
     deleteReport,
     deletePostandReport,
-    banUser,
-    unBanUser
+    setBanUser,
 
 }

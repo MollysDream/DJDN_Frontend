@@ -34,7 +34,7 @@ const PostReportScreen = ({navigation}) => {
     const [reportData, setReportData] = useState([]);
 
     async function getReportData(category){
-        let data = await requestReportAPI.getPostReport(category);
+        let data = await requestReportAPI.getPostOrUserReport(category, 0);
         setReportData(data);
     }
 
@@ -168,7 +168,7 @@ const PostReportScreen = ({navigation}) => {
     }
 
     async function blockUser(){
-        await requestReportAPI.banUser(currentData.targetUser._id);
+        await requestReportAPI.setBanUser(currentData.targetUser._id, true);
         let updateData = reportData.filter(obj=>{
 
             if(obj.targetUser._id == currentData.targetUser._id){
@@ -181,7 +181,7 @@ const PostReportScreen = ({navigation}) => {
     }
 
     async function unBlockUser(){
-        await requestReportAPI.unBanUser(currentData.targetUser._id);
+        await requestReportAPI.setBanUser(currentData.targetUser._id, false);
         let updateData = reportData.filter(obj=>{
 
             if(obj.targetUser._id == currentData.targetUser._id){
@@ -203,7 +203,7 @@ const PostReportScreen = ({navigation}) => {
                 onValueChange={(value) => getReportData(value)}
                 placeholder='카테고리'
             >
-                <Picker.Item color={'grey'} label={'카테고리 선택'} value={''}/>
+                <Picker.Item color={'black'} label={'전체'} value={''}/>
                 {
                     categoryList.map((category, key)=>(
                         <Picker.Item label={category} value={category} key={key}/>
