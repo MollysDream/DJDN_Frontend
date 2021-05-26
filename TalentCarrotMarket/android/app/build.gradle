@@ -188,6 +188,7 @@ android {
 
 dependencies {
     // implementation project(':react-native-community-geolocation')
+    implementation project(':react-native-push-notification')
     implementation platform('com.google.firebase:firebase-bom:26.7.0')
     // implementation platform('com.google.firebase:firebase-bom:27.0.0')
     implementation fileTree(dir: "libs", include: ["*.jar"])

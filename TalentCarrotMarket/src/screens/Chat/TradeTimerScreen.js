@@ -22,6 +22,7 @@ import Base64 from 'crypto-js/enc-base64';
 const CryptoJS =require ('crypto-js');
 
 import requestTradeAPI from "../../requestTradeAPI";
+import RemotePushController from '../../util/RemotePushController'
 
 //글자 강조
 const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{props.children}</Text>
@@ -40,6 +41,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
 
 
   const [endDateTime, setEndDateTime] = useState(endSet);
+  // const [notifyEndDateTime, setNotifyEndDateTime] = useState(endDateTime.setMinutes(endDateTime.getMinutes()-5))
   const [endDateChange, setEndDateChange] = useState(false);
   const nowDate = Date.now();
   // diffTime= 100;
@@ -52,6 +54,8 @@ const TradeTimerScreen = ({navigation, route}) =>{
   useEffect(()=>{
     console.log("새로운 종료시간은 "+endDateTime)
     setDiffTime((endDateTime.getTime()-nowDate)/1000);
+    // setNotifyEndDateTime(endDateTime.setMinutes(endDateTime.getMinutes()-5));
+    // console.log("새로운 알림 종료시간은 "+ notifyEndDateTime);
     console.log("새로운 연장시간은 "+diffTime);
     setEndDateChange(false)
   },[endDateChange])
@@ -90,7 +94,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
 
   const extendButton = async() =>{
 
-    endDateTime.setMinutes(endDateTime.getMinutes()+10)
+    endDateTime.setMinutes(endDateTime.getMinutes()+5)
     console.log("연장 후 시간은ㅇㅇ "+endDateTime)
     setEndDateChange(true)
     const newEndSet = newFormatDate(endDateTime)
@@ -307,7 +311,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
       <CountDown
           size={30}
           until={diffTime}
-          onFinish={autoReport}
+          // onFinish={autoReport}
           digitStyle={{backgroundColor: '#FFF', borderWidth: 2, borderColor: '#1CC625'}}
           digitTxtStyle={{color: '#1CC627'}}
           timeLabelStyle={{color: 'green', fontWeight: 'bold'}}
@@ -324,7 +328,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
       {/* <TouchableOpacity>
         <Button title={'SMS 보내기!'} onPress={autoReport}/>
       </TouchableOpacity> */}
-
+      <RemotePushController time={diffTime}/>
     </View>
     )
 }
