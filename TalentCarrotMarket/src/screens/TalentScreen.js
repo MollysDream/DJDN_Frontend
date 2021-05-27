@@ -1,24 +1,69 @@
 import React from 'react'
-import { Text, View, Button, StyleSheet } from 'react-native'
+
 import { LocalNotification } from '../util/LocalNotification'
+
 import RemotePushController from '../util/RemotePushController'
 
+import {
+  View,
+  Text,
+  StyleSheet, Image, TouchableOpacity, TouchableWithoutFeedback, Modal, TouchableHighlight, Button
+} from 'react-native';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
+import axios from 'axios';
+import IMP from 'iamport-react-native';
+import Iamport from '../Iamport';
 
-const TalentScreen = () => {
 
-//  const handleButtonPress = () => {
-//     LocalNotification()
-// }
+const TalentScreen = ({navigation}) => {
+
+  function press(){
+    navigation.navigate('Iamport');
+  }
+
+  function requestPay(){
+
+    console.log("눌리긴했다!");
+
+    function callback(response) {
+      console.log("된건가..? " + response);
+    }
+    // IMP.request_pay(param, callback) 호출
+    const data = { // param
+      pg: "inicis",
+      pay_method: "card",
+      merchant_uid: `mid_${new Date().getTime()}`,
+      name: "테스트",
+      amount: 100,
+      buyer_email: "junyeoop@naver.com",
+      buyer_name: "나준엽",
+      buyer_tel: "010-3800-7363",
+      buyer_addr: "경기도 수원시 영통구",
+      buyer_postcode: "16501",
+      app_scheme: 'TalentCarrotMarket',
+    };
+    console.log(data.pg);
+    return (
+      <IMP.Payment
+        userCode={'imp74960747'}  // 가맹점 식별코드
+        data={data}           // 결제 데이터
+        callback={callback}   // 결제 종료 후 콜백
+      />
+    );
+  }
 
 return (
-    <View style={styles.container}>
-      {/* <Text>Press a button to trigger the notification</Text>
-      <View style={{ marginTop: 20 }}>
-        <Button title={'거래 시간 푸쉬 알람'} onPress={handleButtonPress} />
-      </View> */}
-      <RemotePushController time={310}/>
-    </View>
-  )
+  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <Text>Talent!</Text>
+    <TouchableOpacity>
+      {/*<Button title={'SMS 보내기!'} onPress={this.sendSMS}/>*/}
+      <Button title={'결제하기!'} onPress={press}/>
+    </TouchableOpacity>
+  </View>
+);
 }
 
 const styles = StyleSheet.create({

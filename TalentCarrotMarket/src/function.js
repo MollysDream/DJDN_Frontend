@@ -10,7 +10,7 @@ function getDate(date){
     let HM = slice_date[1].split(':');
     let S = HM[2].split('.')[0];
 
-    
+
     let cur_date = new Date();
     let year = cur_date.getFullYear();
     let month = (1 + cur_date.getMonth());
@@ -65,7 +65,7 @@ function getBanDate(date){
     return `${year}년-${month}월-${day}일`
 }
 
-const HOST = '192.168.25.41' // OR 10.0.2.2
+const HOST = '192.168.219.114' // OR 10.0.2.2
 
 export {
     getDate,

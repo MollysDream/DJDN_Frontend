@@ -37,6 +37,7 @@ import userProfileScreen from './src/screens/Post/UserProfileScreen';
 //TalentStack
 import advertising from './src/screens/Advertising/AdvertisingScreen';
 import makead from './src/screens/Advertising/MakeAdScreen';
+import Iamport from './src/Iamport';
 
 //chatStack
 import chatchScreen from './src/screens/Chat/ChatChScreen';
@@ -130,8 +131,11 @@ const HomeStackScreen = () => {
 const TalentStackScreen = () => {
   return (
     <Stack.Navigator>
+      <TalentStack.Screen name="talent" component={talentScreen}/>
+      <TalentStack.Screen name="Iamport" component={Iamport}/>
       <TalentStack.Screen name="advertise" component={advertising} />
       <TalentStack.Screen name="makeadver" component={makead}/>
+
     </Stack.Navigator>
   );
 };
@@ -253,8 +257,8 @@ const AdminAdvertisementStackScreen = () => {
             <AdminAdvertisementStack.Screen name="adverrequest" component={adverRequest} />
             <AdminAdvertisementStack.Screen name="adverstatus" component={adverStatus} />
             <AdminAdvertisementStack.Screen name="modifyactive" component={modifyActive} />
-            
-            
+
+
         </Stack.Navigator>
     );
 };

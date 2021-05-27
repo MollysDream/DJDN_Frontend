@@ -28,6 +28,7 @@
     "axios": "^0.21.1",
     "crypto-js": "^4.0.0",
     "haversine": "^1.1.1",
+    "iamport-react-native": "^1.6.3",
     "jquery": "^3.6.0",
     "native-base": "^2.15.2",
     "path": "^0.12.7",
@@ -59,7 +60,7 @@
     "react-native-switch-selector": "^2.1.4",
     "react-native-tab-view": "^3.0.0",
     "react-native-vector-icons": "^8.1.0",
-    "react-native-webview": "^11.4.4",
+    "react-native-webview": "^11.6.2",
     "socket.io-client": "^4.0.1"
   },
   "devDependencies": {
