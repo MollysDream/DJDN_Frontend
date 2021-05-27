@@ -93,9 +93,13 @@ const ModifyActiveScreen = (props) => {
                                         {`  가격: ${advertisement.price}원`}
                                     </Text>
                                 </Item>
+                                {
+                                    advertisement.active == false ?
                                     <TouchableOpacity style={styles.btn2} onPress={()=>updateActive()}>
                                         <Text style={(styles.Text, {color: 'white'})}>승인</Text>
                                     </TouchableOpacity>
+                                    :null
+                                }
                             
                             </Content>
                     </Container>

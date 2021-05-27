@@ -18,6 +18,7 @@ import requestUserAPI from "../../requestUserAPI";
 import requestAddressAPI from "../../requestAddressAPI";
 import {useIsFocused} from "@react-navigation/native";
 
+let select= false;
 const AdvertisementScreen = ({navigation}) => {
 
     //인증한 동네 확인 - 사용자
@@ -29,12 +30,12 @@ const AdvertisementScreen = ({navigation}) => {
     return (
         <View style={styles.btnArea1} >
     
-           <TouchableOpacity style={styles.btn2} onPress={() => navigation.navigate('adverrequest')}>
+           <TouchableOpacity style={styles.btn2} onPress={() => navigation.navigate('adverstatus', {select})}>
                 <Text style={(styles.Text, {color: 'white'})}>요청중인 광고</Text>
             </TouchableOpacity>
     
     
-            <TouchableOpacity style={styles.btn2} onPress={() =>navigation.navigate('adverstatus')}>
+            <TouchableOpacity style={styles.btn2} onPress={() =>navigation.navigate('adverstatus', {select : true})}>
                 <Text style={(styles.Text, {color: 'white'})}>현재 광고 현황</Text>
             </TouchableOpacity>
       

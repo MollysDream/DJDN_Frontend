@@ -11,9 +11,11 @@ export async function createAdver(adverData){
     return info.data;
 }
 
-export async function getRequestAdver() {
-    console.log('getUserTradingPost함수 호출됨');
-    const adverData = await axi.get("/advertisement/getRequestAdver");
+
+
+export async function getAdver() {
+    console.log('getAdver함수 호출됨');
+    const adverData = await axi.get("/advertisement/getAdver");
     //console.log(userTradingPostData.data);
     return adverData.data;
 }
@@ -27,7 +29,7 @@ export async function updateAdverActive(_id, active){
 
 export default{
     createAdver,
-    getRequestAdver,
-    updateAdverActive
+    updateAdverActive,
+    getAdver
 
 }
