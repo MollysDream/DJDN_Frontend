@@ -11,37 +11,22 @@ import {
 import axios from 'axios';
 import smsKey from '../smsKey';
 import Base64 from 'crypto-js/enc-base64';
+
+
+import IMP from 'iamport-react-native';
+
+
+
+
 const CryptoJS =require ('crypto-js');
 
 export default class TalentScreen extends Component{
-
-  /*
-	https://code.google.com/archive/p/crypto-js/
-	https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/crypto-js/CryptoJS%20v3.1.2.zip
-	*/
-
-  /*
-	CryptoJS v3.1.2
-	code.google.com/p/crypto-js
-	(c) 2009-2013 by Jeff Mott. All rights reserved.
-	code.google.com/p/crypto-js/wiki/License
-	*/
-
-  /*
-  <script type="text/javascript" src="./CryptoJS/rollups/hmac-sha256.js"></script>
-  <script type="text/javascript" src="./CryptoJS/components/enc-base64.js"></script>
-  */
   async sendSMS(){
-    // console.log("확인!!");
-    // console.log("확인"+SENS.phoneNumber);
     console.log("확인 accesskey: "+smsKey.accessKey);
     console.log("확인 secretkey: "+smsKey.secretKey);
     console.log("확인 serviceId: "+smsKey.serviceId);
     console.log("확인 phoneNumber: "+smsKey.phoneNumber);
     console.log("확인 timestamp: "+Date.now() + " 타입 : " + typeof Date.now().toString());
-
-
-
     const body = {
       type: 'SMS',
       contentType: 'COMM',
@@ -72,14 +57,50 @@ export default class TalentScreen extends Component{
       .catch((err) => {
         console.error(err.response.data);
       });
-    return 1;
+  }
+
+  requestPay(){
+
+    console.log("눌리긴했다!");
+
+    function callback(response) {
+      console.log("된건가..? " + response);
+    }
+    // IMP.request_pay(param, callback) 호출
+    const data = { // param
+      pg: "inicis",
+      pay_method: "card",
+      merchant_uid: `mid_${new Date().getTime()}`,
+      name: "테스트",
+      amount: 100,
+      buyer_email: "junyeoop@naver.com",
+      buyer_name: "나준엽",
+      buyer_tel: "010-3800-7363",
+      buyer_addr: "경기도 수원시 영통구",
+      buyer_postcode: "16501",
+      app_scheme: 'TalentCarrotMarket',
+    };
+
+    console.log(data.pg);
+
+    return (
+
+      <IMP.Payment
+        userCode={'imp74960747'}  // 가맹점 식별코드
+        data={data}           // 결제 데이터
+        callback={callback}   // 결제 종료 후 콜백
+      />
+
+
+    );
   }
     render(){
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
               <Text>Talent!</Text>
               <TouchableOpacity>
-                <Button title={'SMS 보내기!'} onPress={this.sendSMS}/>
+                {/*<Button title={'SMS 보내기!'} onPress={this.sendSMS}/>*/}
+                <Button title={'결제하기!'} onPress={this.requestPay}/>
               </TouchableOpacity>
             </View>
         );

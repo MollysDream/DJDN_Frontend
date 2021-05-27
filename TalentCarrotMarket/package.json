@@ -28,6 +28,7 @@
     "axios": "^0.21.1",
     "crypto-js": "^4.0.0",
     "haversine": "^1.1.1",
+    "iamport-react-native": "^1.6.3",
     "jquery": "^3.6.0",
     "native-base": "^2.15.2",
     "path": "^0.12.7",
