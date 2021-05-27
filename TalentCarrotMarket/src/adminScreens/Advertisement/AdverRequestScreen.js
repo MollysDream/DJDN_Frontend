@@ -41,7 +41,7 @@ function AdverRequestScreen({navigation}) {
     
 
         return (
-        <TouchableHighlight onPress={() => {navigation.navigate('modifyactive')}}>
+        <TouchableHighlight onPress={() => {navigation.navigate('modifyactive', {item})}}>
         <View style={styles.chatRoomBox}>
             <Image style={styles.post_image} source={{ uri: item.image[0]}} />
             <View style={{flexDirection:'column'}}>

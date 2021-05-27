@@ -17,9 +17,16 @@ export async function getRequestAdver() {
     return adverData.data;
 }
 
+export async function updateAdverActive(_id, active){
+    console.log("updateAdverActive함수 호출됨");
+    console.log(`거래 상태: ${active}로 변경`);
+    const result = await axi.post("/advertisement/updateAdverActive", {_id, active});
+    return result.data;
+}
 
 export default{
     createAdver,
-    getRequestAdver
+    getRequestAdver,
+    updateAdverActive
 
 }
