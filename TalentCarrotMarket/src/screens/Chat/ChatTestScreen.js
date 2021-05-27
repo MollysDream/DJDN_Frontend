@@ -3,9 +3,10 @@ import { StyleSheet, Text, View } from 'react-native';
 import io from 'socket.io-client';
 import AsyncStorage from '@react-native-community/async-storage';
 import ChatScreen from "./ChatScreen";
+import {HOST} from "../../function";
 
 
-const socket = io("http://10.0.2.2:3002"); // replace with the IP of your server, when testing on real devices
+const socket = io(`http://${HOST}:3002`); // replace with the IP of your server, when testing on real devices
 
 export default class ChatTestScreen extends Component{
 	constructor(props) {

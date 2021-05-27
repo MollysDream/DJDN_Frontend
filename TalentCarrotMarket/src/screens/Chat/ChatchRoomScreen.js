@@ -17,6 +17,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import requestUser from "../../requestUserAPI";
 import request from '../../requestAPI';
 import axios from 'axios';
+import {HOST} from "../../function";
 
 let socket;
 let hostId;
@@ -35,7 +36,7 @@ function ChatChRoomScreen(props) {
                     hostId = value;
                 });
 
-            socket = io("http://10.0.2.2:3002");
+            socket = io(`http://${HOST}:3002`);
             console.log("io 정보", socket);
 
             socket.emit('joinRoom', chatroomId);
@@ -74,7 +75,7 @@ function ChatChRoomScreen(props) {
 
         console.log("roomId : ", roomId);
         axios
-            .post("http://10.0.2.2:3000/chat/createChat", newChat)
+            .post(`http://${HOST}:3000/chat/createChat`, newChat)
             .then((data) => {})
     }
 

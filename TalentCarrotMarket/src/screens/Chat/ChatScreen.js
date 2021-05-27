@@ -9,6 +9,7 @@ import axios from 'axios';
 import requestUser from "../../requestUserAPI";
 import request from '../../requestAPI';
 import { IconButton } from 'react-native-paper';
+import {HOST} from "../../function";
 // import {AnimatedAbsoluteButton} from 'react-native-animated-absolute-buttons';
 
 let socket;
@@ -60,7 +61,7 @@ function ChatScreen(props) {
           // console.log("workBeforeChat 실행 / 2번쨰 useEffect, hostId!! "+hostId);
           // console.log("workBeforeChat 실행 / 2번쨰 useEffect, currentUserId!! "+currentUserId);
 
-          socket = io("http://10.0.2.2:3002");
+          socket = io(`http://${HOST}:3002`);
           // socket.emit("searchChatRoom", postOwnerId, postOwnerNick, hostId);
 
             const roomData = await request.getChatRoom();
@@ -124,7 +125,7 @@ function ChatScreen(props) {
           postId : postId,
         }
         let roomInfo;
-        await axios.post("http://10.0.2.2:3000/chat/createChatRoom", newChatRoom)
+        await axios.post(`http://${HOST}:3000/chat/createChatRoom`, newChatRoom)
           .then((data)=>{
             // console.log(data);
             roomInfo = data.data;
@@ -201,7 +202,7 @@ function ChatScreen(props) {
         console.log("chatRoomId : ", chatRoomId);
         console.log("roomId : ", roomId);
         axios
-            .post("http://10.0.2.2:3000/chat/createChat", newChat)
+            .post(`http://${HOST}:3000/chat/createChat`, newChat)
             .then((data) => {})
     }
 

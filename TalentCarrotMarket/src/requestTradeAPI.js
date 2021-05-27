@@ -1,6 +1,7 @@
 import axios from 'axios';
+import {HOST} from "./function";
 
-const axi = axios.create({baseURL: "http://10.0.2.2:3000"});
+const axi = axios.create({baseURL: `http://${HOST}:3000`});
 
 export async function getTrade(chatRoom){
     console.log('getTrade함수 호출됨');
