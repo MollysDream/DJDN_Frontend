@@ -62,6 +62,7 @@ import editUserPostScreen from './src/screens/Mypage/EditUserPostScreen';
 import editProfileScreen from './src/screens/Mypage/EditProfileScreen';
 import keywordScreen from './src/screens/Mypage/KeywordScreen';
 import certificationScreen from './src/screens/Mypage/CertificationScreen';
+import editadverScreen from './src/screens/Advertising/EditAdverScreen';
 
 //admin
 //import adverRequest from './src/adminScreens/Advertisement/AdverRequestScreen';
@@ -175,8 +176,10 @@ const SettingStackScreen = () => {
       <SettingStack.Screen name="editProfileScreen" component={editProfileScreen}/>
       <SettingStack.Screen name="keywordScreen" component={keywordScreen}/>
       <SettingStack.Screen name="자격증 증명" component={certificationScreen}/>
-      <TalentStack.Screen name="advertise" component={advertising} />
-      <TalentStack.Screen name="makeadver" component={makead}/>
+      <SettingStack.Screen name="advertise" component={advertising} />
+      <SettingStack.Screen name="makeadver" component={makead}/>
+      <SettingStack.Screen name="editadver" component={editadverScreen}/>
+      
     </Stack.Navigator>
   );
 };
