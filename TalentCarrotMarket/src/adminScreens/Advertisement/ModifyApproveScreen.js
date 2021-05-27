@@ -27,7 +27,6 @@ const ModifyApproveScreen = (props) => {
     const [modalVisible, setMv] = useState(false);
     const [modalImage, setMi] = useState(0);
 
-    //인증한 동네 확인 - 사용자
     useEffect(() => {
         console.log(advertisement);
     }, []);

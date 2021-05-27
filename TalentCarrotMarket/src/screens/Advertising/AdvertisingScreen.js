@@ -23,14 +23,14 @@ import DisabledScreen from './DisabledScreen';
 
 const AdvertisingScreen = ({navigation}) => {
 
-    const [tab, setTab] = useState(0)
+    const [tab, setTab] = useState(0);
 
 
     let Screen = null;
     if(tab==0)
-        Screen = <DisabledScreen/>
+        Screen = <DisabledScreen navigation={navigation}/>
     else if(tab==1)
-        Screen = <ActivationScreen/>
+        Screen = <ActivationScreen navigation={navigation}/>
   
 
         return (
@@ -55,7 +55,7 @@ const AdvertisingScreen = ({navigation}) => {
                     </Text>
                 </TouchableOpacity>
                 </View>
-
+                <View>{Screen}</View>
                 </View>
      
         )

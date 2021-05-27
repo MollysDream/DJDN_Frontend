@@ -11,13 +11,32 @@ export async function createAdver(adverData){
     return info.data;
 }
 
-
-
 export async function getAdver() {
     console.log('getAdver함수 호출됨');
     const adverData = await axi.get("/advertisement/getAdver");
     //console.log(userTradingPostData.data);
     return adverData.data;
+}
+
+export async function deleteAdver(_id){
+    console.log('deleteAdver함수 호출됨');
+    const result = await axi.delete("/advertisement/deleteAdver", {params:{_id:_id}});
+    return result.data;
+}
+
+export async function updateAdver(adverData){
+    console.log("updateAdver 호출됨");
+    console.log(adverData);
+    const info = await axi.post("/advertisement/updateAdver", adverData);
+    return info.data;
+}
+
+export async function getMyAdver(userId) {
+    console.log('getMyAdver함수 호출됨');
+    console.log("여기 : ", userId);
+    const InfoData = await axi.get("/advertisement/getMyAdver", {params : {userId : userId}});
+    //console.log(userTradingPostData.data);
+    return InfoData.data;
 }
 
 export async function updateAdverApprove(_id, approve){
@@ -30,6 +49,9 @@ export async function updateAdverApprove(_id, approve){
 export default{
     createAdver,
     updateAdverApprove,
-    getAdver
+    getAdver,
+    getMyAdver,
+    deleteAdver,
+    updateAdver
 
 }
