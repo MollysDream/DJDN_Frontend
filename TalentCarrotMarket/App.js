@@ -66,7 +66,7 @@ import certificationScreen from './src/screens/Mypage/CertificationScreen';
 //admin
 //import adverRequest from './src/adminScreens/Advertisement/AdverRequestScreen';
 import adverStatus from './src/adminScreens/Advertisement/AdverStatusScreen';
-import modifyActive from './src/adminScreens/Advertisement/ModifyActiveScreen';
+import modifyApprove from './src/adminScreens/Advertisement/ModifyApproveScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -175,6 +175,8 @@ const SettingStackScreen = () => {
       <SettingStack.Screen name="editProfileScreen" component={editProfileScreen}/>
       <SettingStack.Screen name="keywordScreen" component={keywordScreen}/>
       <SettingStack.Screen name="자격증 증명" component={certificationScreen}/>
+      <TalentStack.Screen name="advertise" component={advertising} />
+      <TalentStack.Screen name="makeadver" component={makead}/>
     </Stack.Navigator>
   );
 };
@@ -252,7 +254,7 @@ const AdminAdvertisementStackScreen = () => {
             <AdminAdvertisementStack.Screen name="광고 확인" component={adminAdvertisementScreen} />
             {/* <AdminAdvertisementStack.Screen name="adverrequest" component={adverRequest} /> */}
             <AdminAdvertisementStack.Screen name="adverstatus" component={adverStatus} />
-            <AdminAdvertisementStack.Screen name="modifyactive" component={modifyActive} />
+            <AdminAdvertisementStack.Screen name="modifyapprove" component={modifyApprove} />
             
             
         </Stack.Navigator>
