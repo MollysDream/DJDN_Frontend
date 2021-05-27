@@ -12,6 +12,7 @@ export async function createAdver(adverData){
 }
 
 
+
 export async function getAdver() {
     console.log('getAdver함수 호출됨');
     const adverData = await axi.get("/advertisement/getAdver");
@@ -19,23 +20,16 @@ export async function getAdver() {
     return adverData.data;
 }
 
-export async function updateAdverActive(_id, active){
+export async function updateAdverApprove(_id, approve){
     console.log("updateAdverActive함수 호출됨");
-    console.log(`거래 상태: ${active}로 변경`);
-    const result = await axi.post("/advertisement/updateAdverActive", {_id, active});
+    console.log(`거래 상태: ${approve}로 변경`);
+    const result = await axi.post("/advertisement/updateAdverApprove", {_id, approve});
     return result.data;
-}
-
-export async function createPoint(email){
-    console.log("createPoint함수 호출됨");
-    const info = await axi.post("/advertisement/createPoint", {email});
-    return info.data;
 }
 
 export default{
     createAdver,
-    updateAdverActive,
-    getAdver,
-    createPoint
+    updateAdverApprove,
+    getAdver
 
 }

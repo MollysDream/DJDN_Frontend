@@ -32,6 +32,7 @@ import requestAdverAPI from "../../requestAdverAPI";
 
 export default class MAkeAdScreen extends Component{
     state={
+        approve : false,
         active: false,
         title: "",
         imageTemp:[],

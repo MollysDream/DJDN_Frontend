@@ -12,7 +12,7 @@ import {
   } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
-
+import Icon3 from 'react-native-vector-icons/Entypo';
 import AsyncStorage from '@react-native-community/async-storage';
 import requestUserAPI from "../../requestUserAPI";
 import requestAddressAPI from "../../requestAddressAPI";
@@ -83,7 +83,10 @@ const MypageScreen = ({navigation}) => {
         console.log('자격증 증명');
         navigation.navigate('자격증 증명', {userId:userId});
     }
-
+    const goToAdvertiseScreen =()=>{
+        console.log('advertise');
+        navigation.navigate('advertise', {userId:userId});
+    }
     return (
       <View style={styles.container}>
 
@@ -136,6 +139,11 @@ const MypageScreen = ({navigation}) => {
               <TouchableOpacity style={styles.buttonList} onPress={goToKeywordScreen}>
                   <Icon style={[styles.iconPlace, {marginTop:3}]} name="tags"  size={36} color="#37CEFF" />
                   <Text style={styles.buttonText}>키워드 알림</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity style={styles.buttonList} onPress={goToAdvertiseScreen}>
+                  <Icon3 style={[styles.iconPlace, {marginTop:3}]} name="creative-commons-noncommercial-us"  size={46} color="#37CEFF" />
+                  <Text style={styles.buttonText}>광고 </Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.buttonList} onPress={goToCertificationScreen}>

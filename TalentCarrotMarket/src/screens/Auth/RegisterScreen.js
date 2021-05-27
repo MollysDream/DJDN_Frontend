@@ -17,7 +17,6 @@ import {
 } from 'react-native';
 
 import requestMemberAPI from "../../requestMemberAPI";
-import requestAdverAPI from "../../requestAdverAPI";
 
 const RegisterScreen = ({navigation}) => {
   const [userName, setUserName] = useState('');
@@ -70,8 +69,6 @@ const RegisterScreen = ({navigation}) => {
      try{
         //회원 가입
           const returnData = await requestMemberAPI.getRegister(userId,userPassword,userName,userNickName);
-          console.log(userId);
-          await requestAdverAPI.createPoint(userId); //email
           setErrortext2('');
           if (returnData.data.message) {
                 alert(returnData.data.message);

@@ -34,13 +34,13 @@ function AdverStatusScreen(props){
     }, []);
 
     function returnFlatListItem(item,index){
-        const itemActive = item.active;
+        const itemApprove = item.approve;
         
         return (
             <View>
             {
-                itemActive == false && props.route.params.select == false ?
-                <TouchableHighlight onPress={() => {props.navigation.navigate('modifyactive', {item})}}>
+                itemApprove == false && props.route.params.select == false ?
+                <TouchableHighlight onPress={() => {props.navigation.navigate('modifyapprove', {item})}}>
                 <View style={styles.chatRoomBox}>
                     <Image style={styles.post_image} source={{ uri: item.image[0]}} />
                     <View style={{flexDirection:'column'}}>
@@ -56,8 +56,8 @@ function AdverStatusScreen(props){
                 </TouchableHighlight>:null
             }
 {
-                itemActive == true && props.route.params.select == true ?
-                <TouchableHighlight onPress={() => {props.navigation.navigate('modifyactive', {item})}}>
+                itemApprove == true && props.route.params.select == true ?
+                <TouchableHighlight onPress={() => {props.navigation.navigate('modifyapprove', {item})}}>
                 <View style={styles.chatRoomBox}>
                     <Image style={styles.post_image} source={{ uri: item.image[0]}} />
                     <View style={{flexDirection:'column'}}>
