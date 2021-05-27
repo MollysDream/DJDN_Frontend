@@ -12,7 +12,6 @@ export async function createAdver(adverData){
 }
 
 
-
 export async function getAdver() {
     console.log('getAdver함수 호출됨');
     const adverData = await axi.get("/advertisement/getAdver");
@@ -27,9 +26,16 @@ export async function updateAdverActive(_id, active){
     return result.data;
 }
 
+export async function createPoint(email){
+    console.log("createPoint함수 호출됨");
+    const info = await axi.post("/advertisement/createPoint", {email});
+    return info.data;
+}
+
 export default{
     createAdver,
     updateAdverActive,
-    getAdver
+    getAdver,
+    createPoint
 
 }
