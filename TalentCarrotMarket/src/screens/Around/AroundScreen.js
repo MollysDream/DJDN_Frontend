@@ -46,7 +46,7 @@ const AroundScreen = ({navigation}) => {
           currentY: location.latitude
         }
       axios
-      .post("http://10.0.2.2:3000/address/currentLocation", send_param)
+      .post("http://:3000/address/currentLocation", send_param)
         //정상 수행
         .then(returnData => {
           navigation.navigate('aroundCertify',{

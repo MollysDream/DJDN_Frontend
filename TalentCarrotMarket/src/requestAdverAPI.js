@@ -1,7 +1,8 @@
 import axios from 'axios';
 import {RNS3} from "react-native-aws3";
+import {HOST} from "./function";
 
-const axi = axios.create({baseURL: "http://10.0.2.2:3000"});
+const axi = axios.create({baseURL: `http://${HOST}:3000`});
 
 export async function createAdver(adverData){
     console.log("createAdver함수 호출됨");
