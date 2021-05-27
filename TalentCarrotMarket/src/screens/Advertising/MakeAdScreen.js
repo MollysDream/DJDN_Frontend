@@ -27,7 +27,8 @@ import {PickerItem} from "react-native/Libraries/Components/Picker/Picker";
 import AsyncStorage from "@react-native-community/async-storage";
 import {S3Key} from "../../Key";
 import requestUserAPI from "../../requestUserAPI";
-import requestAddressAPI from "../../requestAddressAPI"
+import requestAddressAPI from "../../requestAddressAPI";
+import requestAdverAPI from "../../requestAdverAPI";
 
 export default class MAkeAdScreen extends Component{
     state={
@@ -129,7 +130,7 @@ export default class MAkeAdScreen extends Component{
         }
 
         try{
-            const adverData = await request.createAdver(this.state)
+            const adverData = await requestAdverAPI.createAdver(this.state)
             Alert.alert("작성 완료", "광고 작성이 완료되었습니다.",
                 [{ text: '확인', style: 'cancel',
                     onPress : ()=> {

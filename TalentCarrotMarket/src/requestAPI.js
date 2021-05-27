@@ -78,17 +78,6 @@ export async function createPost(postData){
 
 export async function createAdver(adverData){
     console.log("createAdver함수 호출됨");
-    console.log("title", adverData.title);
-    console.log("active", adverData.active);
-    console.log("image", adverData.image);
-    console.log("text", adverData.text);
-    console.log("price", adverData.price);
-    console.log("count", adverData.count);
-    console.log("area", adverData.area);
-    console.log("shopOwner", adverData.shopOwner);
-    console.log("latitude", adverData.area.latitude);
-    console.log("longitude", adverData.area.longitude);
-    console.log("longitude", adverData.area.addressName);
     //console.log(postData);
     const info = await axi.post("/advertisement/createAdver", adverData);
     return info.data;
@@ -195,5 +184,4 @@ export default{
     getChatRoomById,
     getUserTradingPost,
     getPostTitle,
-    createAdver
 }
