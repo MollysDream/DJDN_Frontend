@@ -64,7 +64,7 @@ import keywordScreen from './src/screens/Mypage/KeywordScreen';
 import certificationScreen from './src/screens/Mypage/CertificationScreen';
 
 //admin
-import adverRequest from './src/adminScreens/Advertisement/AdverRequestScreen';
+//import adverRequest from './src/adminScreens/Advertisement/AdverRequestScreen';
 import adverStatus from './src/adminScreens/Advertisement/AdverStatusScreen';
 import modifyActive from './src/adminScreens/Advertisement/ModifyActiveScreen';
 
@@ -248,7 +248,7 @@ const AdminAdvertisementStackScreen = () => {
     return (
         <Stack.Navigator>
             <AdminAdvertisementStack.Screen name="광고 확인" component={adminAdvertisementScreen} />
-            <AdminAdvertisementStack.Screen name="adverrequest" component={adverRequest} />
+            {/* <AdminAdvertisementStack.Screen name="adverrequest" component={adverRequest} /> */}
             <AdminAdvertisementStack.Screen name="adverstatus" component={adverStatus} />
             <AdminAdvertisementStack.Screen name="modifyactive" component={modifyActive} />
             
