@@ -13,6 +13,7 @@ import {
 
 import ModifyApproveScreen from "./ModifyApproveScreen";
 import AdverStatusScreen from "./AdverStatusScreen";
+import Icon from "react-native-vector-icons/FontAwesome5";
 
 const AdvertisementScreen = ({navigation}) => {
 

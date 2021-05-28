@@ -5,21 +5,22 @@ import {
     StyleSheet,
     FlatList,
     TouchableOpacity,
-    Button, Image, TouchableHighlight
+    Button, Image, TouchableHighlight, ScrollView
 } from 'react-native';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import Icon from 'react-native-vector-icons/FontAwesome5';
-import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import AsyncStorage from '@react-native-community/async-storage';
 import requestAdverAPI from "../../requestAdverAPI";
 import {useIsFocused, useNavigation} from "@react-navigation/native";
-import requestUser from "../../requestUserAPI";
-import requestUserAPI from "../../requestUserAPI";
+import {getDate} from "../../function";
+import Icon from "react-native-vector-icons/FontAwesome5";
+import Icon2 from "react-native-vector-icons/MaterialIcons";
 
+
+import Modal from "react-native-modal";
+import Postcode from "@actbase/react-daum-postcode";
 
 function AdverStatusScreen(props,navigation){
     const [adverInfo, setAdverInfo] = useState("");
@@ -31,15 +32,19 @@ function AdverStatusScreen(props,navigation){
 
     let adver;
 
+    async function getadver(){
+        adver = await requestAdverAPI.getAdver();
+        setAdverInfo(adver);
+        setCurrentLocation('전체');
+    }
+
     useEffect(() => {
-        async function getadver(){
-            adver = await requestAdverAPI.getAdver();
-            setAdverInfo(adver);
-        }
         getadver();
     }, [isFocused]);
 
     function returnFlatListItem(item,index){
+        let time = getDate(item.date);
+
         const itemApprove = item.approve;
         let status = null;
         let statusStyle = styles.post_sign
@@ -57,6 +62,7 @@ function AdverStatusScreen(props,navigation){
                 <TouchableHighlight onPress={() => {navigations.navigate('modifyapprove', {item})}}>
                 <View style={styles.post}>
 
+                    <Text style={styles.Address}>{`${time}`}</Text>
                     <Text style={[styles.Address,{top:53}]}>{`${item.addressName}`}</Text>
                     <Text style={[styles.Address,{top:70, fontSize:15, fontWeight:'bold'}]}>{`신청자 - ${item.shopOwner.nickname}`}</Text>
                     <Image style={styles.profileImage} source={{ uri: item.image[0]}} />
@@ -80,6 +86,7 @@ function AdverStatusScreen(props,navigation){
                     <TouchableHighlight onPress={() => {navigations.navigate('modifyapprove', {item})}}>
                         <View style={styles.post}>
 
+                            <Text style={styles.Address}>{`${time}`}</Text>
                             <Text style={[styles.Address,{top:53}]}>{`${item.addressName}`}</Text>
                             <Text style={[styles.Address,{top:70, fontSize:15, fontWeight:'bold'}]}>{`신청자 - ${item.shopOwner.nickname}`}</Text>
                             <Image style={styles.profileImage} source={{ uri: item.image[0]}} />
@@ -103,17 +110,70 @@ function AdverStatusScreen(props,navigation){
             )
         }
 
+
+
+    const [filterModal, setFilterModal] = useState(false);
+    const[currentLocation, setCurrentLocation] = useState('전체');
+
+    function filterModalButton() {
+        setFilterModal(!filterModal);
+    }
+
+    async function selectByPostcode(data){
+
+        let adverData = await requestAdverAPI.getAdverByAddressName(data.bname);
+        setAdverInfo(adverData);
+
+        setCurrentLocation(data.bname);
+        setFilterModal(!filterModal);
+    }
+
     return (
          <View style={{height:'95%'}}>
-            <FlatList
-                    data={adverInfo}
-                    keyExtractor={(item,index) => String(item._id)}
-                    renderItem={({item,index})=>returnFlatListItem(item,index)}
-                    //onEndReached={this.morePage}
-                    onEndReachedThreshold={1}
-                    //extraData ={rerender}
-                    //refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-                   />
+             <FlatList
+                 data={adverInfo}
+                 keyExtractor={(item,index) => String(item._id)}
+                 renderItem={({item,index})=>returnFlatListItem(item,index)}
+                 //onEndReached={this.morePage}
+                 onEndReachedThreshold={1}
+                 //extraData ={rerender}
+                 //refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+             />
+
+             <Modal isVisible={filterModal}>
+                 <ScrollView style={{ padding:3,height:hp(85), width:wp(95)}}>
+
+                     <Postcode
+                         style={{ height:hp(80), marginTop:20, marginRight: 30 }}
+                         jsOptions={{ animated: true }}
+                         onSelected={data => selectByPostcode(data)}
+                     />
+
+                     <TouchableOpacity onPress={()=>setFilterModal(!filterModal)}
+                                       style={{position:'absolute',top:3,right:5}}>
+                         <Icon2 name="cancel"  size={40} color="#c18aff" />
+                     </TouchableOpacity>
+
+                 </ScrollView>
+
+             </Modal>
+
+             <TouchableOpacity onPress={()=>filterModalButton()}
+                               style={{position:'absolute',bottom:10,right:10,alignSelf:'flex-end'}}>
+                 <Icon name="search-location"  size={50} color="purple" />
+             </TouchableOpacity>
+
+             <View style={{position:'absolute',bottom:70,right:10, backgroundColor:"#ebdbff", padding:3, borderRadius:100}}>
+                 <TouchableOpacity onPress={()=>getadver()} style={{alignSelf:'flex-end',flexDirection:'row'}}>
+                     <Text >{`${currentLocation} 광고 확인중`}</Text>
+                     {
+                         currentLocation =='전체'?null:
+                             <Icon2 name="cancel"  size={20} color="#c18aff" />
+                     }
+                 </TouchableOpacity>
+             </View>
+
+
         </View>
 
     );

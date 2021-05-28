@@ -4,7 +4,7 @@ import {
     Text,
     StyleSheet,
     TouchableOpacity,
-    Button, Image,  Modal,TouchableWithoutFeedback, TouchableHighlight
+    Button, Image, Modal, TouchableWithoutFeedback, TouchableHighlight, Alert
 } from 'react-native';
 import {Container, Content, Form, Header, Input, Item, Label, Left, Right, Textarea} from "native-base";
 
@@ -12,13 +12,8 @@ import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import Icon from 'react-native-vector-icons/FontAwesome5';
-import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import { SliderBox } from "react-native-image-slider-box";
-import AsyncStorage from '@react-native-community/async-storage';
-import requestUserAPI from "../../requestUserAPI";
-import requestAddressAPI from "../../requestAddressAPI";
-import {useIsFocused} from "@react-navigation/native";
 import requestAdverAPI from "../../requestAdverAPI";
 
 
@@ -36,9 +31,28 @@ const ModifyApproveScreen = (props) => {
         setMi(index);
     }
 
-    async function updateApprove(){
+    async function approveButton(){
         let approve = !advertisement.approve;
         await requestAdverAPI.updateAdverApprove(advertisement._id, approve);
+
+        Alert.alert("승인 완료", "광고 승인이 완료되었습니다.",
+            [{ text: '확인', style: 'cancel',
+                onPress : ()=> {
+                    props.navigation.goBack();
+                }}])
+
+    }
+
+    async function disapproveButton(){
+        let approve = !advertisement.approve;
+        await requestAdverAPI.updateAdverApprove(advertisement._id, approve);
+
+        Alert.alert("비활성화 완료", "광고를 비활성화 하였습니다.",
+            [{ text: '확인', style: 'cancel',
+                onPress : ()=> {
+                    props.navigation.goBack();
+                }}])
+
     }
 
 
@@ -94,10 +108,13 @@ const ModifyApproveScreen = (props) => {
                                 </Item>
                                 {
                                     advertisement.approve == false ?
-                                    <TouchableOpacity style={styles.btn2} onPress={()=>updateApprove()}>
-                                        <Text style={(styles.Text, {color: 'white'})}>승인</Text>
-                                    </TouchableOpacity>
-                                    :null
+                                        <TouchableOpacity style={styles.btn2} onPress={()=>approveButton()}>
+                                            <Text style={{color: 'white', fontSize:18}}>광고 승인</Text>
+                                        </TouchableOpacity>
+                                    :
+                                        <TouchableOpacity style={styles.btn2} onPress={()=>disapproveButton()}>
+                                            <Text style={{color: 'white', fontSize:18}}>광고 비활성화</Text>
+                                        </TouchableOpacity>
                                 }
                             
                             </Content>
@@ -150,13 +167,13 @@ const styles = StyleSheet.create({
     },
     btn2: {
         flex: 1,
-        width: 300,
+        width: 200,
         height: 50,
         borderRadius: 7,
         justifyContent: 'center',
         alignItems: 'center',
         alignSelf : "center",
-        backgroundColor: '#38b9ff',
+        backgroundColor: '#8d72ff',
       },
     btnArea2: {
         height: hp(10),
