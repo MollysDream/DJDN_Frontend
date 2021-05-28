@@ -4,7 +4,7 @@ import {
     Text,
     StyleSheet,
     TouchableOpacity,
-    Button, Image
+    Button, Image, ScrollView
 } from 'react-native';
 import {
     widthPercentageToDP as wp,
@@ -123,7 +123,7 @@ const MypageScreen = ({navigation}) => {
               }}
           />
 
-          <View style={styles.tradeBox}>
+          <ScrollView style={styles.tradeBox}>
 
 
               <TouchableOpacity style={styles.buttonList} onPress={goToUserPostScreen}>
@@ -152,7 +152,7 @@ const MypageScreen = ({navigation}) => {
               </TouchableOpacity>
 
 
-          </View>
+          </ScrollView>
 
           {/*<View>
               {certifyAddress}

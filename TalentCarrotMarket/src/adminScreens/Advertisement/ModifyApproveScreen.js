@@ -32,7 +32,7 @@ const ModifyApproveScreen = (props) => {
     }, []);
 
     function onImagePress(index){
-        setMv(modalVisible);
+        setMv(!modalVisible);
         setMi(index);
     }
 
@@ -51,7 +51,7 @@ const ModifyApproveScreen = (props) => {
                                    visible={modalVisible}
                                    onRequestClose={() => { console.log("Modal has been closed.") }}>
                                 <View style={styles.modal}>
-                                    <TouchableHighlight onPress={() => { this.setState({modalVisible:false}) }}>
+                                    <TouchableHighlight onPress={() => { setMv(!modalVisible) }}>
                                         <Image
                                             style={{ width: '100%', height: '100%', resizeMode:"contain" }}
                                             source={{ uri: advertisement.image[modalImage] }}

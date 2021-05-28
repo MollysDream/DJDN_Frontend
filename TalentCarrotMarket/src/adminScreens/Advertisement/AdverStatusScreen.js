@@ -16,15 +16,18 @@ import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import AsyncStorage from '@react-native-community/async-storage';
 import requestAdverAPI from "../../requestAdverAPI";
-import {useIsFocused} from "@react-navigation/native";
+import {useIsFocused, useNavigation} from "@react-navigation/native";
 import requestUser from "../../requestUserAPI";
 
 
-function AdverStatusScreen(props){
+function AdverStatusScreen(props,navigation){
     const [adverInfo, setAdverInfo] = useState("");
 
+    const select = props.data;
+    const navigations = useNavigation();
+
     let adver;
-    //인증한 동네 확인 - 사용자
+
     useEffect(() => {
         async function getadver(){
             adver = await requestAdverAPI.getAdver();
@@ -39,8 +42,8 @@ function AdverStatusScreen(props){
         return (
             <View>
             {
-                itemApprove == false && props.route.params.select == false ?
-                <TouchableHighlight onPress={() => {props.navigation.navigate('modifyapprove', {item})}}>
+                itemApprove == false && select == false ?
+                <TouchableHighlight onPress={() => {navigations.navigate('modifyapprove', {item})}}>
                 <View style={styles.chatRoomBox}>
                     <Image style={styles.post_image} source={{ uri: item.image[0]}} />
                     <View style={{flexDirection:'column'}}>
@@ -56,8 +59,8 @@ function AdverStatusScreen(props){
                 </TouchableHighlight>:null
             }
 {
-                itemApprove == true && props.route.params.select == true ?
-                <TouchableHighlight onPress={() => {props.navigation.navigate('modifyapprove', {item})}}>
+                itemApprove == true && select == true ?
+                <TouchableHighlight onPress={() => {navigations.navigate('modifyapprove', {item})}}>
                 <View style={styles.chatRoomBox}>
                     <Image style={styles.post_image} source={{ uri: item.image[0]}} />
                     <View style={{flexDirection:'column'}}>
