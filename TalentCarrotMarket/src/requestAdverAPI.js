@@ -54,6 +54,13 @@ export async function updateAdverActive(_id, active){
     return result.data;
 }
 
+export async function getAdverByAddressName(addressName) {
+    console.log('getAdByAddressName함수 호출됨');
+    const adverData = await axi.get("/advertisement/getAdverByAddressName", {params:{addressName:addressName}});
+    //console.log(userTradingPostData.data);
+    return adverData.data;
+}
+
 export default{
     createAdver,
     updateAdverApprove,
@@ -61,6 +68,6 @@ export default{
     getMyAdver,
     deleteAdver,
     updateAdver,
-    updateAdverActive
-
+    updateAdverActive,
+    getAdverByAddressName
 }

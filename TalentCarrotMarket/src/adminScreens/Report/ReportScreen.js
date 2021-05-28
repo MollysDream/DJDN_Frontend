@@ -10,13 +10,7 @@ import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import Icon from 'react-native-vector-icons/FontAwesome5';
-import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import AsyncStorage from '@react-native-community/async-storage';
-import requestUserAPI from "../../requestUserAPI";
-import requestAddressAPI from "../../requestAddressAPI";
-import {useIsFocused} from "@react-navigation/native";
 
 import AllReportScreen from './AllReportScreen';
 import PostReportScreen from "./PostReportScreen";
@@ -26,9 +20,6 @@ const ReportScreen = ({navigation}) => {
 
     const [tab, setTab] = useState(0) // 0 -> 전체신고, 1 -> 게시물 신고, 2 -> 사용자 신고
 
-    useEffect(() => {
-
-    }, []);
 
     let Screen = null;
     if(tab==0)

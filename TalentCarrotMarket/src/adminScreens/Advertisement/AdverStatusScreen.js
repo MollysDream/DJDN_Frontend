@@ -5,93 +5,176 @@ import {
     StyleSheet,
     FlatList,
     TouchableOpacity,
-    Button, Image, TouchableHighlight
+    Button, Image, TouchableHighlight, ScrollView
 } from 'react-native';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import Icon from 'react-native-vector-icons/FontAwesome5';
-import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import AsyncStorage from '@react-native-community/async-storage';
 import requestAdverAPI from "../../requestAdverAPI";
-import {useIsFocused} from "@react-navigation/native";
-import requestUser from "../../requestUserAPI";
+import {useIsFocused, useNavigation} from "@react-navigation/native";
+import {getDate} from "../../function";
+import Icon from "react-native-vector-icons/FontAwesome5";
+import Icon2 from "react-native-vector-icons/MaterialIcons";
 
 
-function AdverStatusScreen(props){
+import Modal from "react-native-modal";
+import Postcode from "@actbase/react-daum-postcode";
+
+function AdverStatusScreen(props,navigation){
     const [adverInfo, setAdverInfo] = useState("");
 
+    const select = props.data;
+    const navigations = useNavigation();
+
+    const isFocused = useIsFocused();
+
     let adver;
-    //인증한 동네 확인 - 사용자
+
+    async function getadver(){
+        adver = await requestAdverAPI.getAdver();
+        setAdverInfo(adver);
+        setCurrentLocation('전체');
+    }
+
     useEffect(() => {
-        async function getadver(){
-            adver = await requestAdverAPI.getAdver();
-            setAdverInfo(adver);
-        }
         getadver();
-    }, []);
+    }, [isFocused]);
 
     function returnFlatListItem(item,index){
+        let time = getDate(item.date);
+
         const itemApprove = item.approve;
-        
+        let status = null;
+        let statusStyle = styles.post_sign
+        if(item.approve === false){
+            status='승인 대기중'
+        }
+        else if(item.approve ===true){
+            status = '광고중';
+        }
+
         return (
-            <View>
+            <>
             {
-                itemApprove == false && props.route.params.select == false ?
-                <TouchableHighlight onPress={() => {props.navigation.navigate('modifyapprove', {item})}}>
-                <View style={styles.chatRoomBox}>
-                    <Image style={styles.post_image} source={{ uri: item.image[0]}} />
-                    <View style={{flexDirection:'column'}}>
-                        <Text style={styles.postTitle}>{item.title}</Text>
-                        <View style={styles.userDataBox}></View>
-                            <Text style={{fontSize:11, color:'grey'}}>{item.addressName}</Text>
-                            
-                                <Text style={{fontSize:11, color:'grey'}}>요청 대기 중</Text>
-                              
-                        <View style={styles.user_data_text}></View>
+                itemApprove == false && select == false ?
+                <TouchableHighlight onPress={() => {navigations.navigate('modifyapprove', {item})}}>
+                <View style={styles.post}>
+
+                    <Text style={styles.Address}>{`${time}`}</Text>
+                    <Text style={[styles.Address,{top:53}]}>{`${item.addressName}`}</Text>
+                    <Text style={[styles.Address,{top:70, fontSize:15, fontWeight:'bold'}]}>{`신청자 - ${item.shopOwner.nickname}`}</Text>
+                    <Image style={styles.profileImage} source={{ uri: item.image[0]}} />
+
+                    <View style={{flexDirection:'column', marginLeft:10}}>
+                        <View style={{flexDirection:'row'}}>
+                            <Text style={styles.postTitle}>{item.title}</Text>
+                        </View>
+
+                        <View style={[statusStyle,{marginTop:3}]}>
+                            <Text>{status}</Text>
+                        </View>
                     </View>
+
                 </View>
-                </TouchableHighlight>:null
+                </TouchableHighlight>
+                    : null
             }
-{
-                itemApprove == true && props.route.params.select == true ?
-                <TouchableHighlight onPress={() => {props.navigation.navigate('modifyapprove', {item})}}>
-                <View style={styles.chatRoomBox}>
-                    <Image style={styles.post_image} source={{ uri: item.image[0]}} />
-                    <View style={{flexDirection:'column'}}>
-                        <Text style={styles.postTitle}>{item.title}</Text>
-                        <View style={styles.userDataBox}></View>
-                            <Text style={{fontSize:11, color:'grey'}}>{item.addressName}</Text>
-                            
-                                <Text style={{fontSize:11, color:'grey'}}>광고중</Text>
-                              
-                        <View style={styles.user_data_text}></View>
-                    </View>
-                </View>
-                </TouchableHighlight>:null
+            {
+                itemApprove == true && select == true ?
+                    <TouchableHighlight onPress={() => {navigations.navigate('modifyapprove', {item})}}>
+                        <View style={styles.post}>
+
+                            <Text style={styles.Address}>{`${time}`}</Text>
+                            <Text style={[styles.Address,{top:53}]}>{`${item.addressName}`}</Text>
+                            <Text style={[styles.Address,{top:70, fontSize:15, fontWeight:'bold'}]}>{`신청자 - ${item.shopOwner.nickname}`}</Text>
+                            <Image style={styles.profileImage} source={{ uri: item.image[0]}} />
+
+                            <View style={{flexDirection:'column', marginLeft:10}}>
+                                <View style={{flexDirection:'row'}}>
+                                    <Text style={styles.postTitle}>{item.title}</Text>
+                                </View>
+
+                                <View style={[statusStyle,{marginTop:3, backgroundColor:'#9c7eff'}]}>
+                                    <Text>{status}</Text>
+                                </View>
+                            </View>
+
+                        </View>
+                    </TouchableHighlight>
+                    : null
             }
 
-
-           </View>
+           </>
             )
         }
 
+
+
+    const [filterModal, setFilterModal] = useState(false);
+    const[currentLocation, setCurrentLocation] = useState('전체');
+
+    function filterModalButton() {
+        setFilterModal(!filterModal);
+    }
+
+    async function selectByPostcode(data){
+
+        let adverData = await requestAdverAPI.getAdverByAddressName(data.bname);
+        setAdverInfo(adverData);
+
+        setCurrentLocation(data.bname);
+        setFilterModal(!filterModal);
+    }
+
     return (
-         <TouchableHighlight>
-        <View style={styles.chatRoomBox}>
-            <FlatList
-                    data={adverInfo}
-                    keyExtractor={(item,index) => String(item._id)}
-                    renderItem={({item,index})=>returnFlatListItem(item,index)}
-                    //onEndReached={this.morePage}
-                    onEndReachedThreshold={1}
-                    //extraData ={rerender}
-                    //refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-                   />
-            </View>
-        </TouchableHighlight>
+         <View style={{height:'95%'}}>
+             <FlatList
+                 data={adverInfo}
+                 keyExtractor={(item,index) => String(item._id)}
+                 renderItem={({item,index})=>returnFlatListItem(item,index)}
+                 //onEndReached={this.morePage}
+                 onEndReachedThreshold={1}
+                 //extraData ={rerender}
+                 //refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+             />
+
+             <Modal isVisible={filterModal}>
+                 <ScrollView style={{ padding:3,height:hp(85), width:wp(95)}}>
+
+                     <Postcode
+                         style={{ height:hp(80), marginTop:20, marginRight: 30 }}
+                         jsOptions={{ animated: true }}
+                         onSelected={data => selectByPostcode(data)}
+                     />
+
+                     <TouchableOpacity onPress={()=>setFilterModal(!filterModal)}
+                                       style={{position:'absolute',top:3,right:5}}>
+                         <Icon2 name="cancel"  size={40} color="#c18aff" />
+                     </TouchableOpacity>
+
+                 </ScrollView>
+
+             </Modal>
+
+             <TouchableOpacity onPress={()=>filterModalButton()}
+                               style={{position:'absolute',bottom:10,right:10,alignSelf:'flex-end'}}>
+                 <Icon name="search-location"  size={50} color="purple" />
+             </TouchableOpacity>
+
+             <View style={{position:'absolute',bottom:70,right:10, backgroundColor:"#ebdbff", padding:3, borderRadius:100}}>
+                 <TouchableOpacity onPress={()=>getadver()} style={{alignSelf:'flex-end',flexDirection:'row'}}>
+                     <Text >{`${currentLocation} 광고 확인중`}</Text>
+                     {
+                         currentLocation =='전체'?null:
+                             <Icon2 name="cancel"  size={20} color="#c18aff" />
+                     }
+                 </TouchableOpacity>
+             </View>
+
+
+        </View>
 
     );
 }
@@ -99,64 +182,49 @@ function AdverStatusScreen(props){
 
 
 const styles = StyleSheet.create({
-    container:{
-      //borderWidth:1,
-        flex:1,
-        paddingTop:5
 
-    },
-    chatRoomBox:{
-        //borderBottomWidth: 1,
-        marginRight:10,
-        marginLeft:10,
-        marginBottom:5,
-        backgroundColor:'#c2ebff',
-        borderRadius:10,
-        flexDirection:'row'
 
+
+    post:{
+        flexDirection: "row",
+        borderRadius: 15,
+        backgroundColor: "white",
+        borderBottomColor: "purple",
+        borderBottomWidth: 1,
+        padding: 10,
     },
     postTitle:{
-        fontSize:15,
-        paddingTop:7,
-        //borderWidth:1,
-        width:170,
-
+        fontSize:18,
+        fontWeight: "bold",
+        width:"75%",
+        paddingTop:5,
+        color:'#7751ff'
     },
-    userDataBox:{
-        flexDirection:'row',
-        paddingTop: 5
-    },
-    post_image:{
+    Address: {fontSize:13, textAlign:'right', position:'absolute',right:10,top:15, marginRight:3},
+    profileImage:{
         width: wp(20),
         overflow:"hidden",
         height: hp(20),
         aspectRatio: 1,
-        borderRadius: 9,
-        marginRight:12
+        borderRadius: 10,
+
+        borderWidth:2,
+        borderColor:'#c18aff',
     },
-    user_image:{
-        width: wp(10),
-        overflow:"hidden",
-        height: hp(10),
-        aspectRatio: 1,
-        borderRadius: 40,
-        marginRight:7,
-        marginTop:1
+    post_sign:{
+        backgroundColor:'#d9c8ee',
+        padding: 3,
+        borderRadius: 7,
+        alignSelf:'flex-start',
     },
-    user_data_text:{
-        marginTop: 2,
-        marginRight: 13
+    user_sign:{
+        backgroundColor:'#ffaeae',
+        padding: 3,
+        borderRadius: 7
     },
-    chat_text:{
-        paddingTop: 18,
-        color:'grey'
+    status_none:{
+        position: 'absolute'
     },
-    chatTime_text:{
-        position:'absolute',
-        right: 12,
-        top: 10,
-        color:'grey'
-    }
 
 });
 

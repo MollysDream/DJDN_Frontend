@@ -10,81 +10,76 @@ import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import Icon from 'react-native-vector-icons/FontAwesome5';
-import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import AsyncStorage from '@react-native-community/async-storage';
-import requestUserAPI from "../../requestUserAPI";
-import requestAddressAPI from "../../requestAddressAPI";
-import {useIsFocused} from "@react-navigation/native";
+import ModifyApproveScreen from "./ModifyApproveScreen";
+import AdverStatusScreen from "./AdverStatusScreen";
+import Icon from "react-native-vector-icons/FontAwesome5";
 
-let select= false;
 const AdvertisementScreen = ({navigation}) => {
 
-    //인증한 동네 확인 - 사용자
-    useEffect(() => {
+    const [tab, setTab] = useState(0) // 0 -> 요청대기 광고, 1 -> 현재 광고 현황
 
-    }, []);
 
+    let Screen = null;
+    if(tab==0)
+        Screen = <AdverStatusScreen data={false}/>
+    else if(tab==1)
+        Screen = <AdverStatusScreen data={true}/>
 
     return (
-        <View style={styles.btnArea1} >
-    
-           <TouchableOpacity style={styles.btn2} onPress={() => navigation.navigate('adverstatus', {select})}>
-                <Text style={(styles.Text, {color: 'white'})}>요청중인 광고</Text>
-            </TouchableOpacity>
-    
-    
-            <TouchableOpacity style={styles.btn2} onPress={() =>navigation.navigate('adverstatus', {select : true})}>
-                <Text style={(styles.Text, {color: 'white'})}>현재 광고 현황</Text>
-            </TouchableOpacity>
-      
+        <View style={styles.container}>
 
-    </View>
+            <View style={styles.title}>
+                <TouchableOpacity style={{width:'50%', alignItems:'center'}} onPress={()=>setTab(0)}>
+                    <Text style={tab == 0 ? styles.text_on : styles.text_off}>
+                        {`요청대기 광고`}
+                    </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={{width: '50%', alignItems:'center'}} onPress={()=>setTab(1)}>
+                    <Text style={tab == 1 ? styles.text_on : styles.text_off}>
+                        {`승인된 광고 현황`}
+                    </Text>
+                </TouchableOpacity>
+
+            </View>
+
+            <View>{Screen}</View>
+
+
+        </View>
 
     );
 }
 
 
 const styles = StyleSheet.create({
+    text_on:{
+        fontSize:18,
+        fontWeight: 'bold',
+        color: '#8636ff',
+        borderBottomWidth: 2,
+        borderColor: '#8636ff'
+    },
+    text_off:{
+        fontSize:18,
+        fontWeight: 'bold',
+        color: 'grey'
+    },
+    title:{
+        margin:10,
+        flexDirection:'row',
+        borderBottomWidth:5,
+        borderColor:'#ddc4ff',
+        paddingBottom:5
+    },
     container: {
         flex: 1, //전체의 공간을 차지한다는 의미
         flexDirection: 'column',
         backgroundColor: 'white',
-        paddingLeft: wp(7),
-        paddingRight: wp(7),
+        paddingLeft: wp(2),
+        paddingRight: wp(2),
     },
-    btn1: {
-        width: 45,
-        height: 40,
-        borderRadius: 7,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#ffefef',
-        paddingBottom : hp(1.5)
-    },
-    btnArea1: {
-        flex:0.5,
-        alignItems: 'flex-end',
-        paddingRight:50,
-        justifyContent : 'space-around'
-    },
-    btn2: {
-        width: 300,
-        height: 50,
-        borderRadius: 7,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#38b9ff',
-        
-      },
-    btnArea2: {
-        height: hp(10),
-        // backgroundColor: 'orange',
-        paddingTop: hp(1.5),
-        paddingBottom: hp(1.5),
-        alignItems: 'center',
-      },
 
 });
 
