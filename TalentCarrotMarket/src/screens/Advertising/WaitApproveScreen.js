@@ -22,7 +22,6 @@ import AsyncStorage from '@react-native-community/async-storage';
 import Icon from "react-native-vector-icons/FontAwesome5";
 import Icon2 from "react-native-vector-icons/Entypo";
 import Icon3 from "react-native-vector-icons/Ionicons";
-import Icon4 from "react-native-vector-icons/Fontisto";
 import Modal from 'react-native-modal';
 
 // 광고 클릭하면 해당 광고의 자세한 정보 보여주기
@@ -31,7 +30,7 @@ import Modal from 'react-native-modal';
 
 let userId;
 
-export default class DisabledScreen extends Component {
+export default class WaitApproveScreen extends Component {
     
     constructor(props) {
         super(props);
@@ -81,13 +80,6 @@ export default class DisabledScreen extends Component {
         let result_refresh = await this.refreshPage();
     }
 
-    async toggleActivation(item){
-        const active = !item.active;
-        this.toggleModal();
-        let result = await requestAdverAPI.updateAdverActive(item._id,active);
-        let result_refresh = await this.refreshPage();
-    }
-
     goToEditAdverScreen(item){
         this.toggleModal();
         const adverImages = []
@@ -120,7 +112,7 @@ export default class DisabledScreen extends Component {
         return(
             <View>
                 {
-                    item.active == false && item.approve == true ?
+                    item.approve ==false?
                 <View>
                 <TouchableHighlight onPress={() => this.props.navigation.navigate('detailadver',{item})}>
                     <View style={styles.post}>
@@ -164,11 +156,6 @@ export default class DisabledScreen extends Component {
                     />
                      <Modal isVisible={this.state.modalVisible} onBackdropPress={()=>this.toggleModal()}>
                     <View style={styles.optionBox}>
-
-                        <TouchableOpacity style={styles.buttonList}  onPress={()=>this.toggleActivation(this.state.currentItem)}>
-                            <Icon4 style={styles.iconPlace} name="checkbox-active"  size={40} color="#37CEFF" />
-                            <Text style={styles.buttonText}>광고 활성화</Text>
-                        </TouchableOpacity>
 
                         <TouchableOpacity style={styles.buttonList}  onPress={()=>this.goToEditAdverScreen(this.state.currentItem)}>
                             <Icon style={styles.iconPlace} name="edit"  size={40} color="#37CEFF" />
