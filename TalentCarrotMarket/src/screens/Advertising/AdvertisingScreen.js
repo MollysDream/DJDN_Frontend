@@ -20,7 +20,7 @@ import request from '../../requestAPI';
 import requestUser from "../../requestUserAPI";
 import ActivationScreen from './ActivationScreen';
 import DisabledScreen from './DisabledScreen';
-
+import WaitApproveScreen from './WaitApproveScreen';
 const AdvertisingScreen = ({navigation}) => {
 
     const [tab, setTab] = useState(0);
@@ -31,7 +31,8 @@ const AdvertisingScreen = ({navigation}) => {
         Screen = <DisabledScreen navigation={navigation}/>
     else if(tab==1)
         Screen = <ActivationScreen navigation={navigation}/>
-  
+    else if(tab==2)
+        Screen = <WaitApproveScreen navigation={navigation}/>
 
         return (
             
@@ -42,14 +43,19 @@ const AdvertisingScreen = ({navigation}) => {
                 </TouchableOpacity>
                  <View style={styles.title}>                
                 
+                 <TouchableOpacity style={{width:'33%', alignItems:'center'}} onPress={()=>setTab(2)}>
+                    <Text style={tab == 2 ? styles.text_on : styles.text_off}>
+                        {`승인 대기`}
+                    </Text>
+                </TouchableOpacity>
 
-                <TouchableOpacity style={{width:'50%', alignItems:'center'}} onPress={()=>setTab(0)}>
+                <TouchableOpacity style={{width:'33%', alignItems:'center'}} onPress={()=>setTab(0)}>
                     <Text style={tab == 0 ? styles.text_on : styles.text_off}>
                         {`비활성화 광고`}
                     </Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={{width: '50%', alignItems:'center'}} onPress={()=>setTab(1)}>
+                <TouchableOpacity style={{width: '33%', alignItems:'center'}} onPress={()=>setTab(1)}>
                     <Text style={tab == 1 ? styles.text_on : styles.text_off}>
                         {`활성화 광고`}
                     </Text>

@@ -63,7 +63,7 @@ import editProfileScreen from './src/screens/Mypage/EditProfileScreen';
 import keywordScreen from './src/screens/Mypage/KeywordScreen';
 import certificationScreen from './src/screens/Mypage/CertificationScreen';
 import editadverScreen from './src/screens/Advertising/EditAdverScreen';
-
+import detailadverScreen from './src/screens/Advertising/DetailAdverScreen';
 //admin
 //import adverRequest from './src/adminScreens/Advertisement/AdverRequestScreen';
 import adverStatus from './src/adminScreens/Advertisement/AdverStatusScreen';
@@ -179,6 +179,7 @@ const SettingStackScreen = () => {
       <SettingStack.Screen name="advertise" component={advertising} />
       <SettingStack.Screen name="makeadver" component={makead}/>
       <SettingStack.Screen name="editadver" component={editadverScreen}/>
+      <SettingStack.Screen name="detailadver" component={detailadverScreen}/>
       
     </Stack.Navigator>
   );

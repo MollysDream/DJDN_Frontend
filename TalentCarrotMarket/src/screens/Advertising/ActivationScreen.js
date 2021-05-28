@@ -23,6 +23,7 @@ import Icon from "react-native-vector-icons/FontAwesome5";
 import Icon2 from "react-native-vector-icons/Entypo";
 import Icon3 from "react-native-vector-icons/Ionicons";
 import Modal from 'react-native-modal';
+import Icon4 from "react-native-vector-icons/Fontisto";
 
 let userId;
 
@@ -69,6 +70,13 @@ export default class Actiation extends Component {
 
     }
 
+    async deleteAdver(item){
+        this.toggleModal();
+        console.log(item._id);
+        let result = await requestAdverAPI.deleteAdver(item._id);
+        let result_refresh = await this.refreshPage();
+    }
+
     goToEditAdverScreen(item){
         this.toggleModal();
         const adverImages = []
@@ -76,13 +84,20 @@ export default class Actiation extends Component {
             adverImages.push(image);
         })
 
-        this.props.navigation.navigate('editUserPostScreen',
+        this.props.navigation.navigate('editadver',
             {
                 detailAdver: item,
                 adverImages: adverImages,
                 onGoBack: ()=>this.refreshPage()
             });
 
+    }
+
+    async toggleActivation(item){
+        const active = !item.active;
+        this.toggleModal();
+        let result = await requestAdverAPI.updateAdverActive(item._id,active);
+        let result_refresh = await this.refreshPage();
     }
 
     toggleModal(){
@@ -142,6 +157,11 @@ export default class Actiation extends Component {
                     />
                    <Modal isVisible={this.state.modalVisible} onBackdropPress={()=>this.toggleModal()}>
                     <View style={styles.optionBox}>
+
+                        <TouchableOpacity style={styles.buttonList}  onPress={()=>this.toggleActivation(this.state.currentItem)}>
+                            <Icon4 style={styles.iconPlace} name="checkbox-active"  size={40} color="#37CEFF" />
+                            <Text style={styles.buttonText}>광고 비활성화</Text>
+                        </TouchableOpacity>
 
                         <TouchableOpacity style={styles.buttonList}  onPress={()=>this.goToEditAdverScreen(this.state.currentItem)}>
                             <Icon style={styles.iconPlace} name="edit"  size={40} color="#37CEFF" />
