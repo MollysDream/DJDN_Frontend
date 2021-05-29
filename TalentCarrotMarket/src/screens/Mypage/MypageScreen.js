@@ -17,6 +17,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import requestUserAPI from "../../requestUserAPI";
 import requestAddressAPI from "../../requestAddressAPI";
 import {useIsFocused} from "@react-navigation/native";
+import { Rating } from 'react-native-ratings';
 
 const MypageScreen = ({navigation}) => {
 
@@ -95,21 +96,32 @@ const MypageScreen = ({navigation}) => {
               {
                   userData==undefined ?null:
                       (
-                          <View style={styles.user}>
+                          <>
+                            <View style={styles.user}>
                               <Image style={styles.profileImage} source={{uri:userData.profileImage}}/>
                               <Text style={{fontSize:15,marginTop:5, color:'grey'}}>{`${userAddress.addressName}의`}</Text>
                               <Text style={styles.nickname}>{userData.nickname}</Text>
-                          </View>
+                            </View>
+
+                            <View style={styles.ratingArea}>
+                                <View style={styles.ratingView}>
+                                    <Text style={(styles.Text, {color: 'black'})}>평가점수: {userData.averageRating}</Text>
+                                </View>
+                            </View>
+
+                            <Rating
+                            ratingCount={5}
+                            startingValue={userData.averageRating}
+                            imageSize={40}
+                            readonly='true'
+                            type="star"
+                            />
+                          </>
 
                       )
 
               }
 
-              <View style={styles.editArea}>
-                  <TouchableOpacity style={styles.editButton} onPress={editProfileButton}>
-                      <Text style={(styles.Text, {color: 'black'})}>프로필 수정</Text>
-                  </TouchableOpacity>
-              </View>
 
 
           </View>
@@ -157,14 +169,20 @@ const MypageScreen = ({navigation}) => {
           {/*<View>
               {certifyAddress}
           </View>*/}
+            <View style={styles.rowbtnArea}>
+                <View style={styles.bottomArea}>
+                    <TouchableOpacity style={styles.editButton} onPress={editProfileButton}>
+                        <Text style={(styles.Text, {color: 'black'})}>프로필 수정</Text>
+                    </TouchableOpacity>
+                </View>
 
-          <View style={styles.logoutArea}>
-              <TouchableOpacity style={styles.logoutButton} onPress={handleLogoutButton}>
+                <View style={styles.bottomArea}>
+                    <TouchableOpacity style={styles.logoutButton} onPress={handleLogoutButton}>
 
-                  <Text style={(styles.Text, {color: 'black'})}>로그아웃</Text>
-              </TouchableOpacity>
-          </View>
-
+                        <Text style={(styles.Text, {color: 'black'})}>로그아웃</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
 
       </View>
 
@@ -191,8 +209,8 @@ const styles = StyleSheet.create({
         marginBottom:10
     },
     profileImage:{
-        width: 150,
-        height: 150,
+        width: 100,
+        height: 100,
         borderRadius: 150 / 2,
         overflow: "hidden",
         borderWidth: 3,
@@ -201,9 +219,18 @@ const styles = StyleSheet.create({
     nickname:{
       fontSize: 27,
     },
-    editArea:{
+    ratingArea:{
         height:20,
         margin:5,
+    },
+    ratingView:{
+        flex: 1,
+        width: 150,
+        height: 50,
+        borderRadius: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#d4fbff',
     },
     editButton:{
         flex: 1,
@@ -214,15 +241,19 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#d4fbff',
     },
-    logoutArea: {
+    rowbtnArea:{
+        flexDirection: "row",
+        justifyContent: 'center',
+      },
+    bottomArea: {
       height: hp(8),
         paddingRight: wp(2),
       paddingBottom: hp(1.5),
-        position: "absolute", bottom: 0, right: 0
+        // position: "absolute", bottom: 0, right: 0
     },
     logoutButton: {
       flex: 1,
-      width: 100,
+      width: 150,
       height: 50,
       borderRadius: 10,
       justifyContent: 'center',

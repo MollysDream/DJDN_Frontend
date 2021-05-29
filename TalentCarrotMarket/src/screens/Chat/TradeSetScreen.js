@@ -20,6 +20,8 @@ import AsyncStorage from '@react-native-community/async-storage';
 import requestAddressAPI from "../../requestAddressAPI";
 import requestTradeAPI from "../../requestTradeAPI";
 
+import Icon from 'react-native-vector-icons/FontAwesome5';
+
 //글자 강조
 const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{props.children}</Text>
 
@@ -352,7 +354,7 @@ const TradeSetScreen =({navigation,route})=>{
           />)}
        
       <View style={styles.btnArea}>
-        <TouchableOpacity style={styles.btn} onPress={suggestButton}>
+        <TouchableOpacity style={styles.btnAgree} onPress={suggestButton}>
           <Text style={{color: 'white'}}>제안하기</Text>
         </TouchableOpacity>
       </View>
@@ -370,23 +372,30 @@ const TradeSetScreen =({navigation,route})=>{
         onMapClick={e => console.warn('onMapClick', JSON.stringify(e))}>
       </NaverMapView>
         
-      <View style={{justifyContent: 'center',alignItems: 'center', paddingBottom: hp('3')}}> 
-        <Text style={{fontSize: wp('4'), paddingTop: hp('2'), paddingBottom: hp('2')}}>시작 시간: {start}</Text>
-        <Text style={{fontSize: wp('4'), paddingBottom: hp('2')}}>종료 시간: {end} </Text>
+      <View style={{justifyContent: 'center',alignItems: 'center',paddingTop:hp(3),paddingBottom:hp(2)}}>
+        <View style={styles.tradeSetView} >
+          {/* <Icon style={styles.iconPlace} name="hand-holding-usd"  size={30} color="#37CEFF" /> */}
+          <Text style={{fontSize: wp('4')}}>시작: {start}</Text>
+        </View>
+        <View style={styles.tradeSetView} >
+          <Text style={{fontSize: wp('4')}}>종료: {end} </Text>
+        </View>
         {/* <Text>예상시간 : {workTime}</Text> */}
-        <Text style={{fontSize: wp('4')}}>장소: {proLocate}</Text>
+        <View style={styles.tradeSetView} >
+          <Text style={{fontSize: wp('4')}}>장소: {proLocate}</Text>
+        </View>
       </View>
     
       
       {isSuggest==true && isSave==false && userId!=sender?
         (<View style={styles.rowbtnArea}> 
           <View style={styles.btnArea,{paddingRight: wp('1')}}>
-              <TouchableOpacity style={styles.btn} onPress={agreeButton}>
+              <TouchableOpacity style={styles.btnAgree} onPress={agreeButton}>
                 <Text style={{color:'white'}}>동의하기</Text>
               </TouchableOpacity>
             </View>
           <View style={styles.btnArea,{paddingLeft: wp('1')}}>
-            <TouchableOpacity style={styles.btn} onPress={resuggestButton}>
+            <TouchableOpacity style={styles.btnReSuggest} onPress={resuggestButton}>
               <Text style={{color:'white'}}>다시 제안하기</Text>
             </TouchableOpacity>
           </View>
@@ -395,12 +404,12 @@ const TradeSetScreen =({navigation,route})=>{
         
         <View style={styles.rowbtnArea}> 
           <View style={styles.btnArea,{paddingRight: wp('1')}}>
-              <TouchableOpacity style={styles.btn} onPress={timeCheckButton}>
+              <TouchableOpacity style={styles.btnAgree} onPress={timeCheckButton}>
                 <Text style={{color:'white'}}>남은 시간 확인</Text>
               </TouchableOpacity>
             </View>
           <View style={styles.btnArea,{paddingLeft: wp('1')}}>
-            <TouchableOpacity style={styles.btn} onPress={resuggestButton}>
+            <TouchableOpacity style={styles.btnReSuggest} onPress={resuggestButton}>
               <Text style={{color:'white'}}>다시 제안하기</Text>
             </TouchableOpacity>
           </View>
@@ -456,6 +465,13 @@ const styles = StyleSheet.create({
       paddingTop: wp(3),
       alignItems: 'center',
     },
+    tradeSetList:{
+      height:55,
+      flexDirection:'row',
+      backgroundColor: '#ecfeff',
+      borderRadius: 20,
+      marginBottom:7,
+    },
     bottomArea: {
       flex: 0.55,
       paddingTop: wp(3),
@@ -488,14 +504,14 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
     },
-    btn: {
-      width: 150,
-      height: 50,
-      borderRadius: 7,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#4672B8'
-    },
+    // btn: {
+    //   width: 150,
+    //   height: 50,
+    //   borderRadius: 7,
+    //   justifyContent: 'center',
+    //   alignItems: 'center',
+    //   backgroundColor: '#4672B8'
+    // },
     btnDate: {
       width: 500,
       height: 50,
@@ -515,5 +531,45 @@ const styles = StyleSheet.create({
       height: hp(5),
       paddingRight: wp(1)
     },
+    tradeSetArea:{
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingTop:hp(3),
+      paddingBottom:hp(2)
+    },
+    tradeSetView:{
+      width: 500,
+      height: 50,
+      borderRadius: 7,
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexDirection:'row',
+      backgroundColor: '#CDDDEF',
+      borderWidth: 0.5,
+      borderColor: 'white',
+    },
+    btnAgree: {
+      width: 150,
+      height: 50,
+      borderRadius: 7,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#5FC3D9',
+    },
+    btnReSuggest: {
+      width: 150,
+      height: 50,
+      borderRadius: 7,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#D9665F',
+  },
+  iconPlace: {
+    height:'100%',
+    // marginLeft:10,
+    marginRight:30,
+    paddingTop: 5
+
+},
   });
 export default TradeSetScreen;

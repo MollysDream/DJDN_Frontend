@@ -54,7 +54,7 @@ function RemotePushController (props) {
       date: new Date(Date.now()+(props.time-300)*1000),
     })
   }, [props.time])
-  // return null
-  return <View><Text style={{color:'white'}}>안녕하세요 {props.time}</Text></View>
+  return null
+  // return <View><Text style={{color:'white'}}>안녕하세요 {props.time}</Text></View>
 }
 export default RemotePushController
