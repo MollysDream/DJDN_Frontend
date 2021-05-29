@@ -25,6 +25,7 @@ import {Content, Form, Textarea} from "native-base";
 import {Picker} from "@react-native-picker/picker";
 import requestReportAPI from "../../requestReportAPI";
 import FlashMessage, {showMessage} from "react-native-flash-message";
+import { Rating } from 'react-native-ratings';
 
 const UserProfileScreen = ({navigation,route}) => {
 
@@ -366,6 +367,19 @@ const UserProfileScreen = ({navigation,route}) => {
                             <Text style={{fontSize:15, color:'grey'}}>{`${userAddress[0].addressName}/${userAddress[1].addressName}의`}</Text>
                     }
                     <Text style={styles.nickname}>{userData.nickname}</Text>
+                    <View style={styles.ratingArea}>
+                        <View style={styles.ratingView}>
+                            <Text style={(styles.Text, {color: 'black'})}>평가점수: {userData.averageRating}</Text>
+                        </View>
+                    </View>
+
+                    <Rating
+                    ratingCount={5}
+                    startingValue={userData.averageRating}
+                    imageSize={40}
+                    readonly='true'
+                    type="star"
+                    />
                 </View>
 
                 <View style={styles.btnArea1}>
@@ -580,6 +594,19 @@ const styles = StyleSheet.create({
         bottom:0,
         right:0,
         paddingRight:10
+    },
+    ratingArea:{
+        height:20,
+        margin:5,
+    },
+    ratingView:{
+        flex: 1,
+        width: 150,
+        height: 50,
+        borderRadius: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#d4fbff',
     },
 
 });

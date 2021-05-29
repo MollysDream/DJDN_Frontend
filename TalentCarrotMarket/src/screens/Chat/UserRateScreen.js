@@ -28,8 +28,6 @@ const UserRateScreen = ({navigation, route}) => {
         const {user1,user2,tradeId}=route.params;
         const [userId, setUserId] =  useState('');
         const [userData, setUserData] = useState();
-        // const [rating, setRating] = useState(0);
-
 
         useEffect(() => {
           async function getData(){
@@ -89,6 +87,10 @@ const UserRateScreen = ({navigation, route}) => {
                console.log(err);
             }
             }
+          // const checkUserProfile= () => {
+          //     console.log("사용자 프로필 확인!!");
+          //     this.props.navigation.navigate('사용자 프로필',{userData:userData});
+          // }  
           
           //각 카테고리별 별점
           const [starPriceCount,setPriceStarCount]=useState(3);
@@ -123,14 +125,22 @@ const UserRateScreen = ({navigation, route}) => {
             <View style={styles.container}>
               {userData ?
                 <View style={styles.rowTopArea}>
-                  <View style={styles.titleArea}>   
-                    <Image
-                    source={{uri:userData.profileImage}}
-                    style={{width: wp(15),height:hp(15), resizeMode: 'contain'}}
-                    />
+                  <View style={styles.titleArea}>
+                    {/* <TouchableOpacity style={{ flexDirection:'row'}} onPress={checkUserProfile}> */}
+                      <Image
+                      source={{uri:userData.profileImage}}
+                      style={styles.profileImage}
+                      />
+                    {/* </TouchableOpacity>   */}
                   </View>
-                  <Text style={{paddingRight:wp(30),fontSize:wp('5.5')}}>{userData.nickname}</Text>
-                  <Text style={{fontSize:wp('5.5')}}>{userData.averageRating}</Text>
+                  <View>
+                    <Text style={{fontSize:15, marginTop:5, color:'grey'}}>닉네임</Text>
+                    <Text style={{paddingLeft:wp(1),paddingRight:wp(25),fontSize:wp('5.5')}}>{userData.nickname}</Text>
+                  </View>
+                  <View>
+                    <Text style={{fontSize:15, marginTop:5, color:'grey'}}>평가점수</Text>
+                    <Text style={{fontSize:wp('5.5'),paddingLeft:wp(2)}}>{userData.averageRating}</Text>
+                  </View>
                 </View>
                 :
                 <Text>Loading....</Text>
@@ -149,7 +159,7 @@ const UserRateScreen = ({navigation, route}) => {
                   <Text style={{paddingBottom:hp(3)}}><B>각 카테고리에 별점을 매겨주세요</B></Text>
 
                   <View style={styles.rowRateArea}>
-                    <Text style={{paddingLeft:wp(4),paddingRight:wp(21),fontSize:wp('5.5')}}>가격</Text>
+                    <Text style={{paddingLeft:wp(4),paddingRight:wp(21),fontSize:wp('5.5'), color:'grey'}}>가격</Text>
                     <StarRating 
                       disabled={false}
                       // emptyStar={'ios-star-outline'}
@@ -159,61 +169,61 @@ const UserRateScreen = ({navigation, route}) => {
                       maxStars={5}
                       rating={starPriceCount}
                       selectedStar={(rating)=>onStarPriceRatingPress(rating)}
-                      fullStarColor={'red'}
+                      fullStarColor={'#6fceff'}
                     />
                   </View>
                   <View style={styles.rowRateArea}>
-                    <Text style={{paddingLeft:wp(4),paddingRight:wp(16),fontSize:wp('5.5')}}>친절함</Text>
+                    <Text style={{paddingLeft:wp(4),paddingRight:wp(16),fontSize:wp('5.5'), color:'grey'}}>친절함</Text>
                     <StarRating 
                       disabled={false}
                       maxStars={5}
                       rating={starKindCount}
                       selectedStar={(rating)=>onStarKindRatingPress(rating)}
-                      fullStarColor={'red'}
+                      fullStarColor={'#6fceff'}
                     />
                   </View>
                   <View style={styles.rowRateArea}>
-                    <Text style={{paddingLeft:wp(4),paddingRight:wp(11),fontSize:wp('5.5')}}>응답속도</Text>
+                    <Text style={{paddingLeft:wp(4),paddingRight:wp(11),fontSize:wp('5.5'), color:'grey'}}>응답속도</Text>
                     <StarRating 
                       disabled={false}
                       maxStars={5}
                       rating={starSpeedCount}
                       selectedStar={(rating)=>onStarSpeedRatingPress(rating)}
-                      fullStarColor={'red'}
+                      fullStarColor={'#6fceff'}
                     />
                   </View>
                   <View style={styles.rowRateArea}>
-                    <Text style={{paddingLeft:wp(4),paddingRight:wp(4),fontSize:wp('5.5')}}>재거래 희망</Text>
+                    <Text style={{paddingLeft:wp(4),paddingRight:wp(4),fontSize:wp('5.5'), color:'grey'}}>재거래 희망</Text>
                     <StarRating 
                       disabled={false}
                       maxStars={5}
                       rating={starRetradeCount}
                       selectedStar={(rating)=>onStarRetradeRatingPress(rating)}
-                      fullStarColor={'red'}
+                      fullStarColor={'#6fceff'}
                     />
                   </View>
                   <View style={styles.rowRateArea}>
-                    <Text style={{paddingLeft:wp(4),paddingRight:wp(16),fontSize:wp('5.5')}}>전문성</Text>
+                    <Text style={{paddingLeft:wp(4),paddingRight:wp(16),fontSize:wp('5.5'), color:'grey'}}>전문성</Text>
                     <StarRating 
                       disabled={false}
                       maxStars={5}
                       rating={starQualCount}
                       selectedStar={(rating)=>onStarQualRatingPress(rating)}
-                      fullStarColor={'red'}
+                      fullStarColor={'#6fceff'}
                     />
                   </View>
                   
                 </View>
 
-                <View style={styles.rowArea}> 
+                <View style={styles.rowArea}>
                     <View style={styles.btnArea,{paddingRight: wp('1')}}>
-                        <TouchableOpacity style={styles.btn} onPress={cancelButton}>
-                            <Text style={{color:'white'}}>취소하기</Text>
+                        <TouchableOpacity style={styles.btnRate} onPress={rateButton}>
+                            <Text style={{color:'white'}}>평가하기</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.btnArea,{paddingLeft: wp('1')}}>
-                        <TouchableOpacity style={styles.btn} onPress={rateButton}>
-                            <Text style={{color:'white'}}>평가하기</Text>
+                        <TouchableOpacity style={styles.btnCancel} onPress={cancelButton}>
+                            <Text style={{color:'white'}}>취소하기</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -228,12 +238,23 @@ const styles = StyleSheet.create({
         backgroundColor: '#f5f5f5',
         flex: 1,
       },
-    rowTopArea: {
+      rowTopArea: {
         flex: 0.125,
         paddingTop: hp(3),
         paddingLeft: wp(10),
         flexDirection: "row",
         alignItems: 'center',
+    },
+      profileImage:{
+        borderWidth:2,
+        borderColor:'#65b7ff',
+        borderRadius:50,
+        height:60,
+        width:60,
+        overflow:"hidden",
+        aspectRatio: 1,
+        marginRight:12,
+        marginLeft:12,
     },
     rowRateArea:{
         flexDirection: "row",
@@ -259,14 +280,22 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    btn: {
+    btnRate: {
         width: 150,
         height: 50,
         borderRadius: 7,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#4672B8'
+        backgroundColor: '#5FC3D9',
     },
+    btnCancel: {
+      width: 150,
+      height: 50,
+      borderRadius: 7,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#D9665F',
+  },
   });
 
 

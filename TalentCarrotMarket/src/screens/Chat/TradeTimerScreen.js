@@ -5,7 +5,7 @@ import {
   View,
   Text,
   TouchableOpacity,
-  StyleSheet, Button,
+  StyleSheet, Image,
 } from 'react-native';
 
 import axios from "axios";
@@ -21,6 +21,7 @@ import smsKey from '../../smsKey';
 import Base64 from 'crypto-js/enc-base64';
 const CryptoJS =require ('crypto-js');
 
+import requestUserAPI from "../../requestUserAPI";
 import requestTradeAPI from "../../requestTradeAPI";
 import RemotePushController from '../../util/RemotePushController'
 
@@ -59,6 +60,30 @@ const TradeTimerScreen = ({navigation, route}) =>{
     console.log("새로운 연장시간은 "+diffTime);
     // setEndDateChange(false)
   },[endDateChange])
+
+  //사용자 정보 가져오기
+  const [userData, setUserData] = useState();
+
+        useEffect(() => {
+          async function getData(){
+
+              console.log("현재 접속자는 "+ userId)
+
+              if (user1 == userId){
+                console.log("user1이에요! "+ user1)
+                console.log("user2아니에요! "+ user2)
+                let userData = await requestUserAPI.getUserData(user2);
+                setUserData(userData);
+            } else{
+              console.log("user2에요! "+ user2)
+              console.log("user1이 아니에요! "+ user1)
+              let userData = await requestUserAPI.getUserData(user1);
+              setUserData(userData);
+            }
+          }
+
+          let result = getData();
+      },[]);
 
   useEffect(()=>{
     console.log("거래 번호 "+tradeId)
@@ -154,11 +179,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
       const returnData = await requestTradeAPI.endTrade(tradeId);
 
       if (returnData.data.message) {
-        navigation.navigate('userRate',{
-          user1: user1,
-          user2: user2,
-          tradeId: tradeId
-        })
+        setIsEnd(true);
       }
         else{
           alert('거래 완료 제안이 실패했습니다.')
@@ -168,6 +189,14 @@ const TradeTimerScreen = ({navigation, route}) =>{
        console.log(err);
     }
 
+  }
+
+  const userRateButton = () =>{
+    navigation.navigate('userRate',{
+      user1: user1,
+      user2: user2,
+      tradeId: tradeId
+    })
   }
 
   const cancelButton = async() =>{
@@ -188,6 +217,10 @@ const TradeTimerScreen = ({navigation, route}) =>{
        console.log(err);
     }
 
+  }
+
+  const msgSendButton = () =>{
+    navigation.navigate('chatch')
   }
 
    async function autoReport(){
@@ -234,24 +267,42 @@ const TradeTimerScreen = ({navigation, route}) =>{
 
   const tradeEndSuggest =
   <>
-
-        <View style={styles.rowbtnArea}>
-          <View style={styles.btnArea,{paddingRight:wp('1')}}>
-            <TouchableOpacity style={styles.btn} onPress={extendButton}>
-              <Text style={{color: 'white'}}>10분 연장</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.btnArea,{paddingLeft:wp('1')}}>
-            <TouchableOpacity style={styles.btn} onPress={endSuggestButton}>
-              <Text style={{color: 'white'}}>거래종료</Text>
-            </TouchableOpacity>
-          </View>
+        <View style={styles.timeText}>
+          <Text><B>남은 시간</B></Text>
         </View>
-        <View style={styles.btnArea}>
-          <TouchableOpacity style={styles.btnCancel} onPress={cancelButton}>
-            <Text style={{color: 'white'}}>거래 취소하기</Text>
-          </TouchableOpacity>
+
+        <CountDown
+            size={30}
+            until={diffTime}
+            // onFinish={autoReport}
+            digitStyle={{backgroundColor: '#FFF', borderWidth: 2, borderColor: '#1CC625'}}
+            digitTxtStyle={{color: '#1CC627'}}
+            timeLabelStyle={{color: 'green', fontWeight: 'bold'}}
+            separatorStyle={{color: '#1CC625'}}
+            timeToShow={['D','H', 'M', 'S']}
+            timeLabels={{d: 'Days', h: 'Hours', m: 'Minutes', s: 'Seconds'}}
+            showSeparator
+          />
+        <View style={styles.btnList}>
+          <View style={styles.rowArea}>
+            <View style={styles.btnArea,{paddingRight:wp('1')}}>
+              <TouchableOpacity style={styles.btn} onPress={extendButton}>
+                <Text style={{color: 'white'}}>10분 연장</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.btnArea,{paddingLeft:wp('1')}}>
+              <TouchableOpacity style={styles.btn} onPress={endSuggestButton}>
+                <Text style={{color: 'white'}}>거래종료</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <View style={styles.btnArea}>
+            <TouchableOpacity style={styles.btnCancel} onPress={cancelButton}>
+              <Text style={{color: 'white'}}>거래 취소하기</Text>
+            </TouchableOpacity>
+          </View>
         </View>
   </>
 
@@ -259,17 +310,48 @@ const TradeTimerScreen = ({navigation, route}) =>{
   <>
     {isEnd==false?
           (
-          <View style={styles.dateArea}>
-           <Text style={{fontSize:wp('4.5%')}}>상대방이 거래 종료를 할 때까지 기다려주세요!</Text>
-          </View>):
+            <>
+              <View style={styles.helpMsg}>
+                <View style={styles.btnArea}>
+                  <TouchableOpacity style={styles.btnRate} onPress={msgSendButton}>
+                    <Text style={{color: 'white'}}>메세지 보내기</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
 
-          <View style={styles.dateArea}>
-            <View style={styles.btnArea}>
-              <TouchableOpacity style={styles.btnEnd} onPress={endButton}>
-                <Text style={{color: 'white'}}>사용자 평가하기</Text>
-              </TouchableOpacity>
+              <View
+              style={{
+                borderBottomColor: 'black',
+                borderBottomWidth: StyleSheet.hairlineWidth,
+                
+              }}/>
+              <View style={styles.helpMsg}>
+                {/* <Text style={{fontSize:20,marginTop:5,}}>상대방이 거래 종료를 할 때까지 기다려주세요!</Text> */}
+                <Text style={{fontSize:15, marginTop:5, color:'grey'}}>현재 상대방이 거래종료를 하지 않은 상태입니다.</Text>
+                <Text style={{fontSize:15, marginTop:5, color:'grey'}}>메세지를 보내어 거래종료를 요청해보세요!</Text>
+              </View>
+            </>
+          ):
+          <>
+            <View style={styles.dateArea}>
+              <View style={styles.btnArea}>
+                <TouchableOpacity style={styles.btnRate} onPress={userRateButton}>
+                  <Text style={{color: 'white'}}>사용자 평가하기</Text>
+                </TouchableOpacity>
+              </View>
             </View>
+
+            <View
+            style={{
+              borderBottomColor: 'black',
+              borderBottomWidth: StyleSheet.hairlineWidth,
+              
+            }}
+          />
+          <View style={styles.helpMsg}>
+            <Text style={{fontSize:15, marginTop:5, color:'grey'}}>사용자 평가하기 버튼을 눌러 사용자 매너 평가를 해주세요!</Text>
           </View>
+         </>
       }
   </>
 
@@ -277,26 +359,55 @@ const TradeTimerScreen = ({navigation, route}) =>{
   <>
     {isEnd==false?
           (
-            <View style={styles.dateArea}>
-              <View style={styles.btnArea,{paddingLeft:wp('1')}}>
-                <TouchableOpacity style={styles.btnEnd} onPress={()=>{setIsEnd(true)}}>
-                  <Text style={{color: 'white'}}>거래종료확인</Text>
-                </TouchableOpacity>
+            <>
+              <View style={styles.rowArea}>
+                <View style={styles.btnArea,{paddingRight:wp(1)}}>
+                  <TouchableOpacity style={styles.btn} onPress={endButton}>
+                    <Text style={{color: 'white'}}>거래 종료확인</Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.btnArea,{paddingLeft:wp(1)}}>
+                  <TouchableOpacity style={styles.btnCancel2} onPress={cancelButton}>
+                    <Text style={{color: 'white'}}>거래 취소하기</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-              <View style={styles.btnArea}>
-                <TouchableOpacity style={styles.btnCancel} onPress={cancelButton}>
-                  <Text style={{color: 'white'}}>거래 취소하기</Text>
-                </TouchableOpacity>
-              </View>
-            </View>):
 
-          <View style={styles.dateArea}>
-           <View style={styles.btnArea,{paddingLeft:wp('1')}}>
-            <TouchableOpacity style={styles.btnEnd} onPress={endButton}>
-              <Text style={{color: 'white'}}>사용자 평가하기</Text>
-            </TouchableOpacity>
+              <View
+              style={{
+                paddingTop:hp(3),
+                // paddingBottom:hp(5),
+                borderBottomColor: 'black',
+                borderBottomWidth: StyleSheet.hairlineWidth,
+                
+              }}
+            />
+              <View style={styles.helpMsg}>
+                <Text style={{fontSize:15, marginTop:5, color:'grey'}}>현재 상대방이 거래종료를 기다리는 상태입니다.</Text>
+                <Text style={{fontSize:15, marginTop:5, color:'grey'}}>거래 종료확인을 누르고 사용자를 평가해보세요!</Text>
+              </View>
+            </>
+            ):
+          <>
+            <View style={styles.dateArea}>
+              <View style={styles.btnArea}>
+                <TouchableOpacity style={styles.btnRate} onPress={userRateButton}>
+                  <Text style={{color: 'white'}}>사용자 평가하기</Text>
+                </TouchableOpacity>
+              </View>
             </View>
+
+            <View
+            style={{
+              borderBottomColor: 'black',
+              borderBottomWidth: StyleSheet.hairlineWidth,
+              
+            }}
+          />
+          <View style={styles.helpMsg}>
+            <Text style={{fontSize:15, marginTop:5, color:'grey'}}>사용자 평가하기 버튼을 눌러 사용자 매너 평가를 해주세요!</Text>
           </View>
+        </>
       }
   </>
 
@@ -310,22 +421,37 @@ const TradeTimerScreen = ({navigation, route}) =>{
 
 
   return (
-    <View style ={{ flex : 1, justifyContent : 'center', alignItems : 'center'}}>
-
-      <Text style={{paddingBottom:hp(3)}}><B>거래 종료까지 남은 시간</B></Text>
-
-      <CountDown
-          size={30}
-          until={diffTime}
-          // onFinish={autoReport}
-          digitStyle={{backgroundColor: '#FFF', borderWidth: 2, borderColor: '#1CC625'}}
-          digitTxtStyle={{color: '#1CC627'}}
-          timeLabelStyle={{color: 'green', fontWeight: 'bold'}}
-          separatorStyle={{color: '#1CC625'}}
-          timeToShow={['D','H', 'M', 'S']}
-          timeLabels={{d: 'Days', h: 'Hours', m: 'Minutes', s: 'Seconds'}}
-          showSeparator
-        />
+    <View style ={styles.container}>
+      {userData ?
+          <View style={styles.rowTopArea}>
+            <View style={styles.titleArea}>
+              <Text style={{fontSize:15, marginTop:5, color:'grey'}}>거래자 정보</Text>
+              {/* <TouchableOpacity style={{ flexDirection:'row'}} onPress={checkUserProfile}> */}
+                <Image
+                source={{uri:userData.profileImage}}
+                style={styles.profileImage}
+                />
+              {/* </TouchableOpacity>   */}
+            </View>
+            <View>
+              <Text style={{fontSize:12, marginTop:5, color:'grey'}}>닉네임</Text>
+              <Text style={{paddingLeft:wp(1),paddingRight:wp(25),fontSize:wp('5.5')}}>{userData.nickname}</Text>
+            </View>
+            <View>
+              <Text style={{fontSize:12, marginTop:5, color:'grey'}}>평가점수</Text>
+              <Text style={{paddingLeft:wp(2),fontSize:wp('5.5')}}>{userData.averageRating}</Text>
+            </View>
+          </View>
+          :
+          <Text>Loading....</Text>
+        }
+        <View
+          style={{
+            borderBottomColor: 'black',
+            borderBottomWidth: StyleSheet.hairlineWidth,
+            
+          }}
+          />
 
       {isEndSuggest==false?
       (<>{tradeEndSuggest}</>):
@@ -385,6 +511,41 @@ function parse(str){
 }
 
 const styles = StyleSheet.create({
+  container: {
+    backgroundColor: '#f5f5f5',
+    flex: 1,
+  },
+  rowTopArea: {
+    flex: 0.3,
+    paddingTop: hp(7),
+    paddingLeft: wp(10),
+    flexDirection: "row",
+    alignItems: 'center',
+  },
+  titleArea: {
+    justifyContent: 'center',
+    paddingRight:wp(15),
+  },
+  profileImage:{
+    borderWidth:2,
+    borderColor:'#65b7ff',
+    borderRadius:50,
+    height:60,
+    width:60,
+    overflow:"hidden",
+    aspectRatio: 1,
+    marginRight:12,
+    marginLeft:12,
+  },
+  timeText:{
+    paddingBottom:hp(3),
+    paddingTop:hp(3),
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  btnList: {
+    paddingTop:hp(1)
+  },
   btnArea: {
     height: hp(8),
     justifyContent: 'center',
@@ -396,7 +557,7 @@ const styles = StyleSheet.create({
     borderRadius: 7,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#4672B8'
+    backgroundColor: '#5FC3D9'
   },
   btnCancel: {
     width: 200,
@@ -404,26 +565,43 @@ const styles = StyleSheet.create({
     borderRadius: 7,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#EB3B30'
+    backgroundColor: '#D9665F'
   },
-  btnEnd: {
+  btnCancel2: {
+    width: 150,
+    height: 50,
+    borderRadius: 7,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#D9665F'
+  },
+  btnRate: {
     width: 200,
     height: 50,
     borderRadius: 7,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#4672B8'
+    backgroundColor: '#5FC3D9'
   },
-  rowbtnArea:{
-    flexDirection: "row",
-    justifyContent: 'center',
-    paddingTop:hp(5),
-    paddingBottom:hp(3)
-  },
+  // btnEnd: {
+  //   width: 200,
+  //   height: 50,
+  //   borderRadius: 7,
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  //   backgroundColor: '#4672B8'
+  // },
   dateArea:{
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop:hp(5),
+    paddingTop:hp(3),
+    paddingBottom:hp(1)
+  },
+  rowArea:{
+    flexDirection: "row",
+    justifyContent: 'center',
+    paddingTop: hp(3),
+    paddingBottom: hp(1)
   },
   btnDate: {
     width: 500,
@@ -435,6 +613,12 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: 'gray',
   },
+  helpMsg:{
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: hp(5),
+    paddingBottom: hp(5)
+  }
 });
 
 export default TradeTimerScreen;
