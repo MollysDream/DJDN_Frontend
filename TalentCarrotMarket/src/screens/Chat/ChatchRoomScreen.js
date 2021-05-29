@@ -47,7 +47,7 @@ function ChatChRoomScreen(props) {
     }, []);
 
     function onSend(newMessages = []) {
-        socket.emit("chat message to server", newMessages);
+        socket.emit("chat message to server", newMessages, chatroomId);
         setMessages((prevMessages) => GiftedChat.append(prevMessages, newMessages));
         onSendDB(newMessages);
     }
@@ -74,6 +74,7 @@ function ChatChRoomScreen(props) {
         }
 
         console.log("roomId : ", roomId);
+        console.log("senderId : ",senderId);
         axios
             .post(`http://${HOST}:3000/chat/createChat`, newChat)
             .then((data) => {})

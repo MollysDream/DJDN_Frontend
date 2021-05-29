@@ -1,4 +1,3 @@
-
 function getDate(date){
     let ret='';
     let slice_date = date.split("T");

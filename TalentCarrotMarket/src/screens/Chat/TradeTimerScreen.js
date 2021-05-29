@@ -57,7 +57,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
     // setNotifyEndDateTime(endDateTime.setMinutes(endDateTime.getMinutes()-5));
     // console.log("새로운 알림 종료시간은 "+ notifyEndDateTime);
     console.log("새로운 연장시간은 "+diffTime);
-    setEndDateChange(false)
+    // setEndDateChange(false)
   },[endDateChange])
 
   useEffect(()=>{
@@ -96,7 +96,13 @@ const TradeTimerScreen = ({navigation, route}) =>{
 
     endDateTime.setMinutes(endDateTime.getMinutes()+5)
     console.log("연장 후 시간은ㅇㅇ "+endDateTime)
-    setEndDateChange(true)
+
+    if(endDateChange == true){
+      setEndDateChange(false)
+    }else{
+      setEndDateChange(true)
+    }
+    
     const newEndSet = newFormatDate(endDateTime)
 
     //거래연장 통신

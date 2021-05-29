@@ -199,6 +199,7 @@ function ChatScreen(props) {
             senderId: senderId,
             roomId: chatRoomId
         }
+        console.log("hostId: ");
         console.log("chatRoomId : ", chatRoomId);
         console.log("roomId : ", roomId);
         axios

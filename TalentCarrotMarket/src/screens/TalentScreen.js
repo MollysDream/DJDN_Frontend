@@ -1,21 +1,14 @@
 import React from 'react'
 import { Text, View, Button, StyleSheet } from 'react-native'
-import { LocalNotification } from '../util/LocalNotification'
 import RemotePushController from '../util/RemotePushController'
 
 
 const TalentScreen = () => {
 
-//  const handleButtonPress = () => {
-//     LocalNotification()
-// }
+
 
 return (
     <View style={styles.container}>
-      {/* <Text>Press a button to trigger the notification</Text>
-      <View style={{ marginTop: 20 }}>
-        <Button title={'거래 시간 푸쉬 알람'} onPress={handleButtonPress} />
-      </View> */}
       <RemotePushController time={310}/>
     </View>
   )
