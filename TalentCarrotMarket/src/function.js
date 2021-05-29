@@ -65,7 +65,7 @@ function getBanDate(date){
     return `${year}년-${month}월-${day}일`
 }
 
-const HOST = '192.168.25.41' // OR 10.0.2.2
+const HOST = '10.0.2.2' // OR 10.0.2.2
 
 export {
     getDate,

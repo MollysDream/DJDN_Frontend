@@ -8,7 +8,10 @@ import {
 
 import AsyncStorage from '@react-native-community/async-storage';
 import requestUserAPI from "../requestUserAPI";
+import requestMemberAPI from '../requestMemberAPI';
 import requestReportAPI from "../requestReportAPI";
+
+import firebase from 'react-native-firebase';
 
 const SplashScreen = ({navigation}) => {
   //State for ActivityIndicator animation
@@ -21,12 +24,14 @@ const SplashScreen = ({navigation}) => {
       //If not then send for Authentication
       //else send to Home Screen
       let userId = await AsyncStorage.getItem('user_id');
+      let fcmToken = await firebase.messaging().getToken();
+      console.log("fcm token은 "+fcmToken);
 
       if(userId === null){
         navigation.replace('Auth');
       }else{
         let admin = await requestUserAPI.checkAdmin(userId);
-        let userData =await requestUserAPI.getUserData(userId);
+        let userData = await requestUserAPI.getUserData(userId);
 
         //로그인한 사용자가 Ban됐을때.
         if(userData.ban){
@@ -49,7 +54,15 @@ const SplashScreen = ({navigation}) => {
         }
 
         if(admin === null){
-          navigation.replace('MainTab');
+          let autoUserData = await requestMemberAPI.autoLogin(userId,fcmToken);
+          
+          if(autoUserData.data.message){
+            console.log('자동 로그인 성공!')
+            navigation.replace('MainTab');
+          } else{
+            console.log("자동 로그인에 실패하였습니다.");
+          }
+          
         }else{
           console.log("Admin 로그인!");
           navigation.replace('AdminTab');

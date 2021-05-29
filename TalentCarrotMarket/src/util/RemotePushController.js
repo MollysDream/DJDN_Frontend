@@ -20,16 +20,24 @@ function RemotePushController (props) {
       // requestPermissions: true
     })
 
-    // // notification channel
-    // PushNotification.createChannel({
-    //     channelId: "my-channel", // (required)
-    //     channelName: "My channel", // (required)
-    // },
-    // (created) => console.log(`CreateChannel returned '${created}'`)
-    // );
+    // notification channel
+    PushNotification.createChannel({
+        channelId: "my-channel", // (required)
+        channelName: "My channel", // (required)
+    },
+    (created) => console.log(`CreateChannel returned '${created}'`)
+    );
+    
+    // PushNotification.channelExists(channel_id, function (exists) {
+    //   console.log("channel은 존재합니다 "+exists); // true/false
+    //   if(exists){}
+    // });
   }, [])
 
   useEffect(()=>{
+    console.log("거래 남은 시간이 수정되었습니다. "+props.time)
+    //원래 스케줄있던거 삭제 필요
+
     PushNotification.localNotificationSchedule({
       channelId: "my-channel",
       autoCancel: true,

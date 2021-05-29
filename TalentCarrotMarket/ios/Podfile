@@ -12,6 +12,12 @@ target 'TalentCarrotMarket' do
     :hermes_enabled => false
   )
 
+  pod 'IamportReactNative', :path => '../node_modules/iamport-react-native'
+
+  pod 'RNFirebase', :path => '../node_modules/react-native-firebase'
+
+  pod 'RNFBMessaging', :path => '../node_modules/@react-native-firebase/messaging'
+
   target 'TalentCarrotMarketTests' do
     inherit! :complete
     # Pods for testing
