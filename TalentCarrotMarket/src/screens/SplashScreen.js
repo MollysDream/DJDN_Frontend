@@ -11,7 +11,7 @@ import requestUserAPI from "../requestUserAPI";
 import requestMemberAPI from '../requestMemberAPI';
 import requestReportAPI from "../requestReportAPI";
 
-import firebase from 'react-native-firebase';
+import messaging from '@react-native-firebase/messaging';
 
 const SplashScreen = ({navigation}) => {
   //State for ActivityIndicator animation
@@ -24,7 +24,7 @@ const SplashScreen = ({navigation}) => {
       //If not then send for Authentication
       //else send to Home Screen
       let userId = await AsyncStorage.getItem('user_id');
-      let fcmToken = await firebase.messaging().getToken();
+      let fcmToken = await messaging().getToken();
       console.log("fcm token은 "+fcmToken);
 
       if(userId === null){

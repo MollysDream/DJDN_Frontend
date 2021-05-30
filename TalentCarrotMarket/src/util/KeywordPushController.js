@@ -5,6 +5,16 @@ import PushNotification from 'react-native-push-notification'
 function KeywordPushController (props) {
   useEffect(() => {
 
+    /*
+		* 키워드 푸시알림을 해봅시다.
+		* 먼저, 사용자의 키워드 정보, 동네 정보(동네와 반경)를 가져와요
+		* 다음으로, 각 게시물 정보를 가져옵니다. 
+		* 
+		* 지금 보내는 메시지(msg)가 누구냐에 따라 각 상대방에게 알림이 가도록 합시다.
+		* 푸시 알림 메시지의 포맷을 정해줍니다 -> title,tag 등..
+		* sendFCM 메시지를 통해 메시지 보냅시다!
+		 */
+
     PushNotification.configure({
       // (optional) Called when Token is generated (iOS and Android)
       onRegister: function(token) {
