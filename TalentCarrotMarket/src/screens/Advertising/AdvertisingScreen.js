@@ -21,10 +21,36 @@ import requestUser from "../../requestUserAPI";
 import ActivationScreen from './ActivationScreen';
 import DisabledScreen from './DisabledScreen';
 import WaitApproveScreen from './WaitApproveScreen';
+import AsyncStorage from "@react-native-community/async-storage";
+import io from "socket.io-client";
+import {HOST} from "../../function";
+
+import requestPoint from "../../requestPointAPI";
+import {retrySymbolicateLogNow} from "react-native/Libraries/LogBox/Data/LogBoxData";
+
+// let point = 0;
 const AdvertisingScreen = ({navigation, route}) => {
 
     const [tab, setTab] = useState(0);
     const [userId, setUserId]= useState(route.params.userId);
+    const [point, setPoint] = useState(0);
+
+
+  useEffect(() => {
+    async function getPoint() {
+      console.log('포인트 조회에 쓰이는 userId : ' + userId);
+      console.log('1. 조회된 point: '+ point);
+
+      let returnPoint = await requestPoint.getPoint(userId);
+      setPoint(returnPoint.point);
+      // point = returnPoint;
+      console.log('2. 조회된 데이터: '+  returnPoint);
+      console.log('3. 조회된 point: '+  returnPoint.point);
+      // console.log('4. 조회된 point type : '+  typeof returnPoint.toString());
+    }
+    getPoint();
+  }, []);
+
 
     let Screen = null;
     if(tab==0)
@@ -35,29 +61,28 @@ const AdvertisingScreen = ({navigation, route}) => {
         Screen = <WaitApproveScreen navigation={navigation}/>
 
         return (
-
-
             <View style={styles.container}>
 
               <View style={styles.pointBox}>
+
                 <View style={styles.pointTextBox}>
-                  <Text style={styles.pointText}>원</Text>
+                  <Text style={({paddingBottom:100},{color: 'black', fontSize: 10, textAlign:'auto'})}>잔여 포인트:</Text>
+                  <Text style={styles.pointText}>{`${point}원`}</Text>
                 </View>
 
                 <TouchableOpacity style={styles.chargePointButton}>
                   <Text style={(styles.Text, {color: 'black',fontWeight: 'bold',})}>충전</Text>
                 </TouchableOpacity>
+
               </View>
 
-            <View
-              style={{
+              <View style={{
                 borderBottomColor: 'black',
                 borderBottomWidth: StyleSheet.hairlineWidth,
                 marginBottom:10
-              }}
-            />
+              }}/>
 
-            <View style={styles.container}>
+              <View style={styles.container}>
                  <TouchableOpacity onPress={()=>navigation.navigate('makeadver')}
                                   style={{borderWidth:0,position:'absolute',bottom:5,alignSelf:'flex-end'}}>
                     <Icon name="add-circle"  size={70} color="#37CEFF" />
@@ -84,6 +109,7 @@ const AdvertisingScreen = ({navigation, route}) => {
                 </View>
                 <View>{Screen}</View>
             </View>
+
             </View>
 
         )
@@ -130,22 +156,22 @@ const styles = StyleSheet.create({
       marginBottom:20
     },
     pointTextBox:{
-      width: 70,
+      width: 150,
       height: 50,
       justifyContent: 'center',
       alignItems: 'center',
-      marginLeft: 30,
-      paddingLeft: 30,
-      backgroundColor: '#d4fbff',
-
+      marginLeft: 20,
+      // paddingLeft: 20,
+      // backgroundColor: '#d4fbff',
     },
     pointText:{
-      fontSize:20,
+      fontSize:22,
       fontWeight: 'bold',
-      color: 'black'
+      color: 'black',
+      textAlign:'auto'
     },
     chargePointButton:{
-      // flex: 1,
+      // flex: 2,
       // grid: 1,
       width: 70,
       height: 50,
@@ -153,7 +179,8 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: '#d4fbff',
-      marginLeft: 200
+      marginLeft: 120,
+      marginRight: 50
     },
 
 });
