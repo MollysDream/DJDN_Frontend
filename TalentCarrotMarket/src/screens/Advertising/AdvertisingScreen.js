@@ -21,10 +21,10 @@ import requestUser from "../../requestUserAPI";
 import ActivationScreen from './ActivationScreen';
 import DisabledScreen from './DisabledScreen';
 import WaitApproveScreen from './WaitApproveScreen';
-const AdvertisingScreen = ({navigation}) => {
+const AdvertisingScreen = ({navigation, route}) => {
 
     const [tab, setTab] = useState(0);
-
+    const [userId, setUserId]= useState(route.params.userId);
 
     let Screen = null;
     if(tab==0)
@@ -35,14 +35,35 @@ const AdvertisingScreen = ({navigation}) => {
         Screen = <WaitApproveScreen navigation={navigation}/>
 
         return (
-            
+
+
+            <View style={styles.container}>
+
+              <View style={styles.pointBox}>
+                <View style={styles.pointTextBox}>
+                  <Text style={styles.pointText}>원</Text>
+                </View>
+
+                <TouchableOpacity style={styles.chargePointButton}>
+                  <Text style={(styles.Text, {color: 'black',fontWeight: 'bold',})}>충전</Text>
+                </TouchableOpacity>
+              </View>
+
+            <View
+              style={{
+                borderBottomColor: 'black',
+                borderBottomWidth: StyleSheet.hairlineWidth,
+                marginBottom:10
+              }}
+            />
+
             <View style={styles.container}>
                  <TouchableOpacity onPress={()=>navigation.navigate('makeadver')}
                                   style={{borderWidth:0,position:'absolute',bottom:5,alignSelf:'flex-end'}}>
                     <Icon name="add-circle"  size={70} color="#37CEFF" />
                 </TouchableOpacity>
-                 <View style={styles.title}>                
-                
+                 <View style={styles.title}>
+
                  <TouchableOpacity style={{width:'33%', alignItems:'center'}} onPress={()=>setTab(2)}>
                     <Text style={tab == 2 ? styles.text_on : styles.text_off}>
                         {`승인 대기`}
@@ -62,26 +83,27 @@ const AdvertisingScreen = ({navigation}) => {
                 </TouchableOpacity>
                 </View>
                 <View>{Screen}</View>
-                </View>
-     
+            </View>
+            </View>
+
         )
-    
+
 
 }
 
 const styles = StyleSheet.create({
     text_on:{
-    fontSize:18,
+        fontSize:18,
         fontWeight: 'bold',
         color: '#ff5900',
         borderBottomWidth: 2,
         borderColor: '#ff5900'
-},
-text_off:{
-    fontSize:18,
+    },
+    text_off:{
+        fontSize:18,
         fontWeight: 'bold',
         color: 'grey'
-},
+    },
     title:{
         margin:10,
         flexDirection:'row',
@@ -95,6 +117,43 @@ text_off:{
         backgroundColor: 'white',
         paddingLeft: wp(2),
         paddingRight: wp(2),
+    },
+    pointBox:{
+      // flex: 1,
+      alignItems: 'center',
+      flexDirection:'row',
+      borderColor:'black',
+      borderWidth: StyleSheet.hairlineWidth,
+      borderRadius: 10,
+      paddingTop:20,
+      paddingBottom:20,
+      marginBottom:20
+    },
+    pointTextBox:{
+      width: 70,
+      height: 50,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginLeft: 30,
+      paddingLeft: 30,
+      backgroundColor: '#d4fbff',
+
+    },
+    pointText:{
+      fontSize:20,
+      fontWeight: 'bold',
+      color: 'black'
+    },
+    chargePointButton:{
+      // flex: 1,
+      // grid: 1,
+      width: 70,
+      height: 50,
+      borderRadius: 10,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#d4fbff',
+      marginLeft: 200
     },
 
 });
