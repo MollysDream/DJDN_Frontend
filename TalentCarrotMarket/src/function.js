@@ -64,8 +64,8 @@ function getBanDate(date){
     return `${year}년-${month}월-${day}일`
 }
 
-// const HOST = '10.0.2.2'
-const HOST = '192.168.219.114' // OR 10.0.2.2
+const HOST = '10.0.2.2'
+// const HOST = '192.168.219.114' // 나준엽 안드로이드
 
 export {
     getDate,
