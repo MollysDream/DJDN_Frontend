@@ -47,6 +47,8 @@ import chatchroomScreen from './src/screens/Chat/ChatchRoomScreen';
 import chatTestScreen from './src/screens/Chat/ChatTestScreen';
 import tradeTimerScreen from './src/screens/Chat/TradeTimerScreen';
 import userRateScreen from './src/screens/Chat/UserRateScreen';
+import chatUserProfileScreen from './src/screens/Chat/ChatUserProfileScreen';
+import chatDetailPostScreen from './src/screens/Chat/ChatDetailPostScreen';
 
 //aroundStack
 import aroundScreen from './src/screens/Around/AroundScreen';
@@ -161,6 +163,8 @@ const ChatStackScreen = () => {
       <ChatStack.Screen name="userRate" component={userRateScreen} />
       <ChatStack.Screen name="tradeset" component={tradeSetScreen} />
       <ChatStack.Screen name="chatchroom" component={chatchroomScreen} />
+      <ChatStack.Screen name="사용자 프로필" component={chatUserProfileScreen} />
+      <ChatStack.Screen name="DetailPost" component={chatDetailPostScreen}/>
  </Stack.Navigator>
   );
 };
