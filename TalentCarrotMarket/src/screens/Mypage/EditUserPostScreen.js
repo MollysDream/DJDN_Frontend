@@ -65,7 +65,7 @@ export default class EditUserPostScreen extends Component {
             changeToImageTemp.push(file);
         })
         this.setState({imageTemp:changeToImageTemp})
-        this.setState({countImage:this.state.imageTemp.length})
+        this.setState({countImage:changeToImageTemp.length})
         console.log(this.state.imageTemp)
 
 
@@ -265,7 +265,6 @@ export default class EditUserPostScreen extends Component {
                                                     nestedScrollEnabled={true}
                                                     keyExtractor={item => item.name}
                                                     renderItem={({item}) => (
-
                                                         <Image style={styles.image} source={{uri: item.uri}} /> )}
                                                 />
                                             </Item>
