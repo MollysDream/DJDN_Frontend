@@ -1,5 +1,5 @@
 import React, {useState,useEffect} from 'react';
-import {Form, Input, Item, Label} from 'native-base';
+import {Container, Form, Input, Item, Label} from 'native-base';
 import {
     View,
     Text,
@@ -18,6 +18,8 @@ import Icon from "react-native-vector-icons/Ionicons";
 import ImagePicker from "react-native-image-crop-picker";
 import {S3Key} from "../../Key";
 import request from "../../requestAPI";
+import {message} from "../../function";
+import FlashMessage from "react-native-flash-message";
 
 const EditProfileScreen = ({navigation, route}) => {
 
@@ -38,7 +40,7 @@ const EditProfileScreen = ({navigation, route}) => {
     }
 
     const options = {
-        keyPrefix: `---프로필 이미지---/${editNickname}/`,  //제목 뒤에 user_id 값 추가해야 됨.
+        keyPrefix: `---프로필 이미지---/${userId}/${editNickname}/`,  //제목 뒤에 user_id 값 추가해야 됨.
         bucket: 'mollysdreampostdata',
         region: 'ap-northeast-2',
         accessKey: S3Key.accessKey,
@@ -49,7 +51,7 @@ const EditProfileScreen = ({navigation, route}) => {
     async function saveProfile() {
 
         if(editNickname.length === 0){
-            Alert.alert("경고","닉네임을 작성해주세요", [{ text: '확인', style: 'cancel' }])
+            message("닉네임을 작성해주세요")
             return;
         }
 
@@ -120,7 +122,7 @@ const EditProfileScreen = ({navigation, route}) => {
 
     return (
         <View style={styles.container}>
-
+            <FlashMessage position="top"/>
             <View style={styles.profileBox}>
                 <View style={styles.user}>
                     <View style={styles.imageBox}>

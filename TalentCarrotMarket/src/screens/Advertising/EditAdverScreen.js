@@ -29,6 +29,8 @@ import ImagePicker from 'react-native-image-crop-picker';
 import {Picker} from '@react-native-picker/picker';
 import {PickerItem} from "react-native/Libraries/Components/Picker/Picker";
 import FlashMessage, {showMessage} from "react-native-flash-message";
+import {message} from "../../function";
+import {S3Key} from "../../Key";
 
 export default class EditAdverScreen extends Component {
     state = {
@@ -42,11 +44,10 @@ export default class EditAdverScreen extends Component {
         user_id: ""
     }
 
-    message(text){
-        showMessage({message:text, type:'info'});
-    }
-
     async componentDidMount() {
+
+        const userId = await AsyncStorage.getItem('user_id');
+
         const changeToImageTemp = []
         this.props.route.params.adverImages.map((image) => {
                 const file = {
@@ -57,6 +58,8 @@ export default class EditAdverScreen extends Component {
         this.setState({imageTemp: changeToImageTemp})
         this.setState({countImage: changeToImageTemp.length})
         console.log(changeToImageTemp)
+
+        this.setState({user_id:userId});
     }
 
     writeAd = (text, type) => {
@@ -74,18 +77,28 @@ export default class EditAdverScreen extends Component {
 
     async confirmPost() {
         if (this.state.title.length === 0) {
-            this.message("제목을 작성해주세요");
+            message("제목을 작성해주세요");
             return;
         } else if (this.state.imageTemp.length === 0) {
-            this.message("이미지를 첨부해주세요");
+            message("이미지를 첨부해주세요");
             return;
         } else if (this.state.text.length === 0) {
-            this.message("광고 내용을 작성해주세요");
+            message("광고 내용을 작성해주세요");
             return;
         } else if (this.state.price.length === 0) {
-            this.message("가격을 작성해주세요");
+            message("가격을 작성해주세요");
             return;
         }
+
+        const options = {
+            keyPrefix: `---광고---/${this.state.user_id}/${this.state.title}/`,  //제목 뒤에 user_id 값 추가해야 됨.
+            bucket: 'mollysdreampostdata',
+            region: 'ap-northeast-2',
+            accessKey: S3Key.accessKey,
+            secretKey: S3Key.secretKey,
+            successActionStatus: 201,
+        }
+
         if (this.state.imageTemp[0].type != undefined) 
             try {
                 const imageUrl: string[] = await Promise.all(
@@ -155,7 +168,7 @@ export default class EditAdverScreen extends Component {
         return (
             <Container>
                 <FlashMessage position="top"/>
-            <Header>
+            <Header style={{backgroundColor:"#a75bff"}}>
                 <Right>
                     <TouchableOpacity
                         onPress={()=>this.confirmPost()}
@@ -200,7 +213,7 @@ export default class EditAdverScreen extends Component {
                                            data ={this.state.imageTemp}
                                            horizontal = {true}
                                            nestedScrollEnabled={true}
-                                           keyExtractor={item => item.name}
+                                           keyExtractor={item => item.uri}
                                            renderItem={({item}) => (
                                                <Image style={styles.image} source={{uri: item.uri}} /> )}
                                             />  

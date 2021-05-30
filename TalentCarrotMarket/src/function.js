@@ -1,3 +1,5 @@
+import {showMessage} from "react-native-flash-message";
+
 function getDate(date){
     let ret='';
     let slice_date = date.split("T");
@@ -67,10 +69,15 @@ function getBanDate(date){
 const HOST = '10.0.2.2'
 // const HOST = '192.168.219.114' // 나준엽 안드로이드
 
+function message(text){
+    showMessage({message:text, type:'warning'});
+}
+
 export {
     getDate,
     getPrice,
     getPlusDate,
     getBanDate,
-    HOST
+    HOST,
+    message
 }

@@ -29,6 +29,9 @@ import {PickerItem} from "react-native/Libraries/Components/Picker/Picker";
 
 import {S3Key} from "../../Key";
 import requestUserAPI from "../../requestUserAPI";
+import {message} from "../../function";
+import FlashMessage from "react-native-flash-message";
+
 
 export default class MakePostScreen extends Component {
     state = {
@@ -112,28 +115,28 @@ export default class MakePostScreen extends Component {
 
 
         if(this.state.title.length === 0){
-            Alert.alert("경고","제목을 작성해주세요", [{ text: '확인', style: 'cancel' }])
+            message("제목을 작성해주세요");
             return;
         }
         else if(this.state.category == ''){
-            Alert.alert("경고","카테고리를 설정해주세요", [{ text: '확인', style: 'cancel' }])
+            message("카테고리를 설정해주세요");
             return;
         }
         else if(this.state.imageTemp.length === 0){
-            Alert.alert("경고","이미지를 첨부해주세요", [{ text: '확인', style: 'cancel' }])
+            message("이미지를 첨부해주세요");
             return;
         }
         else if(this.state.text.length === 0){
-            Alert.alert("경고","게시글 내용을 작성해주세요", [{ text: '확인', style: 'cancel' }])
+            message("게시글 내용을 작성해주세요");
             return;
         }
         else if(this.state.price.length === 0){
-            Alert.alert("경고","가격을 작성해주세요", [{ text: '확인', style: 'cancel' }])
+            message("가격을 작성해주세요");
             return;
         }
 
         const options = {
-            keyPrefix: `${this.state.title}/`,  //제목 뒤에 user_id 값 추가해야 됨.
+            keyPrefix: `---게시글---/${this.state.user_id}/${this.state.title}/`,
             bucket: 'mollysdreampostdata',
             region: 'ap-northeast-2',
             accessKey: S3Key.accessKey,
@@ -215,6 +218,7 @@ export default class MakePostScreen extends Component {
     render() {
         return (
             <Container>
+                <FlashMessage position="top"/>
                 <Header>
                     <Right>
                         <TouchableOpacity
