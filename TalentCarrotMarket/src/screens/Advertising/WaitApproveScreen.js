@@ -168,12 +168,12 @@ export default class WaitApproveScreen extends Component {
                     <View style={styles.optionBox}>
 
                         <TouchableOpacity style={styles.buttonList}  onPress={()=>this.goToEditAdverScreen(this.state.currentItem)}>
-                            <Icon style={styles.iconPlace} name="edit"  size={40} color="#37CEFF" />
+                            <Icon style={styles.iconPlace} name="edit"  size={40} color="#7453ff" />
                             <Text style={styles.buttonText}>광고 수정</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity style={styles.buttonList} onPress={()=>this.deleteAdver(this.state.currentItem)}>
-                            <Icon2 style={styles.iconPlace} name="cross"  size={45} color="#37CEFF" />
+                            <Icon2 style={styles.iconPlace} name="cross"  size={45} color="#7453ff" />
                             <Text style={styles.buttonText}>삭제</Text>
                         </TouchableOpacity>
                     </View>
@@ -211,19 +211,6 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         padding: 10,
     },
-    cover:{
-        flex: 1,
-        width: 200,
-        height:200,
-        resizeMode: "contain"
-    },
-    postDetail:{
-        flex:3,
-        alignItems :"flex-start",
-        flexDirection : "column",
-        alignSelf : "center",
-        padding:20
-    },
     postTitle:{
         fontSize:18,
         fontWeight: "bold",
@@ -238,7 +225,7 @@ const styles = StyleSheet.create({
         //borderWidth:1,
         height:55,
         flexDirection:'row',
-        backgroundColor: '#ecfeff',
+        backgroundColor: '#edecff',
         borderRadius: 20,
         marginBottom:7,
 
@@ -262,33 +249,7 @@ const styles = StyleSheet.create({
         top: 19,
         right: 15,
     },
-    chatRoomButton: {
-        position: 'absolute',
-        top: 15,
-        right: 48,
-    },
-    optionBox: {
-        //borderWidth: 1,
-        flexDirection:'column',
-        marginTop:7
 
-    },
-    status_ing:{
-        backgroundColor:'#b4e6ff',
-        position: 'absolute',
-        top: 40,
-        padding: 3,
-        borderRadius: 7
-    },
-    status_complete:{
-        backgroundColor:'#98afbf',
-        position: 'absolute',
-        top: 40,
-        padding: 3,
-        borderRadius: 7
-    },
-    status_none:{
-        position: 'absolute'
-    },
+
 
 });

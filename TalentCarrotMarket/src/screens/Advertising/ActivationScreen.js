@@ -24,6 +24,7 @@ import Icon2 from "react-native-vector-icons/Entypo";
 import Icon3 from "react-native-vector-icons/Ionicons";
 import Modal from 'react-native-modal';
 import Icon4 from "react-native-vector-icons/Fontisto";
+import {getDate, getPrice} from "../../function";
 
 let userId;
 
@@ -110,35 +111,44 @@ export default class Actiation extends Component {
     }
 
     returnFlatListItem(item,index){
-        let status = null
-        let statusStyle = styles.status_none
+        let time = getDate(item.date);
+        let status = '활성화';
+        let statusStyle = styles.post_sign
+        let price = getPrice(item.price);
 
         return(
-            <View>
+            <>
                 {
                     item.active == true?
-                <View>
-                <TouchableHighlight >
+                <>
+                <TouchableHighlight onPress={() => this.props.navigation.navigate('detailadver',{item})}>
                     <View style={styles.post}>
+
+                        <Text style={styles.Time}>{`${time}`}</Text>
+                        <Text style={[styles.Time,{bottom:28}]}>{`${item.addressName}`}</Text>
+
                         <Image style={styles.image} source={{ uri: item.image[0]}} />
-                        <View>
-                            <Text style={styles.postTitle}>{item.title}</Text>
-                            <View style={statusStyle}>
+
+                        <View style={{flexDirection:'column', marginLeft:10}}>
+                            <View style={{flexDirection:'row'}}>
+                                <Text style={styles.postTitle}>{item.title}</Text>
+                            </View>
+
+                            <View style={[statusStyle,{marginTop:3}]}>
                                 <Text>{status}</Text>
                             </View>
-                            <View style={{flexDirection:'row'}}>
-                                <Text style={styles.postPrice}>{`${item.price}원`}</Text>
-                                <Text style={styles.postAddressTime}>{`${item.addressName}`}</Text>
-                            </View>
+                            <Text style={styles.postPrice}>{`${price}원`}</Text>
+
                         </View>
+
                     </View>
                 </TouchableHighlight>
                 <TouchableHighlight style={styles.optionButton} onPress={()=>this.onOption(item)}>
-                    <Icon2 name="dots-three-vertical" size={25} color={"black"}></Icon2>
+                    <Icon2 name="dots-three-vertical" size={23} color={"purple"}></Icon2>
                 </TouchableHighlight>
-                </View>:null
+                </>:null
                 }
-            </View>
+            </>
         );
     }
 
@@ -159,17 +169,17 @@ export default class Actiation extends Component {
                     <View style={styles.optionBox}>
 
                         <TouchableOpacity style={styles.buttonList}  onPress={()=>this.toggleActivation(this.state.currentItem)}>
-                            <Icon4 style={styles.iconPlace} name="checkbox-active"  size={40} color="#37CEFF" />
+                            <Icon4 style={styles.iconPlace} name="checkbox-active"  size={40} color="#7453ff" />
                             <Text style={styles.buttonText}>광고 비활성화</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity style={styles.buttonList}  onPress={()=>this.goToEditAdverScreen(this.state.currentItem)}>
-                            <Icon style={styles.iconPlace} name="edit"  size={40} color="#37CEFF" />
+                            <Icon style={styles.iconPlace} name="edit"  size={40} color="#7453ff" />
                             <Text style={styles.buttonText}>광고 수정</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity style={styles.buttonList} onPress={()=>this.deleteAdver(this.state.currentItem)}>
-                            <Icon2 style={styles.iconPlace} name="cross"  size={45} color="#37CEFF" />
+                            <Icon2 style={styles.iconPlace} name="cross"  size={45} color="#7453ff" />
                             <Text style={styles.buttonText}>삭제</Text>
                         </TouchableOpacity>
                     </View>
@@ -184,45 +194,46 @@ export default class Actiation extends Component {
 
 
 const styles = StyleSheet.create({
+    Time: {fontSize:13, textAlign:'right', position:'absolute',right:10,bottom:10, marginRight:3},
+    post_sign:{
+        backgroundColor:'#d9c8ee',
+        padding: 3,
+        borderRadius: 7,
+        alignSelf:'flex-start',
+    },
     image:{
-        width: wp(28),
+        width: wp(20),
         overflow:"hidden",
-        height: hp(28),
+        height: hp(20),
         aspectRatio: 1,
-        borderRadius: 9,
-        marginRight:12
+        borderRadius: 10,
+
+        borderWidth:2,
+        borderColor:'#c18aff',
     },
     post:{
         flexDirection: "row",
         borderRadius: 15,
         backgroundColor: "white",
-        borderBottomColor: "#a6e5ff",
+        borderBottomColor: "purple",
         borderBottomWidth: 1,
         padding: 10,
-        height: 136
     },
-    cover:{
-        flex: 1,
-        width: 200,
-        height:200,
-        resizeMode: "contain"
+    postTitle:{
+        fontSize:18,
+        fontWeight: "bold",
+        width:"75%",
+        paddingTop:5,
+        color:'#7751ff'
     },
-    postDetail:{
-        flex:3,
-        alignItems :"flex-start",
-        flexDirection : "column",
-        alignSelf : "center",
-        padding:20
-    },
-    postTitle:{fontSize:18, fontWeight: "bold", width:200, height:80, paddingTop:9},
     postAddressTime: {fontSize:13, textAlign:'right', width:'30%', marginRight:10},
-    postPrice: {width:'50%',fontSize:17 , color:"#0088ff" ,paddingTop: 9}
-,
+    postPrice: {width:'50%',fontSize:15 , color:"#7453ff" ,paddingTop: 4}
+    ,
     buttonList: {
         //borderWidth:1,
         height:55,
         flexDirection:'row',
-        backgroundColor: '#ecfeff',
+        backgroundColor: '#edecff',
         borderRadius: 20,
         marginBottom:7,
 
@@ -245,34 +256,6 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 19,
         right: 15,
-    },
-    chatRoomButton: {
-        position: 'absolute',
-        top: 15,
-        right: 48,
-    },
-    optionBox: {
-        //borderWidth: 1,
-        flexDirection:'column',
-        marginTop:7
-
-    },
-    status_ing:{
-        backgroundColor:'#b4e6ff',
-        position: 'absolute',
-        top: 40,
-        padding: 3,
-        borderRadius: 7
-    },
-    status_complete:{
-        backgroundColor:'#98afbf',
-        position: 'absolute',
-        top: 40,
-        padding: 3,
-        borderRadius: 7
-    },
-    status_none:{
-        position: 'absolute'
     },
 
 });
