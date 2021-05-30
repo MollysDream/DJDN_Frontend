@@ -14,47 +14,72 @@ import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {SearchBar} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
-import request from '../../requestAPI';
-import requestUser from "../../requestUserAPI";
 import ActivationScreen from './ActivationScreen';
 import DisabledScreen from './DisabledScreen';
 import WaitApproveScreen from './WaitApproveScreen';
-import AsyncStorage from "@react-native-community/async-storage";
-import io from "socket.io-client";
-import {HOST} from "../../function";
+
 
 import requestPoint from "../../requestPointAPI";
-import {retrySymbolicateLogNow} from "react-native/Libraries/LogBox/Data/LogBoxData";
+import requestUser from "../../requestUserAPI";
+
 
 // let point = 0;
 const AdvertisingScreen = ({navigation, route}) => {
 
     const [tab, setTab] = useState(0);
     const [userId, setUserId]= useState(route.params.userId);
+    const [userData, setUserData] = useState('');
     const [point, setPoint] = useState(0);
+    const [flag, setFlag] = useState(0);
+
+
+    console.log('\n');
 
 
   useEffect(() => {
     async function getPoint() {
-      console.log('포인트 조회에 쓰이는 userId : ' + userId);
-      console.log('1. 조회된 point: '+ point);
+      // console.log('포인트 조회에 쓰이는 userId : ' + userId);
+      // console.log('1. 조회된 point: '+ point);
 
       let returnPoint = await requestPoint.getPoint(userId);
       setPoint(returnPoint.point);
       // point = returnPoint;
-      console.log('2. 조회된 데이터: '+  returnPoint);
-      console.log('3. 조회된 point: '+  returnPoint.point);
+      // console.log('2. 조회된 데이터: '+  returnPoint);
+      // console.log('3. 조회된 point: '+  returnPoint.point);
       // console.log('4. 조회된 point type : '+  typeof returnPoint.toString());
     }
+
     getPoint();
-  }, []);
+    if(flag ==0){
+      console.log("flag가 1아니어서 그냥 원래대로 진행!");
+    }
 
-  function IamportPayment(){
-    navigation.navigate('결제', {userId:userId});
+    if(flag ==1){
+      console.log("flag가 1이다!");
+      getPoint();
+      setFlag(0);
+      console.log("flag가 0으로 바꾼다!");
+
+    }
+
+
+
+  }, [point,flag]);
+
+
+  async function IamportPayment(){
+    console.log('onPress 눌렀을 때. '+ userId);
+    setFlag(1);
+
+    let returnUserData = await requestUser.getUserData(userId);
+    setUserData(returnUserData);
+    // console.log('onPress 눌렀을 때. userData '+ userData);
+
+
+
+    navigation.navigate('결제', {userId:userId, userData:returnUserData});
   }
-
 
 
     let Screen = null;

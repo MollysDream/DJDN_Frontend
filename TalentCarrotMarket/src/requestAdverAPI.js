@@ -26,14 +26,14 @@ export async function deleteAdver(_id){
 
 export async function updateAdver(adverData){
     console.log("updateAdver 호출됨");
-    console.log(adverData);
+    // console.log(adverData);
     const info = await axi.post("/advertisement/updateAdver", adverData);
     return info.data;
 }
 
 export async function getMyAdver(userId) {
     console.log('getMyAdver함수 호출됨');
-    console.log("여기 : ", userId);
+    // console.log("여기 : ", userId);
     const InfoData = await axi.get("/advertisement/getMyAdver", {params : {userId : userId}});
     //console.log(userTradingPostData.data);
     return InfoData.data;
