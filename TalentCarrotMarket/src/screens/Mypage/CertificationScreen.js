@@ -152,7 +152,7 @@ const CertificationScreen = ({navigation, route}) => {
 
 
         const options = {
-            keyPrefix: `---자격증---/${title}/`,  //제목 뒤에 user_id 값 추가해야 됨.
+            keyPrefix: `---자격증---/${userId}/${title}/`,  //제목 뒤에 user_id 값 추가해야 됨.
             bucket: 'mollysdreampostdata',
             region: 'ap-northeast-2',
             accessKey: S3Key.accessKey,

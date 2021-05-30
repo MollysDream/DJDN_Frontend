@@ -115,7 +115,7 @@ const AdvertisingScreen = ({navigation, route}) => {
               <View style={styles.container}>
                  <TouchableOpacity onPress={()=>navigation.navigate('makeadver')}
                                   style={{borderWidth:0,position:'absolute',bottom:5,alignSelf:'flex-end'}}>
-                    <Icon name="add-circle"  size={70} color="#37CEFF" />
+                    <Icon name="add-circle"  size={70} color="purple" />
                 </TouchableOpacity>
                  <View style={styles.title}>
 
@@ -151,9 +151,9 @@ const styles = StyleSheet.create({
     text_on:{
         fontSize:18,
         fontWeight: 'bold',
-        color: '#ff5900',
+        color: '#8636ff',
         borderBottomWidth: 2,
-        borderColor: '#ff5900'
+        borderColor: '#8636ff'
     },
     text_off:{
         fontSize:18,
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
         margin:10,
         flexDirection:'row',
         borderBottomWidth:5,
-        borderColor:'#ffd6c4',
+        borderColor:'#ddc4ff',
         paddingBottom:5
     },
     container: {
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
       borderRadius: 10,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: '#d4fbff',
+      backgroundColor: '#ddc4ff',
       marginLeft: 120,
       marginRight: 50
     },
