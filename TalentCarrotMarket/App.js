@@ -66,6 +66,8 @@ import keywordScreen from './src/screens/Mypage/KeywordScreen';
 import certificationScreen from './src/screens/Mypage/CertificationScreen';
 import editadverScreen from './src/screens/Advertising/EditAdverScreen';
 import detailadverScreen from './src/screens/Advertising/DetailAdverScreen';
+import Iamport from "./src/Iamport";
+
 //admin
 //import adverRequest from './src/adminScreens/Advertisement/AdverRequestScreen';
 import adverStatus from './src/adminScreens/Advertisement/AdverStatusScreen';
@@ -184,7 +186,9 @@ const SettingStackScreen = () => {
       <SettingStack.Screen name="makeadver" component={makead}/>
       <SettingStack.Screen name="editadver" component={editadverScreen}/>
       <SettingStack.Screen name="detailadver" component={detailadverScreen}/>
-      
+      <SettingStack.Screen name="결제" component={Iamport}/>
+
+
     </Stack.Navigator>
   );
 };
@@ -263,8 +267,8 @@ const AdminAdvertisementStackScreen = () => {
             {/* <AdminAdvertisementStack.Screen name="adverrequest" component={adverRequest} /> */}
             <AdminAdvertisementStack.Screen name="adverstatus" component={adverStatus} />
             <AdminAdvertisementStack.Screen name="modifyapprove" component={modifyApprove} />
-            
-            
+
+
         </Stack.Navigator>
     );
 };
