@@ -65,7 +65,7 @@ function AdverStatusScreen(props,navigation){
                     <Text style={styles.Address}>{`${time}`}</Text>
                     <Text style={[styles.Address,{top:53}]}>{`${item.addressName}`}</Text>
                     <Text style={[styles.Address,{top:70, fontSize:15, fontWeight:'bold'}]}>{`신청자 - ${item.shopOwner.nickname}`}</Text>
-                    <Image style={styles.profileImage} source={{ uri: item.image[0]}} />
+                    <Image style={styles.postImage} source={{ uri: item.image[0]}} />
 
                     <View style={{flexDirection:'column', marginLeft:10}}>
                         <View style={{flexDirection:'row'}}>
@@ -89,7 +89,7 @@ function AdverStatusScreen(props,navigation){
                             <Text style={styles.Address}>{`${time}`}</Text>
                             <Text style={[styles.Address,{top:53}]}>{`${item.addressName}`}</Text>
                             <Text style={[styles.Address,{top:70, fontSize:15, fontWeight:'bold'}]}>{`신청자 - ${item.shopOwner.nickname}`}</Text>
-                            <Image style={styles.profileImage} source={{ uri: item.image[0]}} />
+                            <Image style={styles.postImage} source={{ uri: item.image[0]}} />
 
                             <View style={{flexDirection:'column', marginLeft:10}}>
                                 <View style={{flexDirection:'row'}}>
@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
         color:'#7751ff'
     },
     Address: {fontSize:13, textAlign:'right', position:'absolute',right:10,top:15, marginRight:3},
-    profileImage:{
+    postImage:{
         width: wp(20),
         overflow:"hidden",
         height: hp(20),

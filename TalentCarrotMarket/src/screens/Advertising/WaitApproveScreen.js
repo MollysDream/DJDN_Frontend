@@ -23,6 +23,7 @@ import Icon from "react-native-vector-icons/FontAwesome5";
 import Icon2 from "react-native-vector-icons/Entypo";
 import Icon3 from "react-native-vector-icons/Ionicons";
 import Modal from 'react-native-modal';
+import {getDate, getPrice} from "../../function";
 
 // 광고 클릭하면 해당 광고의 자세한 정보 보여주기
 // 승인된 것 안된 것도 구분
@@ -106,35 +107,44 @@ export default class WaitApproveScreen extends Component {
     }
 
     returnFlatListItem(item,index){
-        let status = null
-        let statusStyle = styles.status_none
+        let time = getDate(item.date);
+        let status = '승인 대기중';
+        let statusStyle = styles.post_sign
+        let price = getPrice(item.price);
 
         return(
-            <View>
+            <>
                 {
                     item.approve ==false?
-                <View>
+                <>
                 <TouchableHighlight onPress={() => this.props.navigation.navigate('detailadver',{item})}>
                     <View style={styles.post}>
+
+                        <Text style={styles.Time}>{`${time}`}</Text>
+                        <Text style={[styles.Time,{bottom:28}]}>{`${item.addressName}`}</Text>
+
                         <Image style={styles.image} source={{ uri: item.image[0]}} />
-                        <View>
-                            <Text style={styles.postTitle}>{item.title}</Text>
-                            <View style={statusStyle}>
+
+                        <View style={{flexDirection:'column', marginLeft:10}}>
+                            <View style={{flexDirection:'row'}}>
+                                <Text style={styles.postTitle}>{item.title}</Text>
+                            </View>
+
+                            <View style={[statusStyle,{marginTop:3}]}>
                                 <Text>{status}</Text>
                             </View>
-                            <View style={{flexDirection:'row'}}>
-                                <Text style={styles.postPrice}>{`${item.price}원`}</Text>
-                                <Text style={styles.postAddressTime}>{`${item.addressName}`}</Text>
-                            </View>
+                            <Text style={styles.postPrice}>{`${price}원`}</Text>
+
                         </View>
+
                     </View>
                 </TouchableHighlight>
                 <TouchableHighlight style={styles.optionButton} onPress={()=>this.onOption(item)}>
-                    <Icon2 name="dots-three-vertical" size={25} color={"black"}></Icon2>
+                    <Icon2 name="dots-three-vertical" size={23} color={"purple"}></Icon2>
                 </TouchableHighlight>
-                </View>:null
+                </>:null
                 }
-            </View>
+            </>
 
 
 
@@ -176,22 +186,30 @@ export default class WaitApproveScreen extends Component {
 
 
 const styles = StyleSheet.create({
+    Time: {fontSize:13, textAlign:'right', position:'absolute',right:10,bottom:10, marginRight:3},
+    post_sign:{
+        backgroundColor:'#d9c8ee',
+        padding: 3,
+        borderRadius: 7,
+        alignSelf:'flex-start',
+    },
     image:{
-        width: wp(28),
+        width: wp(20),
         overflow:"hidden",
-        height: hp(28),
+        height: hp(20),
         aspectRatio: 1,
-        borderRadius: 9,
-        marginRight:12
+        borderRadius: 10,
+
+        borderWidth:2,
+        borderColor:'#c18aff',
     },
     post:{
         flexDirection: "row",
         borderRadius: 15,
         backgroundColor: "white",
-        borderBottomColor: "#a6e5ff",
+        borderBottomColor: "purple",
         borderBottomWidth: 1,
         padding: 10,
-        height: 136
     },
     cover:{
         flex: 1,
@@ -206,9 +224,15 @@ const styles = StyleSheet.create({
         alignSelf : "center",
         padding:20
     },
-    postTitle:{fontSize:18, fontWeight: "bold", width:200, height:80, paddingTop:9},
+    postTitle:{
+        fontSize:18,
+        fontWeight: "bold",
+        width:"75%",
+        paddingTop:5,
+        color:'#7751ff'
+    },
     postAddressTime: {fontSize:13, textAlign:'right', width:'30%', marginRight:10},
-    postPrice: {width:'50%',fontSize:17 , color:"#0088ff" ,paddingTop: 9}
+    postPrice: {width:'50%',fontSize:15 , color:"#7453ff" ,paddingTop: 4}
 ,
     buttonList: {
         //borderWidth:1,
