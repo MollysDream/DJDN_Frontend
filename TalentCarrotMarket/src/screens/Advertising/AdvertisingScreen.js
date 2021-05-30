@@ -51,6 +51,11 @@ const AdvertisingScreen = ({navigation, route}) => {
     getPoint();
   }, []);
 
+  function IamportPayment(){
+    navigation.navigate('결제', {userId:userId});
+  }
+
+
 
     let Screen = null;
     if(tab==0)
@@ -70,7 +75,7 @@ const AdvertisingScreen = ({navigation, route}) => {
                   <Text style={styles.pointText}>{`${point}원`}</Text>
                 </View>
 
-                <TouchableOpacity style={styles.chargePointButton}>
+                <TouchableOpacity style={styles.chargePointButton} onPress={IamportPayment}>
                   <Text style={(styles.Text, {color: 'black',fontWeight: 'bold',})}>충전</Text>
                 </TouchableOpacity>
 
