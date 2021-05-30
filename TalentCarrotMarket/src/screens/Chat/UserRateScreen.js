@@ -87,10 +87,10 @@ const UserRateScreen = ({navigation, route}) => {
                console.log(err);
             }
             }
-          // const checkUserProfile= () => {
-          //     console.log("사용자 프로필 확인!!");
-          //     this.props.navigation.navigate('사용자 프로필',{userData:userData});
-          // }  
+          const checkUserProfile= () => {
+              console.log("사용자 프로필 확인!!");
+              navigation.navigate('사용자 프로필',{userData:userData});
+          }  
           
           //각 카테고리별 별점
           const [starPriceCount,setPriceStarCount]=useState(3);
@@ -126,12 +126,12 @@ const UserRateScreen = ({navigation, route}) => {
               {userData ?
                 <View style={styles.rowTopArea}>
                   <View style={styles.titleArea}>
-                    {/* <TouchableOpacity style={{ flexDirection:'row'}} onPress={checkUserProfile}> */}
+                    <TouchableOpacity style={{ flexDirection:'row'}} onPress={checkUserProfile}>
                       <Image
                       source={{uri:userData.profileImage}}
                       style={styles.profileImage}
                       />
-                    {/* </TouchableOpacity>   */}
+                    </TouchableOpacity>  
                   </View>
                   <View>
                     <Text style={{fontSize:15, marginTop:5, color:'grey'}}>닉네임</Text>

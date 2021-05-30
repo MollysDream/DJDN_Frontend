@@ -58,7 +58,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
     // setNotifyEndDateTime(endDateTime.setMinutes(endDateTime.getMinutes()-5));
     // console.log("새로운 알림 종료시간은 "+ notifyEndDateTime);
     console.log("새로운 연장시간은 "+diffTime);
-    // setEndDateChange(false)
+    setEndDateChange(false)
   },[endDateChange])
 
   //사용자 정보 가져오기
@@ -68,6 +68,8 @@ const TradeTimerScreen = ({navigation, route}) =>{
           async function getData(){
 
               console.log("현재 접속자는 "+ userId)
+              console.log('user1은? '+user1)
+              console.log('user2는? '+user2)
 
               if (user1 == userId){
                 console.log("user1이에요! "+ user1)
@@ -122,11 +124,11 @@ const TradeTimerScreen = ({navigation, route}) =>{
     endDateTime.setMinutes(endDateTime.getMinutes()+5)
     console.log("연장 후 시간은ㅇㅇ "+endDateTime)
 
-    if(endDateChange == true){
-      setEndDateChange(false)
-    }else{
+    // if(endDateChange == true){
+    //   setEndDateChange(false)
+    // }else{
       setEndDateChange(true)
-    }
+    // }
     
     const newEndSet = newFormatDate(endDateTime)
 
@@ -223,6 +225,11 @@ const TradeTimerScreen = ({navigation, route}) =>{
     navigation.navigate('chatch')
   }
 
+  const checkUserProfile= () =>{
+    console.log("사용자 프로필 확인!!");
+    navigation.navigate('사용자 프로필',{userData:userData});
+  }
+
    async function autoReport(){
 
     console.log("신고된 주소 "+proLocate);
@@ -312,11 +319,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
           (
             <>
               <View style={styles.helpMsg}>
-                <View style={styles.btnArea}>
-                  <TouchableOpacity style={styles.btnRate} onPress={msgSendButton}>
-                    <Text style={{color: 'white'}}>메세지 보내기</Text>
-                  </TouchableOpacity>
-                </View>
+                <Text style={{fontSize:20,marginTop:5,}}>상대방이 거래 종료를 할 때까지 기다려주세요!</Text>
               </View>
 
               <View
@@ -326,9 +329,13 @@ const TradeTimerScreen = ({navigation, route}) =>{
                 
               }}/>
               <View style={styles.helpMsg}>
-                {/* <Text style={{fontSize:20,marginTop:5,}}>상대방이 거래 종료를 할 때까지 기다려주세요!</Text> */}
                 <Text style={{fontSize:15, marginTop:5, color:'grey'}}>현재 상대방이 거래종료를 하지 않은 상태입니다.</Text>
                 <Text style={{fontSize:15, marginTop:5, color:'grey'}}>메세지를 보내어 거래종료를 요청해보세요!</Text>
+                <View style={styles.btnArea}>
+                  <TouchableOpacity style={styles.btnRate} onPress={msgSendButton}>
+                    <Text style={{color: 'white'}}>메세지 보내기</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </>
           ):
@@ -426,12 +433,12 @@ const TradeTimerScreen = ({navigation, route}) =>{
           <View style={styles.rowTopArea}>
             <View style={styles.titleArea}>
               <Text style={{fontSize:15, marginTop:5, color:'grey'}}>거래자 정보</Text>
-              {/* <TouchableOpacity style={{ flexDirection:'row'}} onPress={checkUserProfile}> */}
+              <TouchableOpacity style={{ flexDirection:'row'}} onPress={checkUserProfile}>
                 <Image
                 source={{uri:userData.profileImage}}
                 style={styles.profileImage}
                 />
-              {/* </TouchableOpacity>   */}
+              </TouchableOpacity>  
             </View>
             <View>
               <Text style={{fontSize:12, marginTop:5, color:'grey'}}>닉네임</Text>
@@ -447,6 +454,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
         }
         <View
           style={{
+            paddingBottom:hp(3),
             borderBottomColor: 'black',
             borderBottomWidth: StyleSheet.hairlineWidth,
             
