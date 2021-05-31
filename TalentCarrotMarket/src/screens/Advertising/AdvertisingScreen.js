@@ -22,6 +22,8 @@ import WaitApproveScreen from './WaitApproveScreen';
 
 import requestPoint from "../../requestPointAPI";
 import requestUser from "../../requestUserAPI";
+import {useIsFocused} from "@react-navigation/native";
+
 
 
 // let point = 0;
@@ -36,8 +38,10 @@ const AdvertisingScreen = ({navigation, route}) => {
 
     console.log('\n');
 
+    const isFocused = useIsFocused();
 
-  useEffect(() => {
+
+    useEffect(() => {
     async function getPoint() {
       // console.log('포인트 조회에 쓰이는 userId : ' + userId);
       // console.log('1. 조회된 point: '+ point);
@@ -65,7 +69,7 @@ const AdvertisingScreen = ({navigation, route}) => {
 
 
 
-  }, [point,flag]);
+  }, [point,flag, isFocused]);
 
 
   async function IamportPayment(){
@@ -207,7 +211,7 @@ const styles = StyleSheet.create({
       borderRadius: 10,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: '#d4fbff',
+      backgroundColor: '#ddc4ff',
       marginLeft: '35%',
       marginRight: '5%'
 
