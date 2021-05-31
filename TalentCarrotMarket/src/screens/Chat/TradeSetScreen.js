@@ -367,9 +367,9 @@ const TradeSetScreen =({navigation,route})=>{
         style={{width: '100%', height: '85%'}}
         showsMyLocationButton={true}
         center={{...currentLocation, zoom:16}}
-        onTouch={e => console.warn('onTouch', JSON.stringify(e.nativeEvent))}
-        onCameraChange={e => console.warn('onCameraChange', JSON.stringify(e))}
-        onMapClick={e => console.warn('onMapClick', JSON.stringify(e))}>
+        onTouch={e => console.log('onTouch', JSON.stringify(e.nativeEvent))}
+        onCameraChange={e => console.log('onCameraChange', JSON.stringify(e))}
+        onMapClick={e => console.log('onMapClick', JSON.stringify(e))}>
       </NaverMapView>
         
       <View style={{justifyContent: 'center',alignItems: 'center',paddingTop:hp(3),paddingBottom:hp(2)}}>
