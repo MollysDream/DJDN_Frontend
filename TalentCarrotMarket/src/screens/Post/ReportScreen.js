@@ -25,10 +25,10 @@ export default class ReportScreen extends Component {
         reportWhat:0, //0-> 게시물, 1-> 사용자,
 
         postCategory:'',
-        postCategoryList:['사기 글', '불법 재능', '불법 광고', '미친놈','이상한 재능', '기타'],
+        postCategoryList:['사기 글', '불법 재능', '불법 광고', '욕설','물건 판매', '기타'],
 
         userCategory:'',
-        userCategoryList:['비매너', '욕설', '성희롱', '또라이', '기타'],
+        userCategoryList:['비매너', '욕설', '성희롱', '채팅비매너', '기타'],
         text:'',
 
         userId:this.props.route.params.userId

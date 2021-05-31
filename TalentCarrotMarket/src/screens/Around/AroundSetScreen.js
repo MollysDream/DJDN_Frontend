@@ -116,6 +116,8 @@ const AroundSetScreen = ({navigation}) => {
             let add2
             let userRadius;
 
+            let userData = await requestUserAPI.getUserData(userId);
+
             if(userAddressDataList.address.length == 1){
                 if(userAddressDataList.address[0].addressIndex == 1){
                     console.log("인덱스1 일때 1개")
@@ -138,6 +140,9 @@ const AroundSetScreen = ({navigation}) => {
                 setRadius(userRadius);
                 setDistance(userRadius);
                 setIsLoading(false);
+                console.log(`사용자 인덱스: ${userData.addressIndex}`);
+                setUserData(userData);
+                setUserAddressIndex(userData.addressIndex);
                 return;
             }
 
@@ -159,7 +164,6 @@ const AroundSetScreen = ({navigation}) => {
             console.log(add2);
 
             //**********사용자가 사용중인 동네 무엇인지 불러옴
-            let userData = await requestUserAPI.getUserData(userId);
             setUserData(userData);
             setUserAddressIndex(userData.addressIndex);
 

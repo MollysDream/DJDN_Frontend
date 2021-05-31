@@ -166,7 +166,7 @@ const UserReportScreen = ({navigation}) => {
 
     // 카테고리 관련 함수
     const [category, setCategory] = useState('');
-    const categoryList = ['비매너', '욕설', '성희롱', '또라이', '기타']
+    const categoryList = ['비매너', '욕설', '성희롱', '채팅비매너', '기타']
 
     return (
         <View style={{height:'95%'}}>

@@ -184,7 +184,7 @@ const ChatUserProfileScreen = ({navigation,route}) => {
     //*************신고 함수*************
 
     const [reportModal, setReportModal] = useState(false);
-    const userCategoryList = ['비매너', '욕설', '성희롱', '또라이', '기타'];
+    const userCategoryList = ['비매너', '욕설', '성희롱', '채팅비매너', '기타'];
     const [reportCategory, setReportCategory] = useState('');
 
     const [reportText, setReportText] = useState('');

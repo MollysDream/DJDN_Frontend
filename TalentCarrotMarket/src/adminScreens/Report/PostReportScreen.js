@@ -206,7 +206,7 @@ const PostReportScreen = ({navigation}) => {
 
     // 카테고리 관련 함수
     const [category, setCategory] = useState('');
-    const categoryList = ['사기 글', '불법 재능', '불법 광고', '미친놈','이상한 재능', '기타']
+    const categoryList = ['사기 글', '불법 재능', '불법 광고', '욕설','물건 판매', '기타']
 
     return (
         <View style={{height:'95%'}}>

@@ -261,6 +261,7 @@ const styles = StyleSheet.create({
     height: hp(6),
     paddingLeft: 10,
     paddingRight: 10,
+    color:'black'
   },
   textFormBottom: {
     borderWidth: 2,
@@ -272,6 +273,8 @@ const styles = StyleSheet.create({
     height: hp(6),
     paddingLeft: 10,
     paddingRight: 10,
+    color:'black'
+
   },
   btnArea: {
     height: hp(8),
