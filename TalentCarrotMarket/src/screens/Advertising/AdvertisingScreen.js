@@ -168,14 +168,13 @@ const styles = StyleSheet.create({
         paddingBottom:5
     },
     container: {
-        flex: 1, //전체의 공간을 차지한다는 의미
+        flex: 1,
         flexDirection: 'column',
         backgroundColor: 'white',
         paddingLeft: wp(2),
         paddingRight: wp(2),
     },
     pointBox:{
-      // flex: 1,
       alignItems: 'center',
       flexDirection:'row',
       borderColor:'black',
@@ -190,7 +189,7 @@ const styles = StyleSheet.create({
       height: 50,
       justifyContent: 'center',
       alignItems: 'center',
-      marginLeft: 20,
+      marginLeft: '5%',
       // paddingLeft: 20,
       // backgroundColor: '#d4fbff',
     },
@@ -209,8 +208,8 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: '#d4fbff',
-      marginLeft: 120,
-      marginRight: 50
+      marginLeft: '35%',
+      marginRight: '5%'
     },
 
 });
