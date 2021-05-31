@@ -115,14 +115,14 @@ const Auth = () =>{
 const HomeStackScreen = () => {
   return (
     <Stack.Navigator>
-      <HomeStack.Screen name="Home" component={homeScreen} />
-      <HomeStack.Screen name="SearchPost" component={searchPostScreen} />
-      <HomeStack.Screen name="MakePost" component={makePostScreen}/>
-      <HomeStack.Screen name="FilterOption" component={filterOptionScreen}/>
-      <HomeStack.Screen name="DetailPost" component={detailPostScreen}/>
-      <HomeStack.Screen name="chat" component={chatScreen} />
-      <ChatStack.Screen name="게시글별 채팅리스트" component={chatListByPostScreen} />
-      <ChatStack.Screen name="게시글별 채팅리스트 채팅방" component={chatListRoomScreen} />
+      <HomeStack.Screen options={{title: "홈"}} name="Home" component={homeScreen} />
+      <HomeStack.Screen options={{title: "게시글 검색"}} name="SearchPost" component={searchPostScreen} />
+      <HomeStack.Screen options={{title: "게시글 만들기"}} name="MakePost" component={makePostScreen}/>
+      <HomeStack.Screen options={{title: "검색 옵션"}} name="FilterOption" component={filterOptionScreen}/>
+      <HomeStack.Screen options={{title: "게시글 정보"}} name="DetailPost" component={detailPostScreen}/>
+      <HomeStack.Screen options={{title: "채팅"}} name="chat" component={chatScreen} />
+      <ChatStack.Screen options={{title: "게시글 만들기"}} name="게시글별 채팅리스트" component={chatListByPostScreen} />
+      <ChatStack.Screen options={{title: "채팅"}}  name="게시글별 채팅리스트 채팅방" component={chatListRoomScreen} />
 
       <HomeStack.Screen name="tradeset" component={tradeSetScreen} />
       <HomeStack.Screen name="Report" component={reportScreen} />
@@ -136,9 +136,10 @@ const HomeStackScreen = () => {
 //재능 Tab 스크린 기준 Stack
 const TalentStackScreen = () => {
   return (
-    <Stack.Navigator>
-      <TalentStack.Screen name="advertise" component={advertising} />
-      <TalentStack.Screen name="makeadver" component={makead}/>
+    <Stack.Navigator screenOptions={{
+      headerTitle: false,    }}>
+      {/*<TalentStack.Screen name="advertise" component={advertising} />*/}
+      {/*<TalentStack.Screen name="makeadver" component={makead}/>*/}
     </Stack.Navigator>
   );
 };
@@ -331,8 +332,8 @@ const App=()=> {
       if (remoteMessage.data.type == 'Advertise') {
         alert("bye");
       } else if (remoteMessage.data.type == 'Chat') {
-        console.log("왔어요!2 "+remoteMessage.notification.title);
-        console.log("왔어요! "+remoteMessage.notification.body);
+        // console.log("왔어요!2 "+remoteMessage.notification.title);
+        // console.log("왔어요! "+remoteMessage.notification.body);
           Toast.show({
             text1: remoteMessage.notification.title,
             text2: remoteMessage.notification.body,
@@ -342,7 +343,7 @@ const App=()=> {
       }
       // Alert.alert('A new FCM message arrived!', remoteMessage.data.test);
 
-      console.log('foreground', remoteMessage);
+      // console.log('foreground', remoteMessage);
     });
     messaging().onNotificationOpenedApp((remoteMessage) => {
       // Alert.alert('here from background tap');
@@ -376,7 +377,7 @@ const App=()=> {
   }, []);
 
   return (
- 
+
       <NavigationContainer>
       {/* Stack Navigator for Login+Logout  */}
       <Stack.Navigator initialRouteName="SplashScreen">

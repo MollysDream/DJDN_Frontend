@@ -19,13 +19,29 @@ import request from '../../requestAPI';
 import axios from 'axios';
 import {HOST} from "../../function";
 
+
 let socket;
 let hostId;
 function ChatChRoomScreen(props) {
     const [messages, setMessages] = useState([]);
     const [chatroomId, setRoomId] = useState(props.route.params.roomInfo._id);
+    const [currentUserId, setCurrentUserId] = useState("");
+
     const postOwnerId = props.route.params.postOwner._id;
     const host = props.route.params.host._id;
+
+    useEffect(()=>{
+        async function loadingUserId(){
+            await AsyncStorage
+              .getItem('user_id')
+              .then((value) => {
+                  setCurrentUserId(value);
+              })
+
+        };
+
+        loadingUserId()
+    },[]);
 
     useEffect(() => {
         async function settingChat() {
@@ -44,6 +60,17 @@ function ChatChRoomScreen(props) {
             checkChat(preData);
         }
         settingChat();
+
+        socket.on('rChat', (newMessage) => {
+            let newMessaged = newMessage;
+            // newMessaged[0].user.avatar = logo;
+            console.log("프론트에서 받은 새 메시지 : " + newMessaged);
+            console.log(typeof newMessaged[0].user._id);
+            // newMessaged[0].user._id = 2;
+            setMessages((prevMessages) => GiftedChat.append(prevMessages, newMessaged));
+            // onSendDB(newMessage);
+        });
+
     }, []);
 
     function onSend(newMessages = []) {
@@ -143,21 +170,8 @@ function ChatChRoomScreen(props) {
                 messages={messages}
                 onSend={(newMessages) => onSend(newMessages)}
                 user={{
-                    _id: 1
+                    _id: currentUserId
                 }}/>
-
-                {/*<AnimatedAbsoluteButton*/}
-                {/*buttonSize={100}*/}
-                {/*buttonColor='gray'*/}
-                {/*buttonShape='circular'*/}
-                {/*buttonContent={<Text> 거래 제안</Text>}*/}
-                {/*direction='top'*/}
-                {/*position='bottom-right'*/}
-                {/*positionVerticalMargin={10}*/}
-                {/*positionHorizontalMargin={10}*/}
-                {/*time={500}*/}
-                {/*easing='bounce'*/}
-                {/*buttons={buttons}/>*/}
         </View>
     )
 }

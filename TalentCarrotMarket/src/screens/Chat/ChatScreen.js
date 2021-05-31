@@ -50,10 +50,16 @@ function ChatScreen(props) {
 
 
     useEffect(() => {
-      loadingUserId();
-      // console.log("첫번쨰 useEffect, hostId!! "+hostId);
-      // console.log("첫번쨰 useEffect, currentUserId!! "+currentUserId);
+      async function loadingUserId(){
+        await AsyncStorage
+          .getItem('user_id')
+          .then((value) => {
+            sethostId(value);
+            setCurrentUserId(value);
+          })
 
+      };
+      loadingUserId();
     }, []);
 
     useEffect(() => {
@@ -88,15 +94,7 @@ function ChatScreen(props) {
         onSendDB(newMessages);
     };
 
-   async function loadingUserId(){
-      await AsyncStorage
-      .getItem('user_id')
-      .then((value) => {
-        sethostId(value);
-        setCurrentUserId(value);
-      })
 
-  };
 
 
     async function Room(roomData){ // 받아온 채팅방들 중에서 있으면 그거로, 없으면 생성 ... 설명이 너무 구린가..? 죄송함다..
