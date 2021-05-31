@@ -222,14 +222,14 @@ export default class HomeScreen extends Component{
 
 const styles = StyleSheet.create({
     iconBox:{
-        height:67,
+        height:hp(10),
         alignItems: 'center',
         marginTop:3
     },
     icon:{
-        width: wp(9),
+        width: wp(8),
         overflow:"hidden",
-        height: hp(9),
+        height: hp(8),
         aspectRatio: 1,
         borderRadius: 9,
     },
@@ -270,14 +270,14 @@ const styles = StyleSheet.create({
     status_ing:{
         backgroundColor:'#b4e6ff',
         position: 'absolute',
-        top: 40,
+        top: 55,
         padding: 3,
         borderRadius: 7
     },
     status_complete:{
         backgroundColor:'#98afbf',
         position: 'absolute',
-        top: 40,
+        top: 55,
         padding: 3,
         borderRadius: 7
     },
