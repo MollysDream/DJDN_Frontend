@@ -22,7 +22,7 @@ import requestUserAPI from "../../requestUserAPI";
 import requestReportAPI from "../../requestReportAPI";
 import {getBanDate} from "../../function";
 
-import firebase from 'react-native-firebase';
+import messaging from '@react-native-firebase/messaging';
 
 //글자 강조
 const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{props.children}</Text>
@@ -93,7 +93,7 @@ const LoginScreen = ({navigation}) => {
       return;
     }
 
-    let fcmToken = await firebase.messaging().getToken();
+    let fcmToken = await messaging().getToken();
     console.log("fcm token은 "+fcmToken);
     
 

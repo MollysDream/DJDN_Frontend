@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, createRef} from 'react';
 import {
   StyleSheet,
 } from 'react-native';
@@ -6,6 +6,8 @@ import {
 import { NavigationContainer } from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import messaging from '@react-native-firebase/messaging';
+import Toast from 'react-native-toast-message';
 // import Icon from 'react-native-vector-icons/MaterialIcons';
 import Icon2 from 'react-native-vector-icons/Foundation';
 import Icon3 from 'react-native-vector-icons/Ionicons';
@@ -47,6 +49,8 @@ import chatchroomScreen from './src/screens/Chat/ChatchRoomScreen';
 import chatTestScreen from './src/screens/Chat/ChatTestScreen';
 import tradeTimerScreen from './src/screens/Chat/TradeTimerScreen';
 import userRateScreen from './src/screens/Chat/UserRateScreen';
+import chatUserProfileScreen from './src/screens/Chat/ChatUserProfileScreen';
+import chatDetailPostScreen from './src/screens/Chat/ChatDetailPostScreen';
 
 //aroundStack
 import aroundScreen from './src/screens/Around/AroundScreen';
@@ -163,6 +167,8 @@ const ChatStackScreen = () => {
       <ChatStack.Screen name="userRate" component={userRateScreen} />
       <ChatStack.Screen name="tradeset" component={tradeSetScreen} />
       <ChatStack.Screen name="chatchroom" component={chatchroomScreen} />
+      <ChatStack.Screen name="사용자 프로필" component={chatUserProfileScreen} />
+      <ChatStack.Screen name="DetailPost" component={chatDetailPostScreen}/>
  </Stack.Navigator>
   );
 };
@@ -315,35 +321,91 @@ const AdminTabScreen =({}) => {
 }
 
 const App=()=> {
-  return (
 
-    <NavigationContainer>
-    {/* Stack Navigator for Login+Logout  */}
-    <Stack.Navigator initialRouteName="SplashScreen">
-      <Stack.Screen
-       name="다재다능"
-       component={SplashScreen}
-      />
-      <Stack.Screen
-          name="Auth"
-          component={Auth}
-          options={{headerShown: false}}
+  useEffect(async()=>{
+    await messaging().registerDeviceForRemoteMessages();
+    // export const navigationRef = React.createRef();
+
+    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+
+      if (remoteMessage.data.type == 'Advertise') {
+        alert("bye");
+      } else if (remoteMessage.data.type == 'Chat') {
+        console.log("왔어요!2 "+remoteMessage.notification.title);
+        console.log("왔어요! "+remoteMessage.notification.body);
+          Toast.show({
+            text1: remoteMessage.notification.title,
+            text2: remoteMessage.notification.body,
+            visibilityTime: 4000,
+            topOffset: 20,
+          });
+      }
+      // Alert.alert('A new FCM message arrived!', remoteMessage.data.test);
+
+      console.log('foreground', remoteMessage);
+    });
+    messaging().onNotificationOpenedApp((remoteMessage) => {
+      // Alert.alert('here from background tap');
+      console.log(
+        'Notification caused app to open from background state:',
+        remoteMessage,
+      );
+      // this.props.navigation.navigate(remoteMessage.data.type);
+      console.log(remoteMessage.data);
+      setTimeout((remoteMessage) => {
+        navigate(remoteMessage.data.type, null);
+      }, 1000);
+    });
+
+    messaging()
+      .getInitialNotification()
+      .then((remoteMessage) => {
+        console.log(remoteMessage); // always prints null
+        if (remoteMessage) {
+          // Alert.alert('here from quit tap');
+          console.log(
+            'Notification caused app to open from quit state:',
+            remoteMessage,
+            remoteMessage.data.type,
+          );
+          // this.setState('initialRoute',remoteMessage.data.type)
+        }
+      });
+
+    return unsubscribe;
+  }, []);
+
+  return (
+ 
+      <NavigationContainer>
+      {/* Stack Navigator for Login+Logout  */}
+      <Stack.Navigator initialRouteName="SplashScreen">
+        <Stack.Screen
+        name="다재다능"
+        component={SplashScreen}
         />
         <Stack.Screen
-          name="MainTab"
-          // options={({route}) => ({
-          //   headerTitle: getHeaderTitle(route),
-          // })}
-          component={MainTabScreen}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-            name="AdminTab"
-            component={AdminTabScreen}
+            name="Auth"
+            component={Auth}
             options={{headerShown: false}}
-            />
-    </Stack.Navigator>
-    </NavigationContainer>
+          />
+          <Stack.Screen
+            name="MainTab"
+            // options={({route}) => ({
+            //   headerTitle: getHeaderTitle(route),
+            // })}
+            component={MainTabScreen}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+              name="AdminTab"
+              component={AdminTabScreen}
+              options={{headerShown: false}}
+              />
+      </Stack.Navigator>
+      {/* 알림용 */}
+      <Toast ref={(ref) => Toast.setRef(ref)} />
+      </NavigationContainer>
   );
 }
 

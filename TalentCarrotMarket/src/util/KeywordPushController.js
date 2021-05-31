@@ -2,8 +2,18 @@ import React, { useEffect } from 'react'
 import { Text, View } from 'react-native'
 import PushNotification from 'react-native-push-notification'
 
-function RemotePushController (props) {
+function KeywordPushController (props) {
   useEffect(() => {
+
+    /*
+		* 키워드 푸시알림을 해봅시다.
+		* 먼저, 사용자의 키워드 정보, 동네 정보(동네와 반경)를 가져와요
+		* 다음으로, 각 게시물 정보를 가져옵니다. 
+		* 
+		* 지금 보내는 메시지(msg)가 누구냐에 따라 각 상대방에게 알림이 가도록 합시다.
+		* 푸시 알림 메시지의 포맷을 정해줍니다 -> title,tag 등..
+		* sendFCM 메시지를 통해 메시지 보냅시다!
+		 */
 
     PushNotification.configure({
       // (optional) Called when Token is generated (iOS and Android)
@@ -23,7 +33,7 @@ function RemotePushController (props) {
 
     // notification channel
     PushNotification.createChannel({
-        channelId: "my-channel", // (required)
+        channelId: "keyword-channel", // (required)
         channelName: "My channel", // (required)
     },
     (created) => console.log(`CreateChannel returned '${created}'`)
@@ -36,19 +46,19 @@ function RemotePushController (props) {
   }, [])
 
   useEffect(()=>{
-    console.log("거래 남은 시간이 수정되었습니다. "+props.time)
+    console.log("키워드에 맞는 게시물이 확인되었습니다. "+props.keyword)
 
     //원래 스케줄있던거 삭제
     PushNotification.cancelLocalNotifications({id:'123'});
 
     PushNotification.localNotificationSchedule({
-      channelId: "my-channel",
+      channelId: "keyword-channel",
       autoCancel: true,
       bigText:
-        '거래 종료 예정시간 5분전입니다.',
-      subText: '거래가 끝났다면 거래종료를 눌러주세요!',
+        props.keyword,
+      subText: '키워드에 맞는 게시물이 확인되었습니다.',
       title: 'TalentMarket',
-      message: '거래가 끝났다면 거래종료를 눌러주세요!',
+      message: '키워드에 맞는 게시물이 확인되었습니다.',
       vibrate: false,
       vibration: 300,
       playSound: false,
@@ -57,8 +67,8 @@ function RemotePushController (props) {
       date: new Date(Date.now()+(props.time-300)*1000),
       id:'123'
     })
-  }, [props.time])
+  }, [props.keyword])
   return null
-  // return <View><Text style={{color:'white'}}>안녕하세요 {props.time}</Text></View>
+  // return <View><Text style={{color:'white'}}>안녕하세요 {props.keyword}</Text></View>
 }
-export default RemotePushController
+export default KeywordPushController

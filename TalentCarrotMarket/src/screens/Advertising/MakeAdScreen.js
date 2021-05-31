@@ -29,6 +29,8 @@ import {S3Key} from "../../Key";
 import requestUserAPI from "../../requestUserAPI";
 import requestAddressAPI from "../../requestAddressAPI";
 import requestAdverAPI from "../../requestAdverAPI";
+import {message} from "../../function";
+import FlashMessage from "react-native-flash-message";
 
 export default class MAkeAdScreen extends Component{
     state={
@@ -80,9 +82,6 @@ export default class MAkeAdScreen extends Component{
         else if(type == 'text'){
             this.setState({text:text})
         }
-        /*else if(type == 'category'){
-            this.setState({category:text})
-        }*/
         else if(type == 'duration'){
             this.setState({tag:text})
         }
@@ -93,24 +92,24 @@ export default class MAkeAdScreen extends Component{
 
     async confirmPost(){
         if(this.state.title.length === 0){
-            Alert.alert("경고","제목을 작성해주세요", [{ text: '확인', style: 'cancel' }])
+            message("제목을 작성해주세요");
             return;
         }
         else if(this.state.imageTemp.length === 0){
-            Alert.alert("경고","이미지를 첨부해주세요", [{ text: '확인', style: 'cancel' }])
+            message("이미지를 첨부해주세요");
             return;
         }
         else if(this.state.text.length === 0){
-            Alert.alert("경고","게시글 내용을 작성해주세요", [{ text: '확인', style: 'cancel' }])
+            message("광고 내용을 작성해주세요");
             return;
         }
         else if(this.state.price.length === 0){
-            Alert.alert("경고","가격을 작성해주세요", [{ text: '확인', style: 'cancel' }])
+            message("가격을 작성해주세요");
             return;
         }
 
         const options = {
-            keyPrefix: `${this.state.title}/`,  //제목 뒤에 user_id 값 추가해야 됨.
+            keyPrefix: `---광고---/${this.state.shopOwner}/${this.state.title}/`,  //제목 뒤에 user_id 값 추가해야 됨.
             bucket: 'mollysdreampostdata',
             region: 'ap-northeast-2',
             accessKey: S3Key.accessKey,
@@ -179,7 +178,8 @@ export default class MAkeAdScreen extends Component{
     render() {
         return (
             <Container>
-            <Header>
+                <FlashMessage position="top"/>
+                <Header style={{backgroundColor:"#a75bff"}}>
                 <Right>
                     <TouchableOpacity
                         onPress={()=>this.confirmPost()}

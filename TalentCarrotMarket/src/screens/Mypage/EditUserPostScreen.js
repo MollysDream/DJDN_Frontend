@@ -28,6 +28,8 @@ import {Picker} from '@react-native-picker/picker';
 import {PickerItem} from "react-native/Libraries/Components/Picker/Picker";
 
 import {S3Key} from "../../Key";
+import {message} from "../../function";
+import FlashMessage from "react-native-flash-message";
 
 export default class EditUserPostScreen extends Component {
     state = {
@@ -65,7 +67,7 @@ export default class EditUserPostScreen extends Component {
             changeToImageTemp.push(file);
         })
         this.setState({imageTemp:changeToImageTemp})
-        this.setState({countImage:this.state.imageTemp.length})
+        this.setState({countImage:changeToImageTemp.length})
         console.log(this.state.imageTemp)
 
 
@@ -86,9 +88,6 @@ export default class EditUserPostScreen extends Component {
         else if(type == 'text'){
             this.setState({text:text})
         }
-        /*else if(type == 'category'){
-            this.setState({category:text})
-        }*/
         else if(type == 'tag'){
             this.setState({tag:text})
         }
@@ -99,29 +98,29 @@ export default class EditUserPostScreen extends Component {
 
     async confirmPost(){
         if(this.state.title.length === 0){
-            Alert.alert("경고","제목을 작성해주세요", [{ text: '확인', style: 'cancel' }])
+            message("제목을 작성해주세요");
             return;
         }
         else if(this.state.category == ''){
-            Alert.alert("경고","카테고리를 설정해주세요", [{ text: '확인', style: 'cancel' }])
+            message("카테고리를 설정해주세요");
             return;
         }
         else if(this.state.imageTemp.length === 0){
-            Alert.alert("경고","이미지를 첨부해주세요", [{ text: '확인', style: 'cancel' }])
+            message("이미지를 첨부해주세요");
             return;
         }
         else if(this.state.text.length === 0){
-            Alert.alert("경고","게시글 내용을 작성해주세요", [{ text: '확인', style: 'cancel' }])
+            message("게시글 내용을 작성해주세요");
             return;
         }
         else if(this.state.price.length === 0){
-            Alert.alert("경고","가격을 작성해주세요", [{ text: '확인', style: 'cancel' }])
+            message("가격을 작성해주세요");
             return;
         }
 
 
         const options = {
-            keyPrefix: `${this.state.title}/`,  //제목 뒤에 user_id 값 추가해야 됨.
+            keyPrefix: `---게시글---/${this.state.user_id}/${this.state.title}/`,
             bucket: 'mollysdreampostdata',
             region: 'ap-northeast-2',
             accessKey: S3Key.accessKey,
@@ -205,6 +204,7 @@ export default class EditUserPostScreen extends Component {
     render() {
         return (
             <Container>
+                <FlashMessage position="top"/>
                 <Header>
                     <Right>
                         <TouchableOpacity
@@ -263,9 +263,8 @@ export default class EditUserPostScreen extends Component {
                                                     data ={this.state.imageTemp}
                                                     horizontal = {true}
                                                     nestedScrollEnabled={true}
-                                                    keyExtractor={item => item.name}
+                                                    keyExtractor={item => item.uri}
                                                     renderItem={({item}) => (
-
                                                         <Image style={styles.image} source={{uri: item.uri}} /> )}
                                                 />
                                             </Item>

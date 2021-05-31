@@ -28,6 +28,9 @@ import Modal from 'react-native-modal';
 import ImagePicker from 'react-native-image-crop-picker';
 import {Picker} from '@react-native-picker/picker';
 import {PickerItem} from "react-native/Libraries/Components/Picker/Picker";
+import FlashMessage, {showMessage} from "react-native-flash-message";
+import {message} from "../../function";
+import {S3Key} from "../../Key";
 
 export default class EditAdverScreen extends Component {
     state = {
@@ -42,21 +45,21 @@ export default class EditAdverScreen extends Component {
     }
 
     async componentDidMount() {
+
+        const userId = await AsyncStorage.getItem('user_id');
+
         const changeToImageTemp = []
-        this
-            .props
-            .route
-            .params
-            .adverImages
-            .map((image) => {
+        this.props.route.params.adverImages.map((image) => {
                 const file = {
                     uri: image
                 }
                 changeToImageTemp.push(file);
             })
         this.setState({imageTemp: changeToImageTemp})
-        this.setState({countImage: this.state.imageTemp.length})
-        console.log(this.state.imageTemp)
+        this.setState({countImage: changeToImageTemp.length})
+        console.log(changeToImageTemp)
+
+        this.setState({user_id:userId});
     }
 
     writeAd = (text, type) => {
@@ -65,9 +68,7 @@ export default class EditAdverScreen extends Component {
             this.setState({title: text})
         } else if (type == 'text') {
             this.setState(
-                {text: text}/*else if(type == 'category'){
-            this.setState({category:text})
-        }*/
+                {text: text}
             )
         } else if (type == 'price') {
             this.setState({price: text})
@@ -76,38 +77,28 @@ export default class EditAdverScreen extends Component {
 
     async confirmPost() {
         if (this.state.title.length === 0) {
-            Alert.alert("경고", "제목을 작성해주세요", [
-                {
-                    text: '확인',
-                    style: 'cancel'
-                }
-            ])
+            message("제목을 작성해주세요");
             return;
         } else if (this.state.imageTemp.length === 0) {
-            Alert.alert("경고", "이미지를 첨부해주세요", [
-                {
-                    text: '확인',
-                    style: 'cancel'
-                }
-            ])
+            message("이미지를 첨부해주세요");
             return;
         } else if (this.state.text.length === 0) {
-            Alert.alert("경고", "게시글 내용을 작성해주세요", [
-                {
-                    text: '확인',
-                    style: 'cancel'
-                }
-            ])
+            message("광고 내용을 작성해주세요");
             return;
         } else if (this.state.price.length === 0) {
-            Alert.alert("경고", "가격을 작성해주세요", [
-                {
-                    text: '확인',
-                    style: 'cancel'
-                }
-            ])
+            message("가격을 작성해주세요");
             return;
         }
+
+        const options = {
+            keyPrefix: `---광고---/${this.state.user_id}/${this.state.title}/`,  //제목 뒤에 user_id 값 추가해야 됨.
+            bucket: 'mollysdreampostdata',
+            region: 'ap-northeast-2',
+            accessKey: S3Key.accessKey,
+            secretKey: S3Key.secretKey,
+            successActionStatus: 201,
+        }
+
         if (this.state.imageTemp[0].type != undefined) 
             try {
                 const imageUrl: string[] = await Promise.all(
@@ -126,31 +117,19 @@ export default class EditAdverScreen extends Component {
 
         try {
             const adverData = await requestAdverAPI.updateAdver(this.state);
-            Alert.alert("수정 완료", "게시글 수정이 완료되었습니다.", [
+            Alert.alert("수정 완료", "광고 수정이 완료되었습니다.", [
                 {
                     text: '확인',
                     style: 'cancel',
                     onPress: () => {
-                        this.props
-                            .route
-                            .params
-                            .onGoBack();
-                        this
-                            .props
-                            .navigation
-                            .navigate('advertise')
+                        this.props.route.params.onGoBack();
+                        this.props.navigation.navigate('advertise')
                     }
                 }
             ])
         } catch (err) {
-            Alert.alert("작성 실패", "게시글을 다시 수정해주세요.", err.response.data.error, [
-                {
-                    text: '확인',
-                    style: 'cancel',
-                    onPress: () => {
-                        this.setState({loading: false})
-                    }
-                }
+            Alert.alert("작성 실패", "광고를 다시 수정해주세요.", err.response.data.error, [
+                {text: '확인', style: 'cancel', onPress: () => {this.setState({loading: false})}}
             ])
         }
     }
@@ -179,9 +158,7 @@ export default class EditAdverScreen extends Component {
             this.setState({imageTemp:imageTemp})
             this.setState({countImage:this.state.imageTemp.length})
             console.log(this.state.imageTemp)
-            /*this.state.imageTemp.map((file)=>{
-                console.log(file);
-            })*/
+
         })
 
     }
@@ -190,7 +167,8 @@ export default class EditAdverScreen extends Component {
     render() {
         return (
             <Container>
-            <Header>
+                <FlashMessage position="top"/>
+            <Header style={{backgroundColor:"#a75bff"}}>
                 <Right>
                     <TouchableOpacity
                         onPress={()=>this.confirmPost()}
@@ -208,7 +186,7 @@ export default class EditAdverScreen extends Component {
                                     <Item inlinelabel style={{ marginTop: '3%' }}>
                                         <Label style={{width:'18%'}}>제목</Label>
                                         <Input autoCapitalize='none'
-                                               onChangeText={(text) => this.writeAd(text, "title")} />
+                                               onChangeText={(text) => this.writeAd(text, "title")}>{this.props.route.params.detailAdver.title}</Input>
                                     </Item>
 
                                     <Item inlinelabel >
@@ -216,7 +194,7 @@ export default class EditAdverScreen extends Component {
                                         <Input autoCapitalize='none'
                                                keyboardType="numeric"
                                                onChangeText={(text) => this.writeAd(text, "price")}
-                                        />
+                                        >{this.props.route.params.detailAdver.price}</Input>
 
                                     </Item>
                                     <Item  inlinelabel >
@@ -225,7 +203,7 @@ export default class EditAdverScreen extends Component {
                                             style={styles.imageArea}>
                                                 <Icon name="camera"  size={50} />
                                         </TouchableOpacity>
-                                                                              </Item>
+                                    </Item>
 
                                     {
                                         this.state.countImage != 0 &&
@@ -235,18 +213,17 @@ export default class EditAdverScreen extends Component {
                                            data ={this.state.imageTemp}
                                            horizontal = {true}
                                            nestedScrollEnabled={true}
-                                           keyExtractor={item => item.name}
+                                           keyExtractor={item => item.uri}
                                            renderItem={({item}) => (
-                                               
-                                            <Image style={styles.image} source={{uri: item.uri}} /> )}
+                                               <Image style={styles.image} source={{uri: item.uri}} /> )}
                                             />  
                                         </Item>
                                     }
 
                                     <Textarea rowSpan={8} placeholder="광고 내용을 입력해주세요." autoCapitalize='none'
                                               onChangeText={(text) => this.writeAd(text, "text")}
-                                              style={styles.textAreaContainer} />
-                                    
+                                              style={styles.textAreaContainer}>
+                                        {this.props.route.params.detailAdver.text}</Textarea>
                                 </Form>
                             </Content>
                         </Container>
@@ -297,12 +274,12 @@ const styles = StyleSheet.create({
     imageArea : {
         marginVertical: '5%',
         marginLeft:'40%',
-     
+
     },
     imageTextArea : {
         marginVertical: '0%',
         marginLeft:'0%',
-     
+
     }
    
 });

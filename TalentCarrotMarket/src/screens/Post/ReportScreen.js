@@ -49,21 +49,18 @@ export default class ReportScreen extends Component {
             categoryParam = this.state.postCategory
             if(this.state.postCategory == ''){
                 this.message(`게시글 신고 사유를 설정해주세요!`);
-                //Alert.alert("경고","게시글 신고 사유를 설정해주세요", [{ text: '확인', style: 'cancel' }])
                 return;
             }
         }else{
             categoryParam = this.state.userCategory
             if(this.state.userCategory == ''){
                 this.message(`사용자 신고 사유를 설정해주세요!`);
-                //Alert.alert("경고","사용자 신고 사유를 설정해주세요", [{ text: '확인', style: 'cancel' }])
                 return;
             }
         }
 
         if(this.state.text.length === 0){
             this.message(`신고 상세 내용을 작성해주세요!`);
-            //Alert.alert("경고","신고 상세 내용을 작성해주세요", [{ text: '확인', style: 'cancel' }])
             return;
         }
 
