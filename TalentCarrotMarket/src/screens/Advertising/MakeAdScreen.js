@@ -117,7 +117,15 @@ export default class MAkeAdScreen extends Component{
     }
 
     async confirmPost(){
-        if(this.state.title.length === 0){
+        if(this.state.addressName == null){
+            message("광고 위치를 선택해주세요");
+            return;
+        }
+        else if(this.state.endDate==null){
+            message("만료 날짜를 선택해주세요");
+            return;
+        }
+        else if(this.state.title.length === 0){
             message("제목을 작성해주세요");
             return;
         }
@@ -250,9 +258,7 @@ export default class MAkeAdScreen extends Component{
     changeDate = (event, selectedDate)=>{
         let currentDate = selectedDate || new Date();
 
-        console.log(getGMT9Date(new Date));
-
-        if(currentDate< getGMT9Date(new Date)){
+        if(getGMT9Date(currentDate)< getGMT9Date(new Date)){
             message('현재보다 먼 시간을 골라주세요')
             this.setState({dateModal:false});
             return
@@ -357,7 +363,7 @@ export default class MAkeAdScreen extends Component{
 
                                     {this.state.endDate==null?
                                         <TouchableOpacity style={styles.ruleButton} onPress={()=>this.setDate()}>
-                                            <Text style={{alignSelf:'center'}}>광고만료 기간 선택</Text>
+                                            <Text style={{alignSelf:'center'}}>광고만료 날짜 선택</Text>
                                         </TouchableOpacity>
                                         :
                                         <TouchableOpacity style={[styles.ruleButton, {backgroundColor:'#d3acff'}]} onPress={()=>this.setDate()}>
