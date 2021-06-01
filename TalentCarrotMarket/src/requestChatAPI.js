@@ -18,8 +18,16 @@ export async function getLatestChat(chatRoomId){
 	return chatData.data;
 }
 
+export async function createChat(newChat){
+	console.log("createChat 실행!:");
+	const chatData = await axi.post('/chat/createChat', newChat);
+	//console.log(chatData.data)
+	return chatData.data;
+}
+
 
 export default{
 	getChatRoomByPost,
-	getLatestChat
+	getLatestChat,
+	createChat
 }

@@ -45,53 +45,56 @@ function ChatListByPostScreen(props) {
     const [post, setPost] = useState('');*/
 
 	useEffect(()=>{
+		async function loadingCurrentId(){
+			AsyncStorage
+				.getItem('user_id')
+				.then((value) => {
+					setCurrentId(value);
+				});
+		}
 		loadingCurrentId();
 	},[]);
 
 	useEffect(()=>{
+		async function loadingRoom(){
+			if(currentId){
+				let nick =[];
+				roomInfo = await requestChat.getChatRoomByPost(currentId,postId);
+				await setRoomById(roomInfo);
+				// console.log(`지금 랜더링 ${count++}: 번 실행됐다!`);
+				console.log(roomInfo);
+
+
+				roomInfo.map(async (data)=>{
+					let latestChat = await requestChatAPI.getLatestChat(data._id);
+					//console.log(latestChat);
+					let partnerUserData;
+					let myUserData;
+					if(currentId == data.hostId){
+						myUserData = await requestUser.getUserData(data.hostId);
+						partnerUserData = await requestUser.getUserData(data.postOwnerId);
+					}else{
+						partnerUserData = await requestUser.getUserData(data.hostId);
+						myUserData = await requestUser.getUserData(data.postOwnerId);
+					}
+
+					let postData = await request.getPostTitle(data.postId);
+
+
+
+					nick = nick.concat({_id : data._id, myUserData : myUserData , partnerUserData : partnerUserData, postData : postData[0], latestChat:latestChat });
+					await setNickInfo(nick);
+				})
+			}
+		};
+
 		loadingRoom();
 	},[currentId]);
 
-	async function loadingCurrentId(){
-		AsyncStorage
-			.getItem('user_id')
-			.then((value) => {
-				setCurrentId(value);
-			});
-	}
-
-
-	async function loadingRoom(){
-		if(currentId){
-			let nick =[];
-			roomInfo = await requestChat.getChatRoomByPost(currentId,postId);
-			await setRoomById(roomInfo);
-			console.log(`지금 랜더링 ${count++}: 번 실행됐다!`);
-			console.log(roomInfo);
-
-
-			roomInfo.map(async (data)=>{
-				let latestChat = await requestChatAPI.getLatestChat(data._id);
-				//console.log(latestChat);
-				let partnerUserData;
-				let myUserData;
-				if(currentId == data.hostId){
-					myUserData = await requestUser.getUserData(data.hostId);
-					partnerUserData = await requestUser.getUserData(data.postOwnerId);
-				}else{
-					partnerUserData = await requestUser.getUserData(data.hostId);
-					myUserData = await requestUser.getUserData(data.postOwnerId);
-				}
-
-				let postData = await request.getPostTitle(data.postId);
 
 
 
-				nick = nick.concat({_id : data._id, myUserData : myUserData , partnerUserData : partnerUserData, postData : postData[0], latestChat:latestChat });
-				await setNickInfo(nick);
-			})
-		}
-	}
+
 
 	async function onRefresh(){
 		try{
