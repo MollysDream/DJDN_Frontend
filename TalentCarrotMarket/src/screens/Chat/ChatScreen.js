@@ -39,7 +39,7 @@ function ChatScreen(props) {
             sethostId(value);
             setCurrentUserId(value);
           })
-        let currentUser = await requestUser.getUserData(postOwnerId);
+        let currentUser = await requestUser.getUserData(currentUserId);
         setCurrentUserImage(currentUser.profileImage);
       };
       loadingUserId();
@@ -51,28 +51,26 @@ function ChatScreen(props) {
           socket = io(`http://${HOST}:3002`);
           // socket.emit("searchChatRoom", postOwnerId, postOwnerNick, hostId);
 
-            const roomData = await request.getChatRoom();
-            await Room(roomData);
+          const roomData = await request.getChatRoom();
+          await Room(roomData);
 
-            const preData = await request.getChat(chatRoomId);
-            checkChat(preData);
-
-
-
+          const preData = await request.getChat(chatRoomId);
+          checkChat(preData);
+          socket.emit('joinRoom', chatRoomId);
+          console.log("joinRoom 실행됐다!! 방 번호 : " + chatRoomId);
         }
         if(currentUserId){
           workBeforeChat();
 
           socket.on('chat message to client', (newMessage) => {
             let newMessaged = newMessage;
-            console.log("프론트에서 받은 새 메시지 : " + newMessaged);
+            console.log("프론트에서 받은 새 메시지 : " +  newMessaged[0].text);
             setMessages((prevMessages) => GiftedChat.append(prevMessages, newMessaged));
           });
 
           return() => {
             socket.emit('leaveRoom', chatRoomId);
-
-            socket.disconnect();
+            console.log("leaveRoom 실행됐다!! 방 번호 : " + chatRoomId);
           };
         }
 

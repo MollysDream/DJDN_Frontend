@@ -38,7 +38,7 @@ function ChatListRoomScreen(props) {
 				.then((value) => {
 					setCurrentUserId(value);
 				})
-			let currentUser = await requestUser.getUserData(postOwnerId);
+			let currentUser = await requestUser.getUserData(currentUserId);
 			setCurrentUserImage(currentUser.profileImage);
 		};
 
@@ -55,9 +55,11 @@ function ChatListRoomScreen(props) {
 				});
 
 			socket = io(`http://${HOST}:3002`);
-			console.log("io 정보", socket);
+
 
 			socket.emit('joinRoom', chatroomId);
+			console.log("joinRoom 실행됐다!! 방 번호 : " + chatroomId);
+
 			const preData = await request.getChat(chatroomId);
 			checkChat(preData);
 		}
@@ -65,14 +67,13 @@ function ChatListRoomScreen(props) {
 
 		socket.on('chat message to client', (newMessage) => {
 			let newMessaged = newMessage;
-			console.log("프론트에서 받은 새 메시지 : " + newMessaged);
+			console.log("프론트에서 받은 새 메시지 : " +  newMessaged[0].text);
 			setMessages((prevMessages) => GiftedChat.append(prevMessages, newMessaged));
 		});
 
 		return() => {
 			socket.emit('leaveRoom', chatroomId);
-
-			socket.disconnect();
+			console.log("leaveRoom 실행됐다!! 방 번호 : " + chatroomId);
 		};
 
 	}, []);

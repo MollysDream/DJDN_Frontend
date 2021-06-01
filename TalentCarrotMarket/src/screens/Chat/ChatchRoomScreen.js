@@ -20,8 +20,9 @@ import axios from 'axios';
 import {HOST} from "../../function";
 
 
-let socket;
+let socket = io(`http://${HOST}:3002`);
 let hostId;
+let flag = 1;
 function ChatChRoomScreen(props) {
     const [messages, setMessages] = useState([]);
     const [chatroomId, setRoomId] = useState(props.route.params.roomInfo._id);
@@ -39,11 +40,13 @@ function ChatChRoomScreen(props) {
               .then((value) => {
                   setCurrentUserId(value);
               })
-            let currentUser = await requestUser.getUserData(postOwnerId);
+            let currentUser = await requestUser.getUserData(currentUserId);
             setCurrentUserImage(currentUser.profileImage);
         };
 
         loadingUserId()
+
+
     },[]);
 
     useEffect(() => {
@@ -54,11 +57,11 @@ function ChatChRoomScreen(props) {
                 .then((value) => {
                     hostId = value;
                 });
-
-            socket = io(`http://${HOST}:3002`);
-            console.log("io 정보", socket);
+            // socket = io(`http://${HOST}:3002`);
 
             socket.emit('joinRoom', chatroomId);
+            console.log("joinRoom 실행됐다!! 방 번호 : " + chatroomId);
+
             const preData = await request.getChat(chatroomId);
             checkChat(preData);
         }
@@ -66,14 +69,13 @@ function ChatChRoomScreen(props) {
 
         socket.on('chat message to client', (newMessage) => {
             let newMessaged = newMessage;
-            console.log("프론트에서 받은 새 메시지 : " + newMessaged);
+            console.log("프론트에서 받은 새 메시지 : " + newMessaged[0].text);
             setMessages((prevMessages) => GiftedChat.append(prevMessages, newMessaged));
         });
 
         return() => {
             socket.emit('leaveRoom', chatroomId);
-
-            socket.disconnect();
+            console.log("leaveRoom 실행됐다!! 방 번호 : " + chatroomId);
         };
 
     }, []);

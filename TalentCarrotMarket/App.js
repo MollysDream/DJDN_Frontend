@@ -333,8 +333,8 @@ const App=()=> {
         alert("bye");
 
       } else if (remoteMessage.data.type == 'Chat' || remoteMessage.data.type == 'Keyword') {
-        console.log("알림 타이틀 왔어요! "+remoteMessage.notification.title);
-        console.log("알림 메세지 왔어요! "+remoteMessage.notification.body);
+        // console.log("알림 타이틀 왔어요! "+remoteMessage.notification.title);
+        // console.log("알림 메세지 왔어요! "+remoteMessage.notification.body);
 
           Toast.show({
             text1: remoteMessage.notification.title,
@@ -342,7 +342,7 @@ const App=()=> {
             visibilityTime: 4000,
             topOffset: 20,
           });
-      } 
+      }
       // Alert.alert('A new FCM message arrived!', remoteMessage.data.test);
 
       // console.log('foreground', remoteMessage);
