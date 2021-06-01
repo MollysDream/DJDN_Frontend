@@ -126,7 +126,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
     // }else{
       setEndDateChange(true)
     // }
-    
+
     const newEndSet = newFormatDate(endDateTime)
 
     //거래연장 통신
@@ -227,7 +227,8 @@ const TradeTimerScreen = ({navigation, route}) =>{
     navigation.navigate('사용자 프로필',{userData:userData});
   }
 
-   async function autoReport(){
+  async function autoReport(){
+
 
     console.log("신고된 주소 "+proLocate);
     console.log("확인 accesskey: "+smsKey.accessKey);
@@ -323,7 +324,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
               style={{
                 borderBottomColor: 'black',
                 borderBottomWidth: StyleSheet.hairlineWidth,
-                
+
               }}/>
               <View style={styles.helpMsg}>
                 <Text style={{fontSize:15, marginTop:5, color:'grey'}}>현재 상대방이 거래종료를 하지 않은 상태입니다.</Text>
@@ -349,7 +350,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
             style={{
               borderBottomColor: 'black',
               borderBottomWidth: StyleSheet.hairlineWidth,
-              
+
             }}
           />
           <View style={styles.helpMsg}>
@@ -383,7 +384,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
                 // paddingBottom:hp(5),
                 borderBottomColor: 'black',
                 borderBottomWidth: StyleSheet.hairlineWidth,
-                
+
               }}
             />
               <View style={styles.helpMsg}>
@@ -405,7 +406,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
             style={{
               borderBottomColor: 'black',
               borderBottomWidth: StyleSheet.hairlineWidth,
-              
+
             }}
           />
           <View style={styles.helpMsg}>
@@ -435,7 +436,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
                 source={{uri:userData.profileImage}}
                 style={styles.profileImage}
                 />
-              </TouchableOpacity>  
+              </TouchableOpacity>
             </View>
             <View>
               <Text style={{fontSize:12, marginTop:5, color:'grey'}}>닉네임</Text>
@@ -454,7 +455,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
             paddingBottom:hp(3),
             borderBottomColor: 'black',
             borderBottomWidth: StyleSheet.hairlineWidth,
-            
+
           }}
           />
 
@@ -470,7 +471,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
     )
 }
 
-function makeSignature(){
+async function makeSignature(){
   var space = " ";				// one space
   var newLine = "\n";				// new line
   var method = "POST";				// method
@@ -479,7 +480,7 @@ function makeSignature(){
   var accessKey = smsKey.accessKey;			// access key id (from portal or Sub Account)
   var secretKey = smsKey.secretKey;			// secret key (from portal or Sub Account)
 
-  var hmac = CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA256, secretKey);
+  var hmac = await CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA256, secretKey);
   hmac.update(method);
   hmac.update(space);
   hmac.update(url);

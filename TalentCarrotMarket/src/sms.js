@@ -27,6 +27,9 @@ export default class sms {
 		var result = Base64.stringify(hash);
 		return result.toString();
 	};
+
+
+
 	async sendSMS(){
 		const body = {
 			type: 'SMS',
