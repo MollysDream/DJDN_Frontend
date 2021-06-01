@@ -10,11 +10,12 @@ import requestUser from "../../requestUserAPI";
 import request from '../../requestAPI';
 import { IconButton } from 'react-native-paper';
 import {HOST} from "../../function";
+import requestChatAPI from "../../requestChatAPI";
 // import {AnimatedAbsoluteButton} from 'react-native-animated-absolute-buttons';
 
 let socket;
 let chatRoomId="";
-
+let currentUserId ;
 function ChatScreen(props) {
     const [messages, setMessages] = useState([]);
     const [postOwnerId, setPostOwnerId] = useState(
@@ -26,10 +27,19 @@ function ChatScreen(props) {
         props.route.params.postOwner.nickname
     );
     const [postId, setpostid] = useState(props.route.params.item._id);
-    const [currentUserId, setCurrentUserId] = useState("");
+    // const [currentUserId, setCurrentUserId] = useState("");
     const [currentUserImage, setCurrentUserImage] = useState('');
 
-
+    async function loadingCurrentUserId() {
+      await AsyncStorage
+        .getItem('user_id')
+        .then((value) => {
+          currentUserId = value;
+        })
+      let currentUser = await requestUser.getUserData(currentUserId);
+      setCurrentUserImage(currentUser.profileImage);
+    };
+    loadingCurrentUserId()
 
     useEffect(() => {
       async function loadingUserId(){
@@ -37,10 +47,7 @@ function ChatScreen(props) {
           .getItem('user_id')
           .then((value) => {
             sethostId(value);
-            setCurrentUserId(value);
           })
-        let currentUser = await requestUser.getUserData(currentUserId);
-        setCurrentUserImage(currentUser.profileImage);
       };
       loadingUserId();
     }, []);
@@ -162,7 +169,7 @@ function ChatScreen(props) {
       }
     }
 
-    function onSendDB(newMessage) {
+    async function onSendDB(newMessage) {
         let beforeTime = new Date();
         let month = beforeTime.getMonth() + 1;
         let time = beforeTime.getFullYear() + '-' + month + '-' + beforeTime.getDate() +
@@ -171,7 +178,7 @@ function ChatScreen(props) {
         let textId = newMessage[0]._id;
         let createdAt = time;
         let text = newMessage[0].text;
-        let senderId = hostId;
+        let senderId = currentUserId;
         let roomId = chatRoomId;
 
 
@@ -186,9 +193,7 @@ function ChatScreen(props) {
         console.log("hostId: ");
         console.log("chatRoomId : ", chatRoomId);
         console.log("roomId : ", roomId);
-        axios
-            .post(`http://${HOST}:3000/chat/createChat`, newChat)
-            .then((data) => {})
+      let chatData = await requestChatAPI.createChat(newChat);
     }
 
     return (
