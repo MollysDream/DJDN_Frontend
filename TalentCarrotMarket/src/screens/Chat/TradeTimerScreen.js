@@ -62,11 +62,13 @@ const TradeTimerScreen = ({navigation, route}) =>{
     useEffect(() => {
       async function getData(){
 
-          console.log("현재 접속자는 "+ userId)
+          let user= await AsyncStorage.getItem('user_id');
+
+          console.log("현재 접속자는 "+ user)
           console.log('user1은? '+user1)
           console.log('user2는? '+user2)
 
-          if (user1 == userId){
+          if (user1 == user){
             console.log("user1이에요! "+ user1)
             console.log("user2아니에요! "+ user2)
             let userData = await requestUserAPI.getUserData(user2);
@@ -89,7 +91,6 @@ const TradeTimerScreen = ({navigation, route}) =>{
       .then(returnData => {
         if(returnData.data.message){
 
-          setTradeData(returnData.data);
           setIsEndSuggest(returnData.data.trade.completeSuggest);
           setIsEnd(returnData.data.trade.complete);
 
@@ -139,7 +140,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
         if(compareDiffTime>0){
           alert("거래 연장에 성공했습니다!");
         } else{
-          alert("연장한 거래 시간이 현재시간보다 빠릅니다.")
+          alert("거래 연장에 실패하였습니다.")
         }
       } else {
         alert('거래 연장에 실패하였습니다.')
