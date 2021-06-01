@@ -25,6 +25,8 @@ function ChatListRoomScreen(props) {
 	const [messages, setMessages] = useState([]);
 	const [chatroomId, setRoomId] = useState(props.route.params.roomInfo._id);
 	const [currentUserId, setCurrentUserId] = useState("");
+	const [currentUserImage, setCurrentUserImage] = useState('');
+
 
 	const postOwnerId = props.route.params.postOwner._id;
   const host = props.route.params.host._id;
@@ -36,7 +38,8 @@ function ChatListRoomScreen(props) {
 				.then((value) => {
 					setCurrentUserId(value);
 				})
-
+			let currentUser = await requestUser.getUserData(postOwnerId);
+			setCurrentUserImage(currentUser.profileImage);
 		};
 
 		loadingUserId()
@@ -65,6 +68,12 @@ function ChatListRoomScreen(props) {
 			console.log("프론트에서 받은 새 메시지 : " + newMessaged);
 			setMessages((prevMessages) => GiftedChat.append(prevMessages, newMessaged));
 		});
+
+		return() => {
+			socket.emit('leaveRoom', chatroomId);
+
+			socket.disconnect();
+		};
 
 	}, []);
 
@@ -166,7 +175,8 @@ function ChatListRoomScreen(props) {
 				messages={messages}
 				onSend={(newMessages) => onSend(newMessages)}
 				user={{
-					_id: currentUserId
+					_id: currentUserId,
+					avatar: currentUserImage
 				}}/>
 		</View>
 	)
