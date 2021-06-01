@@ -25,6 +25,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import requestChatAPI from "../../requestChatAPI";
+import {useIsFocused} from "@react-navigation/native";
 
 
 // let roomById;
@@ -40,8 +41,10 @@ function ChatChScreen({navigation}) {
       const [nickInfo, setNickInfo] = useState([]);
       /*const [host, setHost] = useState('');
       const [post, setPost] = useState('');*/
+    const isFocused = useIsFocused();
 
-      useEffect(()=>{
+
+    useEffect(()=>{
         async function loadingCurrentId(){
             AsyncStorage
                 .getItem('user_id')
@@ -93,7 +96,8 @@ function ChatChScreen({navigation}) {
           }
         }
         loadingRoom();
-      },[currentId]);
+      },[currentId, isFocused]);
+
 
     async function onRefresh(){
         try{

@@ -208,7 +208,7 @@ const MainTabScreen =({}) => {
           tabBarIcon: ({color}) => <Icon2 name="home" color={color} size={26} />,
         }}
       />
-      <Tab.Screen
+      {/*<Tab.Screen
         name="TabSecond"
         component={TalentStackScreen}
         options={{
@@ -217,7 +217,7 @@ const MainTabScreen =({}) => {
             <Icon3 name="document-text" color={color} size={26} />
           ),
         }}
-      />
+      />*/}
       <Tab.Screen
         name="TabThird"
         component={AroundStackScreen}
