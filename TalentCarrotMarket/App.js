@@ -343,17 +343,13 @@ const App=()=> {
             topOffset: 20,
           });
       } 
-      // Alert.alert('A new FCM message arrived!', remoteMessage.data.test);
 
-      // console.log('foreground', remoteMessage);
     });
     messaging().onNotificationOpenedApp((remoteMessage) => {
-      // Alert.alert('here from background tap');
       console.log(
         'Notification caused app to open from background state:',
         remoteMessage,
       );
-      // this.props.navigation.navigate(remoteMessage.data.type);
       console.log(remoteMessage.data);
       setTimeout((remoteMessage) => {
         navigate(remoteMessage.data.type, null);
@@ -363,15 +359,13 @@ const App=()=> {
     messaging()
       .getInitialNotification()
       .then((remoteMessage) => {
-        console.log(remoteMessage); // always prints null
+        console.log(remoteMessage);
         if (remoteMessage) {
-          // Alert.alert('here from quit tap');
           console.log(
             'Notification caused app to open from quit state:',
             remoteMessage,
             remoteMessage.data.type,
           );
-          // this.setState('initialRoute',remoteMessage.data.type)
         }
       });
 
