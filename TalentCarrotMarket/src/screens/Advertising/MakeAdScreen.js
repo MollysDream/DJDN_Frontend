@@ -31,6 +31,13 @@ import requestAddressAPI from "../../requestAddressAPI";
 import requestAdverAPI from "../../requestAdverAPI";
 import {message} from "../../function";
 import FlashMessage from "react-native-flash-message";
+import Postcode from "@actbase/react-daum-postcode";
+import Icon2 from "react-native-vector-icons/MaterialIcons";
+import Modal from "react-native-modal";
+import NaverMapView, {Circle, Marker} from "react-native-nmap";
+import Geolocation from "react-native-geolocation-service";
+import SwitchSelector from "react-native-switch-selector";
+import {add} from "react-native-reanimated";
 
 export default class MAkeAdScreen extends Component{
     state={
@@ -43,11 +50,24 @@ export default class MAkeAdScreen extends Component{
         count: 0,
         shopOwner:"",
         area: {},
-        image:[]
+        image:[],
+        mapModal:false,
+        P1:{latitude: 37.564362, longitude: 126.977011},
+        pickPoint:null,
+        radius:0,
+        addressName:null
     }
 
     async componentDidMount() {
 
+        Geolocation.getCurrentPosition(
+            position =>{
+                const {latitude,longitude}=position.coords;
+                this.setState({P1:{latitude, longitude}});
+            },
+            error => {console.log(error.code,error.message)},
+            { enableHighAccuracy:true, timeout: 20000, maximumAge:1000},
+        );
 
         //광고 작성 사용자의 userId값을 저장하기 위해 요청
         const userId = await AsyncStorage.getItem('user_id');
@@ -143,7 +163,7 @@ export default class MAkeAdScreen extends Component{
         }
     }
   
-        selectImage = async ()=>{
+    selectImage = async ()=>{
             const path =require('path');
             ImagePicker.openPicker({
                 width: 200,
@@ -175,10 +195,102 @@ export default class MAkeAdScreen extends Component{
         }
 
 
+
+    setLocation(){
+        //if()
+        this.setState({mapModal:true});
+    }
+
+    async pickLocation(point){
+        console.log(point);
+        let latitude = point.latitude;
+        let longitude = point.longitude;
+        if(this.state.radius==0)
+            this.setState({pickPoint:{latitude,longitude}, P1:{latitude,longitude}, radius:500})
+
+        this.setState({pickPoint:{latitude,longitude}, P1:{latitude,longitude}});
+        let addressData = await requestAddressAPI.currentLocation(longitude, latitude);
+        this.setState({addressName:addressData.data.address});
+        console.log(addressData.data.address);
+    }
+
+    radiusInitial = 0;
+    radiusOptions = [
+        {label:"500m", value: 500},
+        {label:"1km", value: 1000},
+        {label:"1.5km", value: 1500},
+        {label:"2km", value: 2000},
+    ];
+    selectSwitchRadius(value){
+        if(this.state.pickPoint==null)
+            return
+        switch(value){
+            case 500:this.radiusInitial=0;
+                break;
+            case 1000:this.radiusInitial=1;
+                break;
+            case 1500:this.radiusInitial=2;
+                break;
+            case 2000:this.radiusInitial=3;
+                break;
+        }
+        this.setState({radius:value});
+    }
+
     render() {
         return (
             <Container>
                 <FlashMessage position="top"/>
+
+                {/*광고 위치선택 모달*/}
+                <Modal isVisible={this.state.mapModal}>
+
+                    <View style={{backgroundColor:'white',borderRadius:20, width:'100%', height:'100%'}}>
+
+                        <Text style={styles.locationModalText}>광고 위치 선택</Text>
+                        <NaverMapView
+                            style={{width: '100%', height: hp(60)}}
+                            /*showsMyLocationButton={true}*/
+                            center={{...this.state.P1, zoom:14}}
+                            onMapClick={e => this.pickLocation(e)}>
+
+                            {this.state.pickPoint==null?null:
+                                <Marker coordinate={this.state.pickPoint} pinColor={"red"}/>
+                            }
+                            {this.state.radius==0?null:
+                                <Circle coordinate={this.state.pickPoint} radius={this.state.radius} color={'rgba(144,64,201,0.2)'}/>
+                            }
+                        </NaverMapView>
+
+                        <Text style={[styles.locationModalText,{fontSize:17}]}>광고 반경 설정</Text>
+                        <SwitchSelector style={{paddingBottom:4}}
+                                        options={this.radiusOptions}
+                                        initial={this.radiusInitial}
+                                        onPress={value => this.selectSwitchRadius(value)}
+                                        textColor={'#af7bff'}
+                                        selectedColor={'white'}
+                                        buttonColor={'#af7bff'}
+                                        borderColor={'#af7bff'}
+                                        hasPadding
+                        />
+
+                        {this.state.addressName==null?null:
+                            <View style={{marginTop:15,alignSelf:"center", borderRadius:10, borderWidth:1,backgroundColor:'#d3acff', borderColor:'purple',padding:10}}>
+                                <Text style={{alignSelf:'center',fontSize:17}}>{`${this.state.addressName} - ${this.state.radius}m`}</Text>
+                            </View>
+                        }
+
+
+
+                        <TouchableOpacity onPress={()=>this.setState({mapModal:false})}
+                                          style={{position:'absolute',top:3,right:5}}>
+                            <Icon2 name="cancel"  size={40} color="#c18aff" />
+                        </TouchableOpacity>
+
+                    </View>
+
+                </Modal>
+
                 <Header style={{backgroundColor:"#a75bff"}}>
                 <Right>
                     <TouchableOpacity
@@ -193,6 +305,25 @@ export default class MAkeAdScreen extends Component{
                     <ScrollView style={{ marginTop : '3%' }}>
                         <Container>
                             <Content>
+                                
+                                <View style={{flexDirection:'row'}}>
+
+                                    {this.state.addressName==null?
+                                        <TouchableOpacity style={styles.ruleButton} onPress={()=>this.setLocation()}>
+                                            <Text style={{alignSelf:'center'}}>광고위치 선택</Text>
+                                        </TouchableOpacity>
+                                        :
+                                        <TouchableOpacity style={[styles.ruleButton, {backgroundColor:'#d3acff'}]} onPress={()=>this.setLocation()}>
+                                            <Text style={{alignSelf:'center'}}>{`${this.state.addressName} - ${this.state.radius}m`}</Text>
+                                        </TouchableOpacity>
+                                    }
+
+                                    <TouchableOpacity style={styles.ruleButton}>
+                                        <Text style={{alignSelf:'center'}}>광고만료 기간 선택</Text>
+                                    </TouchableOpacity>
+                                    
+                                </View>
+                                
                                 <Form>
                                     <Item inlinelabel style={{ marginTop: '3%' }}>
                                         <Label style={{width:'18%'}}>제목</Label>
@@ -249,6 +380,21 @@ export default class MAkeAdScreen extends Component{
 
 
 const styles = StyleSheet.create({
+
+    locationModalText:{
+        alignSelf:'center', fontSize:20, fontWeight:'bold', margin:10
+    },
+
+    ruleButton:{
+      width:'50%',
+        borderRadius: 10,
+        borderColor:'purple',
+        borderWidth:1,
+        paddingTop:4,
+        paddingBottom:4
+
+    },
+
     image:{
         width: wp(28),
         overflow:"hidden",
