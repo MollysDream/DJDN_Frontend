@@ -47,7 +47,7 @@ export async function currentLocation(currentX, currentY){
 }
 
 export async function currentAddress(currentX, currentY){
-    console.log(`currentLocation함수 호출됨 위경도:${currentY} ${currentX}`);
+    console.log(`currentAddress함수 호출됨 위경도:${currentY} ${currentX}`);
     const returnData = await axi.post("/address/currentAddress", {currentX,currentY});
 
     return returnData;

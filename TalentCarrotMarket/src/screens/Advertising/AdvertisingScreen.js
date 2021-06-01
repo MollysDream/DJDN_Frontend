@@ -52,6 +52,8 @@ const AdvertisingScreen = ({navigation, route}) => {
       // console.log('2. 조회된 데이터: '+  returnPoint);
       // console.log('3. 조회된 point: '+  returnPoint.point);
       // console.log('4. 조회된 point type : '+  typeof returnPoint.toString());
+      setTab(0);
+      return (  <View>{Screen}</View>);
     }
 
     getPoint();
@@ -120,7 +122,7 @@ const AdvertisingScreen = ({navigation, route}) => {
                  <TouchableOpacity onPress={()=>navigation.navigate('makeadver')}
                                   style={{borderWidth:0,position:'absolute',bottom:5,alignSelf:'flex-end'}}>
                     <Icon name="add-circle"  size={70} color="purple" />
-                </TouchableOpacity>
+                </TouchableOpacity> 
                  <View style={styles.title}>
 
                  <TouchableOpacity style={{width:'33%', alignItems:'center'}} onPress={()=>setTab(2)}>
