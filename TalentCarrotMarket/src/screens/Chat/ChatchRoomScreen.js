@@ -49,7 +49,7 @@ function ChatChRoomScreen(props) {
 
     loadingUserId()
 
-    console.log(currentUserImage);
+    // console.log(currentUserImage);
 
     // useEffect(()=>{
     //     async function loadingUserId(){
