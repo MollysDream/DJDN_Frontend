@@ -194,23 +194,6 @@ const TradeSetScreen =({navigation,route})=>{
 
       },[locate, currentLocation])
 
-      // useEffect(()=>{
-      //   console.log(currentLocation)
-
-      //   requestTradeAPI.updateTradeLocation(tradeId, currentLocation.longitude,currentLocation.latitude)
-      //     .then(returnData => {
-      //       console.log(returnData.data.message);
-      //       const currentLongitude = currentLocation.longitude;
-      //       const currentLatitude = currentLocation.latitude;
-    
-      //       setSaveLocation({currentLongitude, currentLatitude});
-      //       })
-      //       //에러
-      //       .catch(err => {
-      //           console.log(err);
-      //       });   
-
-      // },[tradeId])
       
       const locationHandler = (e) => {
         
