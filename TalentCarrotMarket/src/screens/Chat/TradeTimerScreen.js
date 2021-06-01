@@ -42,11 +42,8 @@ const TradeTimerScreen = ({navigation, route}) =>{
 
 
   const [endDateTime, setEndDateTime] = useState(endSet);
-  // const [notifyEndDateTime, setNotifyEndDateTime] = useState(endDateTime.setMinutes(endDateTime.getMinutes()-5))
   const [endDateChange, setEndDateChange] = useState(false);
   const nowDate = Date.now();
-  // diffTime= 100;
-  // const diffTime = (endDateTime.getTime() - nowDate.getTime())/1000;
   const [diffTime, setDiffTime] = useState((endDateTime.getTime()- nowDate)/1000);
 
   const [isEndSuggest, setIsEndSuggest] = useState(false);
@@ -55,8 +52,6 @@ const TradeTimerScreen = ({navigation, route}) =>{
   useEffect(()=>{
     console.log("새로운 종료시간은 "+endDateTime)
     setDiffTime((endDateTime.getTime()-nowDate)/1000);
-    // setNotifyEndDateTime(endDateTime.setMinutes(endDateTime.getMinutes()-5));
-    // console.log("새로운 알림 종료시간은 "+ notifyEndDateTime);
     console.log("새로운 연장시간은 "+diffTime);
     setEndDateChange(false)
   },[endDateChange])
