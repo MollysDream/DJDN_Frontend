@@ -253,7 +253,7 @@ const PostReportScreen = ({navigation}) => {
                             <View >
 
                                 <View style={styles.modal_profile}>
-                                    <Image style={[styles.profileImage, {borderRadius:10, borderColor:'orange'}]} source={{ uri: currentData.targetPost.image[0]}} />
+                                    <Image style={[styles.modal_profileImage, {borderRadius:10, borderColor:'orange'}]} source={{ uri: currentData.targetPost.image[0]}} />
                                     <Text style={{fontSize:17, fontWeight:'bold'}}>{currentData.targetPost.title}</Text>
                                 </View>
 
@@ -423,6 +423,16 @@ const styles = StyleSheet.create({
         width: wp(20),
         overflow:"hidden",
         height: hp(20),
+        aspectRatio: 1,
+        borderRadius: 100,
+
+        borderWidth:2,
+        borderColor:'#ff8a8a',
+    },
+    modal_profileImage:{
+        width: wp(17),
+        overflow:"hidden",
+        height: hp(17),
         aspectRatio: 1,
         borderRadius: 100,
 

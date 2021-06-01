@@ -15,6 +15,7 @@ import {
 } from 'react-native-responsive-screen';
 
 import NaverMapView, {Marker} from "react-native-nmap";
+import Geolocation from 'react-native-geolocation-service';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-community/async-storage';
 import requestAddressAPI from "../../requestAddressAPI";
@@ -28,6 +29,7 @@ const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{pr
 let userId ;
 let sender;
 let receiver;
+let saveLocation ={latitude:null, longitude:null};
 
 const TradeSetScreen =({navigation,route})=>{
 
@@ -39,7 +41,7 @@ const TradeSetScreen =({navigation,route})=>{
         userId=value
       );
 
-      const [locate,setLocate]=useState('')
+      const [locate,setLocate]=useState('');
       const [detailLocate,setDetailLocate]=useState('');
       const [isSuggest,setIsSuggest]=useState(false);
       const [isSave,setIsSave]=useState(false);
@@ -52,6 +54,15 @@ const TradeSetScreen =({navigation,route})=>{
       const [start, setStart]=useState('');
       const [end, setEnd]=useState('');
 
+
+      // 거래 장소 설정
+      const [currentLocation, setCurrentLocation] = useState({
+        latitude: 37.27886373711404, longitude: 127.04245001890514
+      });
+      // const [saveLocation, setSaveLocation] = useState({
+      //   latitude: null, longitude: null
+      // });
+
       useEffect(()=>{
 
         console.log("채팅방 번호 "+chatRoom)
@@ -59,6 +70,11 @@ const TradeSetScreen =({navigation,route})=>{
         requestTradeAPI.getTrade(chatRoom)
           .then(returnData => {
               if(returnData.data.message){
+              
+              const saveLongitude = returnData.data.trade.longitude;
+              const saveLatitude = returnData.data.trade.latitude;
+
+              saveLocation = {latitude:saveLatitude, longitude:saveLongitude};
 
               console.log("거래 정보는 "+returnData.data.trade);
               setIsSuggest(true);
@@ -67,6 +83,8 @@ const TradeSetScreen =({navigation,route})=>{
               setStart(returnData.data.trade.startTime);
               setEnd(returnData.data.trade.endTime);
               setTradeId(returnData.data.trade._id);
+
+              console.log("가져온 거래 장소는 "+saveLocation.longtitude)
 
               if(returnData.data.trade.sender==userId){
                 console.log("현재 접속자는 거래 제안자임 "+ returnData.data.trade.sender);
@@ -146,8 +164,21 @@ const TradeSetScreen =({navigation,route})=>{
         }
       }
       
-      // 거래 장소 설정
-      const [currentLocation, setCurrentLocation] = useState({latitude: 37.27886373711404, longitude: 127.04245001890514});
+      //처음 현재 주소 출력 (제안 시 필요)
+      useEffect(() =>{
+        Geolocation.getCurrentPosition(
+        position =>{
+            const {latitude,longitude}=position.coords;
+            setCurrentLocation({
+              latitude,
+              longitude
+            })
+
+          },
+          error => {console.log(error.code,error.message)},
+          { enableHighAccuracy:true, timeout: 20000, maximumAge:1000},
+        );
+      },[]);
 
       useEffect(()=>{
         console.log(currentLocation)
@@ -162,6 +193,24 @@ const TradeSetScreen =({navigation,route})=>{
                 });
 
       },[locate, currentLocation])
+
+      // useEffect(()=>{
+      //   console.log(currentLocation)
+
+      //   requestTradeAPI.updateTradeLocation(tradeId, currentLocation.longitude,currentLocation.latitude)
+      //     .then(returnData => {
+      //       console.log(returnData.data.message);
+      //       const currentLongitude = currentLocation.longitude;
+      //       const currentLatitude = currentLocation.latitude;
+    
+      //       setSaveLocation({currentLongitude, currentLatitude});
+      //       })
+      //       //에러
+      //       .catch(err => {
+      //           console.log(err);
+      //       });   
+
+      // },[tradeId])
       
       const locationHandler = (e) => {
         
@@ -181,6 +230,7 @@ const TradeSetScreen =({navigation,route})=>{
                         .catch(err => {
                             console.log(err);
                         });
+
                 
                     console.log('onMapClick', JSON.stringify(e));
                 }}
@@ -222,18 +272,27 @@ const TradeSetScreen =({navigation,route})=>{
         setStart(startSet);
         setEnd(endSet);
 
+        const endDateTime = parse(endSet);
         try{
           //거래제안
-           const returnData = await requestTradeAPI.createTradeTime(startSet,endSet,entireLocate,sender,receiver,chatRoom);
+          const nowDate = Date.now();
+          var compareDiffTime=(endDateTime.getTime()-nowDate)/1000;
+          console.log("차이는?? "+compareDiffTime)
+          if(compareDiffTime>0){
+            const returnData = await requestTradeAPI.createTradeTime(startSet,endSet,entireLocate,sender,receiver,chatRoom,currentLocation.longitude,currentLocation.latitude);
     
-           if (returnData.data.message) {
-            console.log("거래 장소 및 시간 설정 완료")
-            console.log("거래 번호 "+returnData.data.tradeId)
-            setTradeId(returnData.data.tradeId);
-            setIsSuggest(true);
-            } else {
-              console.log('거래 장소 및 시간 설정 실패');
-            }
+            if (returnData.data.message) {
+             console.log("거래 장소 및 시간 설정 완료")
+             console.log("거래 번호 "+returnData.data.tradeId)
+             setTradeId(returnData.data.tradeId);
+             setIsSuggest(true);
+             } else {
+               console.log('거래 장소 및 시간 설정 실패');
+             }
+          } else{
+            alert("거래 종료시간이 현재시간보다 빠릅니다! 재설정해주세요")
+          }
+          
         } catch(err){
             console.log(err);
       }
@@ -363,14 +422,27 @@ const TradeSetScreen =({navigation,route})=>{
     // 거래 시간 및 장소 제안 후 (isSuggest = true)
     const saveTrade =
     <>
+    {saveLocation.latitude!=null&&saveLocation.longitude!=null?
+    (<NaverMapView 
+      style={{width: '100%', height: '85%'}}
+      showsMyLocationButton={true}
+      center={{...saveLocation, zoom:16}}
+      onTouch={e => console.log('onTouch', JSON.stringify(e.nativeEvent))}
+      onCameraChange={e => console.log('onCameraChange', JSON.stringify(e))}
+      onMapClick={e => console.log('onMapClick', JSON.stringify(e))}>
+        <Marker coordinate={saveLocation}/>
+    </NaverMapView>):
+    
       <NaverMapView 
-        style={{width: '100%', height: '85%'}}
-        showsMyLocationButton={true}
-        center={{...currentLocation, zoom:16}}
-        onTouch={e => console.warn('onTouch', JSON.stringify(e.nativeEvent))}
-        onCameraChange={e => console.warn('onCameraChange', JSON.stringify(e))}
-        onMapClick={e => console.warn('onMapClick', JSON.stringify(e))}>
-      </NaverMapView>
+      style={{width: '100%', height: '85%'}}
+      showsMyLocationButton={true}
+      center={{...currentLocation, zoom:16}}
+      onTouch={e => console.log('onTouch', JSON.stringify(e.nativeEvent))}
+      onCameraChange={e => console.log('onCameraChange', JSON.stringify(e))}
+      onMapClick={e => console.log('onMapClick', JSON.stringify(e))}>
+        <Marker coordinate={currentLocation}/>
+    </NaverMapView>
+    }
         
       <View style={{justifyContent: 'center',alignItems: 'center',paddingTop:hp(3),paddingBottom:hp(2)}}>
         <View style={styles.tradeSetView} >

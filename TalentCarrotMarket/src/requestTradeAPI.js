@@ -9,9 +9,9 @@ export async function getTrade(chatRoom){
     return returnData;
 }
 
-export async function createTradeTime(startTime,endTime,location,sender,receiver,chatRoom){
+export async function createTradeTime(startTime,endTime,location,sender,receiver,chatRoom,longitude,latitude){
     console.log('createTradeTime함수 호출됨');
-    const returnData = await axi.post("/trade/createTradeTime", {startTime,endTime,location,sender,receiver,chatRoom});
+    const returnData = await axi.post("/trade/createTradeTime", {startTime,endTime,location,sender,receiver,chatRoom,longitude,latitude});
     return returnData;
 }
 
@@ -20,6 +20,12 @@ export async function agreeTrade(tradeId){
     const returnData = await axi.post("/trade/agreeTrade", {tradeId});
     return returnData;
 }
+
+// export async function updateTradeLocation(tradeId, longitude, latitude){
+//     console.log('updateTradeLocation함수 호출됨');
+//     const returnData = await axi.post("/trade/updateTradeLocation", {tradeId, longitude, latitude});
+//     return returnData;
+// }
 
 export async function deleteTrade(tradeId){
     console.log('deleteTrade함수 호출됨');

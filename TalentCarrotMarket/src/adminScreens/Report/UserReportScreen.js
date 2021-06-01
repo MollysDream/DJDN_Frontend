@@ -213,7 +213,7 @@ const UserReportScreen = ({navigation}) => {
                             <View >
 
                                 <View style={styles.modal_profile}>
-                                    <Image style={styles.profileImage} source={{ uri: currentData.targetUser.profileImage}} />
+                                    <Image style={styles.modal_profileImage} source={{ uri: currentData.targetUser.profileImage}} />
                                     <Text style={{fontSize:20, fontWeight:'bold'}}>{currentData.targetUser.nickname}</Text>
                                 </View>
 
@@ -363,6 +363,16 @@ const styles = StyleSheet.create({
         width: wp(20),
         overflow:"hidden",
         height: hp(20),
+        aspectRatio: 1,
+        borderRadius: 100,
+
+        borderWidth:2,
+        borderColor:'#ff8a8a',
+    },
+    modal_profileImage:{
+        width: wp(17),
+        overflow:"hidden",
+        height: hp(17),
         aspectRatio: 1,
         borderRadius: 100,
 
