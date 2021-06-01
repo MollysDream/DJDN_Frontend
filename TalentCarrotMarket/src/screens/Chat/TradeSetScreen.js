@@ -382,7 +382,7 @@ const TradeSetScreen =({navigation,route})=>{
             value={startDate}
             mode={mode}
             is24Hour={true}
-            display="default"
+            display="spinner"
             onChange={onChange}
           />)}
 
@@ -392,7 +392,7 @@ const TradeSetScreen =({navigation,route})=>{
             value={endDate}
             mode={mode}
             is24Hour={true}
-            display="default"
+            display="spinner"
             onChange={onChangeEnd}
           />)}
        

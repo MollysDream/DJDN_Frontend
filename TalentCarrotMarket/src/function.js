@@ -66,6 +66,34 @@ function getBanDate(date){
     return `${year}년-${month}월-${day}일`
 }
 
+function getGMT9Date(date){
+    Date.prototype.addHours= function(h){
+        this.setHours(this.getHours()+h);
+        return this;
+    }
+    let krDate = date.addHours(9);
+
+    return krDate;
+}
+
+function getAdEndDate(date){
+    /*Date.prototype.addHours= function(h){
+        this.setHours(this.getHours()+h);
+        return this;
+    }
+    let krDate = date.addHours(9);
+
+    console.log(krDate);*/
+
+    let year = date.getUTCFullYear();
+    let month = date.getUTCMonth()+1;
+    let day = date.getUTCDate();
+
+    console.log(`${year}년-${month}월-${day}일`);
+
+    return `${year}년-${month}월-${day}일`
+}
+
 //const HOST = '192.168.25.19' // 정수범 안드로이드
 // const HOST = '192.168.219.114' // 나준엽 안드로이드
 const HOST = '10.0.2.2'
@@ -80,5 +108,7 @@ export {
     getPlusDate,
     getBanDate,
     HOST,
-    message
+    message,
+    getAdEndDate,
+    getGMT9Date
 }
