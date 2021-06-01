@@ -74,10 +74,10 @@ function ChatScreen(props) {
 
     }, [currentUserId]);
 
-    function onSend(newMessages = []) {
-        socket.emit("chat message to server", newMessages, chatRoomId);
-        setMessages((prevMessages) => GiftedChat.append(prevMessages, newMessages));
-        onSendDB(newMessages);
+    function onSend(newMessage = []) {
+        socket.emit("chat message to server", newMessage, chatRoomId);
+        setMessages((prevMessages) => GiftedChat.append(prevMessages, newMessage));
+        onSendDB(newMessage);
     };
 
 
@@ -202,7 +202,6 @@ function ChatScreen(props) {
                 user={{
                     _id: currentUserId
                 }}/>
-
         </View>
     )
 

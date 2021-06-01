@@ -69,10 +69,10 @@ function ChatChRoomScreen(props) {
 
     }, []);
 
-    function onSend(newMessages = []) {
-        socket.emit("chat message to server", newMessages, chatroomId);
-        setMessages((prevMessages) => GiftedChat.append(prevMessages, newMessages));
-        onSendDB(newMessages);
+    function onSend(newMessage = []) {
+        socket.emit("chat message to server", newMessage, chatroomId);
+        setMessages((prevMessages) => GiftedChat.append(prevMessages, newMessage));
+        onSendDB(newMessage);
     }
 
     function onSendDB(newMessage) {
