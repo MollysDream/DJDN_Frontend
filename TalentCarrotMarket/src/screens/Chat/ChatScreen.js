@@ -199,7 +199,18 @@ function ChatScreen(props) {
     return (
         <View style={styles.container}>
             <View style={styles.clockButtonContainer}>
-            </View>
+            <IconButton
+              icon="clock"
+              size={36}
+              color="#6646ee"
+              onPress={()=>props.navigation
+                .navigate('tradeset',{
+                  user1:postOwnerId,
+                  user2:currentUserId,
+                  chatRoom:chatRoomId
+                })}
+            />
+          </View>
 
             <GiftedChat
                 messages={messages}
