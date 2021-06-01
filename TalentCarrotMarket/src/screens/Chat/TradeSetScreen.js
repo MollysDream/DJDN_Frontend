@@ -426,11 +426,10 @@ const TradeSetScreen =({navigation,route})=>{
     (<NaverMapView 
       style={{width: '100%', height: '85%'}}
       showsMyLocationButton={true}
-      center={{...saveLocation, zoom:16}}
+      center={{...currentLocation, zoom:16}}
       onTouch={e => console.log('onTouch', JSON.stringify(e.nativeEvent))}
       onCameraChange={e => console.log('onCameraChange', JSON.stringify(e))}
       onMapClick={e => console.log('onMapClick', JSON.stringify(e))}>
-        <Marker coordinate={saveLocation}/>
     </NaverMapView>):
     
       <NaverMapView 
