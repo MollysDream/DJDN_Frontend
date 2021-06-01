@@ -194,23 +194,6 @@ const TradeSetScreen =({navigation,route})=>{
 
       },[locate, currentLocation])
 
-      // useEffect(()=>{
-      //   console.log(currentLocation)
-
-      //   requestTradeAPI.updateTradeLocation(tradeId, currentLocation.longitude,currentLocation.latitude)
-      //     .then(returnData => {
-      //       console.log(returnData.data.message);
-      //       const currentLongitude = currentLocation.longitude;
-      //       const currentLatitude = currentLocation.latitude;
-    
-      //       setSaveLocation({currentLongitude, currentLatitude});
-      //       })
-      //       //에러
-      //       .catch(err => {
-      //           console.log(err);
-      //       });   
-
-      // },[tradeId])
       
       const locationHandler = (e) => {
         
@@ -346,7 +329,8 @@ const TradeSetScreen =({navigation,route})=>{
          const returnData = await requestTradeAPI.deleteTrade(tradeId);
   
          if (returnData.data.message) {
-          alert('거래를 다시 제안합니다.')
+          alert('기존 거래를 삭제하고 다시 제안합니다.')
+          navigation.navigate('chatch');
           } else {
             alert('거래 취소 실패!')
           }

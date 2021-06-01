@@ -208,7 +208,7 @@ const MainTabScreen =({}) => {
           tabBarIcon: ({color}) => <Icon2 name="home" color={color} size={26} />,
         }}
       />
-      <Tab.Screen
+      {/*<Tab.Screen
         name="TabSecond"
         component={TalentStackScreen}
         options={{
@@ -217,7 +217,7 @@ const MainTabScreen =({}) => {
             <Icon3 name="document-text" color={color} size={26} />
           ),
         }}
-      />
+      />*/}
       <Tab.Screen
         name="TabThird"
         component={AroundStackScreen}
@@ -342,18 +342,17 @@ const App=()=> {
             visibilityTime: 4000,
             topOffset: 20,
           });
+
       }
       // Alert.alert('A new FCM message arrived!', remoteMessage.data.test);
 
-      // console.log('foreground', remoteMessage);
+
     });
     messaging().onNotificationOpenedApp((remoteMessage) => {
-      // Alert.alert('here from background tap');
       console.log(
         'Notification caused app to open from background state:',
         remoteMessage,
       );
-      // this.props.navigation.navigate(remoteMessage.data.type);
       console.log(remoteMessage.data);
       setTimeout((remoteMessage) => {
         navigate(remoteMessage.data.type, null);
@@ -363,15 +362,13 @@ const App=()=> {
     messaging()
       .getInitialNotification()
       .then((remoteMessage) => {
-        console.log(remoteMessage); // always prints null
+        console.log(remoteMessage);
         if (remoteMessage) {
-          // Alert.alert('here from quit tap');
           console.log(
             'Notification caused app to open from quit state:',
             remoteMessage,
             remoteMessage.data.type,
           );
-          // this.setState('initialRoute',remoteMessage.data.type)
         }
       });
 
