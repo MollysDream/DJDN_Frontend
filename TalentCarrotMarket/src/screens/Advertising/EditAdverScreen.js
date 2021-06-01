@@ -6,9 +6,6 @@ import {
     Image,
     FlatList,
     TouchableOpacity,
-    Button,
-    RefreshControl,
-    TouchableHighlight,
     KeyboardAvoidingView,
     TouchableWithoutFeedback,ScrollView,
     Alert
@@ -16,21 +13,21 @@ import {
 import { Content, Container, Header, Left, Right, Title, Body, Item, Label,
     Input, Form, Textarea } from 'native-base';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-import {SearchBar} from 'react-native-elements';
 import request from '../../requestAPI';
-import requestUser from "../../requestUserAPI";
 import requestAdverAPI from "../../requestAdverAPI";
 import AsyncStorage from '@react-native-community/async-storage';
 import Icon from "react-native-vector-icons/FontAwesome5";
 import Icon2 from "react-native-vector-icons/Entypo";
-import Icon3 from "react-native-vector-icons/Ionicons";
+import Icon3 from "react-native-vector-icons/MaterialIcons";
 import Modal from 'react-native-modal';
 import ImagePicker from 'react-native-image-crop-picker';
-import {Picker} from '@react-native-picker/picker';
-import {PickerItem} from "react-native/Libraries/Components/Picker/Picker";
 import FlashMessage, {showMessage} from "react-native-flash-message";
-import {message} from "../../function";
+import {getAdEndDate, getGMT9Date, message} from "../../function";
 import {S3Key} from "../../Key";
+import requestAddressAPI from "../../requestAddressAPI";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import NaverMapView, {Circle, Marker} from "react-native-nmap";
+import SwitchSelector from "react-native-switch-selector";
 
 export default class EditAdverScreen extends Component {
     state = {
@@ -41,10 +38,21 @@ export default class EditAdverScreen extends Component {
         price: this.props.route.params.detailAdver.price,
         imageTemp: [], //디바이스에서 불러온 이미지 정보 임시 저장
         countImage: 0, //선택한 이미지 개수
-        user_id: ""
+        user_id: "",
+
+        mapModal:false,
+        P1:{latitude: Number(this.props.route.params.detailAdver.latitude), longitude: Number(this.props.route.params.detailAdver.longitude)},
+        pickPoint:{latitude: Number(this.props.route.params.detailAdver.latitude), longitude: Number(this.props.route.params.detailAdver.longitude)},
+        radius:this.props.route.params.detailAdver.radius,
+        addressName:this.props.route.params.detailAdver.addressName,
+
+        dateModal:false,
+        endDate: new Date(this.props.route.params.detailAdver.endDate)
     }
 
     async componentDidMount() {
+
+        this.selectSwitchRadius(this.props.route.params.detailAdver.radius);
 
         const userId = await AsyncStorage.getItem('user_id');
 
@@ -76,10 +84,18 @@ export default class EditAdverScreen extends Component {
     }
 
     async confirmPost() {
-        if (this.state.title.length === 0) {
+        if(this.state.addressName == null){
+            message("광고 위치를 선택해주세요");
+            return;
+        }
+        else if(this.state.endDate==null){
+            message("만료 날짜를 선택해주세요");
+            return;
+        }
+        else if(this.state.title.length === 0){
             message("제목을 작성해주세요");
             return;
-        } else if (this.state.imageTemp.length === 0) {
+        }else if (this.state.imageTemp.length === 0) {
             message("이미지를 첨부해주세요");
             return;
         } else if (this.state.text.length === 0) {
@@ -163,11 +179,131 @@ export default class EditAdverScreen extends Component {
 
     }
 
+    //광고 위치 함수
+    setLocation(){
+        //if()
+        this.setState({mapModal:true});
+    }
+
+    async pickLocation(point){
+        console.log(point);
+        let latitude = point.latitude;
+        let longitude = point.longitude;
+        if(this.state.radius==0)
+            this.setState({pickPoint:{latitude,longitude}, P1:{latitude,longitude}, radius:500})
+
+        this.setState({pickPoint:{latitude,longitude}, P1:{latitude,longitude}});
+        let addressData = await requestAddressAPI.currentLocation(longitude, latitude);
+        this.setState({addressName:addressData.data.address});
+        console.log(addressData.data.address);
+    }
+
+    radiusInitial = 0;
+    radiusOptions = [
+        {label:"500m", value: 500},
+        {label:"1km", value: 1000},
+        {label:"1.5km", value: 1500},
+        {label:"2km", value: 2000},
+    ];
+    selectSwitchRadius(value){
+        if(this.state.pickPoint==null)
+            return
+        switch(value){
+            case 500:this.radiusInitial=0;
+                break;
+            case 1000:this.radiusInitial=1;
+                break;
+            case 1500:this.radiusInitial=2;
+                break;
+            case 2000:this.radiusInitial=3;
+                break;
+        }
+        this.setState({radius:value});
+    }
+
+    //광고 기간 함수
+    setDate(){
+        this.setState({dateModal:true});
+    }
+
+    changeDate = (event, selectedDate)=>{
+        let currentDate = selectedDate || new Date();
+
+        if(getGMT9Date(currentDate)< getGMT9Date(new Date)){
+            message('현재보다 먼 시간을 골라주세요')
+            this.setState({dateModal:false});
+            return
+        }
+
+
+        this.setState({endDate:currentDate, dateModal:false});
+    }
 
     render() {
         return (
             <Container>
                 <FlashMessage position="top"/>
+
+                {/*광고 시간선택 모달*/}
+                {this.state.dateModal?
+                    <DateTimePicker
+                        testID="dateTimePicker"
+                        value={new Date()}
+                        mode={'date'}
+                        is24Hour={true}
+                        display="spinner"
+                        onChange={this.changeDate}
+                    />
+                    :null
+                }
+
+                {/*광고 위치선택 모달*/}
+                <Modal isVisible={this.state.mapModal}>
+
+                    <View style={{backgroundColor:'white',borderRadius:20, width:'100%', height:'100%'}}>
+
+                        <Text style={styles.locationModalText}>광고 위치 선택</Text>
+                        <NaverMapView
+                            style={{width: '100%', height: hp(60)}}
+                            /*showsMyLocationButton={true}*/
+                            center={{...this.state.P1, zoom:14}}
+                            onMapClick={e => this.pickLocation(e)}>
+
+                            {this.state.pickPoint==null?null:
+                                <Marker coordinate={this.state.pickPoint} pinColor={"red"}/>
+                            }
+                            {this.state.radius==0?null:
+                                <Circle coordinate={this.state.pickPoint} radius={this.state.radius} color={'rgba(144,64,201,0.2)'}/>
+                            }
+                        </NaverMapView>
+
+                        <Text style={[styles.locationModalText,{fontSize:17}]}>광고 반경 설정</Text>
+                        <SwitchSelector style={{paddingBottom:4}}
+                                        options={this.radiusOptions}
+                                        initial={this.radiusInitial}
+                                        onPress={value => this.selectSwitchRadius(value)}
+                                        textColor={'#af7bff'}
+                                        selectedColor={'white'}
+                                        buttonColor={'#af7bff'}
+                                        borderColor={'#af7bff'}
+                                        hasPadding
+                        />
+
+                        {this.state.addressName==null?null:
+                            <TouchableOpacity onPress={()=>this.setState({mapModal:false})} style={{marginTop:15,alignSelf:"center", borderRadius:10, borderWidth:1,backgroundColor:'#d3acff', borderColor:'purple',padding:10}}>
+                                <Text style={{alignSelf:'center',fontSize:17}}>{`${this.state.addressName} - ${this.state.radius}m`}</Text>
+                            </TouchableOpacity>
+                        }
+
+                        <TouchableOpacity onPress={()=>this.setState({mapModal:false})}
+                                          style={{position:'absolute',top:3,right:5}}>
+                            <Icon3 name="cancel"  size={40} color="#c18aff" />
+                        </TouchableOpacity>
+
+                    </View>
+
+                </Modal>
+
             <Header style={{backgroundColor:"#a75bff"}}>
                 <Right>
                     <TouchableOpacity
@@ -182,6 +318,33 @@ export default class EditAdverScreen extends Component {
                     <ScrollView style={{ marginTop : '3%' }}>
                         <Container>
                             <Content>
+
+                                <View style={{flexDirection:'row'}}>
+
+                                    {this.state.addressName==null?
+                                        <TouchableOpacity style={styles.ruleButton} onPress={()=>this.setLocation()}>
+                                            <Text style={{alignSelf:'center'}}>광고위치 선택</Text>
+                                        </TouchableOpacity>
+                                        :
+                                        <TouchableOpacity style={[styles.ruleButton, {backgroundColor:'#d3acff'}]} onPress={()=>this.setLocation()}>
+                                            <Text style={{alignSelf:'center'}}>{`${this.state.addressName} - ${this.state.radius}m`}</Text>
+                                        </TouchableOpacity>
+                                    }
+
+                                    {this.state.endDate==null?
+                                        <TouchableOpacity style={styles.ruleButton} onPress={()=>this.setDate()}>
+                                            <Text style={{alignSelf:'center'}}>광고만료 날짜 선택</Text>
+                                        </TouchableOpacity>
+                                        :
+                                        <TouchableOpacity style={[styles.ruleButton, {backgroundColor:'#d3acff'}]} onPress={()=>this.setDate()}>
+                                            <Text style={{alignSelf:'center'}}>{`만료: ${getAdEndDate(this.state.endDate)}`}</Text>
+                                        </TouchableOpacity>
+
+                                    }
+
+
+                                </View>
+
                                 <Form>
                                     <Item inlinelabel style={{ marginTop: '3%' }}>
                                         <Label style={{width:'18%'}}>제목</Label>
@@ -237,6 +400,21 @@ export default class EditAdverScreen extends Component {
 
 
 const styles = StyleSheet.create({
+
+    locationModalText:{
+        alignSelf:'center', fontSize:20, fontWeight:'bold', margin:10
+    },
+
+    ruleButton:{
+        width:'50%',
+        borderRadius: 10,
+        borderColor:'purple',
+        borderWidth:1,
+        paddingTop:4,
+        paddingBottom:4
+
+    },
+
     image:{
         width: wp(28),
         overflow:"hidden",

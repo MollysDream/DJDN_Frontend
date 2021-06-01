@@ -6,10 +6,8 @@ import {
     View,
     Image,
     TouchableOpacity,
-    TextInput,
     FlatList,
     ScrollView,
-    Keyboard,
     KeyboardAvoidingView,
     TouchableWithoutFeedback
 } from 'react-native';
@@ -22,22 +20,20 @@ import {
 
 import request from "../../requestAPI";
 import ImagePicker from 'react-native-image-crop-picker';
-import {Picker} from '@react-native-picker/picker';
-import {PickerItem} from "react-native/Libraries/Components/Picker/Picker";
 import AsyncStorage from "@react-native-community/async-storage";
 import {S3Key} from "../../Key";
 import requestUserAPI from "../../requestUserAPI";
 import requestAddressAPI from "../../requestAddressAPI";
 import requestAdverAPI from "../../requestAdverAPI";
-import {message} from "../../function";
+import {getAdEndDate, getGMT9Date, message} from "../../function";
 import FlashMessage from "react-native-flash-message";
-import Postcode from "@actbase/react-daum-postcode";
 import Icon2 from "react-native-vector-icons/MaterialIcons";
 import Modal from "react-native-modal";
 import NaverMapView, {Circle, Marker} from "react-native-nmap";
 import Geolocation from "react-native-geolocation-service";
 import SwitchSelector from "react-native-switch-selector";
-import {add} from "react-native-reanimated";
+
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default class MAkeAdScreen extends Component{
     state={
@@ -51,11 +47,15 @@ export default class MAkeAdScreen extends Component{
         shopOwner:"",
         area: {},
         image:[],
+
         mapModal:false,
         P1:{latitude: 37.564362, longitude: 126.977011},
         pickPoint:null,
         radius:0,
-        addressName:null
+        addressName:null,
+
+        dateModal:false,
+        endDate: null
     }
 
     async componentDidMount() {
@@ -111,7 +111,15 @@ export default class MAkeAdScreen extends Component{
     }
 
     async confirmPost(){
-        if(this.state.title.length === 0){
+        if(this.state.addressName == null){
+            message("광고 위치를 선택해주세요");
+            return;
+        }
+        else if(this.state.endDate==null){
+            message("만료 날짜를 선택해주세요");
+            return;
+        }
+        else if(this.state.title.length === 0){
             message("제목을 작성해주세요");
             return;
         }
@@ -187,15 +195,12 @@ export default class MAkeAdScreen extends Component{
                 this.setState({imageTemp:imageTemp})
                 this.setState({countImage:this.state.imageTemp.length})
                 console.log(this.state.imageTemp)
-                /*this.state.imageTemp.map((file)=>{
-                    console.log(file);
-                })*/
+
             })
     
         }
 
-
-
+        //광고 위치 함수
     setLocation(){
         //if()
         this.setState({mapModal:true});
@@ -237,10 +242,42 @@ export default class MAkeAdScreen extends Component{
         this.setState({radius:value});
     }
 
+        //광고 기간 함수
+    setDate(){
+        this.setState({dateModal:true});
+    }
+
+    changeDate = (event, selectedDate)=>{
+        let currentDate = selectedDate || new Date();
+
+        if(getGMT9Date(currentDate)< getGMT9Date(new Date)){
+            message('현재보다 먼 시간을 골라주세요')
+            this.setState({dateModal:false});
+            return
+        }
+
+
+        this.setState({endDate:currentDate, dateModal:false});
+    }
+
+
     render() {
         return (
             <Container>
                 <FlashMessage position="top"/>
+
+                {/*광고 시간선택 모달*/}
+                {this.state.dateModal?
+                    <DateTimePicker
+                        testID="dateTimePicker"
+                        value={new Date()}
+                        mode={'date'}
+                        is24Hour={true}
+                        display="spinner"
+                        onChange={this.changeDate}
+                    />
+                    :null
+                }
 
                 {/*광고 위치선택 모달*/}
                 <Modal isVisible={this.state.mapModal}>
@@ -275,12 +312,10 @@ export default class MAkeAdScreen extends Component{
                         />
 
                         {this.state.addressName==null?null:
-                            <View style={{marginTop:15,alignSelf:"center", borderRadius:10, borderWidth:1,backgroundColor:'#d3acff', borderColor:'purple',padding:10}}>
+                            <TouchableOpacity onPress={()=>this.setState({mapModal:false})} style={{marginTop:15,alignSelf:"center", borderRadius:10, borderWidth:1,backgroundColor:'#d3acff', borderColor:'purple',padding:10}}>
                                 <Text style={{alignSelf:'center',fontSize:17}}>{`${this.state.addressName} - ${this.state.radius}m`}</Text>
-                            </View>
+                            </TouchableOpacity>
                         }
-
-
 
                         <TouchableOpacity onPress={()=>this.setState({mapModal:false})}
                                           style={{position:'absolute',top:3,right:5}}>
@@ -318,9 +353,17 @@ export default class MAkeAdScreen extends Component{
                                         </TouchableOpacity>
                                     }
 
-                                    <TouchableOpacity style={styles.ruleButton}>
-                                        <Text style={{alignSelf:'center'}}>광고만료 기간 선택</Text>
-                                    </TouchableOpacity>
+                                    {this.state.endDate==null?
+                                        <TouchableOpacity style={styles.ruleButton} onPress={()=>this.setDate()}>
+                                            <Text style={{alignSelf:'center'}}>광고만료 날짜 선택</Text>
+                                        </TouchableOpacity>
+                                        :
+                                        <TouchableOpacity style={[styles.ruleButton, {backgroundColor:'#d3acff'}]} onPress={()=>this.setDate()}>
+                                            <Text style={{alignSelf:'center'}}>{`만료: ${getAdEndDate(this.state.endDate)}`}</Text>
+                                        </TouchableOpacity>
+
+                                    }
+
                                     
                                 </View>
                                 
