@@ -102,6 +102,8 @@ function ChatChRoomScreen(props) {
     function onSend(newMessage = []) {
         socket.emit("chat message to server", newMessage, chatroomId);
         setMessages((prevMessages) => GiftedChat.append(prevMessages, newMessage));
+        console.log("서버로 넘기는 메세지 : "+ newMessage[0].text);
+        console.log("서버로 넘기는 작성자 id : "+ newMessage[0].user._id);
         onSendDB(newMessage);
     }
 
