@@ -6,10 +6,8 @@ import {
     View,
     Image,
     TouchableOpacity,
-    TextInput,
     FlatList,
     ScrollView,
-    Keyboard,
     KeyboardAvoidingView,
     TouchableWithoutFeedback
 } from 'react-native';
@@ -22,8 +20,6 @@ import {
 
 import request from "../../requestAPI";
 import ImagePicker from 'react-native-image-crop-picker';
-import {Picker} from '@react-native-picker/picker';
-import {PickerItem} from "react-native/Libraries/Components/Picker/Picker";
 import AsyncStorage from "@react-native-community/async-storage";
 import {S3Key} from "../../Key";
 import requestUserAPI from "../../requestUserAPI";
@@ -31,13 +27,11 @@ import requestAddressAPI from "../../requestAddressAPI";
 import requestAdverAPI from "../../requestAdverAPI";
 import {getAdEndDate, getGMT9Date, message} from "../../function";
 import FlashMessage from "react-native-flash-message";
-import Postcode from "@actbase/react-daum-postcode";
 import Icon2 from "react-native-vector-icons/MaterialIcons";
 import Modal from "react-native-modal";
 import NaverMapView, {Circle, Marker} from "react-native-nmap";
 import Geolocation from "react-native-geolocation-service";
 import SwitchSelector from "react-native-switch-selector";
-import {add} from "react-native-reanimated";
 
 import DateTimePicker from '@react-native-community/datetimepicker';
 
@@ -201,9 +195,7 @@ export default class MAkeAdScreen extends Component{
                 this.setState({imageTemp:imageTemp})
                 this.setState({countImage:this.state.imageTemp.length})
                 console.log(this.state.imageTemp)
-                /*this.state.imageTemp.map((file)=>{
-                    console.log(file);
-                })*/
+
             })
     
         }
