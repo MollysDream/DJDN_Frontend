@@ -26,6 +26,8 @@ function ChatChRoomScreen(props) {
     const [messages, setMessages] = useState([]);
     const [chatroomId, setRoomId] = useState(props.route.params.roomInfo._id);
     const [currentUserId, setCurrentUserId] = useState("");
+    const [currentUserImage, setCurrentUserImage] = useState('');
+
 
     const postOwnerId = props.route.params.postOwner._id;
     const host = props.route.params.host._id;
@@ -37,7 +39,8 @@ function ChatChRoomScreen(props) {
               .then((value) => {
                   setCurrentUserId(value);
               })
-
+            let currentUser = await requestUser.getUserData(postOwnerId);
+            setCurrentUserImage(currentUser.profileImage);
         };
 
         loadingUserId()
@@ -67,12 +70,18 @@ function ChatChRoomScreen(props) {
             setMessages((prevMessages) => GiftedChat.append(prevMessages, newMessaged));
         });
 
+        return() => {
+            socket.emit('leaveRoom', chatroomId);
+
+            socket.disconnect();
+        };
+
     }, []);
 
-    function onSend(newMessages = []) {
-        socket.emit("chat message to server", newMessages, chatroomId);
-        setMessages((prevMessages) => GiftedChat.append(prevMessages, newMessages));
-        onSendDB(newMessages);
+    function onSend(newMessage = []) {
+        socket.emit("chat message to server", newMessage, chatroomId);
+        setMessages((prevMessages) => GiftedChat.append(prevMessages, newMessage));
+        onSendDB(newMessage);
     }
 
     function onSendDB(newMessage) {
@@ -167,7 +176,8 @@ function ChatChRoomScreen(props) {
                 messages={messages}
                 onSend={(newMessages) => onSend(newMessages)}
                 user={{
-                    _id: currentUserId
+                    _id: currentUserId,
+                    avatar: currentUserImage
                 }}/>
         </View>
     )

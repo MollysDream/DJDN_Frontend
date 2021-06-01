@@ -27,6 +27,7 @@ function ChatScreen(props) {
     );
     const [postId, setpostid] = useState(props.route.params.item._id);
     const [currentUserId, setCurrentUserId] = useState("");
+    const [currentUserImage, setCurrentUserImage] = useState('');
 
 
 
@@ -38,7 +39,8 @@ function ChatScreen(props) {
             sethostId(value);
             setCurrentUserId(value);
           })
-
+        let currentUser = await requestUser.getUserData(postOwnerId);
+        setCurrentUserImage(currentUser.profileImage);
       };
       loadingUserId();
     }, []);
@@ -56,32 +58,32 @@ function ChatScreen(props) {
             checkChat(preData);
 
 
-            return() => {
-                socket.emit('leaveRoom', chatRoomId);
 
-                socket.disconnect();
-            };
         }
         if(currentUserId){
           workBeforeChat();
+
+          socket.on('chat message to client', (newMessage) => {
+            let newMessaged = newMessage;
+            console.log("프론트에서 받은 새 메시지 : " + newMessaged);
+            setMessages((prevMessages) => GiftedChat.append(prevMessages, newMessaged));
+          });
+
+          return() => {
+            socket.emit('leaveRoom', chatRoomId);
+
+            socket.disconnect();
+          };
         }
 
-        socket.on('chat message to client', (newMessage) => {
-          let newMessaged = newMessage;
-          console.log("프론트에서 받은 새 메시지 : " + newMessaged);
-          setMessages((prevMessages) => GiftedChat.append(prevMessages, newMessaged));
-        });
 
     }, [currentUserId]);
 
-    function onSend(newMessages = []) {
-        socket.emit("chat message to server", newMessages, chatRoomId);
-        setMessages((prevMessages) => GiftedChat.append(prevMessages, newMessages));
-        onSendDB(newMessages);
+    function onSend(newMessage = []) {
+        socket.emit("chat message to server", newMessage, chatRoomId);
+        setMessages((prevMessages) => GiftedChat.append(prevMessages, newMessage));
+        onSendDB(newMessage);
     };
-
-
-
 
     async function Room(roomData){
       let flag = 0;
@@ -200,9 +202,10 @@ function ChatScreen(props) {
                 messages={messages}
                 onSend={(newMessages) => onSend(newMessages)}
                 user={{
-                    _id: currentUserId
-                }}/>
+                    _id: currentUserId,
+                  avatar: currentUserImage
 
+                }}/>
         </View>
     )
 
