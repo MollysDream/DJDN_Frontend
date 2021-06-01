@@ -29,25 +29,6 @@ function ChatScreen(props) {
     const [currentUserId, setCurrentUserId] = useState("");
 
 
-    // const buttons = [
-    //     {
-    //         color: '#4672B8',
-    //         content: <View>
-    //             <Text>
-    //                 ⌚ 🗺️</Text>
-    //             <Text>시간 장소</Text>
-    //         </View>,
-    //         action: () => {
-    //             props
-    //                 .navigation
-    //                 .navigate('tradeset',{
-    //                     user1:postOwnerId,
-    //                     user2:hostId
-    //                 })
-    //         }
-    //     }
-    // ];
-
 
     useEffect(() => {
       async function loadingUserId(){
@@ -64,8 +45,6 @@ function ChatScreen(props) {
 
     useEffect(() => {
         async function workBeforeChat() {
-          // console.log("workBeforeChat 실행 / 2번쨰 useEffect, hostId!! "+hostId);
-          // console.log("workBeforeChat 실행 / 2번쨰 useEffect, currentUserId!! "+currentUserId);
 
           socket = io(`http://${HOST}:3002`);
           // socket.emit("searchChatRoom", postOwnerId, postOwnerNick, hostId);
@@ -86,10 +65,17 @@ function ChatScreen(props) {
         if(currentUserId){
           workBeforeChat();
         }
+
+        socket.on('chat message to client', (newMessage) => {
+          let newMessaged = newMessage;
+          console.log("프론트에서 받은 새 메시지 : " + newMessaged);
+          setMessages((prevMessages) => GiftedChat.append(prevMessages, newMessaged));
+        });
+
     }, [currentUserId]);
 
     function onSend(newMessages = []) {
-        socket.emit("chat message to server", newMessages);
+        socket.emit("chat message to server", newMessages, chatRoomId);
         setMessages((prevMessages) => GiftedChat.append(prevMessages, newMessages));
         onSendDB(newMessages);
     };
@@ -97,7 +83,7 @@ function ChatScreen(props) {
 
 
 
-    async function Room(roomData){ // 받아온 채팅방들 중에서 있으면 그거로, 없으면 생성 ... 설명이 너무 구린가..? 죄송함다..
+    async function Room(roomData){
       let flag = 0;
       // 받아온 roomData에서 조건문 실행해서 값이 존재하면 flag = 1 로 바꾸고, 채팅방 입장.
       roomData.map((data)=>{
@@ -154,7 +140,7 @@ function ChatScreen(props) {
                         text: data.text,
                         createdAt: data.createdAt,
                         user: {
-                            _id: 1,
+                            _id: hostId,
                             avatar: hostImage
                         }
                     }
@@ -166,7 +152,7 @@ function ChatScreen(props) {
                         text: data.text,
                         createdAt: data.createdAt,
                         user: {
-                            _id: 2,
+                            _id: postOwnerId,
                           avatar: postOnwerImage
                         }
                     }
@@ -208,38 +194,15 @@ function ChatScreen(props) {
     return (
         <View style={styles.container}>
             <View style={styles.clockButtonContainer}>
-                {/* <IconButton
-                icon="clock"
-                size={36}
-                color="#6646ee"
-                onPress={()=>props.navigation
-                    .navigate('tradeset',{
-                        user1:postOwnerId,
-                        user2:host,
-                        chatRoom:chatroomId
-                    })}
-                /> */}
             </View>
 
             <GiftedChat
                 messages={messages}
                 onSend={(newMessages) => onSend(newMessages)}
                 user={{
-                    _id: 1
+                    _id: currentUserId
                 }}/>
 
-            {/* <AnimatedAbsoluteButton
-                buttonSize={100}
-                buttonColor='gray'
-                buttonShape='circular'
-                buttonContent={<Text> 거래 제안</Text>}
-                direction='top'
-                position='bottom-right'
-                positionVerticalMargin={10}
-                positionHorizontalMargin={10}
-                time={500}
-                easing='bounce'
-                buttons={buttons}/>  */}
         </View>
     )
 

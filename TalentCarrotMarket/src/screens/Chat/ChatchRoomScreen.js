@@ -61,14 +61,10 @@ function ChatChRoomScreen(props) {
         }
         settingChat();
 
-        socket.on('rChat', (newMessage) => {
+        socket.on('chat message to client', (newMessage) => {
             let newMessaged = newMessage;
-            // newMessaged[0].user.avatar = logo;
             console.log("프론트에서 받은 새 메시지 : " + newMessaged);
-            console.log(typeof newMessaged[0].user._id);
-            // newMessaged[0].user._id = 2;
             setMessages((prevMessages) => GiftedChat.append(prevMessages, newMessaged));
-            // onSendDB(newMessage);
         });
 
     }, []);
@@ -107,7 +103,8 @@ function ChatChRoomScreen(props) {
             .then((data) => {})
     }
 
-    async function checkChat(preData) { //채팅 내용들 중에서 내가 보낸 것, 상대방이 보낸 것 구분
+    //채팅 내용들 중에서 내가 보낸 것, 상대방이 보낸 것 구분
+    async function checkChat(preData) {
         console.log("여기서 hostID : " , hostId);
 
         let postOnwer = await requestUser.getUserData(postOwnerId);
@@ -129,7 +126,7 @@ function ChatChRoomScreen(props) {
                             text: data.text,
                             createdAt: data.createdAt,
                             user: {
-                                _id: 1,
+                                _id: hostId,
                                 avatar: hostImage
                             }
                         }
@@ -141,7 +138,7 @@ function ChatChRoomScreen(props) {
                             text: data.text,
                             createdAt: data.createdAt,
                             user: {
-                                _id: 2,
+                                _id: postOwnerId,
                                 avatar: postOnwerImage
                             }
                         }
