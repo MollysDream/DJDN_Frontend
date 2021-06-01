@@ -64,28 +64,28 @@ const TradeTimerScreen = ({navigation, route}) =>{
   //사용자 정보 가져오기
   const [userData, setUserData] = useState();
 
-        useEffect(() => {
-          async function getData(){
+    useEffect(() => {
+      async function getData(){
 
-              console.log("현재 접속자는 "+ userId)
-              console.log('user1은? '+user1)
-              console.log('user2는? '+user2)
+          console.log("현재 접속자는 "+ userId)
+          console.log('user1은? '+user1)
+          console.log('user2는? '+user2)
 
-              if (user1 == userId){
-                console.log("user1이에요! "+ user1)
-                console.log("user2아니에요! "+ user2)
-                let userData = await requestUserAPI.getUserData(user2);
-                setUserData(userData);
-            } else{
-              console.log("user2에요! "+ user2)
-              console.log("user1이 아니에요! "+ user1)
-              let userData = await requestUserAPI.getUserData(user1);
-              setUserData(userData);
-            }
-          }
+          if (user1 == userId){
+            console.log("user1이에요! "+ user1)
+            console.log("user2아니에요! "+ user2)
+            let userData = await requestUserAPI.getUserData(user2);
+            setUserData(userData);
+        } else{
+          console.log("user2에요! "+ user2)
+          console.log("user1이 아니에요! "+ user1)
+          let userData = await requestUserAPI.getUserData(user1);
+          setUserData(userData);
+        }
+      }
 
-          let result = getData();
-      },[]);
+      let result = getData();
+  },[]);
 
   useEffect(()=>{
     console.log("거래 번호 "+tradeId)
@@ -94,6 +94,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
       .then(returnData => {
         if(returnData.data.message){
 
+          setTradeData(returnData.data);
           setIsEndSuggest(returnData.data.trade.completeSuggest);
           setIsEnd(returnData.data.trade.complete);
 
@@ -121,7 +122,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
 
   const extendButton = async() =>{
 
-    endDateTime.setMinutes(endDateTime.getMinutes()+5)
+    endDateTime.setMinutes(endDateTime.getMinutes()+10)
     console.log("연장 후 시간은ㅇㅇ "+endDateTime)
 
     // if(endDateChange == true){
@@ -143,7 +144,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
         if(compareDiffTime>0){
           alert("거래 연장에 성공했습니다!");
         } else{
-          alert("거래 연장 시간이 현재시간보다 빠릅니다. 거래시간 재 설정을 해주세요")
+          alert("연장한 거래 시간이 현재시간보다 빠릅니다.")
         }
       } else {
         alert('거래 연장에 실패하였습니다.')
