@@ -9,6 +9,12 @@ export async function addPoint(user_id, amount){
 	return point.data;
 }
 
+export async function deductPoint(user_id, amount){
+	console.log('deductPoint함수 호출됨');
+	const point = await axi.post("/point/addPoint", {user_id,amount});
+	return point.data;
+}
+
 export async function getPoint(user_id){
 	console.log('getPoint함수 호출됨');
 	const point = await axi.get("/point/getPointById", {params:{user_id:user_id}});
@@ -23,6 +29,7 @@ export async function createPoint(email){
 
 export default{
 	addPoint,
+	deductPoint,
 	getPoint,
 	createPoint
 }

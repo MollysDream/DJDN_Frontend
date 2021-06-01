@@ -19,13 +19,29 @@ import request from '../../requestAPI';
 import axios from 'axios';
 import {HOST} from "../../function";
 
+
 let socket;
 let hostId;
 function ChatChRoomScreen(props) {
     const [messages, setMessages] = useState([]);
     const [chatroomId, setRoomId] = useState(props.route.params.roomInfo._id);
+    const [currentUserId, setCurrentUserId] = useState("");
+
     const postOwnerId = props.route.params.postOwner._id;
     const host = props.route.params.host._id;
+
+    useEffect(()=>{
+        async function loadingUserId(){
+            await AsyncStorage
+              .getItem('user_id')
+              .then((value) => {
+                  setCurrentUserId(value);
+              })
+
+        };
+
+        loadingUserId()
+    },[]);
 
     useEffect(() => {
         async function settingChat() {
@@ -44,6 +60,13 @@ function ChatChRoomScreen(props) {
             checkChat(preData);
         }
         settingChat();
+
+        socket.on('chat message to client', (newMessage) => {
+            let newMessaged = newMessage;
+            console.log("프론트에서 받은 새 메시지 : " + newMessaged);
+            setMessages((prevMessages) => GiftedChat.append(prevMessages, newMessaged));
+        });
+
     }, []);
 
     function onSend(newMessages = []) {
@@ -80,7 +103,8 @@ function ChatChRoomScreen(props) {
             .then((data) => {})
     }
 
-    async function checkChat(preData) { //채팅 내용들 중에서 내가 보낸 것, 상대방이 보낸 것 구분
+    //채팅 내용들 중에서 내가 보낸 것, 상대방이 보낸 것 구분
+    async function checkChat(preData) {
         console.log("여기서 hostID : " , hostId);
 
         let postOnwer = await requestUser.getUserData(postOwnerId);
@@ -102,7 +126,7 @@ function ChatChRoomScreen(props) {
                             text: data.text,
                             createdAt: data.createdAt,
                             user: {
-                                _id: 1,
+                                _id: hostId,
                                 avatar: hostImage
                             }
                         }
@@ -114,7 +138,7 @@ function ChatChRoomScreen(props) {
                             text: data.text,
                             createdAt: data.createdAt,
                             user: {
-                                _id: 2,
+                                _id: postOwnerId,
                                 avatar: postOnwerImage
                             }
                         }
@@ -143,21 +167,8 @@ function ChatChRoomScreen(props) {
                 messages={messages}
                 onSend={(newMessages) => onSend(newMessages)}
                 user={{
-                    _id: 1
+                    _id: currentUserId
                 }}/>
-
-                {/*<AnimatedAbsoluteButton*/}
-                {/*buttonSize={100}*/}
-                {/*buttonColor='gray'*/}
-                {/*buttonShape='circular'*/}
-                {/*buttonContent={<Text> 거래 제안</Text>}*/}
-                {/*direction='top'*/}
-                {/*position='bottom-right'*/}
-                {/*positionVerticalMargin={10}*/}
-                {/*positionHorizontalMargin={10}*/}
-                {/*time={500}*/}
-                {/*easing='bounce'*/}
-                {/*buttons={buttons}/>*/}
         </View>
     )
 }

@@ -115,19 +115,19 @@ const Auth = () =>{
 const HomeStackScreen = () => {
   return (
     <Stack.Navigator>
-      <HomeStack.Screen name="Home" component={homeScreen} />
-      <HomeStack.Screen name="SearchPost" component={searchPostScreen} />
-      <HomeStack.Screen name="MakePost" component={makePostScreen}/>
-      <HomeStack.Screen name="FilterOption" component={filterOptionScreen}/>
-      <HomeStack.Screen name="DetailPost" component={detailPostScreen}/>
-      <HomeStack.Screen name="chat" component={chatScreen} />
-      <ChatStack.Screen name="게시글별 채팅리스트" component={chatListByPostScreen} />
-      <ChatStack.Screen name="게시글별 채팅리스트 채팅방" component={chatListRoomScreen} />
+      <HomeStack.Screen options={{title: "홈"}} name="Home" component={homeScreen} />
+      <HomeStack.Screen options={{title: "게시글 검색"}} name="SearchPost" component={searchPostScreen} />
+      <HomeStack.Screen options={{title: "게시글 만들기"}} name="MakePost" component={makePostScreen}/>
+      <HomeStack.Screen options={{title: "검색 옵션"}} name="FilterOption" component={filterOptionScreen}/>
+      <HomeStack.Screen options={{title: "게시글 정보"}} name="DetailPost" component={detailPostScreen}/>
+      <HomeStack.Screen options={{title: "채팅"}} name="chat" component={chatScreen} />
+      <ChatStack.Screen options={{title: "게시글 만들기"}} name="게시글별 채팅리스트" component={chatListByPostScreen} />
+      <ChatStack.Screen options={{title: "채팅"}}  name="게시글별 채팅리스트 채팅방" component={chatListRoomScreen} />
 
-      <HomeStack.Screen name="tradeset" component={tradeSetScreen} />
-      <HomeStack.Screen name="Report" component={reportScreen} />
+      <HomeStack.Screen options={{title: "거래"}} name="tradeset" component={tradeSetScreen} />
+      <HomeStack.Screen options={{title: "신고"}} name="Report" component={reportScreen} />
 
-      <HomeStack.Screen name="사용자 프로필" component={userProfileScreen} />
+      <HomeStack.Screen options={{title: "사용자 프로필"}} name="사용자 프로필" component={userProfileScreen} />
 
     </Stack.Navigator>
   );
@@ -136,9 +136,10 @@ const HomeStackScreen = () => {
 //재능 Tab 스크린 기준 Stack
 const TalentStackScreen = () => {
   return (
-    <Stack.Navigator>
-      <TalentStack.Screen name="advertise" component={advertising} />
-      <TalentStack.Screen name="makeadver" component={makead}/>
+    <Stack.Navigator screenOptions={{
+      headerTitle: false,    }}>
+      {/*<TalentStack.Screen name="advertise" component={advertising} />*/}
+      {/*<TalentStack.Screen name="makeadver" component={makead}/>*/}
     </Stack.Navigator>
   );
 };
@@ -148,9 +149,9 @@ const AroundStackScreen = () => {
   return (
     <Stack.Navigator>
       {/*<AroundStack.Screen name="around" component={aroundScreen} />*/}
-      <AroundStack.Screen name="aroundSet" component={aroundSetScreen} />
-      <AroundStack.Screen name="aroundAdd" component={aroundAddScreen} />
-      <AroundStack.Screen name="aroundCertify" component={aroundCertifyScreen} />
+      <AroundStack.Screen options={{title: "동네 설정"}} name="aroundSet" component={aroundSetScreen} />
+      <AroundStack.Screen options={{title: "동네 추가"}} name="aroundAdd" component={aroundAddScreen} />
+      <AroundStack.Screen options={{title: "동네 인증"}} name="aroundCertify" component={aroundCertifyScreen} />
     </Stack.Navigator>
   );
 };
@@ -159,16 +160,16 @@ const AroundStackScreen = () => {
 const ChatStackScreen = () => {
   return (
     <Stack.Navigator>
-      <ChatStack.Screen name="chatch" component={chatchScreen} />
-      <ChatStack.Screen name="chat" component={chatScreen} />
-      <ChatStack.Screen name="chatTest" component={chatTestScreen} />
-      <ChatStack.Screen name="게시글별 채팅리스트" component={chatListByPostScreen} />
-      <ChatStack.Screen name="tradeTimer" component={tradeTimerScreen} />
-      <ChatStack.Screen name="userRate" component={userRateScreen} />
-      <ChatStack.Screen name="tradeset" component={tradeSetScreen} />
-      <ChatStack.Screen name="chatchroom" component={chatchroomScreen} />
-      <ChatStack.Screen name="사용자 프로필" component={chatUserProfileScreen} />
-      <ChatStack.Screen name="DetailPost" component={chatDetailPostScreen}/>
+      <ChatStack.Screen options={{title: "채팅"}} name="chatch" component={chatchScreen} />
+      <ChatStack.Screen options={{title: "채팅"}} name="chat" component={chatScreen} />
+      <ChatStack.Screen options={{title: "채팅"}} name="chatTest" component={chatTestScreen} />
+      <ChatStack.Screen options={{title: "게시글별 채팅리스트"}} name="게시글별 채팅리스트" component={chatListByPostScreen} />
+      <ChatStack.Screen options={{title: "거래 타이머"}} name="tradeTimer" component={tradeTimerScreen} />
+      <ChatStack.Screen options={{title: "사용자 평가"}} name="userRate" component={userRateScreen} />
+      <ChatStack.Screen options={{title: "거래"}} name="tradeset" component={tradeSetScreen} />
+      <ChatStack.Screen options={{title: "채팅"}} name="chatchroom" component={chatchroomScreen} />
+      <ChatStack.Screen options={{title: "사용자 프로필"}} name="사용자 프로필" component={chatUserProfileScreen} />
+      <ChatStack.Screen options={{title: "게시글 정보"}} name="DetailPost" component={chatDetailPostScreen}/>
  </Stack.Navigator>
   );
 };
@@ -177,18 +178,18 @@ const ChatStackScreen = () => {
 const SettingStackScreen = () => {
   return (
     <Stack.Navigator>
-      <SettingStack.Screen name="마이페이지" component={mypageScreen} />
-      <SettingStack.Screen name="userPostScreen" component={userPostScreen}/>
-      <SettingStack.Screen name="userTradingPostScreen" component={userTradingPostScreen}/>
-      <SettingStack.Screen name="editUserPostScreen" component={editUserPostScreen}/>
-      <SettingStack.Screen name="editProfileScreen" component={editProfileScreen}/>
-      <SettingStack.Screen name="keywordScreen" component={keywordScreen}/>
-      <SettingStack.Screen name="자격증 증명" component={certificationScreen}/>
-      <SettingStack.Screen name="advertise" component={advertising} />
-      <SettingStack.Screen name="makeadver" component={makead}/>
-      <SettingStack.Screen name="editadver" component={editadverScreen}/>
-      <SettingStack.Screen name="detailadver" component={detailadverScreen}/>
-      <SettingStack.Screen name="결제" component={Iamport}/>
+      <SettingStack.Screen options={{title: "마이페이지"}} name="마이페이지" component={mypageScreen} />
+      <SettingStack.Screen options={{title: "구매내역"}} name="userPostScreen" component={userPostScreen}/>
+      <SettingStack.Screen options={{title: "판매내역"}} name="userTradingPostScreen" component={userTradingPostScreen}/>
+      <SettingStack.Screen options={{title: "게시글 수정"}} name="editUserPostScreen" component={editUserPostScreen}/>
+      <SettingStack.Screen options={{title: "프로필 수정"}} name="editProfileScreen" component={editProfileScreen}/>
+      <SettingStack.Screen options={{title: "키워드"}} name="keywordScreen" component={keywordScreen}/>
+      <SettingStack.Screen options={{title: "자격증"}} name="자격증 증명" component={certificationScreen}/>
+      <SettingStack.Screen options={{title: "광고"}} name="advertise" component={advertising} />
+      <SettingStack.Screen options={{title: "광고 생성"}} name="makeadver" component={makead}/>
+      <SettingStack.Screen options={{title: "광고 편집"}} name="editadver" component={editadverScreen}/>
+      <SettingStack.Screen options={{title: "광고 정보"}} name="detailadver" component={detailadverScreen}/>
+      <SettingStack.Screen options={{title: "결제"}} name="결제" component={Iamport}/>
 
 
     </Stack.Navigator>
@@ -330,6 +331,7 @@ const App=()=> {
 
       if (remoteMessage.data.type == 'Advertise') {
         alert("bye");
+
       } else if (remoteMessage.data.type == 'Chat' || remoteMessage.data.type == 'Keyword') {
         console.log("알림 타이틀 왔어요! "+remoteMessage.notification.title);
         console.log("알림 메세지 왔어요! "+remoteMessage.notification.body);
@@ -343,7 +345,7 @@ const App=()=> {
       } 
       // Alert.alert('A new FCM message arrived!', remoteMessage.data.test);
 
-      console.log('foreground', remoteMessage);
+      // console.log('foreground', remoteMessage);
     });
     messaging().onNotificationOpenedApp((remoteMessage) => {
       // Alert.alert('here from background tap');
@@ -377,7 +379,7 @@ const App=()=> {
   }, []);
 
   return (
- 
+
       <NavigationContainer>
       {/* Stack Navigator for Login+Logout  */}
       <Stack.Navigator initialRouteName="SplashScreen">
