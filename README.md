@@ -1,4 +1,7 @@
-# DJDN (다재다능) 
+# DJDN (다재다능)
+
+<img src="https://user-images.githubusercontent.com/65855364/120515949-d0b1e000-c409-11eb-9a8d-53a0054cb010.png", width="400px">
+
 Molly's Dream Capstone Design Project
 
 
