@@ -259,9 +259,9 @@ const TradeSetScreen =({navigation,route})=>{
         try{
           //거래제안
           const nowDate = Date.now();
-          var compareDiffTime=(endDateTime.getTime()-nowDate)/1000;
-          console.log("차이는?? "+compareDiffTime)
-          if(compareDiffTime>0){
+          var endDiffTime=(endDateTime.getTime()-nowDate)/1000;
+          // console.log("차이는?? "+endDiffTime)
+          if(endDiffTime>0){
             const returnData = await requestTradeAPI.createTradeTime(startSet,endSet,entireLocate,sender,receiver,chatRoom,currentLocation.longitude,currentLocation.latitude);
     
             if (returnData.data.message) {
@@ -307,15 +307,29 @@ const TradeSetScreen =({navigation,route})=>{
       // const sendEndSet = sendFormatDate(endDate,endTime)
       var sendEndDate = parse(end);
       console.log("저장된 시간은 "+sendEndDate)
+      const startSet = formatDate(startDate,startTime);
+      const startDateTime = parse(startSet);
 
-      navigation.navigate('tradeTimer',{
-        tradeId: tradeId,
-        endSet: sendEndDate,
-        proLocate:proLocate,
-        user1: user1,
-        user2: user2
-      })
-    }
+      const nowDate = Date.now();
+      var startDiffTime=(nowDate-startDateTime.getTime())/1000;
+      console.log("시작 시간은? "+startDateTime)
+      console.log("차이??"+startDiffTime);
+
+      var alarmTxt = "아직 시작 시간이 아닙니다!\n설정된 시작 시간은 "+startSet+" 입니다"
+      alarmTxt.replace(/\n/g,'<br/>');
+
+      if(startDiffTime>0){
+        navigation.navigate('tradeTimer',{
+          tradeId: tradeId,
+          endSet: sendEndDate,
+          proLocate:proLocate,
+          user1: user1,
+          user2: user2
+        })
+      } else{
+        alert(alarmTxt)
+      }
+}
     
 
     //재제안 버튼
