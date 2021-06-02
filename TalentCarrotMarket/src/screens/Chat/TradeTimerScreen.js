@@ -5,7 +5,7 @@ import {
   View,
   Text,
   TouchableOpacity,
-  StyleSheet, Image,
+  StyleSheet, Image, Button
 } from 'react-native';
 
 import axios from "axios";
@@ -25,6 +25,8 @@ import requestUserAPI from "../../requestUserAPI";
 import requestTradeAPI from "../../requestTradeAPI";
 import RemotePushController from '../../util/RemotePushController'
 
+import * as sms from '../../sms';
+
 //글자 강조
 const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{props.children}</Text>
 
@@ -39,7 +41,6 @@ const TradeTimerScreen = ({navigation, route}) =>{
   AsyncStorage.getItem('user_id').then((value) =>
         userId=value
       );
-
 
   const [endDateTime, setEndDateTime] = useState(endSet);
   const [endDateChange, setEndDateChange] = useState(false);
@@ -115,6 +116,37 @@ const TradeTimerScreen = ({navigation, route}) =>{
 
   },[])
 
+  useEffect(()=>{
+    console.log("거래 번호 "+tradeId)
+
+    requestTradeAPI.getEndTrade(tradeId)
+      .then(returnData => {
+        if(returnData.data.message){
+
+          setIsEndSuggest(returnData.data.trade.completeSuggest);
+          setIsEnd(returnData.data.trade.complete);
+
+          console.log("현재 종료 제안 상태는 "+isEndSuggest);
+          console.log("현재 종료 상태는 "+isEnd);
+
+          if(returnData.data.trade.sender==userId){
+            console.log("현재 접속자는 거래 제안자임 "+ returnData.data.trade.sender);
+            sender=userId;
+          } else{
+            console.log("현재 접속자는 거래 제안받은사람임 "+ returnData.data.trade.receiver);
+            receiver=userId;
+          }
+        } else{
+          console.log("거래가 존재하지 않습니다.");
+        }
+        })
+        //에러
+        .catch(err => {
+            console.log(err);
+        });
+
+  },[])
+
 
   const extendButton = async() =>{
 
@@ -151,7 +183,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
   }
 
   const endSuggestButton = async() =>{
-
+    setIsEndSuggest(true);
     //거래완료제안 통신
     try{
       const returnData = await requestTradeAPI.endSuggestTrade(tradeId);
@@ -159,7 +191,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
       if (returnData.data.message) {
         alert('거래 완료 제안을 했습니다!')
         sender=userId;
-        setIsEndSuggest(true);
+        
       }
         else{
           alert('거래 완료 제안이 실패했습니다.')
@@ -172,13 +204,13 @@ const TradeTimerScreen = ({navigation, route}) =>{
   }
 
   const endButton = async() =>{
-
+    setIsEnd(true);
     //거래완료 통신
     try{
       const returnData = await requestTradeAPI.endTrade(tradeId);
 
       if (returnData.data.message) {
-        setIsEnd(true);
+        console.log(returnData.data.message)
       }
         else{
           alert('거래 완료 제안이 실패했습니다.')
@@ -237,14 +269,15 @@ const TradeTimerScreen = ({navigation, route}) =>{
     console.log("확인 timestamp: "+Date.now() + " 타입 : " + typeof Date.now().toString());
 
     const body = {
-      type: 'SMS',
-      contentType: 'COMM',
-      countryCode: '82',
-      from: smsKey.phoneNumber, // 발신자 번호, 바꾸지 X
-      content: `${proLocate} 주소에서 신고가 들어왔습니다.`,
-      messages: [
+      "type": 'SMS',
+      "contentType": 'COMM',
+      "countryCode": '82',
+      "from": smsKey.phoneNumber, // 발신자 번호, 바꾸지 X
+      "content": `${proLocate} 주소에서 신고가 들어왔습니다.`,
+      "messages": [
         {
-          to: '01075301550', // 수신자 번호
+          "to": '01075301550', // 수신자 번호
+          "content":`${proLocate} 주소에서 신고가 들어왔습니다.`
         },
       ],
     };
@@ -256,6 +289,9 @@ const TradeTimerScreen = ({navigation, route}) =>{
         'x-ncp-apigw-signature-v2': makeSignature(),
       },
     };
+
+    console.log('확인 타입 '+typeof(body))
+
     axios
       .post(`https://sens.apigw.ntruss.com/sms/v2/services/${smsKey.serviceId}/messages`, body, options)
       .then(async (res) => {
@@ -278,7 +314,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
         <CountDown
             size={30}
             until={diffTime}
-            // onFinish={autoReport}
+            onFinish={autoReport}
             digitStyle={{backgroundColor: '#FFF', borderWidth: 2, borderColor: '#1CC625'}}
             digitTxtStyle={{color: '#1CC627'}}
             timeLabelStyle={{color: 'green', fontWeight: 'bold'}}
