@@ -263,7 +263,8 @@ const TradeSetScreen =({navigation,route})=>{
           // console.log("차이는?? "+endDiffTime)
           if(endDiffTime>0){
             const returnData = await requestTradeAPI.createTradeTime(startSet,endSet,entireLocate,sender,receiver,chatRoom,currentLocation.longitude,currentLocation.latitude);
-    
+            saveLocation = {latitude:currentLocation.latitude, longitude:currentLocation.longitude};
+
             if (returnData.data.message) {
              console.log("거래 장소 및 시간 설정 완료")
              console.log("거래 번호 "+returnData.data.tradeId)
@@ -307,15 +308,15 @@ const TradeSetScreen =({navigation,route})=>{
       // const sendEndSet = sendFormatDate(endDate,endTime)
       var sendEndDate = parse(end);
       console.log("저장된 시간은 "+sendEndDate)
-      const startSet = formatDate(startDate,startTime);
-      const startDateTime = parse(startSet);
+
+      const startDateTime = parse(start);
 
       const nowDate = Date.now();
       var startDiffTime=(nowDate-startDateTime.getTime())/1000;
       console.log("시작 시간은? "+startDateTime)
       console.log("차이??"+startDiffTime);
 
-      var alarmTxt = "아직 시작 시간이 아닙니다!\n설정된 시작 시간은 "+startSet+" 입니다"
+      var alarmTxt = "아직 시작 시간이 아닙니다!\n설정된 시작 시간은 "+start+" 입니다"
       alarmTxt.replace(/\n/g,'<br/>');
 
       if(startDiffTime>0){
@@ -344,7 +345,6 @@ const TradeSetScreen =({navigation,route})=>{
   
          if (returnData.data.message) {
           alert('기존 거래를 삭제하고 다시 제안합니다.')
-          navigation.navigate('chatch');
           } else {
             alert('거래 취소 실패!')
           }
