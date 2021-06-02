@@ -91,6 +91,14 @@ import adminAdvertisementScreen from './src/adminScreens/Advertisement/Advertise
 //AdminMypageStack
 import adminMypageScreen from './src/adminScreens/Mypage/MypageScreen';
 
+import { LogBox } from 'react-native';
+
+// Ignore log notification by message
+LogBox.ignoreLogs(['Warning: ...']);
+
+//Ignore all log notifications
+LogBox.ignoreAllLogs();
+
 const AdminReportStack = createStackNavigator();
 const AdminAdvertisementStack = createStackNavigator();
 const AdminMypageStack = createStackNavigator();

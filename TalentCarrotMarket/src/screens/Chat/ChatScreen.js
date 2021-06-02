@@ -95,7 +95,7 @@ function ChatScreen(props) {
       // 받아온 roomData에서 조건문 실행해서 값이 존재하면 flag = 1 로 바꾸고, 채팅방 입장.
       roomData.map((data)=>{
 
-        if(data.postOwnerId == postOwnerId && data.hostId == hostId && data.postId == postId ){
+        if(data.postOwnerId == postOwnerId && data.hostId == currentUserId && data.postId == postId ){
           chatRoomId = data._id;
           // console.log("roomData.map에서 찾은 postOwnerId : "+ postOwnerId);
           // console.log("roomData.map에서 찾은 hostId : ", hostId);
@@ -111,7 +111,7 @@ function ChatScreen(props) {
       if(flag == 0){
         console.log('flag가 0이어서 채팅방 새로 생성한다.');
         let newChatRoom = {
-          hostId : hostId,
+          hostId : currentUserId,
           postOwnerId : postOwnerId,
           postId : postId,
         }
@@ -199,7 +199,18 @@ function ChatScreen(props) {
     return (
         <View style={styles.container}>
             <View style={styles.clockButtonContainer}>
-            </View>
+            <IconButton
+              icon="clock"
+              size={36}
+              color="#6646ee"
+              onPress={()=>props.navigation
+                .navigate('tradeset',{
+                  user1:postOwnerId,
+                  user2:currentUserId,
+                  chatRoom:chatRoomId
+                })}
+            />
+          </View>
 
             <GiftedChat
                 messages={messages}
