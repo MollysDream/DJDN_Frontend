@@ -28,6 +28,12 @@ export default class sms {
 		return result.toString();
 	};
 	async sendSMS(){
+
+		console.log("확인 accesskey: "+smsKey.accessKey);
+		console.log("확인 secretkey: "+smsKey.secretKey);
+		console.log("확인 serviceId: "+smsKey.serviceId);
+		console.log("확인 phoneNumber: "+smsKey.phoneNumber);
+		console.log("확인 timestamp: "+Date.now() + " 타입 : " + typeof Date.now().toString());
 		const body = {
 			type: 'SMS',
 			contentType: 'COMM',

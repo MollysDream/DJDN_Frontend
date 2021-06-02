@@ -105,6 +105,7 @@ const TradeSetScreen =({navigation,route})=>{
 
       },[])
 
+
       // 거래 시간 설정
       const [startDate, setStartDate] = useState(new Date());
       const [endDate, setEndDate] = useState(new Date());
