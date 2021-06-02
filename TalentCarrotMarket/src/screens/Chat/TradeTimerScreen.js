@@ -281,6 +281,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
         },
       ],
     };
+
     const options = {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
@@ -290,10 +291,9 @@ const TradeTimerScreen = ({navigation, route}) =>{
       },
     };
 
-    console.log('확인 타입 '+typeof(body))
 
     axios
-      .post(`https://sens.apigw.ntruss.com/sms/v2/services/${smsKey.serviceId}/messages`, body, options)
+      .post(`https://sens.apigw.ntruss.com/sms/v2/services/${encodeURIComponent(smsKey.serviceId)}/messages`, body, options)
       .then(async (res) => {
         // 성공 이벤트
         alert('거래 종료를 누르지 않아 자동으로 신고가 됩니다.')
@@ -510,7 +510,7 @@ function makeSignature(){
   var space = " ";				// one space
   var newLine = "\n";				// new line
   var method = "POST";				// method
-  var url = `/sms/v2/services/${smsKey.serviceId}/messages`;	// url (include query string)
+  var url = `/sms/v2/services/${encodeURIComponent(smsKey.serviceId)}/messages`;	// url (include query string)
   var timestamp = Date.now().toString();			// current timestamp (epoch)
   var accessKey = smsKey.accessKey;			// access key id (from portal or Sub Account)
   var secretKey = smsKey.secretKey;			// secret key (from portal or Sub Account)
