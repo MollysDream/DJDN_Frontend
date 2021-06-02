@@ -400,6 +400,18 @@ const TradeTimerScreen = ({navigation, route}) =>{
     {isEnd==false?
           (
             <>
+                <CountDown
+                size={30}
+                until={diffTime}
+                onFinish={autoReport}
+                digitStyle={{backgroundColor: '#FFF', borderWidth: 2, borderColor: '#1CC625'}}
+                digitTxtStyle={{color: '#1CC627'}}
+                timeLabelStyle={{color: 'green', fontWeight: 'bold'}}
+                separatorStyle={{color: '#1CC625'}}
+                timeToShow={['D','H', 'M', 'S']}
+                timeLabels={{d: 'Days', h: 'Hours', m: 'Minutes', s: 'Seconds'}}
+                showSeparator
+              />
               <View style={styles.rowArea}>
                 <View style={styles.btnArea,{paddingRight:wp(1)}}>
                   <TouchableOpacity style={styles.btn} onPress={endButton}>
