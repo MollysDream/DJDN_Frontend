@@ -81,6 +81,8 @@ function ChatChRoomScreen(props) {
             socket.emit('joinRoom', chatroomId);
             console.log("joinRoom 실행됐다!! 방 번호 : " + chatroomId);
 
+            socket.emit("CONNECT",  chatroomId);
+
             const preData = await request.getChat(chatroomId);
             checkChat(preData);
         }
