@@ -88,16 +88,18 @@ const ModifyApproveScreen = (props) => {
                 <View style={{backgroundColor:'white',borderRadius:20, width:'100%', height:'100%'}}>
 
                     <Text style={styles.locationModalText}>광고 위치</Text>
-                    <NaverMapView
-                        style={{width: '100%', height: hp(60)}}
-                        /*showsMyLocationButton={true}*/
-                        center={{...P1, zoom:14}}>
 
-                        <Marker coordinate={P1} pinColor={"red"}/>
-                        <Circle coordinate={P1} radius={advertisement.radius} color={'rgba(144,64,201,0.2)'}/>
+                    <View pointerEvents="none" >
+                        <NaverMapView
+                            style={{width: '100%', height: hp(60)}}
+                            /*showsMyLocationButton={true}*/
+                            center={{...P1, zoom:13}}>
 
-                    </NaverMapView>
+                            <Marker coordinate={P1} pinColor={"red"}/>
+                            <Circle coordinate={P1} radius={advertisement.radius} color={'rgba(144,64,201,0.2)'}/>
 
+                        </NaverMapView>
+                    </View>
 
                     <TouchableOpacity style={{marginTop:15,alignSelf:"center", borderRadius:10, borderWidth:1,backgroundColor:'#d3acff', borderColor:'purple',padding:10}}>
                         <Text style={{alignSelf:'center',fontSize:17}}>{`${advertisement.addressName} - ${advertisement.radius}m`}</Text>
