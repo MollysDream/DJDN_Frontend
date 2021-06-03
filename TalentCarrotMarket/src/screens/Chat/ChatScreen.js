@@ -102,6 +102,7 @@ function ChatScreen(props) {
           // console.log("roomData.map에서 찾은 currentUserId : ", currentUserId);
           console.log("조회중 찾았다! : ", chatRoomId);
           socket.emit('joinRoom', chatRoomId);
+
           flag = 1;
           return false;
         }
@@ -134,21 +135,21 @@ function ChatScreen(props) {
 
         console.log(postOnwer.nickname);
 
-        let host = await requestUser.getUserData(hostId);
+        let host = await requestUser.getUserData(currentUserId);
         let hostImage = host.profileImage;
         console.log("호스트Id : " +hostId);
         console.log("호스트닉네임 : " +host.nickname);
 
         preData.map((data) => {
-            if (data.senderId == hostId) {
+            if (data.senderId == currentUserId) {
                 setMessages((prevMessages) => GiftedChat.append(prevMessages, [
                     {
                         _id: data._id,
                         text: data.text,
                         createdAt: data.createdAt,
                         user: {
-                            _id: hostId,
-                            avatar: hostImage
+                            _id: currentUserId,
+                            avatar: currentUserImage
                         }
                     }
                 ]));

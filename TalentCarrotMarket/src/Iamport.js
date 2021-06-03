@@ -84,7 +84,7 @@ export default function Iamport({navigation, route}) {
 	const data = {
 		pg: 'inicis',
 		pay_method: 'card',
-		name: userData.name+'의 아임포트 테스트',
+		name: userData.name+'의 포인트 충전',
 		merchant_uid: `mid_${new Date().getTime()}`,
 		amount: amount,
 		buyer_name: userData.name,
