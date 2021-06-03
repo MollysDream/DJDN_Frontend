@@ -94,7 +94,7 @@ function getAdEndDate(date){
     return `${year}년-${month}월-${day}일`
 }
 
-//const HOST = '192.168.25.19' // 정수범 안드로이드
+//const HOST = '192.168.25.35' // 정수범 안드로이드
 // const HOST = '192.168.219.114' // 나준엽 안드로이드
 // const HOST = '172.30.1.53' // 김영웅 안드로이드
 const HOST = '10.0.2.2'
