@@ -125,7 +125,6 @@ export default class UserPostScreen extends Component{
     }
 
     onChatPress(item){
-        console.log("시방?")
         let postOwner = 'await getUserData( userId)'
         this.props.navigation.push('게시글별 채팅리스트', {postOwner,item})
         this.props.navigation.navigate('게시글별 채팅리스트');

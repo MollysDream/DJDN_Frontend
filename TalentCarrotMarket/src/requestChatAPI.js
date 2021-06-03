@@ -25,9 +25,17 @@ export async function createChat(newChat){
 	return chatData.data;
 }
 
+export async function getChatRoomDataById(chatRoomId){
+	console.log("getChatRoomDataById함수 실행!:");
+	const chatRoomData = await axi.post('/chat/getChatRoomDataById', {chatRoomId:chatRoomId});
+	console.log(chatRoomData.data)
+	return chatRoomData.data;
+}
+
 
 export default{
 	getChatRoomByPost,
 	getLatestChat,
-	createChat
+	createChat,
+	getChatRoomDataById
 }
