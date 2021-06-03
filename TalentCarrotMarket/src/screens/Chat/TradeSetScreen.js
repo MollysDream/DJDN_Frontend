@@ -325,7 +325,7 @@ const TradeSetScreen =({navigation,route})=>{
           endSet: sendEndDate,
           proLocate:proLocate,
           user1: user1,
-          user2: user2
+          user2: user2,
         })
       } else{
         alert(alarmTxt)

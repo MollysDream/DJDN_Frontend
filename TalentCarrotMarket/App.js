@@ -340,7 +340,7 @@ const App=()=> {
       if (remoteMessage.data.type == 'Advertise') {
         alert("bye");
 
-      } else if (remoteMessage.data.type == 'Chat' || remoteMessage.data.type == 'Keyword') {
+      } else if (remoteMessage.data.type == 'Chat' || remoteMessage.data.type == 'Extend' || remoteMessage.data.type == 'Suggest' || remoteMessage.data.type == 'EndTrade') {
         // console.log("알림 타이틀 왔어요! "+remoteMessage.notification.title);
         // console.log("알림 메세지 왔어요! "+remoteMessage.notification.body);
 

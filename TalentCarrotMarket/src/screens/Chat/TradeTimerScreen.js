@@ -25,15 +25,18 @@ import requestUserAPI from "../../requestUserAPI";
 import requestTradeAPI from "../../requestTradeAPI";
 import RemotePushController from '../../util/RemotePushController'
 
-import * as sms from '../../sms';
+import io from "socket.io-client";
+import {HOST} from "../../function";
+
 
 //글자 강조
 const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{props.children}</Text>
 
-// var diffTime;
+
 let userId ;
 let sender;
 let receiver;
+let socket = io(`http://${HOST}:3002`);
 
 const TradeTimerScreen = ({navigation, route}) =>{
 
@@ -114,6 +117,8 @@ const TradeTimerScreen = ({navigation, route}) =>{
             console.log(err);
         });
 
+        // socket.emit('joinRoom', tradeId);
+
   },[])
 
   useEffect(()=>{
@@ -145,20 +150,32 @@ const TradeTimerScreen = ({navigation, route}) =>{
             console.log(err);
         });
 
+        socket.emit('joinTradeRoom', tradeId);
+
+        socket.on('extend endTime to client', (endDateTime) => {
+          let newEndTime = endDateTime;
+          console.log("프론트에서 받은 새 연장시간 : " +  newEndTime);
+          setDiffTime((newEndTime.getTime()- nowDate)/1000);
+        });
+
+        socket.on('suggest tradeEnd to client', () => {
+          // let newEndTime = endDateTime;
+          // console.log("프론트에서 받은 새 연장시간 : " +  newEndTime);
+        });
+
+        socket.on('end trade to client', () => {
+          // let newEndTime = endDateTime;
+          // console.log("프론트에서 받은 새 연장시간 : " +  newEndTime);
+        });
+
   },[])
 
 
   const extendButton = async() =>{
 
     endDateTime.setMinutes(endDateTime.getMinutes()+10)
-    console.log("연장 후 시간은ㅇㅇ "+endDateTime)
+    setEndDateChange(true)
 
-    // if(endDateChange == true){
-    //   setEndDateChange(false)
-    // }else{
-      setEndDateChange(true)
-    // }
-    
     const newEndSet = newFormatDate(endDateTime)
 
     //거래연장 통신
@@ -167,7 +184,8 @@ const TradeTimerScreen = ({navigation, route}) =>{
 
        if (returnData.data.message) {
         var compareDiffTime=(endDateTime.getTime()-nowDate)/1000;
-        console.log("차이는?? "+compareDiffTime)
+        console.log("차이는?? "+compareDiffTime);
+        socket.emit("extend endTime",tradeId, newEndSet);
 
         if(compareDiffTime>0){
           alert("거래 연장에 성공했습니다!");
@@ -191,7 +209,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
       if (returnData.data.message) {
         alert('거래 완료 제안을 했습니다!')
         sender=userId;
-        
+        socket.emit("suggest tradeEnd", endDateTime);
       }
         else{
           alert('거래 완료 제안이 실패했습니다.')
@@ -211,6 +229,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
 
       if (returnData.data.message) {
         console.log(returnData.data.message)
+        socket.emit("end trade", tradeId, endDateTime);
       }
         else{
           alert('거래 완료 제안이 실패했습니다.')
@@ -400,18 +419,21 @@ const TradeTimerScreen = ({navigation, route}) =>{
     {isEnd==false?
           (
             <>
+              <View style={{paddingTop:hp(3)}}>
                 <CountDown
-                size={30}
-                until={diffTime}
-                onFinish={autoReport}
-                digitStyle={{backgroundColor: '#FFF', borderWidth: 2, borderColor: '#1CC625'}}
-                digitTxtStyle={{color: '#1CC627'}}
-                timeLabelStyle={{color: 'green', fontWeight: 'bold'}}
-                separatorStyle={{color: '#1CC625'}}
-                timeToShow={['D','H', 'M', 'S']}
-                timeLabels={{d: 'Days', h: 'Hours', m: 'Minutes', s: 'Seconds'}}
-                showSeparator
-              />
+                  size={30}
+                  until={diffTime}
+                  onFinish={autoReport}
+                  digitStyle={{backgroundColor: '#FFF', borderWidth: 2, borderColor: '#1CC625'}}
+                  digitTxtStyle={{color: '#1CC627'}}
+                  timeLabelStyle={{color: 'green', fontWeight: 'bold'}}
+                  separatorStyle={{color: '#1CC625'}}
+                  timeToShow={['D','H', 'M', 'S']}
+                  timeLabels={{d: 'Days', h: 'Hours', m: 'Minutes', s: 'Seconds'}}
+                  showSeparator
+                />
+              </View>
+                
               <View style={styles.rowArea}>
                 <View style={styles.btnArea,{paddingRight:wp(1)}}>
                   <TouchableOpacity style={styles.btn} onPress={endButton}>
@@ -433,6 +455,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
                 borderBottomWidth: StyleSheet.hairlineWidth,
                 
               }}
+              
             />
               <View style={styles.helpMsg}>
                 <Text style={{fontSize:15, marginTop:5, color:'grey'}}>현재 상대방이 거래종료를 기다리는 상태입니다.</Text>
