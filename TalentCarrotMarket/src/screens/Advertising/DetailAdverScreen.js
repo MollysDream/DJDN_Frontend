@@ -4,10 +4,10 @@ import {
     Text,
     StyleSheet,
     TouchableOpacity,
-    Button, Image, TouchableWithoutFeedback, TouchableHighlight, ScrollView
+    Button, Image, TouchableWithoutFeedback, TouchableHighlight, ScrollView, Modal
 } from 'react-native';
 import {Container, Content, Form, Header, Input, Item, Label, Left, Right, Textarea} from "native-base";
-import Modal from "react-native-modal";
+import Modal2 from "react-native-modal";
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
@@ -29,6 +29,9 @@ const DetailAdverScreen = (props) => {
     const [advertisement, setadver] = useState(props.route.params.item);
     const [mapModal, setMapModal] = useState(false);
 
+    const [modalVisible, setMv] = useState(false);
+    const [modalImage, setMi] = useState(0);
+
     const P1 = {
         latitude: Number(advertisement.latitude),
         longitude: Number(advertisement.longitude)
@@ -38,6 +41,11 @@ const DetailAdverScreen = (props) => {
         console.log(advertisement);
     }, []);
 
+    function onImagePress(index){
+        setMv(!modalVisible);
+        setMi(index);
+    }
+
 
     function seeLocation(){
         setMapModal(!mapModal)
@@ -46,7 +54,7 @@ const DetailAdverScreen = (props) => {
     return (
         <ScrollView>
             {/*광고 위치선택 모달*/}
-            <Modal isVisible={mapModal}>
+            <Modal2 isVisible={mapModal}>
 
                 <View style={{backgroundColor:'white',borderRadius:20, width:'100%', height:'100%'}}>
 
@@ -74,9 +82,22 @@ const DetailAdverScreen = (props) => {
 
                 </View>
 
-            </Modal>
+            </Modal2>
 
             <Content>
+
+                <Modal animationType={"fade"} transparent={false}
+                       visible={modalVisible}
+                       onRequestClose={() => { console.log("Modal has been closed.") }}>
+                    <View style={styles.modal}>
+                        <TouchableHighlight onPress={() => { setMv(!modalVisible) }}>
+                            <Image
+                                style={{ width: '100%', height: '100%', resizeMode:"contain" }}
+                                source={{ uri: advertisement.image[modalImage] }}
+                            />
+                        </TouchableHighlight>
+                    </View>
+                </Modal>
 
 
                 <View style={{flexDirection:'row'}}>
@@ -97,6 +118,7 @@ const DetailAdverScreen = (props) => {
                         <SliderBox
                             images={advertisement.image}
                             sliderBoxHeight={350}
+                            onCurrentImagePressed={index => onImagePress(index)}
                             dotColor="#3AC2FF"
                             inactiveDotColor="#d2f0ff"
                             ImageComponentStyle={{borderRadius: 15, width: '100%'}}
