@@ -22,6 +22,8 @@ import requestAddressAPI from "../../requestAddressAPI";
 import requestTradeAPI from "../../requestTradeAPI";
 
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import requestAPI from "../../requestAPI";
+import requestChatAPI from "../../requestChatAPI";
 
 //글자 강조
 const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{props.children}</Text>
@@ -54,6 +56,8 @@ const TradeSetScreen =({navigation,route})=>{
       const [start, setStart]=useState('');
       const [end, setEnd]=useState('');
 
+      //채팅방 데이터
+    const [chatRoomData, setChatRoomData] = useState(null);
 
       // 거래 장소 설정
       const [currentLocation, setCurrentLocation] = useState({
@@ -178,6 +182,13 @@ const TradeSetScreen =({navigation,route})=>{
           error => {console.log(error.code,error.message)},
           { enableHighAccuracy:true, timeout: 20000, maximumAge:1000},
         );
+
+        async function getChatroomData(){
+              let chatRoomData = await requestChatAPI.getChatRoomDataById(chatRoom)
+            setChatRoomData(chatRoomData);
+          }
+          getChatroomData();
+
       },[]);
 
       useEffect(()=>{
@@ -294,6 +305,9 @@ const TradeSetScreen =({navigation,route})=>{
          if (returnData.data.message) {
           console.log("거래 동의 완료")
           setIsSave(true);
+
+          await requestAPI.updatePostTradeStatus(chatRoomData.postId, 1);
+
           } else {
             console.log('거래 장소 및 시간 설정 실패');
           }
@@ -325,7 +339,8 @@ const TradeSetScreen =({navigation,route})=>{
           endSet: sendEndDate,
           proLocate:proLocate,
           user1: user1,
-          user2: user2
+          user2: user2,
+            chatRoomData: chatRoomData,
         })
       } else{
         alert(alarmTxt)
@@ -342,6 +357,7 @@ const TradeSetScreen =({navigation,route})=>{
       try{
         //거래삭제
          const returnData = await requestTradeAPI.deleteTrade(tradeId);
+         await requestAPI.updatePostTradeStatus(chatRoomData.postId, 0);
   
          if (returnData.data.message) {
           alert('기존 거래를 삭제하고 다시 제안합니다.')

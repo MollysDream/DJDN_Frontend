@@ -18,6 +18,8 @@ import requestTradeAPI from "../../requestTradeAPI";
 
 import StarRating from 'react-native-star-rating';
 import AsyncStorage from '@react-native-community/async-storage';
+import requestChatAPI from "../../requestChatAPI";
+import requestAPI from "../../requestAPI";
 
 //글자 강조
 const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{props.children}</Text>
@@ -25,7 +27,7 @@ let oppoUser;
 
 const UserRateScreen = ({navigation, route}) => {
 
-        const {user1,user2,tradeId}=route.params;
+        const {user1,user2,tradeId, chatRoomData}=route.params;
         const [userId, setUserId] =  useState('');
         const [userData, setUserData] = useState();
 
@@ -76,6 +78,9 @@ const UserRateScreen = ({navigation, route}) => {
               const returnData = await requestTradeAPI.userRate(oppoUser,userRate,tradeId);
         
               if (returnData.data.message) {
+
+                  await requestAPI.updatePostTradeStatus(chatRoomData.postId, 2);
+                      
                 alert('사용자 평가를 완료했습니다.')
                 navigation.navigate('chatch')
               }

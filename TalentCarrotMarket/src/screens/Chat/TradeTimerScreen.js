@@ -37,7 +37,7 @@ let receiver;
 
 const TradeTimerScreen = ({navigation, route}) =>{
 
-  const {tradeId,endSet,proLocate,user1,user2}=route.params;
+  const {tradeId,endSet,proLocate,user1,user2, chatRoomData}=route.params;
   AsyncStorage.getItem('user_id').then((value) =>
         userId=value
       );
@@ -226,7 +226,8 @@ const TradeTimerScreen = ({navigation, route}) =>{
     navigation.navigate('userRate',{
       user1: user1,
       user2: user2,
-      tradeId: tradeId
+      tradeId: tradeId,
+      chatRoomData: chatRoomData
     })
   }
 

@@ -41,7 +41,6 @@ export default class HomeScreen extends Component{
         //console.log("홈스크린 componentDidMount");
         try{
             const userId = await AsyncStorage.getItem('user_id');
-
             this.setState({userId:userId});
 
             let userAddressDataList = await requestAddressAPI.getUserAddress(userId);
