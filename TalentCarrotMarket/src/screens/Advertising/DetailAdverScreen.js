@@ -40,95 +40,94 @@ const DetailAdverScreen = (props) => {
 
 
     function seeLocation(){
-        //if()
         setMapModal(!mapModal)
     }
 
     return (
+        <ScrollView>
+            {/*광고 위치선택 모달*/}
+            <Modal isVisible={mapModal}>
 
-                    <ScrollView>
-                        {/*광고 위치선택 모달*/}
-                        <Modal isVisible={mapModal}>
+                <View style={{backgroundColor:'white',borderRadius:20, width:'100%', height:'100%'}}>
 
-                            <View style={{backgroundColor:'white',borderRadius:20, width:'100%', height:'100%'}}>
+                    <Text style={styles.locationModalText}>광고 위치</Text>
+                    <NaverMapView
+                        style={{width: '100%', height: hp(60)}}
+                        /*showsMyLocationButton={true}*/
+                        center={{...P1, zoom:14}}>
 
-                                <Text style={styles.locationModalText}>광고 위치</Text>
-                                <NaverMapView
-                                    style={{width: '100%', height: hp(60)}}
-                                    /*showsMyLocationButton={true}*/
-                                    center={{...P1, zoom:14}}>
+                        <Marker coordinate={P1} pinColor={"red"}/>
+                        <Circle coordinate={P1} radius={advertisement.radius} color={'rgba(144,64,201,0.2)'}/>
 
-                                    <Marker coordinate={P1} pinColor={"red"}/>
-                                    <Circle coordinate={P1} radius={advertisement.radius} color={'rgba(144,64,201,0.2)'}/>
-
-                                </NaverMapView>
-
-
-                                <TouchableOpacity style={{marginTop:15,alignSelf:"center", borderRadius:10, borderWidth:1,backgroundColor:'#d3acff', borderColor:'purple',padding:10}}>
-                                    <Text style={{alignSelf:'center',fontSize:17}}>{`${advertisement.addressName} - ${advertisement.radius}m`}</Text>
-                                </TouchableOpacity>
+                    </NaverMapView>
 
 
-                                <TouchableOpacity onPress={()=>setMapModal(false)}
-                                                  style={{position:'absolute',top:3,right:5}}>
-                                    <Icon2 name="cancel"  size={40} color="#c18aff" />
-                                </TouchableOpacity>
-
-                            </View>
-
-                        </Modal>
-
-                        <Content>
+                    <TouchableOpacity style={{marginTop:15,alignSelf:"center", borderRadius:10, borderWidth:1,backgroundColor:'#d3acff', borderColor:'purple',padding:10}}>
+                        <Text style={{alignSelf:'center',fontSize:17}}>{`${advertisement.addressName} - ${advertisement.radius}m`}</Text>
+                    </TouchableOpacity>
 
 
-                            <View style={{flexDirection:'row'}}>
+                    <TouchableOpacity onPress={()=>setMapModal(false)}
+                                      style={{position:'absolute',top:3,right:5}}>
+                        <Icon2 name="cancel"  size={40} color="#c18aff" />
+                    </TouchableOpacity>
 
-                                <TouchableOpacity style={[styles.ruleButton, {justifyContent:'center', backgroundColor:'#e5cdff'}]} onPress={()=>seeLocation()}>
-                                    <Text style={{alignSelf:'center'}}>{`${advertisement.addressName} - ${advertisement.radius}m`}</Text>
-                                    <Text style={{alignSelf:'center'}}>클릭하여 위치 확인</Text>
-                                </TouchableOpacity>
+                </View>
 
-                                <TouchableOpacity style={[styles.ruleButton, {justifyContent:'center', backgroundColor:'#e5cdff'}]}>
-                                    <Text style={{alignSelf:'center'}}>{`만료: ${getAdEndDate(new Date(advertisement.endDate))}`}</Text>
-                                </TouchableOpacity>
+            </Modal>
 
-                            </View>
+            <Content>
 
-                            <Item >
-                                <View>
-                                    <SliderBox
-                                        images={advertisement.image}
-                                        sliderBoxHeight={350}
-                                        dotColor="#3AC2FF"
-                                        inactiveDotColor="#d2f0ff"
-                                        ImageComponentStyle={{borderRadius: 15, width: '100%'}}
-                                    />
-                                </View>
-                            </Item>
-                            <Text style={{fontSize:20, fontWeight : 'bold', marginLeft : '3%', marginTop : '3%',  marginBottom : '3%'}}>
-                                {`${advertisement.title}`}
-                            </Text>
-                            <Item>
-                                <Text style={{fontSize:15, color : "grey",marginBottom : '2%', marginLeft : "3%"}}>
-                                    {getDate(advertisement.date)}
-                                </Text>
-                            </Item>
 
-                            <Item>
-                                <Text style={{fontSize:16, marginTop : '7%',marginBottom : '20%', marginLeft : '3%'}}>
-                                    {`${advertisement.text}`}
-                                </Text>
-                            </Item>
+                <View style={{flexDirection:'row'}}>
 
-                            <Item >
+                    <TouchableOpacity style={[styles.ruleButton, {justifyContent:'center', backgroundColor:'#e5cdff'}]} onPress={()=>seeLocation()}>
+                        <Text style={{alignSelf:'center'}}>{`${advertisement.addressName} - ${advertisement.radius}m`}</Text>
+                        <Text style={{alignSelf:'center'}}>클릭하여 위치 확인</Text>
+                    </TouchableOpacity>
 
-                                <Text style={{fontSize: 15 , marginLeft : "3%",marginTop : '5%',marginBottom : '10%'}}>
-                                    {`  가격: ${advertisement.price}원`}
-                                </Text>
-                            </Item>
+                    <TouchableOpacity style={[styles.ruleButton, {justifyContent:'center', backgroundColor:'#e5cdff'}]}>
+                        <Text style={{alignSelf:'center'}}>{`만료: ${getAdEndDate(new Date(advertisement.endDate))}`}</Text>
+                    </TouchableOpacity>
 
-                            </Content>
-                    </ScrollView>
+                </View>
+
+                <Item >
+                    <View>
+                        <SliderBox
+                            images={advertisement.image}
+                            sliderBoxHeight={350}
+                            dotColor="#3AC2FF"
+                            inactiveDotColor="#d2f0ff"
+                            ImageComponentStyle={{borderRadius: 15, width: '100%'}}
+                        />
+                    </View>
+                </Item>
+                <Text style={{fontSize:20, fontWeight : 'bold', marginLeft : '3%', marginTop : '3%',  marginBottom : '3%'}}>
+                    {`${advertisement.title}`}
+                </Text>
+                <Item>
+                    <Text style={{fontSize:15, color : "grey",marginBottom : '2%', marginLeft : "3%"}}>
+                        {getDate(advertisement.date)}
+                    </Text>
+                </Item>
+
+                <Item>
+                    <Text style={{fontSize:16, marginTop : '7%',marginBottom : '20%', marginLeft : '3%'}}>
+                        {`${advertisement.text}`}
+                    </Text>
+                </Item>
+
+                <Item>
+                    <Text style={{fontSize: 15 , marginLeft : "3%",marginTop : '5%',marginBottom : '10%'}}>
+                        {`  가격: ${advertisement.price}원`}
+                    </Text>
+                </Item>
+
+            </Content>
+        </ScrollView>
+
+
 
     );
 }
