@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
       rowTopArea: {
         flex: 0.125,
         paddingTop: hp(3),
-        paddingLeft: wp(10),
+        // paddingLeft: wp(10),
         flexDirection: "row",
         alignItems: 'center',
     },
