@@ -52,6 +52,10 @@ const TradeTimerScreen = ({navigation, route}) =>{
 
   const [isEndSuggest, setIsEndSuggest] = useState(false);
   const [isEnd, setIsEnd] = useState(false);
+//
+
+  //실시간 통신 확인
+  const [socketCome, setSocketCome] = useState(false);
 
   useEffect(()=>{
     console.log("새로운 종료시간은 "+endDateTime)
@@ -88,38 +92,6 @@ const TradeTimerScreen = ({navigation, route}) =>{
       let result = getData();
   },[]);
 
-  useEffect(()=>{
-    console.log("거래 번호 "+tradeId)
-
-    requestTradeAPI.getEndTrade(tradeId)
-      .then(returnData => {
-        if(returnData.data.message){
-
-          setIsEndSuggest(returnData.data.trade.completeSuggest);
-          setIsEnd(returnData.data.trade.complete);
-
-          console.log("현재 종료 제안 상태는 "+isEndSuggest);
-          console.log("현재 종료 상태는 "+isEnd);
-
-          if(returnData.data.trade.sender==userId){
-            console.log("현재 접속자는 거래 제안자임 "+ returnData.data.trade.sender);
-            sender=userId;
-          } else{
-            console.log("현재 접속자는 거래 제안받은사람임 "+ returnData.data.trade.receiver);
-            receiver=userId;
-          }
-        } else{
-          console.log("거래가 존재하지 않습니다.");
-        }
-        })
-        //에러
-        .catch(err => {
-            console.log(err);
-        });
-
-        // socket.emit('joinRoom', tradeId);
-
-  },[])
 
   useEffect(()=>{
     console.log("거래 번호 "+tradeId)
@@ -128,11 +100,17 @@ const TradeTimerScreen = ({navigation, route}) =>{
       .then(returnData => {
         if(returnData.data.message){
 
+          const returnEndDate = parse(returnData.data.trade.endTime);
+
+          setDiffTime((returnEndDate.getTime()-nowDate)/1000);
+
           setIsEndSuggest(returnData.data.trade.completeSuggest);
           setIsEnd(returnData.data.trade.complete);
 
           console.log("현재 종료 제안 상태는 "+isEndSuggest);
           console.log("현재 종료 상태는 "+isEnd);
+
+          console.log("거래제안자 "+returnData.data.trade.sender)
 
           if(returnData.data.trade.sender==userId){
             console.log("현재 접속자는 거래 제안자임 "+ returnData.data.trade.sender);
@@ -155,22 +133,50 @@ const TradeTimerScreen = ({navigation, route}) =>{
         socket.on('extend endTime to client', (endDateTime) => {
           let newEndTime = parse(endDateTime);
           console.log("프론트에서 받은 새 연장시간ㄴㄴㄴㄴㄴㄴ : " +  newEndTime);
-          console.log("무애호호호홓");
           // setDiffTime((newEndTime.getTime()- nowDate)/1000);
-          setEndDateChange(true);
+          setSocketCome(true);
         });
 
         socket.on('suggest tradeEnd to client', () => {
-          // let newEndTime = endDateTime;
-          // console.log("프론트에서 받은 새 연장시간 : " +  newEndTime);
+          setSocketCome(true);
         });
 
         socket.on('end trade to client', () => {
-          // let newEndTime = endDateTime;
-          // console.log("프론트에서 받은 새 연장시간 : " +  newEndTime);
+          setSocketCome(true);
         });
 
   },[])
+
+  useEffect(()=>{
+
+    console.log("socket 실시간 통신 완료 "+socketCome)
+
+    requestTradeAPI.getEndTrade(tradeId)
+      .then(returnData => {
+        if(returnData.data.message){
+
+          console.log(returnData.data.trade.endTime);
+          const returnEndDate = parse(returnData.data.trade.endTime);
+
+          setDiffTime((returnEndDate.getTime()-nowDate)/1000);
+          setIsEndSuggest(returnData.data.trade.completeSuggest);
+          setIsEnd(returnData.data.trade.complete);
+
+          console.log("현재 종료 제안 상태는 "+isEndSuggest);
+          console.log("현재 종료 상태는 "+isEnd);
+
+          setSocketCome(false);
+          
+        } else{
+          console.log("거래가 존재하지 않습니다.");
+        }
+        })
+        //에러
+        .catch(err => {
+            console.log(err);
+        });
+
+  },[socketCome])
 
 
   const extendButton = async() =>{
@@ -203,15 +209,27 @@ const TradeTimerScreen = ({navigation, route}) =>{
   }
 
   const endSuggestButton = async() =>{
+
     setIsEndSuggest(true);
+    let suggester;
+    let suggestee;
+    
+    if(user1==userId){
+      suggester = user1;
+      suggestee = user2;
+    } else{
+      suggester = user2;
+      suggestee = user1;
+    }
+
     //거래완료제안 통신
     try{
-      const returnData = await requestTradeAPI.endSuggestTrade(tradeId);
+      const returnData = await requestTradeAPI.endSuggestTrade(tradeId,suggester,suggestee);
 
       if (returnData.data.message) {
-        alert('거래 완료 제안을 했습니다!')
+        alert('거래 완료 제안을 했습니다!');
+        socket.emit("suggest tradeEnd", tradeId, userId);
         sender=userId;
-        socket.emit("suggest tradeEnd", endDateTime);
       }
         else{
           alert('거래 완료 제안이 실패했습니다.')
@@ -231,7 +249,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
 
       if (returnData.data.message) {
         console.log(returnData.data.message)
-        socket.emit("end trade", tradeId, endDateTime);
+        socket.emit("end trade", tradeId, userId);
       }
         else{
           alert('거래 완료 제안이 실패했습니다.')
@@ -490,7 +508,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
 
   const tradeEnd =
   <>
-    {userId==sender?(
+    {userId==sender && userId!=receiver?(
       <>{senderView}</>):
       <>{receiverView}</>
     }

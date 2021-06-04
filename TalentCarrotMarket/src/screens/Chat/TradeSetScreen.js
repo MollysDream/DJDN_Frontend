@@ -59,9 +59,6 @@ const TradeSetScreen =({navigation,route})=>{
       const [currentLocation, setCurrentLocation] = useState({
         latitude: 37.27886373711404, longitude: 127.04245001890514
       });
-      // const [saveLocation, setSaveLocation] = useState({
-      //   latitude: null, longitude: null
-      // });
 
       useEffect(()=>{
 
@@ -102,8 +99,8 @@ const TradeSetScreen =({navigation,route})=>{
             console.log(err);
           });
           
-
       },[])
+
 
       // 거래 시간 설정
       const [startDate, setStartDate] = useState(new Date());
