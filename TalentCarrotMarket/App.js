@@ -362,9 +362,9 @@ const App=()=> {
         remoteMessage,
       );
       console.log(remoteMessage.data);
-      setTimeout((remoteMessage) => {
-        navigate(remoteMessage.data.type, null);
-      }, 1000);
+      // setTimeout((remoteMessage) => {
+      //   navigate('MainTab', null);
+      // }, 1000);
     });
 
     messaging()
