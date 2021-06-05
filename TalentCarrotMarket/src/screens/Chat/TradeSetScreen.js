@@ -121,15 +121,21 @@ const TradeSetScreen =({navigation,route})=>{
           socket.on('agree trade to client', () => {
             setSocketCome(true);
           });
+
+          socket.on('delete trade to client', () => {
+            setSocketCome(true);
+          });
       },[])
 
       useEffect(()=>{
 
         console.log("socket 실시간 통신 완료 "+socketCome)
     
-        requestTradeAPI.getEndTrade(tradeId)
+        requestTradeAPI.getTrade(chatRoom)
           .then(returnData => {
             if(returnData.data.message){
+
+              console.log('동의 상태는 '+returnData.data.trade.isSave);
     
               setIsSuggest(true);
               setIsSave(returnData.data.trade.isSave);
@@ -277,7 +283,8 @@ const TradeSetScreen =({navigation,route})=>{
     // 설정 완료 후, 제안 버튼
     const suggestButton = async() =>{
       
-      
+      // let user= await AsyncStorage.getItem('user_id');
+
       if(user1==userId){
         sender = user1;
         receiver = user2;
@@ -343,7 +350,7 @@ const TradeSetScreen =({navigation,route})=>{
 
       try{
         //거래제안동의
-         const returnData = await requestTradeAPI.agreeTrade(tradeId);
+         const returnData = await requestTradeAPI.agreeTrade(tradeId.toString());
   
          if (returnData.data.message) {
           console.log("거래 동의 완료")
@@ -362,8 +369,7 @@ const TradeSetScreen =({navigation,route})=>{
 
     //남은 시간 확인 버튼
     const timeCheckButton = () =>{
-
-      // const sendEndSet = sendFormatDate(endDate,endTime)
+    
       var sendEndDate = parse(end);
       console.log("저장된 시간은 "+sendEndDate)
 
@@ -378,14 +384,20 @@ const TradeSetScreen =({navigation,route})=>{
       alarmTxt.replace(/\n/g,'<br/>');
 
       if(startDiffTime>0){
-        navigation.navigate('tradeTimer',{
-          tradeId: tradeId,
-          endSet: sendEndDate,
-          proLocate:proLocate,
-          user1: user1,
-          user2: user2,
+        // if(isSave==true){
+          navigation.navigate('tradeTimer',{
+            tradeId: tradeId,
+            endSet: sendEndDate,
+            proLocate:proLocate,
+            user1: user1,
+            user2: user2,
+            chatRoom: chatRoom,
             chatRoomData: chatRoomData,
-        })
+          }) 
+        // } else{
+        //   alert("아직 상대방이 동의하지 않았습니다!")
+        // }
+    
       } else{
         alert(alarmTxt)
       }
@@ -399,6 +411,7 @@ const TradeSetScreen =({navigation,route})=>{
 
       //거래취소(삭제) 통신
       try{
+        socket.emit("delete trade", chatRoom, userId);
         //거래삭제
          const returnData = await requestTradeAPI.deleteTrade(tradeId);
          await requestAPI.updatePostTradeStatus(chatRoomData.postId, 0);
