@@ -45,9 +45,9 @@ export async function updateTradeTime(tradeId,endTime){
     return returnData;
 }
 
-export async function endSuggestTrade(tradeId,suggester,suggestee){
+export async function endSuggestTrade(tradeId,sender,receiver){
     console.log('endSuggestTrade함수 호출됨');
-    const returnData = await axi.post("/trade/endSuggestTrade", {tradeId,suggester,suggestee});
+    const returnData = await axi.post("/trade/endSuggestTrade", {tradeId,sender,receiver});
     return returnData;
 }
 

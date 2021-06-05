@@ -25,6 +25,9 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import requestAPI from "../../requestAPI";
 import requestChatAPI from "../../requestChatAPI";
 
+import io from "socket.io-client";
+import {HOST} from "../../function";
+
 //글자 강조
 const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{props.children}</Text>
 
@@ -32,6 +35,8 @@ let userId ;
 let sender;
 let receiver;
 let saveLocation ={latitude:null, longitude:null};
+
+let socket = io(`http://${HOST}:3002`);
 
 const TradeSetScreen =({navigation,route})=>{
 
@@ -63,9 +68,10 @@ const TradeSetScreen =({navigation,route})=>{
       const [currentLocation, setCurrentLocation] = useState({
         latitude: 37.27886373711404, longitude: 127.04245001890514
       });
-      // const [saveLocation, setSaveLocation] = useState({
-      //   latitude: null, longitude: null
-      // });
+
+      
+    //실시간 통신 확인
+    const [socketCome, setSocketCome] = useState(false);
 
       useEffect(()=>{
 
@@ -105,9 +111,44 @@ const TradeSetScreen =({navigation,route})=>{
           .catch(err => {
             console.log(err);
           });
-          
 
+          socket.emit('joinTradeSetRoom', chatRoom);
+
+          socket.on('suggest trade to client', () => {
+            setSocketCome(true);
+          });
+  
+          socket.on('agree trade to client', () => {
+            setSocketCome(true);
+          });
       },[])
+
+      useEffect(()=>{
+
+        console.log("socket 실시간 통신 완료 "+socketCome)
+    
+        requestTradeAPI.getEndTrade(tradeId)
+          .then(returnData => {
+            if(returnData.data.message){
+    
+              setIsSuggest(true);
+              setIsSave(returnData.data.trade.isSave);
+              setProLocate(returnData.data.trade.location);
+              setStart(returnData.data.trade.startTime);
+              setEnd(returnData.data.trade.endTime);
+
+              setSocketCome(false);
+              
+            } else{
+              console.log("거래가 존재하지 않습니다.");
+            }
+            })
+            //에러
+            .catch(err => {
+                console.log(err);
+            });
+    
+      },[socketCome])
 
       // 거래 시간 설정
       const [startDate, setStartDate] = useState(new Date());
@@ -281,6 +322,8 @@ const TradeSetScreen =({navigation,route})=>{
              console.log("거래 번호 "+returnData.data.tradeId)
              setTradeId(returnData.data.tradeId);
              setIsSuggest(true);
+             socket.emit("suggest trade", chatRoom, userId);
+
              } else {
                console.log('거래 장소 및 시간 설정 실패');
              }
@@ -307,6 +350,7 @@ const TradeSetScreen =({navigation,route})=>{
           setIsSave(true);
 
           await requestAPI.updatePostTradeStatus(chatRoomData.postId, 1);
+          socket.emit("agree trade", chatRoom, userId);
 
           } else {
             console.log('거래 장소 및 시간 설정 실패');

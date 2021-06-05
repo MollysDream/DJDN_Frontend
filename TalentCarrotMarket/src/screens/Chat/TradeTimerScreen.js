@@ -52,7 +52,6 @@ const TradeTimerScreen = ({navigation, route}) =>{
 
   const [isEndSuggest, setIsEndSuggest] = useState(false);
   const [isEnd, setIsEnd] = useState(false);
-//
 
   //실시간 통신 확인
   const [socketCome, setSocketCome] = useState(false);
@@ -211,25 +210,24 @@ const TradeTimerScreen = ({navigation, route}) =>{
   const endSuggestButton = async() =>{
 
     setIsEndSuggest(true);
-    let suggester;
-    let suggestee;
-    
-    if(user1==userId){
-      suggester = user1;
-      suggestee = user2;
+
+    let user= await AsyncStorage.getItem('user_id');
+
+    if(user1==user){
+      sender = user1;
+      receiver = user2;
     } else{
-      suggester = user2;
-      suggestee = user1;
+      sender = user2;
+      receiver = user1;
     }
 
     //거래완료제안 통신
     try{
-      const returnData = await requestTradeAPI.endSuggestTrade(tradeId,suggester,suggestee);
+      const returnData = await requestTradeAPI.endSuggestTrade(tradeId,sender,receiver);
 
       if (returnData.data.message) {
         alert('거래 완료 제안을 했습니다!');
         socket.emit("suggest tradeEnd", tradeId, userId);
-        sender=userId;
       }
         else{
           alert('거래 완료 제안이 실패했습니다.')
