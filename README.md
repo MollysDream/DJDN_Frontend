@@ -42,6 +42,13 @@
 * npm >= 6.14.11
 ```
 
+## Before start
+./src/smskey.js 파일 생성 후 다음과 같이 설정이 필요합니다.
+
+```sh
+?????
+```
+
 ## Install
 
 ```sh
