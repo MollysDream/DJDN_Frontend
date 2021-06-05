@@ -40,7 +40,7 @@ let socket = io(`http://${HOST}:3002`);
 
 const TradeTimerScreen = ({navigation, route}) =>{
 
-  const {tradeId,endSet,proLocate,user1,user2, chatRoomData}=route.params;
+  const {tradeId,endSet,proLocate,user1,user2, chatRoom, chatRoomData}=route.params;
   AsyncStorage.getItem('user_id').then((value) =>
         userId=value
       );
@@ -272,6 +272,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
 
     //거래취소(삭제) 통신
     try{
+      socket.emit("delete trade", chatRoom, userId);
       const returnData = await requestTradeAPI.deleteTrade(tradeId);
 
       if (returnData.data.message) {
