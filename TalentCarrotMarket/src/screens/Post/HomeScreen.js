@@ -123,8 +123,13 @@ export default class HomeScreen extends Component{
                     onPress : ()=> this.refreshPage()}])
         }
 
-
         this.props.navigation.navigate('DetailPost',{detailPost: item, postOwner: userData});
+    }
+
+    async goToDetailAdvertisementScreen(item){
+        console.log(`${item.title} 광고 확인`);
+
+        //this.props.navigation.navigate('DetailPost',{detailPost: item, postOwner: userData});
     }
 
     filterOption = async () =>{
@@ -145,32 +150,59 @@ export default class HomeScreen extends Component{
         let price = getPrice(item.price);
         let status = null
         let statusStyle = styles.status_none
-        if(item.tradeStatus === 1){
-            status = '거래중';
-            statusStyle = styles.status_ing
-        }
-        else if(item.tradeStatus ===2){
-            status = '거래완료';
-            statusStyle = styles.status_complete
-        }
-        return(
-            <TouchableHighlight onPress={() => this.goToDetailPostScreen(item)}>
-                <View style={styles.post}>
-                    <Image style={styles.image} source={{ uri: item.image[0]}} />
-                    <View>
-                        <Text style={styles.postTitle}>{item.title}</Text>
-                        <View style={statusStyle}>
-                            <Text>{status}</Text>
-                        </View>
-                        <View style={{flexDirection:'row'}}>
-                            <Text style={styles.postPrice}>{`${price}원`}</Text>
-                            <Text style={styles.postAddressTime}>{`${item.addressName}\n${time}`}</Text>
+
+        //광고
+        if(item.active){
+            status='지역광고';
+            return(
+                <TouchableHighlight onPress={() => this.goToDetailAdvertisementScreen(item)}>
+                    <View style={[styles.post,{borderBottomColor: "#cba6ff"}]}>
+                        <Image style={[styles.image,{borderWidth:3, borderColor:'#cba6ff'}]} source={{ uri: item.image[0]}} />
+                        <View>
+                            <Text style={styles.postTitle}>{item.title}</Text>
+                            <View style={[styles.status_complete, {backgroundColor:'#cba6ff'}]}>
+                                <Text>{`${item.addressName} - ${status}`}</Text>
+                            </View>
+                            <View style={{flexDirection:'row'}}>
+                                <Text style={[styles.postPrice,{color:"#a05eff"}]}>{`${price}원`}</Text>
+                            </View>
                         </View>
                     </View>
-                </View>
-            </TouchableHighlight>
+                </TouchableHighlight>
+            );
+        }
+        else{ //게시글
 
-        );
+            if(item.tradeStatus === 1){
+                status = '거래중';
+                statusStyle = styles.status_ing
+            }
+            else if(item.tradeStatus ===2){
+                status = '거래완료';
+                statusStyle = styles.status_complete
+            }
+            return(
+                <TouchableHighlight onPress={() => this.goToDetailPostScreen(item)}>
+                    <View style={styles.post}>
+                        <Image style={styles.image} source={{ uri: item.image[0]}} />
+                        <View>
+                            <Text style={styles.postTitle}>{item.title}</Text>
+                            <View style={statusStyle}>
+                                <Text>{status}</Text>
+                            </View>
+                            <View style={{flexDirection:'row'}}>
+                                <Text style={styles.postPrice}>{`${price}원`}</Text>
+                                <Text style={styles.postAddressTime}>{`${item.addressName}\n${time}`}</Text>
+                            </View>
+                        </View>
+                    </View>
+                </TouchableHighlight>
+
+            );
+
+        }
+
+
     }
 
 

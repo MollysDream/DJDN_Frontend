@@ -64,7 +64,7 @@ export async function getAdverByAddressName(addressName) {
 export async function getAdvertisementPost(userId) {
     console.log('getAdvertisementPost함수 호출됨');
     const adverData = await axi.get("/advertisement/getAdvertisementPost", {params:{userId:userId}});
-    console.log(adverData.data);
+    //console.log(adverData.data);
     return adverData.data;
 }
 
