@@ -10,7 +10,8 @@ import {CheckBox} from 'react-native-elements';
 import request from "../../requestAPI";
 import requestUserAPI from "../../requestUserAPI";
 import {heightPercentageToDP as hp, widthPercentageToDP as wp} from "react-native-responsive-screen";
-
+import Icon from 'react-native-vector-icons/AntDesign';
+import Icon4 from "react-native-vector-icons/MaterialIcons";
 
 export default class FilterOptionScreen extends Component{
     constructor(props) {
@@ -67,7 +68,8 @@ export default class FilterOptionScreen extends Component{
     render(){
         const options = [
             {label: "최신순", value:0},
-            {label: "거리순", value:1}
+            {label: "거리순", value:1},
+            {label: "키워드", value:2}
         ]
         return (
             <View style={{flex:1, backgroundColor:'white'}}>
@@ -99,10 +101,14 @@ export default class FilterOptionScreen extends Component{
                         initial={this.state.sort}
                         options={options}
                         onPress={value => this.setState({sort:value})}
-                        buttonColor={'#89dcfd'}
-                        borderColor={'#89dcfd'}
+                        buttonColor={'#69d5ff'}
+                        borderColor={'#69d5ff'}
                         hasPadding
                     />
+                    <TouchableOpacity onPress={()=>this.props.navigation.navigate('keywordScreen', {userId:this.state.userData._id, keywordList:this.state.userData.keyword})}
+                        style={{borderRadius:10,backgroundColor:'#b4ecff',alignSelf:'flex-end', marginTop:5, marginRight:31, padding:4}}>
+                        <Text style={{fontSize:13}}>키워드 설정</Text>
+                    </TouchableOpacity>
                 </View>
 
                 <View style={styles.btnArea2}>
