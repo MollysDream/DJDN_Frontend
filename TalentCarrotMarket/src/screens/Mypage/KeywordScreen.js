@@ -68,7 +68,7 @@ const KeywordScreen = ({navigation, route}) => {
 
             <View style={styles.buttonList}>
                 <Icon style={styles.iconPlace} name="tags"  size={40} color="#37CEFF" />
-                <Text style={styles.buttonText}>{`키워드 알림`}</Text>
+                <Text style={styles.buttonText}>{`키워드 설정`}</Text>
                 <Text style={[styles.buttonText, {color:'#006BFF'}]}>{keywordList.length}</Text>
                 <Text style={[styles.buttonText, {marginLeft:1}]}>{`/${MAXKEYWORD}`}</Text>
             </View>

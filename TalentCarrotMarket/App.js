@@ -139,6 +139,7 @@ const HomeStackScreen = () => {
       <HomeStack.Screen options={{title: "사용자 프로필"}} name="사용자 프로필" component={userProfileScreen} />
 
       <HomeStack.Screen options={{title: "광고 정보"}} name="DetailAdvertisement" component={detailAdvertisementScreen} />
+      <SettingStack.Screen options={{title: "키워드"}} name="keywordScreen" component={keywordScreen}/>
 
     </Stack.Navigator>
   );

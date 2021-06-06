@@ -150,7 +150,7 @@ const MypageScreen = ({navigation}) => {
 
               <TouchableOpacity style={styles.buttonList} onPress={goToKeywordScreen}>
                   <Icon style={[styles.iconPlace, {marginTop:3}]} name="tags"  size={36} color="#37CEFF" />
-                  <Text style={styles.buttonText}>키워드 알림</Text>
+                  <Text style={styles.buttonText}>키워드 설정</Text>
               </TouchableOpacity>
               
               <TouchableOpacity style={styles.buttonList} onPress={goToAdvertiseScreen}>

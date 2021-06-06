@@ -7,20 +7,12 @@ import {
     Button, Image, TouchableWithoutFeedback, TouchableHighlight, ScrollView, Modal
 } from 'react-native';
 import {Container, Content, Form, Header, Input, Item, Label, Left, Right, Textarea} from "native-base";
-import Modal2 from "react-native-modal";
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import Icon from 'react-native-vector-icons/FontAwesome5';
-import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import { SliderBox } from "react-native-image-slider-box";
-import AsyncStorage from '@react-native-community/async-storage';
-import requestUserAPI from "../../requestUserAPI";
-import requestAddressAPI from "../../requestAddressAPI";
-import {useIsFocused} from "@react-navigation/native";
-import requestAdverAPI from "../../requestAdverAPI";
-import NaverMapView, {Circle, Marker} from "react-native-nmap";
 import {getAdEndDate, getDate} from "../../function";
 
 const DetailAdvertisementScreen = (props) => {

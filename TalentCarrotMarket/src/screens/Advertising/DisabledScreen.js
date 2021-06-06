@@ -14,14 +14,10 @@ import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {SearchBar} from 'react-native-elements';
-import request from '../../requestAPI';
-import requestUser from "../../requestUserAPI";
 import requestAdverAPI from "../../requestAdverAPI";
 import AsyncStorage from '@react-native-community/async-storage';
 import Icon from "react-native-vector-icons/FontAwesome5";
 import Icon2 from "react-native-vector-icons/Entypo";
-import Icon3 from "react-native-vector-icons/Ionicons";
 import Icon4 from "react-native-vector-icons/Fontisto";
 import Modal from 'react-native-modal';
 import {getDate, getGMT9Date, getPrice, message} from "../../function";
