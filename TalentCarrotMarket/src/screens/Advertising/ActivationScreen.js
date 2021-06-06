@@ -140,9 +140,15 @@ export default class Actiation extends Component {
                                 <Text style={styles.postTitle}>{item.title}</Text>
                             </View>
 
-                            <View style={[statusStyle,{marginTop:3}]}>
-                                <Text>{status}</Text>
+                            <View style={{flexDirection:"row"}}>
+                                <View style={[statusStyle,{marginTop:3}]}>
+                                    <Text>{status}</Text>
+                                </View>
+                                <View style={[statusStyle,{marginTop:3, marginLeft:3, backgroundColor:'#ffc2fa'}]}>
+                                    <Text>{`노출수: ${item.count}회`}</Text>
+                                </View>
                             </View>
+
                             <Text style={styles.postPrice}>{price==='0'?null:`${price}원`}</Text>
 
                         </View>

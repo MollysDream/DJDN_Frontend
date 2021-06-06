@@ -157,8 +157,12 @@ const DetailAdverScreen = (props) => {
                             }
                         </Text>
                     </View>
+                    <View style={{backgroundColor:'#ffc2fa', padding: 3, borderRadius: 7, position:'absolute', right:13}} >
+                        <Text>{`노출수: ${advertisement.count}회`}</Text>
+                    </View>
 
                 </Item>
+
 
             </Content>
         </ScrollView>

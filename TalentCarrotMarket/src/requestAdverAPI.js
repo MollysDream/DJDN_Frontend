@@ -4,6 +4,9 @@ import {HOST} from "./function";
 
 const axi = axios.create({baseURL: `http://${HOST}:3000`});
 
+//차감할 포인트
+const amount = 1;
+
 export async function createAdver(adverData){
     console.log("createAdver함수 호출됨");
     //console.log(postData);
@@ -65,6 +68,12 @@ export async function getAdvertisementPost(userId) {
     console.log('getAdvertisementPost함수 호출됨');
     const adverData = await axi.get("/advertisement/getAdvertisementPost", {params:{userId:userId}});
     //console.log(adverData.data);
+    if(adverData.data==null)
+        return [];
+
+    let user_id = adverData.data.shopOwner;
+    await axi.post("/point/deductPoint",{user_id, amount});
+
     return adverData.data;
 }
 
