@@ -35,7 +35,8 @@ export default class EditAdverScreen extends Component {
         title: this.props.route.params.detailAdver.title,
         image: this.props.route.params.adverImages,
         text: this.props.route.params.detailAdver.text,
-        price: this.props.route.params.detailAdver.price,
+        price: this.props.route.params.detailAdver.price===0?'':this.props.route.params.detailAdver.price,
+        phoneNumber:this.props.route.params.detailAdver.phoneNumber,
         imageTemp: [], //디바이스에서 불러온 이미지 정보 임시 저장
         countImage: 0, //선택한 이미지 개수
         user_id: "",
@@ -80,6 +81,9 @@ export default class EditAdverScreen extends Component {
             )
         } else if (type == 'price') {
             this.setState({price: text})
+        }else if(type=='phoneNumber'){
+            console.log(this.state.phoneNumber);
+            this.setState({phoneNumber:text})
         }
     }
 
@@ -100,9 +104,6 @@ export default class EditAdverScreen extends Component {
             return;
         } else if (this.state.text.length === 0) {
             message("광고 내용을 작성해주세요");
-            return;
-        } else if (this.state.price.length === 0) {
-            message("가격을 작성해주세요");
             return;
         }
 
@@ -356,10 +357,22 @@ export default class EditAdverScreen extends Component {
                                         <Label style={{width:'18%'}}>가격</Label>
                                         <Input autoCapitalize='none'
                                                keyboardType="numeric"
+                                               placeholder={"(선택사항)"}
                                                onChangeText={(text) => this.writeAd(text, "price")}
-                                        >{this.props.route.params.detailAdver.price}</Input>
+                                        >{this.state.price}</Input>
 
                                     </Item>
+
+                                    <Item inlinelabel >
+                                        <Label style={{width:'18%'}}>연락처</Label>
+                                        <Input autoCapitalize='none'
+                                               keyboardType="numeric"
+                                               placeholder={"(선택사항)"}
+                                               onChangeText={(text) => this.writeAd(text, "phoneNumber")}
+                                        >{this.props.route.params.detailAdver.phoneNumber}</Input>
+
+                                    </Item>
+
                                     <Item  inlinelabel >
                                         <TouchableOpacity
                                             onPress={this.selectImage}

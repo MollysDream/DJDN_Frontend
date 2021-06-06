@@ -43,6 +43,7 @@ export default class MAkeAdScreen extends Component{
         imageTemp:[],
         text: "",
         price: 0,
+        phoneNumber:"",
         count: 0,
         shopOwner:"",
         area: {},
@@ -93,20 +94,18 @@ export default class MAkeAdScreen extends Component{
 
     writeAd = (text, type)=>{
 
-        if(type == "active"){
-            this.setState({active:text})
-        }
-        else if(type == 'title'){
+
+        if(type == 'title'){
             this.setState({title:text})
         }
         else if(type == 'text'){
             this.setState({text:text})
         }
-        else if(type == 'duration'){
-            this.setState({tag:text})
-        }
         else if(type == 'price'){
             this.setState({price:text})
+        }else if(type=='phoneNumber'){
+            console.log(this.state.phoneNumber);
+            this.setState({phoneNumber:text})
         }
     }
 
@@ -129,10 +128,6 @@ export default class MAkeAdScreen extends Component{
         }
         else if(this.state.text.length === 0){
             message("광고 내용을 작성해주세요");
-            return;
-        }
-        else if(this.state.price.length === 0){
-            message("가격을 작성해주세요");
             return;
         }
 
@@ -378,10 +373,22 @@ export default class MAkeAdScreen extends Component{
                                         <Label style={{width:'18%'}}>가격</Label>
                                         <Input autoCapitalize='none'
                                                keyboardType="numeric"
+                                               placeholder={"(선택사항)"}
                                                onChangeText={(text) => this.writeAd(text, "price")}
                                         />
 
                                     </Item>
+                                    <Item inlinelabel >
+                                        <Label style={{width:'18%'}}>연락처</Label>
+                                        <Input autoCapitalize='none'
+                                               keyboardType="numeric"
+                                               placeholder={"(선택사항)"}
+                                               onChangeText={(text) => this.writeAd(text, "phoneNumber")}
+                                        />
+
+                                    </Item>
+
+
                                     <Item  inlinelabel >
                                         <TouchableOpacity
                                             onPress={this.selectImage}

@@ -24,7 +24,7 @@ import Icon2 from "react-native-vector-icons/Entypo";
 import Icon3 from "react-native-vector-icons/Ionicons";
 import Modal from 'react-native-modal';
 import Icon4 from "react-native-vector-icons/Fontisto";
-import {getDate, getPrice} from "../../function";
+import {getDate, getGMT9Date, getPrice} from "../../function";
 
 let userId;
 
@@ -116,6 +116,12 @@ export default class Actiation extends Component {
         let statusStyle = styles.post_sign
         let price = getPrice(item.price);
 
+        let curTime = getGMT9Date(new Date());
+        if (new Date(item.endDate)<curTime){
+            status = '기간만료';
+            statusStyle = [styles.post_sign,{backgroundColor: '#ff6e6e'}]
+        }
+
         return(
             <>
                 {
@@ -134,10 +140,16 @@ export default class Actiation extends Component {
                                 <Text style={styles.postTitle}>{item.title}</Text>
                             </View>
 
-                            <View style={[statusStyle,{marginTop:3}]}>
-                                <Text>{status}</Text>
+                            <View style={{flexDirection:"row"}}>
+                                <View style={[statusStyle,{marginTop:3}]}>
+                                    <Text>{status}</Text>
+                                </View>
+                                <View style={[statusStyle,{marginTop:3, marginLeft:3, backgroundColor:'#ffc2fa'}]}>
+                                    <Text>{`노출수: ${item.count}회`}</Text>
+                                </View>
                             </View>
-                            <Text style={styles.postPrice}>{`${price}원`}</Text>
+
+                            <Text style={styles.postPrice}>{price==='0'?null:`${price}원`}</Text>
 
                         </View>
 
@@ -157,6 +169,7 @@ export default class Actiation extends Component {
     return(
         <View>
              <FlatList
+                        contentContainerStyle={{paddingBottom:70}}
                         data={this.state.data}
                         keyExtractor={(item,index) => String(item._id)}
                         renderItem={({item,index})=>this.returnFlatListItem(item,index)}

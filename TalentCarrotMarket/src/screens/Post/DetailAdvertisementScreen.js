@@ -4,49 +4,35 @@ import {
     Text,
     StyleSheet,
     TouchableOpacity,
-    Button, Image, Modal, TouchableWithoutFeedback, TouchableHighlight, Alert, ScrollView
+    Button, Image, TouchableWithoutFeedback, TouchableHighlight, ScrollView, Modal
 } from 'react-native';
 import {Container, Content, Form, Header, Input, Item, Label, Left, Right, Textarea} from "native-base";
 import Modal2 from "react-native-modal";
-
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 import { SliderBox } from "react-native-image-slider-box";
-import requestAdverAPI from "../../requestAdverAPI";
-import {getAdEndDate, getDate} from "../../function";
-import NaverMapView, {Circle, Marker} from "react-native-nmap";
-import Icon2 from "react-native-vector-icons/MaterialCommunityIcons";
+import AsyncStorage from '@react-native-community/async-storage';
 import requestUserAPI from "../../requestUserAPI";
 import requestAddressAPI from "../../requestAddressAPI";
+import {useIsFocused} from "@react-navigation/native";
+import requestAdverAPI from "../../requestAdverAPI";
+import NaverMapView, {Circle, Marker} from "react-native-nmap";
+import {getAdEndDate, getDate} from "../../function";
 
+const DetailAdvertisementScreen = (props) => {
 
-const ModifyApproveScreen = (props) => {
     const [advertisement, setadver] = useState(props.route.params.item);
+
     const [modalVisible, setMv] = useState(false);
     const [modalImage, setMi] = useState(0);
 
-    const [mapModal, setMapModal] = useState(false);
-    const [userAddress, setUserAddress] = useState(undefined);
-
-    const P1 = {
-        latitude: Number(advertisement.latitude),
-        longitude: Number(advertisement.longitude)
-    }
-
-    function seeLocation(){
-        setMapModal(!mapModal)
-    }
 
     useEffect(() => {
-        async function getUserAddress(){
-            let address = await requestAddressAPI.getUserAddress(advertisement.shopOwner._id);
-            setUserAddress(address.address[0].addressName)
-        }
-        getUserAddress();
-        //console.log(advertisement);
+        console.log(advertisement);
     }, []);
 
     function onImagePress(index){
@@ -54,70 +40,15 @@ const ModifyApproveScreen = (props) => {
         setMi(index);
     }
 
-    async function approveButton(){
-        let approve = !advertisement.approve;
-        await requestAdverAPI.updateAdverApprove(advertisement._id, approve);
 
-        Alert.alert("승인 완료", "광고 승인이 완료되었습니다.",
-            [{ text: '확인', style: 'cancel',
-                onPress : ()=> {
-                    props.navigation.goBack();
-                }}])
-
+    function seeLocation(){
+        setMapModal(!mapModal)
     }
-
-    async function disapproveButton(){
-        let approve = !advertisement.approve;
-        await requestAdverAPI.updateAdverApprove(advertisement._id, approve);
-
-        Alert.alert("비활성화 완료", "광고를 비활성화 하였습니다.",
-            [{ text: '확인', style: 'cancel',
-                onPress : ()=> {
-                    props.navigation.goBack();
-                }}])
-
-    }
-
 
     return (
         <ScrollView>
-
-            {/*광고 위치선택 모달*/}
-            <Modal2 isVisible={mapModal}>
-
-                <View style={{backgroundColor:'white',borderRadius:20, width:'100%', height:'100%'}}>
-
-                    <Text style={styles.locationModalText}>광고 위치</Text>
-
-                    <View pointerEvents="none" >
-                        <NaverMapView
-                            style={{width: '100%', height: hp(60)}}
-                            /*showsMyLocationButton={true}*/
-                            center={{...P1, zoom:13}}>
-
-                            <Marker coordinate={P1} pinColor={"red"}/>
-                            <Circle coordinate={P1} radius={advertisement.radius} color={'rgba(144,64,201,0.2)'}/>
-
-                        </NaverMapView>
-                    </View>
-
-                    <TouchableOpacity style={{marginTop:15,alignSelf:"center", borderRadius:10, borderWidth:1,backgroundColor:'#d3acff', borderColor:'purple',padding:10}}>
-                        <Text style={{alignSelf:'center',fontSize:17}}>{`${advertisement.addressName} - ${advertisement.radius}m`}</Text>
-                    </TouchableOpacity>
-
-
-                    <TouchableOpacity onPress={()=>setMapModal(false)}
-                                      style={{position:'absolute',top:3,right:5}}>
-                        <Icon2 name="cancel"  size={40} color="#c18aff" />
-                    </TouchableOpacity>
-
-                </View>
-
-            </Modal2>
-
-
-
             <Content>
+
                 <Modal animationType={"fade"} transparent={false}
                        visible={modalVisible}
                        onRequestClose={() => { console.log("Modal has been closed.") }}>
@@ -131,19 +62,6 @@ const ModifyApproveScreen = (props) => {
                     </View>
                 </Modal>
 
-                <View style={{flexDirection:'row'}}>
-
-                    <TouchableOpacity style={[styles.ruleButton, {justifyContent:'center', backgroundColor:'#e5cdff'}]} onPress={()=>seeLocation()}>
-                        <Text style={{alignSelf:'center'}}>{`${advertisement.addressName} - ${advertisement.radius}m`}</Text>
-                        <Text style={{alignSelf:'center'}}>클릭하여 위치 확인</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity style={[styles.ruleButton, {justifyContent:'center', backgroundColor:'#e5cdff'}]}>
-                        <Text style={{alignSelf:'center'}}>{`만료: ${getAdEndDate(new Date(advertisement.endDate))}`}</Text>
-                    </TouchableOpacity>
-
-                </View>
-
                 <Item >
                     <View>
                         <SliderBox
@@ -156,21 +74,6 @@ const ModifyApproveScreen = (props) => {
                         />
                     </View>
                 </Item>
-
-                <Item style={{marginTop:10, paddingBottom:10, flexDirection:'row'}} >
-
-                    <View style={{ flexDirection:'row'}}>
-                        <Image style={styles.profileImage} source={{ uri: advertisement.shopOwner.profileImage}}/>
-                        <View style={{flexDirection:'column', paddingTop:9}}>
-                            <Text style={{color:'grey',fontSize:13}}>{`${userAddress}의`}</Text>
-                            <Text style={{fontSize:17, marginBottom : "3%", marginTop : "3%" }}>
-                                {`${advertisement.shopOwner.nickname}님`}
-                            </Text>
-                        </View>
-                    </View>
-
-                </Item>
-
                 <Text style={{fontSize:20, fontWeight : 'bold', marginLeft : '3%', marginTop : '3%',  marginBottom : '3%'}}>
                     {`${advertisement.title}`}
                 </Text>
@@ -179,11 +82,13 @@ const ModifyApproveScreen = (props) => {
                         {getDate(advertisement.date)}
                     </Text>
                 </Item>
+
                 <Item>
                     <Text style={{fontSize:16, marginTop : '7%',marginBottom : '20%', marginLeft : '3%'}}>
                         {`${advertisement.text}`}
                     </Text>
                 </Item>
+
                 <Item>
                     <View style={{flexDirection:'column'}}>
                         <Text style={{fontSize: 15 , marginLeft : "3%",marginTop : '5%',marginBottom : '10%'}}>
@@ -200,16 +105,6 @@ const ModifyApproveScreen = (props) => {
                         </Text>
                     </View>
                 </Item>
-                {
-                    advertisement.approve == false ?
-                        <TouchableOpacity style={styles.btn2} onPress={()=>approveButton()}>
-                            <Text style={{color: 'white', fontSize:18}}>광고 승인</Text>
-                        </TouchableOpacity>
-                        :
-                        <TouchableOpacity style={styles.btn2} onPress={()=>disapproveButton()}>
-                            <Text style={{color: 'white', fontSize:18}}>광고 비활성화</Text>
-                        </TouchableOpacity>
-                }
 
             </Content>
         </ScrollView>
@@ -275,21 +170,21 @@ const styles = StyleSheet.create({
     },
     btn2: {
         flex: 1,
-        width: 200,
+        width: 300,
         height: 50,
         borderRadius: 7,
         justifyContent: 'center',
         alignItems: 'center',
         alignSelf : "center",
-        backgroundColor: '#8d72ff',
-      },
+        backgroundColor: '#38b9ff',
+    },
     btnArea2: {
         height: hp(10),
         // backgroundColor: 'orange',
         paddingTop: hp(1.5),
         paddingBottom: hp(1.5),
         alignItems: 'center',
-      },
+    },
     cover:{
         flex: 1,
         width: 200,
@@ -314,4 +209,5 @@ const styles = StyleSheet.create({
 
 
 });
-export default ModifyApproveScreen;
+export default DetailAdvertisementScreen;
+

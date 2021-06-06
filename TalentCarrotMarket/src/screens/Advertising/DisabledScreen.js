@@ -24,7 +24,9 @@ import Icon2 from "react-native-vector-icons/Entypo";
 import Icon3 from "react-native-vector-icons/Ionicons";
 import Icon4 from "react-native-vector-icons/Fontisto";
 import Modal from 'react-native-modal';
-import {getDate, getPrice} from "../../function";
+import {getDate, getGMT9Date, getPrice, message} from "../../function";
+import requestPointAPI from "../../requestPointAPI";
+import FlashMessage from "react-native-flash-message";
 
 // 광고 클릭하면 해당 광고의 자세한 정보 보여주기
 // 승인된 것 안된 것도 구분
@@ -83,6 +85,14 @@ export default class DisabledScreen extends Component {
     }
 
     async toggleActivation(item){
+
+        let pointData =await requestPointAPI.getPoint(item.shopOwner);
+        if(pointData.point<=0){
+            message('포인트가 부족합니다');
+            this.toggleModal();
+            return
+        }
+
         const active = !item.active;
         this.toggleModal();
         let result = await requestAdverAPI.updateAdverActive(item._id,active);
@@ -120,6 +130,13 @@ export default class DisabledScreen extends Component {
         let statusStyle = styles.post_sign
         let price = getPrice(item.price);
 
+        let curTime = getGMT9Date(new Date());
+        if (new Date(item.endDate)<curTime){
+            status = '기간만료';
+            statusStyle = [styles.post_sign,{backgroundColor: '#ff6e6e'}]
+        }
+
+
         return(
             <>
                 {
@@ -138,10 +155,16 @@ export default class DisabledScreen extends Component {
                                             <Text style={styles.postTitle}>{item.title}</Text>
                                         </View>
 
-                                        <View style={[statusStyle,{marginTop:3}]}>
-                                            <Text>{status}</Text>
+                                        <View style={{flexDirection:"row"}}>
+                                            <View style={[statusStyle,{marginTop:3}]}>
+                                                <Text>{status}</Text>
+                                            </View>
+                                            <View style={[statusStyle,{marginTop:3, marginLeft:3, backgroundColor:'#ffc2fa'}]}>
+                                                <Text>{`노출수: ${item.count}회`}</Text>
+                                            </View>
                                         </View>
-                                        <Text style={styles.postPrice}>{`${price}원`}</Text>
+
+                                        <Text style={styles.postPrice}>{price==='0'?null:`${price}원`}</Text>
 
                                     </View>
 
@@ -163,7 +186,9 @@ export default class DisabledScreen extends Component {
     render() {
         return(
             <View>
+                <FlashMessage position="top"/>
                 <FlatList
+                    contentContainerStyle={{paddingBottom:70}}
                     data={this.state.data}
                     keyExtractor={(item,index) => String(item._id)}
                     renderItem={({item,index})=>this.returnFlatListItem(item,index)}

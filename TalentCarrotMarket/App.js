@@ -31,6 +31,7 @@ import makePostScreen from './src/screens/Post/MakePostScreen';
 import filterOptionScreen from './src/screens/Post/FilterOptionScreen';
 
 import detailPostScreen from './src/screens/Post/DetailPostScreen';
+import detailAdvertisementScreen from './src/screens/Post/DetailAdvertisementScreen';
 import tradeSetScreen from './src/screens/Chat/TradeSetScreen';
 import reportScreen from './src/screens/Post/ReportScreen';
 
@@ -136,6 +137,8 @@ const HomeStackScreen = () => {
       <HomeStack.Screen options={{title: "신고"}} name="Report" component={reportScreen} />
 
       <HomeStack.Screen options={{title: "사용자 프로필"}} name="사용자 프로필" component={userProfileScreen} />
+
+      <HomeStack.Screen options={{title: "광고 정보"}} name="DetailAdvertisement" component={detailAdvertisementScreen} />
 
     </Stack.Navigator>
   );
