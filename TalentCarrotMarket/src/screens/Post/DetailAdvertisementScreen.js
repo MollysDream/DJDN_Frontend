@@ -90,9 +90,20 @@ const DetailAdvertisementScreen = (props) => {
                 </Item>
 
                 <Item>
-                    <Text style={{fontSize: 15 , marginLeft : "3%",marginTop : '5%',marginBottom : '10%'}}>
-                        {`  가격: ${advertisement.price}원`}
-                    </Text>
+                    <View style={{flexDirection:'column'}}>
+                        <Text style={{fontSize: 15 , marginLeft : "3%",marginTop : '5%',marginBottom : '10%'}}>
+                            {
+                                advertisement.price===0?
+                                    `  가격: 없음`:`  가격: ${advertisement.price}원`
+                            }
+                        </Text>
+                        <Text style={{fontSize: 15 , marginLeft : "3%",marginTop : '5%',marginBottom : '10%'}}>
+                            {
+                                advertisement.phoneNumber?
+                                    `  연락처: ${advertisement.phoneNumber}`:`  연락처: 없음`
+                            }
+                        </Text>
+                    </View>
                 </Item>
 
             </Content>

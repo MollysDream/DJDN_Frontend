@@ -163,7 +163,7 @@ export default class HomeScreen extends Component{
                                 <Text>{`${item.addressName} - ${status}`}</Text>
                             </View>
                             <View style={{flexDirection:'row'}}>
-                                <Text style={[styles.postPrice,{color:"#a05eff"}]}>{`${price}원`}</Text>
+                                <Text style={[styles.postPrice,{color:"#a05eff"}]}>{price==='0'?null:`${price}원`}</Text>
                             </View>
                         </View>
                     </View>

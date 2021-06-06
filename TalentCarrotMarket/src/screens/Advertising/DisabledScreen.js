@@ -148,7 +148,7 @@ export default class DisabledScreen extends Component {
                                         <View style={[statusStyle,{marginTop:3}]}>
                                             <Text>{status}</Text>
                                         </View>
-                                        <Text style={styles.postPrice}>{`${price}원`}</Text>
+                                        <Text style={styles.postPrice}>{price==='0'?null:`${price}원`}</Text>
 
                                     </View>
 
