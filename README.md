@@ -55,6 +55,7 @@ const smsKey = {
 	phoneNumber: ,
 	serviceId: 
 }
+export default smsKey
 ```
 ./src/Key.js 파일 생성 후 다음과 같이 설정이 필요합니다.
 
@@ -63,6 +64,7 @@ const S3Key = {
     accessKey: ,
     secretKey: 
 }
+export default S3Key
 ```
 
 
