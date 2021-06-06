@@ -128,8 +128,7 @@ export default class HomeScreen extends Component{
 
     async goToDetailAdvertisementScreen(item){
         console.log(`${item.title} 광고 확인`);
-
-        //this.props.navigation.navigate('DetailPost',{detailPost: item, postOwner: userData});
+        this.props.navigation.navigate('DetailAdvertisement',{item});
     }
 
     filterOption = async () =>{
