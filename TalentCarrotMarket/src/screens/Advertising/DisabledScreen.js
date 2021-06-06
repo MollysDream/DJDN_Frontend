@@ -24,7 +24,9 @@ import Icon2 from "react-native-vector-icons/Entypo";
 import Icon3 from "react-native-vector-icons/Ionicons";
 import Icon4 from "react-native-vector-icons/Fontisto";
 import Modal from 'react-native-modal';
-import {getDate, getGMT9Date, getPrice} from "../../function";
+import {getDate, getGMT9Date, getPrice, message} from "../../function";
+import requestPointAPI from "../../requestPointAPI";
+import FlashMessage from "react-native-flash-message";
 
 // 광고 클릭하면 해당 광고의 자세한 정보 보여주기
 // 승인된 것 안된 것도 구분
@@ -83,6 +85,14 @@ export default class DisabledScreen extends Component {
     }
 
     async toggleActivation(item){
+
+        let pointData =await requestPointAPI.getPoint(item.shopOwner);
+        if(pointData.point<=0){
+            message('포인트가 부족합니다');
+            this.toggleModal();
+            return
+        }
+
         const active = !item.active;
         this.toggleModal();
         let result = await requestAdverAPI.updateAdverActive(item._id,active);
@@ -170,6 +180,7 @@ export default class DisabledScreen extends Component {
     render() {
         return(
             <View>
+                <FlashMessage position="top"/>
                 <FlatList
                     contentContainerStyle={{paddingBottom:70}}
                     data={this.state.data}
