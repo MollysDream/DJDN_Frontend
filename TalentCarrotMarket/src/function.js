@@ -1,42 +1,40 @@
 import {showMessage} from "react-native-flash-message";
 
 function getDate(date){
-    let ret='';
-    let slice_date = date.split("T");
 
-    //YMD 0 = 년, 1 = 월, 2 = 일
-    let YMD = slice_date[0].split('-');
-    //console.log(slice_date[1]);
-    //HMS 0 = 시간, 1 = 분, 2 = 초
-    let HM = slice_date[1].split(':');
-    let S = HM[2].split('.')[0];
+    let itemTime = getGMT9Date(new Date(date));
+    let curTime = getGMT9Date(new Date());
+    //console.log(itemTime);
+    //console.log(curTime);
+
+    let delta = Math.abs(curTime - itemTime) / 1000;
+
+    let days = Math.floor(delta / 86400);
+    delta -= days * 86400;
+
+    let hours = Math.floor(delta / 3600) % 24;
+    delta -= hours * 3600;
+
+    let minutes = Math.floor(delta / 60) % 60;
+    delta -= minutes * 60;
+
+    let seconds = Math.floor(delta % 60);  // in theory the modulus is not required
+
+    //console.log(days +" "+hours+" "+minutes+" "+seconds);
+
+    console.log(String(itemTime));
+    if(days>30){
+        return `${itemTime.getUTCFullYear()}년-${itemTime.getUTCMonth()+1}월`;
+    }
+    if(days>0)
+        return days+'일 전';
+    if(hours>0)
+        return hours+'시간 전';
+    if(minutes)
+        return minutes+'분 전';
+    return seconds+'초 전';
 
 
-    let cur_date = new Date();
-    let year = cur_date.getFullYear();
-    let month = (1 + cur_date.getMonth());
-    month = month >= 10 ? month: '0' + month;
-    let day = cur_date.getDate();
-    day = day >= 10 ? day : '0' + day;
-    let hour = cur_date.getHours();
-    let minutes = cur_date.getMinutes();
-    let second = cur_date.getSeconds();
-
-
-
-    ret = String(second-parseInt(S))+'초 전';
-    if(parseInt(HM[1]) != parseInt(minutes))
-        ret = String(minutes- HM[1])+'분 전';
-    if((parseInt(HM[0])+9)%24 != parseInt(hour))
-        ret = String(hour - (parseInt(HM[0])+9)%24)+'시간 전';
-    if((parseInt(HM[0])+9)>=24)
-        YMD[2] = parseInt(YMD[2]) + 1;
-    if(YMD[2] != day)
-        ret = String(day - YMD[2]) + "일 전";
-    if(YMD[1] != month || YMD[0] != year)
-        ret = `${YMD[0]}년-${YMD[1]}월`;
-
-    return ret;
 }
 
 function getPrice(price){
