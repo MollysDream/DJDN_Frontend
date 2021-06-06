@@ -1,4 +1,4 @@
-<h1 align="center">Welcome to DJDN-Frontend 👋</h1>
+<h1 align="center">DJDN-Frontend에 오신 것을 환영합니다!👋</h1>
 <p>
   <img alt="Version" src="https://img.shields.io/badge/version-1.0.0-blue.svg?cacheSeconds=2592000" />
   <a href=" " target="_blank">
@@ -126,17 +126,14 @@ npm run android
 
 ## Author
 
-👤 **김영웅**, **윤태섭**, **이병훈**
+👤 **김영웅**, **나준엽**, **윤태섭**, **이병훈**, **정수범**
 
-* Github: [@Kim234](https://github.com/Kim234), [@styy1124](https://github.com/styy1124), [@LeeByeongHoon](https://github.com/LeeByeongHoon)
+* Github: [@Kim234](https://github.com/Kim234), [@junyeoop](https://github.com/junyeoop), [@styy1124](https://github.com/styy1124), [@LeeByeongHoon](https://github.com/LeeByeongHoon), [@teller2016](https://github.com/teller2016)
 
-## 🤝 Contributing
-
-Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page]( ). You can also take a look at the [contributing guide]( ).
 
 ## Show your support
 
-Give a ⭐️ if this project helped you!
+프로젝트가 도움이 되었다면 ⭐️ 을 눌러주세요!
 
 ***
 _This README was generated with ❤️ by [readme-md-generator](https://github.com/kefranabg/readme-md-generator)_
