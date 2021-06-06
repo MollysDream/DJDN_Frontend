@@ -24,7 +24,7 @@ import Icon2 from "react-native-vector-icons/Entypo";
 import Icon3 from "react-native-vector-icons/Ionicons";
 import Modal from 'react-native-modal';
 import Icon4 from "react-native-vector-icons/Fontisto";
-import {getDate, getPrice} from "../../function";
+import {getDate, getGMT9Date, getPrice} from "../../function";
 
 let userId;
 
@@ -115,6 +115,12 @@ export default class Actiation extends Component {
         let status = '활성화';
         let statusStyle = styles.post_sign
         let price = getPrice(item.price);
+
+        let curTime = getGMT9Date(new Date());
+        if (new Date(item.endDate)<curTime){
+            status = '기간만료';
+            statusStyle = [styles.post_sign,{backgroundColor: '#ff6e6e'}]
+        }
 
         return(
             <>

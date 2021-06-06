@@ -23,7 +23,7 @@ import Icon from "react-native-vector-icons/FontAwesome5";
 import Icon2 from "react-native-vector-icons/Entypo";
 import Icon3 from "react-native-vector-icons/Ionicons";
 import Modal from 'react-native-modal';
-import {getDate, getPrice} from "../../function";
+import {getDate, getGMT9Date, getPrice} from "../../function";
 
 // 광고 클릭하면 해당 광고의 자세한 정보 보여주기
 // 승인된 것 안된 것도 구분
@@ -111,6 +111,13 @@ export default class WaitApproveScreen extends Component {
         let status = '승인 대기중';
         let statusStyle = styles.post_sign
         let price = getPrice(item.price);
+
+        let curTime = getGMT9Date(new Date());
+        if (new Date(item.endDate)<curTime){
+            status = '기간만료';
+            statusStyle = [styles.post_sign,{backgroundColor: '#ff6e6e'}]
+        }
+
 
         return(
             <>
