@@ -156,6 +156,7 @@ export default class WaitApproveScreen extends Component {
     return(
         <View>
              <FlatList
+                        contentContainerStyle={{paddingBottom:70}}
                         data={this.state.data}
                         keyExtractor={(item,index) => String(item._id)}
                         renderItem={({item,index})=>this.returnFlatListItem(item,index)}

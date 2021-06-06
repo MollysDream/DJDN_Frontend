@@ -119,10 +119,6 @@ const AdvertisingScreen = ({navigation, route}) => {
               }}/>
 
               <View style={styles.container}>
-                 <TouchableOpacity onPress={()=>navigation.navigate('makeadver')}
-                                  style={{borderWidth:0,position:'absolute',bottom:5,alignSelf:'flex-end'}}>
-                    <Icon name="add-circle"  size={70} color="purple" />
-                </TouchableOpacity> 
                  <View style={styles.title}>
 
                  <TouchableOpacity style={{width:'33%', alignItems:'center'}} onPress={()=>setTab(2)}>
@@ -145,6 +141,11 @@ const AdvertisingScreen = ({navigation, route}) => {
                 </View>
                 <View>{Screen}</View>
             </View>
+
+                <TouchableOpacity onPress={()=>navigation.navigate('makeadver')}
+                                  style={{borderWidth:0,position:'absolute',bottom:5,right:5}}>
+                    <Icon name="add-circle"  size={70} color="purple" />
+                </TouchableOpacity>
 
             </View>
 
