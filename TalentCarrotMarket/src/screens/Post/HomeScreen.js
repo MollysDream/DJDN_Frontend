@@ -21,6 +21,7 @@ import requestUser from "../../requestUserAPI";
 import AsyncStorage from '@react-native-community/async-storage';
 import {getDate, getPrice} from '../../function';
 import requestAddressAPI from "../../requestAddressAPI";
+import requestAdverAPI from "../../requestAdverAPI";
 
 export default class HomeScreen extends Component{
 
@@ -53,9 +54,9 @@ export default class HomeScreen extends Component{
 
             //this.setState({userId:userId})
             const postData = await request.getPost(this.state.page, userId);
-
+            const advertisementData = await requestAdverAPI.getAdvertisementPost(userId);
             this.setState({
-                data: this.state.data.concat(postData),
+                data: this.state.data.concat(postData).concat(advertisementData),
                 page : this.state.page + 1,
             });
 
@@ -69,8 +70,9 @@ export default class HomeScreen extends Component{
     morePage = async() => {
         //console.log('더 불러와 제발!!');
         const postData = await request.getPost(this.state.page, this.state.userId);
+        const advertisementData = await requestAdverAPI.getAdvertisementPost(this.state.userId);
         this.setState({
-            data: this.state.data.concat(postData),
+            data: this.state.data.concat(postData).concat(advertisementData),
             page : this.state.page + 1,
             rerender: !this.state.rerender,
         });
@@ -83,8 +85,10 @@ export default class HomeScreen extends Component{
             this.setState({page:0, refreshing: true});
 
             const postData = await request.getPost(0, this.state.userId);
+            const advertisementData = await requestAdverAPI.getAdvertisementPost(this.state.userId);
+
             this.setState({
-                data: postData,
+                data: postData.concat(advertisementData),
                 page : this.state.page + 1,
                 rerender: !this.state.rerender,
                 refreshing: false
@@ -199,10 +203,10 @@ export default class HomeScreen extends Component{
 
                 <FlatList
                     data={this.state.data}
-                    keyExtractor={(item,index) => String(item._id)}
+                    keyExtractor={(item,index) => String(index+'_'+item._id)}
                     renderItem={({item,index})=>this.returnFlatListItem(item,index)}
                     onEndReached={this.morePage}
-                    onEndReachedThreshold={1}
+                    onEndReachedThreshold={0.2}
                     extraData={this.state.rerender}
                     refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.refreshPage} />}
                 />
