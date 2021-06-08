@@ -78,6 +78,8 @@ const AroundCertifyScreen = ({navigation,route}) => {
     //동네 인증
     const certifyAroundButton = async () =>{
 
+        await requestAddressAPI.createAddress(userId, chosenAddress, addressIndex);
+
           //현재 위치정보
         const addressDataParam ={
             userId:userId,

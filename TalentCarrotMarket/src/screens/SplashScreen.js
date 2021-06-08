@@ -16,6 +16,7 @@ import messaging from '@react-native-firebase/messaging';
 const SplashScreen = ({navigation}) => {
   //State for ActivityIndicator animation
   const [animating, setAnimating] = useState(true);
+  //AsyncStorage.clear();
 
   useEffect(() => {
     setTimeout(async () => {

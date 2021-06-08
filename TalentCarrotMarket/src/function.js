@@ -22,7 +22,7 @@ function getDate(date){
 
     //console.log(days +" "+hours+" "+minutes+" "+seconds);
 
-    console.log(String(itemTime));
+    //console.log(String(itemTime));
     if(days>30){
         return `${itemTime.getUTCFullYear()}년-${itemTime.getUTCMonth()+1}월`;
     }
@@ -94,8 +94,8 @@ function getAdEndDate(date){
 
 //const HOST = '192.168.25.35' // 정수범 안드로이드
 // const HOST = '192.168.219.114' // 나준엽 안드로이드
-const HOST = '192.168.25.36' // 김영웅 안드로이드
-// const HOST = '10.0.2.2'
+// const HOST = '192.168.219.100' // 김영웅 안드로이드
+const HOST = '10.0.2.2'
 
 function message(text){
     showMessage({message:text, type:'warning'});

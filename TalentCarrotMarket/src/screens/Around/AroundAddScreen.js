@@ -71,7 +71,7 @@ const AroundAddScreen = ({navigation,route}) => {
     const saveChosenAddress = async() =>{
         console.log(`${chosenAddress} 저장`);
         //let userId = await AsyncStorage.getItem('user_id');
-        let result = await requestAddressAPI.createAddress(userId, chosenAddress, chooseIndex);
+        //let result = await requestAddressAPI.createAddress(userId, chosenAddress, chooseIndex);
 
         navigation.navigate('aroundCertify',{
             chosenAddress:chosenAddress,
