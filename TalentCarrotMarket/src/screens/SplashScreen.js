@@ -64,8 +64,14 @@ const SplashScreen = ({navigation}) => {
           }
           
         }else{
-          console.log("Admin 로그인!");
-          navigation.replace('AdminTab');
+          let autoUserData = await requestMemberAPI.autoLogin(userId,fcmToken);
+          if(autoUserData.data.message){
+            console.log("Admin 로그인!");
+            navigation.replace('AdminTab');
+          } else{
+            console.log("자동 로그인에 실패하였습니다.");
+          }
+          
         }
 
       }
