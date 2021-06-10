@@ -153,8 +153,8 @@ const TradeTimerScreen = ({navigation, route}) =>{
         if(returnData.data.message){
 
           console.log(returnData.data.trade.endTime);
-          setEndDateTime(endDateTime);
           const returnEndDate = parse(returnData.data.trade.endTime);
+          setEndDateTime(returnEndDate.getTime());
 
           setDiffTime((returnEndDate.getTime()-nowDate)/1000);
           setIsEndSuggest(returnData.data.trade.completeSuggest);
