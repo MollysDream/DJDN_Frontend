@@ -28,6 +28,9 @@ import requestChatAPI from "../../requestChatAPI";
 import io from "socket.io-client";
 import {HOST} from "../../function";
 
+import {useIsFocused} from "@react-navigation/native";
+
+
 //글자 강조
 const B = (props) => <Text style={{fontWeight: 'bold', fontSize:wp('5.5%')}}>{props.children}</Text>
 
@@ -52,8 +55,6 @@ const TradeSetScreen =({navigation,route})=>{
       const [detailLocate,setDetailLocate]=useState('');
       const [isSuggest,setIsSuggest]=useState(false);
       const [isSave,setIsSave]=useState(false);
-      // const [sender, setSender]=useState('');
-      // const [receiver, setReceiver]=useState('');
       const [tradeId, setTradeId]=useState('');
 
       // 제안된 장소, 시간 확인
@@ -72,6 +73,9 @@ const TradeSetScreen =({navigation,route})=>{
       
     //실시간 통신 확인
     const [socketCome, setSocketCome] = useState(false);
+
+    const isFocused = useIsFocused();
+
 
       useEffect(()=>{
 
@@ -125,7 +129,7 @@ const TradeSetScreen =({navigation,route})=>{
           socket.on('delete trade to client', () => {
             setSocketCome(true);
           });
-      },[])
+      },[isFocused])
 
       useEffect(()=>{
 

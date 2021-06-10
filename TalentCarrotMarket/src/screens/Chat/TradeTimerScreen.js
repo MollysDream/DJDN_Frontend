@@ -40,21 +40,22 @@ let socket = io(`http://${HOST}:3002`);
 
 const TradeTimerScreen = ({navigation, route}) =>{
 
-  const {tradeId,endSet,proLocate,user1,user2, chatRoom, chatRoomData}=route.params;
   AsyncStorage.getItem('user_id').then((value) =>
-        userId=value
-      );
+    userId=value
+  );
 
+  const {tradeId,endSet,proLocate,user1,user2, chatRoom, chatRoomData}=route.params;
   const [endDateTime, setEndDateTime] = useState(endSet);
   const [endDateChange, setEndDateChange] = useState(false);
   const nowDate = Date.now();
   const [diffTime, setDiffTime] = useState((endDateTime.getTime()- nowDate)/1000);
-
   const [isEndSuggest, setIsEndSuggest] = useState(false);
   const [isEnd, setIsEnd] = useState(false);
 
   //실시간 통신 확인
   const [socketCome, setSocketCome] = useState(false);
+  //사용자 정보 가져오기
+  const [userData, setUserData] = useState();
 
   useEffect(()=>{
     console.log("새로운 종료시간은 "+endDateTime)
@@ -62,9 +63,6 @@ const TradeTimerScreen = ({navigation, route}) =>{
     console.log("새로운 연장시간은 "+diffTime);
     setEndDateChange(false)
   },[endDateChange])
-
-  //사용자 정보 가져오기
-  const [userData, setUserData] = useState();
 
     useEffect(() => {
       async function getData(){
@@ -298,7 +296,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
     navigation.navigate('사용자 프로필',{userData:userData});
   }
 
-   async function autoReport(){
+  async function autoReport(){
 
     console.log("신고된 주소 "+proLocate);
     console.log("확인 accesskey: "+smsKey.accessKey);
