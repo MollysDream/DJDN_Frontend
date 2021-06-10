@@ -94,8 +94,9 @@ function getAdEndDate(date){
 
 //const HOST = '192.168.25.35' // 정수범 안드로이드
 // const HOST = '192.168.219.114' // 나준엽 안드로이드
-// const HOST = '192.168.219.100' // 김영웅 안드로이드
-const HOST = '10.0.2.2'
+// const HOST = '192.168.25.32' // 김영웅 안드로이드
+// const HOST = '101.101.208.25'
+const HOST = '101.101.208.25'
 
 function message(text){
     showMessage({message:text, type:'warning'});
