@@ -23,7 +23,7 @@ import talentScreen from './src/screens/TalentScreen';
 import RegisterScreen from './src/screens/Auth/RegisterScreen';
 import LoginScreen from './src/screens/Auth/LoginScreen';
 
-//postStack(home)
+//HomeStack
 import homeScreen from './src/screens/Post/HomeScreen';
 import searchPostScreen from './src/screens/Post/SearchPostScreen';
 
@@ -33,7 +33,8 @@ import filterOptionScreen from './src/screens/Post/FilterOptionScreen';
 import detailPostScreen from './src/screens/Post/DetailPostScreen';
 import detailAdvertisementScreen from './src/screens/Post/DetailAdvertisementScreen';
 import tradeSetScreen from './src/screens/Chat/TradeSetScreen';
-import reportScreen from './src/screens/Post/ReportScreen';
+//import reportScreen from './src/screens/Post/ReportScreen';
+import reportPostUserScreen from './src/screens/Post/ReportPostUserScreen';
 
 import userProfileScreen from './src/screens/Post/UserProfileScreen';
 
@@ -134,7 +135,11 @@ const HomeStackScreen = () => {
       <ChatStack.Screen options={{title: "채팅"}}  name="게시글별 채팅리스트 채팅방" component={chatListRoomScreen} />
 
       <HomeStack.Screen options={{title: "거래"}} name="tradeset" component={tradeSetScreen} />
+{/*
       <HomeStack.Screen options={{title: "신고"}} name="Report" component={reportScreen} />
+*/}
+      <HomeStack.Screen options={{title: "신고"}} name="Report" component={reportPostUserScreen} />
+
 
       <HomeStack.Screen options={{title: "사용자 프로필"}} name="사용자 프로필" component={userProfileScreen} />
 
@@ -280,8 +285,8 @@ const AdminAdvertisementStackScreen = () => {
         <Stack.Navigator>
             <AdminAdvertisementStack.Screen name="광고 확인" component={adminAdvertisementScreen} />
             {/* <AdminAdvertisementStack.Screen name="adverrequest" component={adverRequest} /> */}
-            <AdminAdvertisementStack.Screen name="adverstatus" component={adverStatus} />
-            <AdminAdvertisementStack.Screen name="modifyapprove" component={modifyApprove} />
+            <AdminAdvertisementStack.Screen  name="adverstatus" component={adverStatus} />
+            <AdminAdvertisementStack.Screen options={{title: "광고 승인"}} name="modifyapprove" component={modifyApprove} />
 
 
         </Stack.Navigator>
