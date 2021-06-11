@@ -43,245 +43,251 @@ let socket = io(`http://${HOST}:3002`);
 
 const TradeSetScreen =({navigation,route})=>{
 
-      const {user1,user2,chatRoom}=route.params;
+    const {user1,user2,chatRoom}=route.params;
 
-      const locateInputRef = createRef();
- 
-      AsyncStorage.getItem('user_id').then((value) =>
-        userId=value
-      );
+    const locateInputRef = createRef();
 
-      const [locate,setLocate]=useState('');
-      const [detailLocate,setDetailLocate]=useState('');
-      const [isSuggest,setIsSuggest]=useState(false);
-      const [isSave,setIsSave]=useState(false);
-      const [tradeId, setTradeId]=useState('');
+    AsyncStorage.getItem('user_id').then((value) =>
+      userId=value
+    );
 
-      // 제안된 장소, 시간 확인
-      const [proLocate, setProLocate]=useState('');
-      const [start, setStart]=useState('');
-      const [end, setEnd]=useState('');
+    const [locate,setLocate]=useState('');
+    const [detailLocate,setDetailLocate]=useState('');
+    const [isSuggest,setIsSuggest]=useState(false);
+    const [isSave,setIsSave]=useState(false);
+    const [tradeId, setTradeId]=useState('');
 
-      //채팅방 데이터
+    // 제안된 장소, 시간 확인
+    const [proLocate, setProLocate]=useState('');
+    const [start, setStart]=useState('');
+    const [end, setEnd]=useState('');
+
+    //채팅방 데이터
     const [chatRoomData, setChatRoomData] = useState(null);
 
-      // 거래 장소 설정
-      const [currentLocation, setCurrentLocation] = useState({
-        latitude: 37.27886373711404, longitude: 127.04245001890514
-      });
+    // 거래 장소 설정
+    const [currentLocation, setCurrentLocation] = useState({
+      latitude: 37.27886373711404, longitude: 127.04245001890514
+    });
 
-      
     //실시간 통신 확인
     const [socketCome, setSocketCome] = useState(false);
 
+    // 화면 변경 시 데이터 불러옴
     const isFocused = useIsFocused();
 
 
-      useEffect(()=>{
+    useEffect(()=>{
 
-        console.log("채팅방 번호 "+chatRoom)
+      console.log("채팅방 번호 "+chatRoom)
 
-        requestTradeAPI.getTrade(chatRoom)
-          .then(returnData => {
-              if(returnData.data.message){
-              
-              const saveLongitude = returnData.data.trade.longitude;
-              const saveLatitude = returnData.data.trade.latitude;
+      requestTradeAPI.getTrade(chatRoom)
+        .then(returnData => {
+            if(returnData.data.message ){
+              // if(returnData.data.trade.complete==true){
+              //   alert("이미 종료된 거래입니다!")
+              //   navigation.navigate("chatch")
+              // }else{
+                const saveLongitude = returnData.data.trade.longitude;
+                const saveLatitude = returnData.data.trade.latitude;
 
-              saveLocation = {latitude:saveLatitude, longitude:saveLongitude};
+                saveLocation = {latitude:saveLatitude, longitude:saveLongitude};
 
-              console.log("거래 정보는 "+returnData.data.trade);
-              setIsSuggest(true);
-              setIsSave(returnData.data.trade.isSave);
-              setProLocate(returnData.data.trade.location);
-              setStart(returnData.data.trade.startTime);
-              setEnd(returnData.data.trade.endTime);
-              setTradeId(returnData.data.trade._id);
+                console.log("거래 정보는 "+returnData.data.trade);
+                setIsSuggest(true);
+                setIsSave(returnData.data.trade.isSave);
+                setProLocate(returnData.data.trade.location);
+                setStart(returnData.data.trade.startTime);
+                setEnd(returnData.data.trade.endTime);
+                setTradeId(returnData.data.trade._id);
 
-              console.log("가져온 거래 장소는 "+saveLocation.longtitude)
+                console.log("가져온 거래 장소는 "+saveLocation.longtitude)
 
-              if(returnData.data.trade.sender==userId){
-                console.log("현재 접속자는 거래 제안자임 "+ returnData.data.trade.sender);
-                sender=userId;
-              } else{
-                console.log("현재 접속자는 거래 제안받은사람임 "+ returnData.data.trade.receiver);
-                receiver=userId;
-              }
-            } else{
-              console.log("거래가 존재하지 않습니다.");
-            }
+                if(returnData.data.trade.sender==userId){
+                  console.log("현재 접속자는 거래 제안자임 "+ returnData.data.trade.sender);
+                  sender=userId;
+                } else{
+                  console.log("현재 접속자는 거래 제안받은사람임 "+ returnData.data.trade.receiver);
+                  receiver=userId;
+                }
+              // }
+          
+
+          } else{
+            console.log("거래가 존재하지 않습니다.");
+          }
+        })
+        //에러
+        .catch(err => {
+          console.log(err);
+        });
+
+        socket.emit('joinTradeSetRoom', chatRoom);
+
+        socket.on('suggest trade to client', () => {
+          setSocketCome(true);
+        });
+
+        socket.on('agree trade to client', () => {
+          setSocketCome(true);
+        });
+
+        socket.on('delete trade to client', () => {
+          setSocketCome(true);
+        });
+      },[isFocused])
+
+    useEffect(()=>{
+
+      console.log("socket 실시간 통신 완료 "+socketCome)
+  
+      requestTradeAPI.getTrade(chatRoom)
+        .then(returnData => {
+          if(returnData.data.message){
+
+            console.log('동의 상태는 '+returnData.data.trade.isSave);
+  
+            setIsSuggest(true);
+            setIsSave(returnData.data.trade.isSave);
+            setProLocate(returnData.data.trade.location);
+            setStart(returnData.data.trade.startTime);
+            setEnd(returnData.data.trade.endTime);
+
+            setSocketCome(false);
+            
+          } else{
+            console.log("거래가 존재하지 않습니다.");
+            navigation.navigate('chatch');
+          }
           })
           //에러
           .catch(err => {
-            console.log(err);
+              console.log(err);
           });
-
-          socket.emit('joinTradeSetRoom', chatRoom);
-
-          socket.on('suggest trade to client', () => {
-            setSocketCome(true);
-          });
-  
-          socket.on('agree trade to client', () => {
-            setSocketCome(true);
-          });
-
-          socket.on('delete trade to client', () => {
-            setSocketCome(true);
-          });
-      },[isFocused])
-
-      useEffect(()=>{
-
-        console.log("socket 실시간 통신 완료 "+socketCome)
-    
-        requestTradeAPI.getTrade(chatRoom)
-          .then(returnData => {
-            if(returnData.data.message){
-
-              console.log('동의 상태는 '+returnData.data.trade.isSave);
-    
-              setIsSuggest(true);
-              setIsSave(returnData.data.trade.isSave);
-              setProLocate(returnData.data.trade.location);
-              setStart(returnData.data.trade.startTime);
-              setEnd(returnData.data.trade.endTime);
-
-              setSocketCome(false);
-              
-            } else{
-              console.log("거래가 존재하지 않습니다.");
-            }
-            })
-            //에러
-            .catch(err => {
-                console.log(err);
-            });
-    
       },[socketCome])
 
-      // 거래 시간 설정
-      const [startDate, setStartDate] = useState(new Date());
-      const [endDate, setEndDate] = useState(new Date());
-      const [startTime,setStartTime]=useState(new Date());
-      const [endTime,setEndTime]=useState(new Date());
-      const [mode, setMode] = useState('date');
-      const [show, setShow] = useState(false);
-      const [showEnd, setShowEnd] = useState(false);
+    // 거래 시간 설정
+    const [startDate, setStartDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(new Date());
+    const [startTime,setStartTime]=useState(new Date());
+    const [endTime,setEndTime]=useState(new Date());
+    const [mode, setMode] = useState('date');
+    const [show, setShow] = useState(false);
+    const [showEnd, setShowEnd] = useState(false);
 
-      const showMode = (currentMode) => {
-        setShow(true);
-        setMode(currentMode);
-      };
-      const showEndMode = (currentMode) => {
-        setShowEnd(true);
-        setMode(currentMode);
-      };
-    
-      const showDatepicker = () => {
-        showMode('date');
-      };
+    const showMode = (currentMode) => {
+      setShow(true);
+      setMode(currentMode);
+    };
+    const showEndMode = (currentMode) => {
+      setShowEnd(true);
+      setMode(currentMode);
+    };
+  
+    const showDatepicker = () => {
+      showMode('date');
+    };
 
-      const showEndDatepicker = () => {
-        showEndMode('date');
-      };
-      
+    const showEndDatepicker = () => {
+      showEndMode('date');
+    };
     
-      const onChange = (event, selectedValue) =>{
+    
+    const onChange = (event, selectedValue) =>{
+      setShow(Platform.OS === 'ios');
+      if(mode == 'date'){
+        const currentDate = selectedValue || new Date();
+        setStartDate(currentDate);
+        setMode('time');
+        setShow(Platform.OS !== 'ios'); 
+      }
+      else if(mode == 'time'){
+        const selectedTime = selectedValue || new Date();
+        setStartTime(selectedTime);
         setShow(Platform.OS === 'ios');
-        if(mode == 'date'){
-          const currentDate = selectedValue || new Date();
-          setStartDate(currentDate);
-          setMode('time');
-          setShow(Platform.OS !== 'ios'); 
-        }
-        else if(mode == 'time'){
-          const selectedTime = selectedValue || new Date();
-          setStartTime(selectedTime);
-          setShow(Platform.OS === 'ios');
-          setMode('date');
-        }
+        setMode('date');
       }
+    }
 
-      const onChangeEnd = (event, selectedValue) =>{
-        setShowEnd(Platform.OS === 'ios');
-        if(mode == 'date'){
-          const currentDate = selectedValue || new Date();
-          setEndDate(currentDate);
-          setMode('time');
-          setShowEnd(Platform.OS !== 'ios'); 
-        }
-        else if(mode == 'time'){
-          const selectedTime = selectedValue || new Date();
-          setEndTime(selectedTime);
-          setShow(Platform.OS === 'ios');
-          setMode('date');
-        }
+    const onChangeEnd = (event, selectedValue) =>{
+      setShowEnd(Platform.OS === 'ios');
+      if(mode == 'date'){
+        const currentDate = selectedValue || new Date();
+        setEndDate(currentDate);
+        setMode('time');
+        setShowEnd(Platform.OS !== 'ios'); 
       }
+      else if(mode == 'time'){
+        const selectedTime = selectedValue || new Date();
+        setEndTime(selectedTime);
+        setShow(Platform.OS === 'ios');
+        setMode('date');
+      }
+    }
+    
+    //처음 현재 주소 출력 (제안 시 필요)
+    useEffect(() =>{
+      Geolocation.getCurrentPosition(
+      position =>{
+          const {latitude,longitude}=position.coords;
+          setCurrentLocation({
+            latitude,
+            longitude
+          })
+
+        },
+        error => {console.log(error.code,error.message)},
+        { enableHighAccuracy:true, timeout: 20000, maximumAge:1000},
+      );
+
+      async function getChatroomData(){
+            let chatRoomData = await requestChatAPI.getChatRoomDataById(chatRoom)
+          setChatRoomData(chatRoomData);
+        }
+        getChatroomData();
+
+    },[]);
+
+    useEffect(()=>{
+      console.log(currentLocation)
+
+      requestAddressAPI.currentAddress(currentLocation.longitude,currentLocation.latitude)
+            .then(returnData => {
+              setLocate(returnData.data.address);
+              })
+              //에러
+              .catch(err => {
+                  console.log(err);
+              });
+
+    },[locate, currentLocation])
+
+    
+    const locationHandler = (e) => {
       
-      //처음 현재 주소 출력 (제안 시 필요)
-      useEffect(() =>{
-        Geolocation.getCurrentPosition(
-        position =>{
-            const {latitude,longitude}=position.coords;
-            setCurrentLocation({
-              latitude,
-              longitude
-            })
+      Alert.alert(
+          "",
+          "여기서 거래하실건가요??",
+          [
+              { text: 'Cancel'},
+              { text: 'OK', onPress: () => {
+                  setCurrentLocation(e);
 
-          },
-          error => {console.log(error.code,error.message)},
-          { enableHighAccuracy:true, timeout: 20000, maximumAge:1000},
-        );
+                  requestAddressAPI.currentAddress(currentLocation.longitude,currentLocation.latitude)
+                    .then(returnData => {
+                      setLocate(returnData.data.address);
+                      })
+                      //에러
+                      .catch(err => {
+                          console.log(err);
+                      });
 
-        async function getChatroomData(){
-              let chatRoomData = await requestChatAPI.getChatRoomDataById(chatRoom)
-            setChatRoomData(chatRoomData);
-          }
-          getChatroomData();
-
-      },[]);
-
-      useEffect(()=>{
-        console.log(currentLocation)
-
-        requestAddressAPI.currentAddress(currentLocation.longitude,currentLocation.latitude)
-              .then(returnData => {
-                setLocate(returnData.data.address);
-                })
-                //에러
-                .catch(err => {
-                    console.log(err);
-                });
-
-      },[locate, currentLocation])
-
-      
-      const locationHandler = (e) => {
-        
-        Alert.alert(
-            "",
-            "여기서 거래하실건가요??",
-            [
-                { text: 'Cancel'},
-                { text: 'OK', onPress: () => {
-                    setCurrentLocation(e);
-
-                    requestAddressAPI.currentAddress(currentLocation.longitude,currentLocation.latitude)
-                      .then(returnData => {
-                        setLocate(returnData.data.address);
-                        })
-                        //에러
-                        .catch(err => {
-                            console.log(err);
-                        });
-
-                
-                    console.log('onMapClick', JSON.stringify(e));
-                }}
-            ],
-            { cancelable: false }
-        );
+              
+                  console.log('onMapClick', JSON.stringify(e));
+              }}
+          ],
+          { cancelable: false }
+      );
     };
 
     // 설정 완료 후, 제안 버튼
