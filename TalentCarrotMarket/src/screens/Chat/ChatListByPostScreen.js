@@ -170,6 +170,9 @@ function ChatListByPostScreen(props) {
 
 	return (
 		<View style={styles.container}>
+
+			{nickInfo.length==0?<Text>생성된 채팅방이 없습니다...</Text>:null}
+
 			<FlatList
 				data={nickInfo}
 				keyExtractor={(item,index) => String(item._id)}

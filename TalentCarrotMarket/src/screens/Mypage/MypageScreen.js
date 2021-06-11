@@ -140,7 +140,7 @@ const MypageScreen = ({navigation}) => {
 
               <TouchableOpacity style={styles.buttonList} onPress={goToUserPostScreen}>
                   <Icon style={styles.iconPlace} name="hand-holding-usd"  size={40} color="#37CEFF" />
-                  <Text style={styles.buttonText}>재능구매 내역</Text>
+                  <Text style={styles.buttonText}>재능구매 내역 (내 게시물)</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.buttonList} onPress={goToUserTradingPostScreen}>

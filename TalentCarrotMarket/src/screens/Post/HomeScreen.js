@@ -149,6 +149,8 @@ export default class HomeScreen extends Component{
         let price = getPrice(item.price);
         let status = null
         let statusStyle = styles.status_none
+        let mine = null
+        let mineStyle = styles.status_none
 
         //광고
         if(item.active){
@@ -180,12 +182,19 @@ export default class HomeScreen extends Component{
                 status = '거래완료';
                 statusStyle = styles.status_complete
             }
+            if(item.user_id == this.state.userId){
+                mine = 'My';
+                mineStyle = styles.status_mine;
+            }
             return(
                 <TouchableHighlight onPress={() => this.goToDetailPostScreen(item)}>
                     <View style={styles.post}>
                         <Image style={styles.image} source={{ uri: item.image[0]}} />
                         <View>
                             <Text style={styles.postTitle}>{item.title}</Text>
+                            <View style={mineStyle}>
+                                <Text>{mine}</Text>
+                            </View>
                             <View style={statusStyle}>
                                 <Text>{status}</Text>
                             </View>
@@ -314,6 +323,15 @@ const styles = StyleSheet.create({
         top: 55,
         padding: 3,
         borderRadius: 7
+    },
+    status_mine:{
+        backgroundColor:'#ffd6b3',
+        position:'absolute',
+        right:65,
+        top:3,
+        padding:2,
+        borderRadius: 7
+
     },
     status_none:{
         position: 'absolute'

@@ -193,14 +193,14 @@ const LoginScreen = ({navigation}) => {
                 <Text style={(styles.Text, {color: 'white'})}>회원가입</Text>
               </TouchableOpacity>
             </View>
-            <View style={styles.btnArea2} >
+            {/*<View style={styles.btnArea2} >
               <GoogleSigninButton
               style={{ width: 220, height: 50 }}
               size={GoogleSigninButton.Size.Wide}
               color={GoogleSigninButton.Color.Dark}
               onPress={_signIn}
               />
-            </View>
+            </View>*/}
           </View>
           
         </View>

@@ -96,7 +96,7 @@ export default class FilterOptionScreen extends Component{
                 </View>
 
                 <View style={styles.content}>
-                    <Text style={styles.text}>정렬</Text>
+                    <Text style={styles.text}>필터</Text>
                     <SwitchSelector
                         initial={this.state.sort}
                         options={options}

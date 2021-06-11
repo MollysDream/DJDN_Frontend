@@ -424,7 +424,7 @@ const styles = StyleSheet.create({
         right:3
     },
     addModalBox:{
-        margin:20,
+        margin:10,
         flex:1,
         backgroundColor:'white',
         borderRadius:10
