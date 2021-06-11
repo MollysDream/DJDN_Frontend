@@ -183,7 +183,6 @@ export default class HomeScreen extends Component{
                 statusStyle = styles.status_complete
             }
             if(item.user_id == this.state.userId){
-                console.log('a')
                 mine = 'My';
                 mineStyle = styles.status_mine;
             }
@@ -328,7 +327,7 @@ const styles = StyleSheet.create({
     status_mine:{
         backgroundColor:'#ffd6b3',
         position:'absolute',
-        right:70,
+        right:65,
         top:3,
         padding:2,
         borderRadius: 7
