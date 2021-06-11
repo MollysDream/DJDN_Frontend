@@ -23,6 +23,7 @@ import requestAddressAPI from "../../requestAddressAPI";
 import requestUserAPI from "../../requestUserAPI";
 
 import { useIsFocused } from '@react-navigation/native';
+import {meterToKm} from "../../function";
 //const P0 = {latitude: 37.564362, longitude: 126.977011};
 const haversine = require('haversine');
 
@@ -230,12 +231,13 @@ const AroundSetScreen = ({navigation}) => {
     useEffect(()=>{
         //커스텀 상태이면 실행
         if(customFlag){
-            if(distance >= 1000)
+            /*if(distance >= 1000)
                 setStrDistance(`${(distance/1000).toFixed(1)}km`);
             else
-                setStrDistance(`${distance}m`);
+                setStrDistance(`${distance}m`);*/
+            setStrDistance(meterToKm(distance));
 
-            console.log(distance);
+            //console.log(distance);
             setTempDistance(distance);
             setRadius(distance);
 
@@ -253,8 +255,14 @@ const AroundSetScreen = ({navigation}) => {
     const saveRadius = async () =>{
         console.log(`${Radius} 반경 저장!!!`);
 
-        if(Radius < 50){
-            Alert.alert("설정 실패","50m 이상 반경으로 설정해주세요.",[
+        if(Radius < 100){
+            Alert.alert("설정 실패","100m 이상 반경으로 설정해주세요.",[
+                {text:'확인', style:'cancel'}
+            ])
+            return
+        }
+        if(Radius > 5000){
+            Alert.alert("설정 실패","5km 이하 반경으로 설정해주세요.",[
                 {text:'확인', style:'cancel'}
             ])
             return
@@ -262,7 +270,7 @@ const AroundSetScreen = ({navigation}) => {
 
         let result = await requestAddressAPI.updateRadius(userId, Radius, userAddressIndex);
 
-        Alert.alert("설정 완료",`거래 반경이 ${Radius}m로 설정 되었습니다.`,[
+        Alert.alert("설정 완료",`거래 반경이 ${meterToKm(Radius)}로 설정 되었습니다.`,[
             {text:'확인', style:'cancel'}
         ])
 
@@ -473,9 +481,7 @@ const AroundSetScreen = ({navigation}) => {
             <View style={styles.bottomArea}>
               <Text style={{paddingBottom:5}}>
                   <B>{userAddressIndex == 1 ? address1: address2} 반경 {
-                  Radius>=1000?
-                      `${(Radius/1000).toFixed(1)}km`:
-                      `${Radius}m`
+                  meterToKm(Radius)
               }</B>
               </Text>
               <Text style={{paddingBottom:5}}>선택한 범위의 게시글만 볼 수 있어요.</Text>

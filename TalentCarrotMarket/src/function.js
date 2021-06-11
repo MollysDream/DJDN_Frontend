@@ -104,6 +104,13 @@ function message(text){
     showMessage({message:text, type:'warning'});
 }
 
+function meterToKm(meter){
+    return meter>=1000?
+        `${(meter/1000).toFixed(1)}km`:
+        `${meter}m`
+
+}
+
 export {
     getDate,
     getPrice,
@@ -112,5 +119,6 @@ export {
     HOST,
     message,
     getAdEndDate,
-    getGMT9Date
+    getGMT9Date,
+    meterToKm
 }
