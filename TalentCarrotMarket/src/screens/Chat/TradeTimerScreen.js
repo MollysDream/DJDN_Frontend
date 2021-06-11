@@ -64,29 +64,29 @@ const TradeTimerScreen = ({navigation, route}) =>{
     setEndDateChange(false)
   },[endDateChange])
 
-    useEffect(() => {
-      async function getData(){
+  useEffect(() => {
+    async function getData(){
 
-          let user= await AsyncStorage.getItem('user_id');
+        let user= await AsyncStorage.getItem('user_id');
 
-          console.log("현재 접속자는 "+ user)
-          console.log('user1은? '+user1)
-          console.log('user2는? '+user2)
+        console.log("현재 접속자는 "+ user)
+        console.log('user1은? '+user1)
+        console.log('user2는? '+user2)
 
-          if (user1 == user){
-            console.log("user1이에요! "+ user1)
-            console.log("user2아니에요! "+ user2)
-            let userData = await requestUserAPI.getUserData(user2);
-            setUserData(userData);
-        } else{
-          console.log("user2에요! "+ user2)
-          console.log("user1이 아니에요! "+ user1)
-          let userData = await requestUserAPI.getUserData(user1);
+        if (user1 == user){
+          console.log("user1이에요! "+ user1)
+          console.log("user2아니에요! "+ user2)
+          let userData = await requestUserAPI.getUserData(user2);
           setUserData(userData);
-        }
+      } else{
+        console.log("user2에요! "+ user2)
+        console.log("user1이 아니에요! "+ user1)
+        let userData = await requestUserAPI.getUserData(user1);
+        setUserData(userData);
       }
+    }
 
-      let result = getData();
+    let result = getData();
   },[]);
 
 
@@ -142,6 +142,10 @@ const TradeTimerScreen = ({navigation, route}) =>{
           setSocketCome(true);
         });
 
+        socket.on('delete trade to client', () => {
+          setSocketCome(true);
+        });
+
   },[])
 
   useEffect(()=>{
@@ -167,6 +171,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
           
         } else{
           console.log("거래가 존재하지 않습니다.");
+          navigation.navigate('chatch');
         }
         })
         //에러
@@ -299,18 +304,25 @@ const TradeTimerScreen = ({navigation, route}) =>{
 
   async function autoReport(){
 
+    let secretKey = smsKey.secretKey;
+    let accessKey = smsKey.accessKey;
+    let serviceId = smsKey.serviceId;
+    let phoneNumber = smsKey.phoneNumber;
+
+    let signatureValue = makeSignature();
+
     console.log("신고된 주소 "+proLocate);
-    console.log("확인 accesskey: "+smsKey.accessKey);
-    console.log("확인 secretkey: "+smsKey.secretKey);
-    console.log("확인 serviceId: "+smsKey.serviceId);
-    console.log("확인 phoneNumber: "+smsKey.phoneNumber);
+    console.log("확인 accesskey: "+accessKey);
+    console.log("확인 secretkey: "+secretKey);
+    console.log("확인 serviceId: "+serviceId);
+    console.log("확인 phoneNumber: "+phoneNumber);
     console.log("확인 timestamp: "+Date.now() + " 타입 : " + typeof Date.now().toString());
 
     const body = {
       "type": 'SMS',
       "contentType": 'COMM',
       "countryCode": '82',
-      "from": smsKey.phoneNumber, // 발신자 번호, 바꾸지 X
+      "from": phoneNumber, // 발신자 번호, 바꾸지 X
       "content": `${proLocate} 주소에서 신고가 들어왔습니다.`,
       "messages": [
         {
@@ -324,14 +336,14 @@ const TradeTimerScreen = ({navigation, route}) =>{
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
         'x-ncp-apigw-timestamp': Date.now().toString(),
-        'x-ncp-iam-access-key': smsKey.accessKey,
-        'x-ncp-apigw-signature-v2': makeSignature(),
+        'x-ncp-iam-access-key': accessKey,
+        'x-ncp-apigw-signature-v2': signatureValue,
       },
     };
 
 
     axios
-      .post(`https://sens.apigw.ntruss.com/sms/v2/services/${encodeURIComponent(smsKey.serviceId)}/messages`, body, options)
+      .post(`https://sens.apigw.ntruss.com/sms/v2/services/${encodeURIComponent(serviceId)}/messages`, body, options)
       .then(async (res) => {
         // 성공 이벤트
         alert('거래 종료를 누르지 않아 자동으로 신고가 됩니다.')
@@ -561,10 +573,12 @@ const TradeTimerScreen = ({navigation, route}) =>{
 }
 
 function makeSignature(){
+
+  let serviceId = smsKey.serviceId;
   var space = " ";				// one space
   var newLine = "\n";				// new line
   var method = "POST";				// method
-  var url = `/sms/v2/services/${encodeURIComponent(smsKey.serviceId)}/messages`;	// url (include query string)
+  var url = `/sms/v2/services/${encodeURIComponent(serviceId)}/messages`;	// url (include query string)
   var timestamp = Date.now().toString();			// current timestamp (epoch)
   var accessKey = smsKey.accessKey;			// access key id (from portal or Sub Account)
   var secretKey = smsKey.secretKey;			// secret key (from portal or Sub Account)
