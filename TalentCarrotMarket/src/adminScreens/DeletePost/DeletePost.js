@@ -101,6 +101,8 @@ export default class DeletePostScreen extends Component{
 
     updateSearch = (search) =>{
         this.setState({search});
+        if(search=='')
+            this.refreshPage();
     }
 
     searchPost = async() =>{

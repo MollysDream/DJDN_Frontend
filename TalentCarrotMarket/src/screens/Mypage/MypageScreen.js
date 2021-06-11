@@ -102,11 +102,13 @@ const MypageScreen = ({navigation}) => {
                   userData==undefined ?null:
                       (
                           <>
-                              <View style={{position:'absolute', right:0}}>
-                                  <TouchableOpacity style={{padding:10, borderRadius:10, backgroundColor:'#9a63ff'}} onPress={()=>navigation.replace('AdminTab')}>
-                                      <Text style={{color: 'black'}}>관리자 페이지</Text>
-                                  </TouchableOpacity>
-                              </View>
+                              {admin===null?null:
+                                  <View style={{position:'absolute', right:0}}>
+                                      <TouchableOpacity style={{padding:10, borderRadius:10, backgroundColor:'#9a63ff'}} onPress={()=>navigation.replace('AdminTab')}>
+                                          <Text style={{color: 'black'}}>관리자 페이지</Text>
+                                      </TouchableOpacity>
+                                  </View>
+                              }
                             <View style={styles.user}>
                               <Image style={styles.profileImage} source={{uri:userData.profileImage}}/>
                               <Text style={{fontSize:15,marginTop:5, color:'grey'}}>{`${userAddress.addressName}의`}</Text>
