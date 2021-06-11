@@ -165,6 +165,12 @@ export async function endTrade(tradeId){
     return result.data;
 }
 
+export async function getAdminPost(searchValue){
+    console.log(`getAdminPost함수  사용자 ID: 관리자`);
+    const postData = await axi.get("/data/getAdminPost", {params:{searchValue:searchValue}});
+    //console.log(postData.data);
+    return postData.data;
+}
 
 export default{
     userTest,
@@ -185,4 +191,5 @@ export default{
     getChatRoomById,
     getUserTradingPost,
     getPostTitle,
+    getAdminPost
 }
