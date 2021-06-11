@@ -26,6 +26,8 @@ const MypageScreen = ({navigation}) => {
   const [userData, setUserData] = useState();
   const [userAddress, setUserAddress] = useState('');
 
+  const [admin, setAdmin] = useState(null);
+
     const isFocused = useIsFocused();
 
     const handleLogoutButton = () => {
@@ -41,6 +43,9 @@ const MypageScreen = ({navigation}) => {
             //로그아웃 시 에러 방지
             if(userId == undefined)
                 return;
+
+            let adminData = await requestUserAPI.checkAdmin(userId);
+            setAdmin(adminData)
 
             setUserId(userId);
 
@@ -97,6 +102,11 @@ const MypageScreen = ({navigation}) => {
                   userData==undefined ?null:
                       (
                           <>
+                              <View style={{position:'absolute', right:0}}>
+                                  <TouchableOpacity style={{padding:10, borderRadius:10, backgroundColor:'#9a63ff'}} onPress={()=>navigation.replace('AdminTab')}>
+                                      <Text style={{color: 'black'}}>관리자 페이지</Text>
+                                  </TouchableOpacity>
+                              </View>
                             <View style={styles.user}>
                               <Image style={styles.profileImage} source={{uri:userData.profileImage}}/>
                               <Text style={{fontSize:15,marginTop:5, color:'grey'}}>{`${userAddress.addressName}의`}</Text>

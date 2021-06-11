@@ -87,6 +87,14 @@ const MypageScreen = ({navigation}) => {
 
 
 
+            <View style={[styles.logoutArea, {right:120}]}>
+                <TouchableOpacity style={[styles.logoutButton,{backgroundColor:'#96f2ff'}]} onPress={()=>navigation.replace('MainTab')}>
+                    <Text style={{color: 'black'}}>사용자 페이지</Text>
+                </TouchableOpacity>
+            </View>
+
+
+
             <View style={styles.logoutArea}>
                 <TouchableOpacity style={styles.logoutButton} onPress={handleLogoutButton}>
 
