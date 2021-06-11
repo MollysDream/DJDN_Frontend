@@ -35,7 +35,6 @@ export default class DeletePostScreen extends Component{
         this.state = {
             search:'',
             data:[],
-            page:0,
             rerender: false,
             refreshing: false,
             userId: '',
@@ -45,11 +44,9 @@ export default class DeletePostScreen extends Component{
     }
 
     async componentDidMount() {
-        const postData = await requestAPI.getAdminPost(0, '', this.state.page);
-        //console.log(postData);
+        const postData = await requestAPI.getAdminPost('');
         this.setState({
             data: this.state.data.concat(postData),
-            page : this.state.page + 1
         });
     }
 
@@ -78,26 +75,14 @@ export default class DeletePostScreen extends Component{
         let result_refresh = await this.refreshPage();
     }
 
-    morePage = async() => {
-        const postData = await requestAPI.getAdminPost(0, this.state.search, this.state.page);
-        this.setState({
-            data: this.state.data.concat(postData),
-            page : this.state.page + 1,
-            rerender: !this.state.rerender,
-        });
-    }
-
     refreshPage = async() => {
         console.log('페이지 새로고침');
 
-        this.state.page = 0;
-        this.setState({page:this.state.page, refreshing: true});
+        this.setState({refreshing: true});
 
-        const postData = await requestAPI.getAdminPost(0, this.state.search, this.state.page);
-        //console.log(postData);
+        const postData = await requestAPI.getAdminPost('');
         this.setState({
             data: postData,
-            page : this.state.page + 1,
             rerender: !this.state.rerender,
             refreshing: false
         });
@@ -117,17 +102,16 @@ export default class DeletePostScreen extends Component{
     updateSearch = (search) =>{
         this.setState({search});
     }
+
     searchPost = async() =>{
         console.log(`${this.state.search} 검색 시작!!`)
 
-        this.state.page = 0;
-        this.setState({page:this.state.page, refreshing: true});
+        this.setState({refreshing: true});
 
-        const postData = await requestAPI.getAdminPost(0, this.state.search, this.state.page);
+        const postData = await requestAPI.getAdminPost( this.state.search);
         //console.log(postData);
         this.setState({
             data: postData,
-            page : this.state.page + 1,
             rerender: !this.state.rerender,
             refreshing: false
         });
@@ -166,7 +150,7 @@ export default class DeletePostScreen extends Component{
                     </View>
                 </TouchableHighlight>
                 <TouchableHighlight style={styles.optionButton} onPress={()=>this.onOptionPress(item)}>
-                    <Icon2 name="dots-three-vertical" size={25} color={"black"}></Icon2>
+                    <Icon3 name="trash" size={28} color={"#ffc8a6"}></Icon3>
                 </TouchableHighlight>
 
             </View>
@@ -188,6 +172,7 @@ export default class DeletePostScreen extends Component{
                         onChangeText={this.updateSearch}
                         value={search}
                         onSubmitEditing={this.searchPost}
+                        onClear={this.refreshPage}
                         lightTheme
                         inputContainerStyle={{backgroundColor:'#edffff', borderRadius:15}}
                         containerStyle={{borderWidth:0, borderRadius:10, backgroundColor:'#ffffff'}}
@@ -196,9 +181,9 @@ export default class DeletePostScreen extends Component{
                         data={this.state.data}
                         keyExtractor={(item,index) => String(item._id)}
                         renderItem={({item,index})=>this.returnFlatListItem(item,index)}
-                        onEndReached={this.morePage}
+                        /*onEndReached={this.morePage}
                         onEndReachedThreshold={1}
-                        extraData={this.state.rerender}
+                        extraData={this.state.rerender}*/
                         refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.refreshPage} />}
                     />
                 </View>
