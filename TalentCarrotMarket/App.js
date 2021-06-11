@@ -90,8 +90,11 @@ import adminReportScreen from './src/adminScreens/Report/ReportScreen';
 import detailReportPostScreen from './src/adminScreens/Report/DetailReportPostScreen';
 //AdminAdvertisementStack
 import adminAdvertisementScreen from './src/adminScreens/Advertisement/AdvertisementScreen';
+//AdminDeletePostStack
+import deletePostScreen from './src/adminScreens/DeletePost/DeletePost';
 //AdminMypageStack
 import adminMypageScreen from './src/adminScreens/Mypage/MypageScreen';
+
 
 import { LogBox } from 'react-native';
 
@@ -293,6 +296,18 @@ const AdminAdvertisementStackScreen = () => {
     );
 };
 
+const AdminDeletePostStackScreen = () => {
+    return (
+        <Stack.Navigator>
+            <AdminAdvertisementStack.Screen name="게시글 관리" component={deletePostScreen} />
+            <AdminReportStack.Screen name="상세 게시물" component={detailReportPostScreen}/>
+
+
+
+        </Stack.Navigator>
+    );
+};
+
 const AdminMypageStackScreen = () => {
     return (
         <Stack.Navigator>
@@ -321,6 +336,16 @@ const AdminTabScreen =({}) => {
                     tabBarLabel: '광고',
                     tabBarIcon: ({color}) => (
                         <Icon6 name="ad" color={color} size={26} />
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name="TabFourth"
+                component={AdminDeletePostStackScreen}
+                options={{
+                    tabBarLabel: '게시글 관리',
+                    tabBarIcon: ({color}) => (
+                        <Icon4 name="post-outline" color={color} size={26} />
                     ),
                 }}
             />
