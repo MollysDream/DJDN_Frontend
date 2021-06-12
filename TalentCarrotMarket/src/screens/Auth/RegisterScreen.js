@@ -87,7 +87,7 @@ const RegisterScreen = ({navigation}) => {
 
      try{
         //회원 가입
-          const returnData = await requestMemberAPI.getRegister(userId,userPassword,userName,userNickName,userNumber);
+          const returnData = await requestMemberAPI.getRegister(userId,userPassword,userName,userNickName,userPhone);
           console.log(userId);
           await requestPointAPI.createPoint(userId); //email
           setErrortext2('');
