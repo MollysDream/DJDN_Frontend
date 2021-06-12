@@ -80,6 +80,7 @@ function getAdEndDate(date){
         return this;
     }
     let krDate = date.addHours(9);
+
     console.log(krDate);*/
 
     let year = date.getUTCFullYear();
