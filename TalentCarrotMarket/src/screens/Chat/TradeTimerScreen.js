@@ -77,11 +77,11 @@ const TradeTimerScreen = ({navigation, route}) =>{
         console.log('user1은? '+user1)
         console.log('user2는? '+user2)
 
-        if (user1 == user){
-          console.log("user1이에요! "+ user1)
-          console.log("user2아니에요! "+ user2)
-          let userData = await requestUserAPI.getUserData(user2);
-          setUserData(userData);
+      if (user1 == user){
+        console.log("user1이에요! "+ user1)
+        console.log("user2아니에요! "+ user2)
+        let userData = await requestUserAPI.getUserData(user2);
+        setUserData(userData);
       } else{
         console.log("user2에요! "+ user2)
         console.log("user1이 아니에요! "+ user1)
@@ -115,11 +115,11 @@ const TradeTimerScreen = ({navigation, route}) =>{
     });
 
     socket.on('end trade to client', () => {
+      console.log("거래 종료 옴")
       setSocketCome(true);
     });
 
     socket.on('delete trade to client', () => {
-      // console.log("거래 삭제 옴")
       setIsDelete(true);
       setSocketCome(true);
     });

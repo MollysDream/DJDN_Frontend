@@ -80,7 +80,6 @@ function getAdEndDate(date){
         return this;
     }
     let krDate = date.addHours(9);
-
     console.log(krDate);*/
 
     let year = date.getUTCFullYear();
@@ -94,12 +93,21 @@ function getAdEndDate(date){
 
 //const HOST = '192.168.25.35' // 정수범 안드로이드
 // const HOST = '192.168.219.114' // 나준엽 안드로이드
-const HOST = '192.168.31.219' // 김영웅 안드로이드
-// const HOST = '10.0.2.2'
+
+//const HOST = '192.168.25.7' // 김영웅 안드로이드
+ const HOST = '10.0.2.2'
 // const HOST = '101.101.208.25'
+
 
 function message(text){
     showMessage({message:text, type:'warning'});
+}
+
+function meterToKm(meter){
+    return meter>=1000?
+        `${(meter/1000).toFixed(1)}km`:
+        `${meter}m`
+
 }
 
 export {
@@ -110,5 +118,6 @@ export {
     HOST,
     message,
     getAdEndDate,
-    getGMT9Date
+    getGMT9Date,
+    meterToKm
 }

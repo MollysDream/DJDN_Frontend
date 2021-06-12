@@ -6,6 +6,7 @@ import {
     TouchableOpacity,
     TextInput,
     Alert,
+    ScrollView
 } from 'react-native';
 
 
@@ -56,6 +57,8 @@ const TradeSetScreen =({navigation,route})=>{
     const [isSuggest,setIsSuggest]=useState(false);
     const [isSave,setIsSave]=useState(false);
     const [tradeId, setTradeId]=useState('');
+    // const [sender,setSender]=useState('');
+    // const [receiver,setReceiver]=useState('');
 
     // 제안된 장소, 시간 확인
     const [proLocate, setProLocate]=useState('');
@@ -88,7 +91,6 @@ const TradeSetScreen =({navigation,route})=>{
       settingTrade();
 
       socket.on('suggest trade to client', () => {
-        // console.log("제안 옴");
         if(socketCome==true){
           setSocketCome(false);
         } else{
@@ -106,7 +108,6 @@ const TradeSetScreen =({navigation,route})=>{
       });
 
       socket.on('delete trade to client', () => {
-        // console.log("거래 삭제 옴")
         setIsDelete(true);
 
         if(socketCome==true){
@@ -125,29 +126,36 @@ const TradeSetScreen =({navigation,route})=>{
       requestTradeAPI.getTrade(chatRoom)
         .then(returnData => {
             if(returnData.data.message){
-              const saveLongitude = returnData.data.trade.longitude;
-              const saveLatitude = returnData.data.trade.latitude;
-
-              saveLocation = {latitude:saveLatitude, longitude:saveLongitude};
-
-              console.log("거래 동의 상태는 "+returnData.data.trade.isSave);
-              setIsSuggest(true);
-              setIsSave(returnData.data.trade.isSave);
-              setProLocate(returnData.data.trade.location);
-              setStart(returnData.data.trade.startTime);
-              setEnd(returnData.data.trade.endTime);
-              setTradeId(returnData.data.trade._id);
-
-              console.log("가져온 거래 장소는 "+saveLocation.longtitude)
-
-              if(returnData.data.trade.sender==userId){
-                console.log("현재 접속자는 거래 제안자임 "+ returnData.data.trade.sender);
-                sender=userId;
+              if(returnData.data.trade.complete==true){
+                alert("이미 종료된 거래입니다!")
+                navigation.navigate('chatch')
               } else{
-                console.log("현재 접속자는 거래 제안받은사람임 "+ returnData.data.trade.receiver);
-                receiver=userId;
-              }
+                const saveLongitude = returnData.data.trade.longitude;
+                const saveLatitude = returnData.data.trade.latitude;
 
+                saveLocation = {latitude:saveLatitude, longitude:saveLongitude};
+
+                console.log("거래 동의 상태는 "+returnData.data.trade.isSave);
+                setIsSuggest(true);
+                setIsSave(returnData.data.trade.isSave);
+                setProLocate(returnData.data.trade.location);
+                setStart(returnData.data.trade.startTime);
+                setEnd(returnData.data.trade.endTime);
+                setTradeId(returnData.data.trade._id);
+
+                console.log("가져온 거래 장소는 "+saveLocation.longtitude)
+
+                if(returnData.data.trade.sender==userId){
+                  console.log("현재 접속자는 거래 제안자임 "+ returnData.data.trade.sender);
+                  sender=userId;
+                  // setSender(userId);
+                } else{
+                  console.log("현재 접속자는 거래 제안받은사람임 "+ returnData.data.trade.receiver);
+                  receiver=userId;
+                  // setReceiver(userId);
+                }
+
+              }
           } else{
             console.log("거래가 존재하지 않습니다.");
           }
@@ -158,13 +166,13 @@ const TradeSetScreen =({navigation,route})=>{
         });
       },[isFocused,socketCome])
 
-      useEffect(()=>{
-        console.log("거래 삭제 진행"+isDelete)
-        if(isDelete==true){
-          navigation.navigate('chatch')
-        }
-        setIsDelete(false);
-      },[isDelete])
+    useEffect(()=>{
+      console.log("거래 삭제 진행"+isDelete)
+      if(isDelete==true){
+        navigation.navigate('chatch')
+      }
+      setIsDelete(false);
+    },[isDelete])
 
     // 거래 시간 설정
     const [startDate, setStartDate] = useState(new Date());
@@ -206,6 +214,8 @@ const TradeSetScreen =({navigation,route})=>{
         setStartTime(selectedTime);
         setShow(Platform.OS === 'ios');
         setMode('date');
+        const startSet = formatDate(startDate,startTime);
+        setStart(startSet)
       }
     }
 
@@ -222,6 +232,8 @@ const TradeSetScreen =({navigation,route})=>{
         setEndTime(selectedTime);
         setShow(Platform.OS === 'ios');
         setMode('date');
+        const endSet = formatDate(endDate,endTime);
+        setEnd(endSet)
       }
     }
     
@@ -298,9 +310,13 @@ const TradeSetScreen =({navigation,route})=>{
       if(user1==userId){
         sender = user1;
         receiver = user2;
+        // setSender(user1);
+        // setReceiver(user2);
       } else{
         sender = user2;
         receiver = user1;
+        // setSender(user2);
+        // setReceiver(user1);
       }
 
       console.log("sender는 "+sender);
@@ -321,7 +337,7 @@ const TradeSetScreen =({navigation,route})=>{
         const endSet = formatDate(endDate,endTime);
 
         setProLocate(entireLocate);
-        setStart(startSet);
+        // setStart(startSet);
         setEnd(endSet);
 
         const endDateTime = parse(endSet);
@@ -394,7 +410,7 @@ const TradeSetScreen =({navigation,route})=>{
       alarmTxt.replace(/\n/g,'<br/>');
 
       if(startDiffTime>0){
-        // if(isSave==true){
+        if(isSave==true){
           navigation.navigate('tradeTimer',{
             tradeId: tradeId,
             endSet: sendEndDate,
@@ -404,9 +420,9 @@ const TradeSetScreen =({navigation,route})=>{
             chatRoom: chatRoom,
             chatRoomData: chatRoomData,
           }) 
-        // } else{
-        //   alert("아직 상대방이 동의하지 않았습니다!")
-        // }
+        } else{
+          alert("아직 상대방이 동의하지 않았습니다!")
+        }
     
       } else{
         alert(alarmTxt)
@@ -428,9 +444,9 @@ const TradeSetScreen =({navigation,route})=>{
   
          if (returnData.data.message) {
           alert('기존 거래를 삭제하고 다시 제안합니다.')
-          } else {
-            alert('거래 취소 실패!')
-          }
+        } else {
+          alert('거래 취소 실패!')
+        }
       } catch(err){
           console.log(err);
     }
@@ -440,58 +456,68 @@ const TradeSetScreen =({navigation,route})=>{
     // 거래 시간 및 장소 제안할 시 (isSuggest = false)
     const proposeTrade =
     <>
+    
       <NaverMapView 
-        style={{width: '100%', height: '85%'}}
-        showsMyLocationButton={true}
-        center={{...currentLocation, zoom:16}}
-        onTouch={e => console.log('onTouch', JSON.stringify(e.nativeEvent))}
-        onCameraChange={e => console.log('onCameraChange', JSON.stringify(e))}
-        onMapClick={e => locationHandler(e)}
-        useTextureView>
-          <Marker coordinate={currentLocation}/>
+          style={{width: '100%', height: '55%'}}
+          showsMyLocationButton={true}
+          center={{...currentLocation, zoom:16}}
+          onTouch={e => console.log('onTouch', JSON.stringify(e.nativeEvent))}
+          onCameraChange={e => console.log('onCameraChange', JSON.stringify(e))}
+          onMapClick={e => locationHandler(e)}
+          useTextureView>
+            <Marker coordinate={currentLocation}/>
       </NaverMapView>
 
-      <View style={styles.locateForm}>
-        <Text style={{fontSize: wp('4')}}>                          {locate}</Text>
-        <TextInput
-          style={styles.textForm}
-          onChangeText={(locate) => setDetailLocate(locate)}
-          placeholder={'🗺️거래를 진행 할 상세 주소를 입력해주세요!(ex 101동 1103호)🗺️'}
-          ref={locateInputRef}
-        />
-      </View>
-      
-      <View style={styles.dateArea}>
-          <TouchableOpacity style={styles.btnDate} onPress={showDatepicker} >
-            <Text style={{color: 'black'}}>시작 날짜 및 시간 설정하세요 ⌚</Text>
-          </TouchableOpacity>
-        <View style={styles.datetimeButton}>
-          <TouchableOpacity style={styles.btnDate} onPress={showEndDatepicker} >
-            <Text style={{color: 'black'}}>종료 날짜 및 시간 설정하세요 ⌚</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-      
-      
-        {show && (
-          <DateTimePicker
-            testID="dateTimePicker"
-            value={startDate}
-            mode={mode}
-            is24Hour={true}
-            display="spinner"
-            onChange={onChange}
-          />)}
+      <ScrollView>
+        <View style={styles.locateForm}>
+            <Text style={{fontSize: wp('4')}}>                          {locate}</Text>
+            <TextInput
+              style={styles.textForm}
+              textAlign={'center'}
+              onChangeText={(locate) => setDetailLocate(locate)}
+              placeholder={'🗺️거래를 진행 할 상세 주소를 입력해주세요!🗺️'}
+              ref={locateInputRef}
+            />
+          </View>
+          <View style={styles.dateArea}>
+            <TouchableOpacity style={styles.btnDate} onPress={showDatepicker} >
+              <Text style={{color: 'black'}}>시작 날짜 및 시간 설정하세요 ⌚</Text>
+            </TouchableOpacity>
+            {start!=''?
+            (<View style={styles.setTimeForm}>
+              <Text style={{fontSize: wp('4')}}>설정된 시작 시각:{start}</Text> 
+            </View>):null
+            }
+            <TouchableOpacity style={styles.btnDate} onPress={showEndDatepicker} >
+              <Text style={{color: 'black'}}>종료 날짜 및 시간 설정하세요 ⌚</Text>
+            </TouchableOpacity>
+            {end!=''?
+            (<View style={styles.setTimeForm}>
+              <Text style={{fontSize: wp('4')}}>설정된 종료 시각:{end}</Text> 
+            </View>):null
+            }
+          </View>
+        
+          {show && (
+            <DateTimePicker
+              testID="dateTimePicker"
+              value={startDate}
+              mode={mode}
+              is24Hour={true}
+              display="spinner"
+              onChange={onChange}
+            />)}
 
-        {showEnd && (
-          <DateTimePicker
-            testID="dateTimePicker"
-            value={endDate}
-            mode={mode}
-            is24Hour={true}
-            display="spinner"
-            onChange={onChangeEnd}
-          />)}
+          {showEnd && (
+            <DateTimePicker
+              testID="dateTimePicker"
+              value={endDate}
+              mode={mode}
+              is24Hour={true}
+              display="spinner"
+              onChange={onChangeEnd}
+            />)}
+      </ScrollView>
        
       <View style={styles.btnArea}>
         <TouchableOpacity style={styles.btnAgree} onPress={suggestButton}>
@@ -504,40 +530,40 @@ const TradeSetScreen =({navigation,route})=>{
     const saveTrade =
     <>
     {saveLocation.latitude!=null&&saveLocation.longitude!=null?
-    (<NaverMapView 
-      style={{width: '100%', height: '85%'}}
-      showsMyLocationButton={true}
-      center={{...saveLocation, zoom:16}}
-      onTouch={e => console.log('onTouch', JSON.stringify(e.nativeEvent))}
-      onCameraChange={e => console.log('onCameraChange', JSON.stringify(e))}
-      onMapClick={e => console.log('onMapClick', JSON.stringify(e))}>
-        <Marker coordinate={saveLocation}/>
-    </NaverMapView>):
-    
+      (<NaverMapView 
+        style={{width: '100%', height: '55%'}}
+        showsMyLocationButton={true}
+        center={{...saveLocation, zoom:16}}
+        onTouch={e => console.log('onTouch', JSON.stringify(e.nativeEvent))}
+        onCameraChange={e => console.log('onCameraChange', JSON.stringify(e))}
+        onMapClick={e => console.log('onMapClick', JSON.stringify(e))}>
+          <Marker coordinate={saveLocation}/>
+      </NaverMapView>):
+      
       <NaverMapView 
-      style={{width: '100%', height: '85%'}}
+      style={{width: '100%', height: '55%'}}
       showsMyLocationButton={true}
       center={{...currentLocation, zoom:16}}
       onTouch={e => console.log('onTouch', JSON.stringify(e.nativeEvent))}
       onCameraChange={e => console.log('onCameraChange', JSON.stringify(e))}
       onMapClick={e => console.log('onMapClick', JSON.stringify(e))}>
-        <Marker coordinate={currentLocation}/>
-    </NaverMapView>
-    }
-        
-      <View style={{justifyContent: 'center',alignItems: 'center',paddingTop:hp(3),paddingBottom:hp(2)}}>
-        <View style={styles.tradeSetView} >
-          {/* <Icon style={styles.iconPlace} name="hand-holding-usd"  size={30} color="#37CEFF" /> */}
-          <Text style={{fontSize: wp('4')}}>시작: {start}</Text>
-        </View>
-        <View style={styles.tradeSetView} >
-          <Text style={{fontSize: wp('4')}}>종료: {end} </Text>
-        </View>
-        {/* <Text>예상시간 : {workTime}</Text> */}
-        <View style={styles.tradeSetView} >
-          <Text style={{fontSize: wp('4')}}>장소: {proLocate}</Text>
-        </View>
-      </View>
+          <Marker coordinate={currentLocation}/>
+      </NaverMapView>
+      }
+    
+        <ScrollView style={styles.tradeBox}>
+          <View style={styles.tradeSetView} >
+            {/* <Icon style={styles.iconPlace} name="hand-holding-usd"  size={30} color="#37CEFF" /> */}
+            <Text style={{fontSize: wp('4')}}>시작: {start}</Text>
+          </View>
+          <View style={styles.tradeSetView} >
+            <Text style={{fontSize: wp('4')}}>종료: {end} </Text>
+          </View>
+          {/* <Text>예상시간 : {workTime}</Text> */}
+          <View style={styles.tradeSetView} >
+            <Text style={{fontSize: wp('4')}}>장소: {proLocate}</Text>
+          </View>
+        </ScrollView>
     
       
       {isSuggest==true && isSave==false && userId!=sender?
@@ -579,11 +605,10 @@ const TradeSetScreen =({navigation,route})=>{
               <Text style={{paddingBottom:15}}>지도 마커를 통해 거래 장소를 설정해주세요!</Text>
           </View>
 
-
-        {isSuggest == false ?(
-          <View style={styles.bottomArea}>{proposeTrade}</View>
-        ): <View style={styles.bottomArea}>{saveTrade}</View>}
-    </View>
+          {isSuggest == false ?(
+            <View style={styles.bottomArea}>{proposeTrade}</View>
+          ): <View style={styles.bottomArea}>{saveTrade}</View>}
+        </View>
       );
     
 }
@@ -610,11 +635,14 @@ function parse(str){
 
 const styles = StyleSheet.create({
     container: {
-      backgroundColor: '#f5f5f5',
-      flex: 1
+      flexDirection: 'column',
+      backgroundColor: 'white',
+      // paddingLeft: wp(7),
+      // paddingRight: wp(7),
+      flex:1
     },
     topArea: {
-      flex: 0.125,
+      flex: 1,
       paddingTop: wp(3),
       alignItems: 'center',
     },
@@ -626,17 +654,31 @@ const styles = StyleSheet.create({
       marginBottom:7,
     },
     bottomArea: {
-      flex: 0.55,
+      flex:7,
       paddingTop: wp(3),
       alignItems: 'center',
     },
     locateForm:{
+      width: wp(100),
       justifyContent: 'center',
       marginTop: wp(3),
       marginBottom:wp(3),
       borderWidth: 0.5,
       borderColor: 'gray',
       backgroundColor:'white'
+    },
+    setTimeForm:{
+      width: wp(100),
+      justifyContent: 'center',
+      alignItems:'center',
+      borderWidth: 0.5,
+      borderColor: 'black',
+      borderBottomRightRadius: 7,
+      borderBottomLeftRadius: 7,
+      width: '100%',
+      height: hp(6),
+      paddingLeft: 10,
+      paddingRight: 10,
     },
     textForm: {
       borderWidth: 2,
@@ -676,6 +718,7 @@ const styles = StyleSheet.create({
       borderColor: 'gray',
     },
     dateArea:{
+      width:wp(98),
       justifyContent: 'center',
       alignItems: 'center',
       marginBottom:wp(3),
@@ -691,7 +734,7 @@ const styles = StyleSheet.create({
       paddingBottom:hp(2)
     },
     tradeSetView:{
-      width: 500,
+      width: wp(100),
       height: 50,
       borderRadius: 7,
       justifyContent: 'center',
@@ -700,6 +743,11 @@ const styles = StyleSheet.create({
       backgroundColor: '#CDDDEF',
       borderWidth: 0.5,
       borderColor: 'white',
+      // height:55,
+      //   flexDirection:'row',
+      //   backgroundColor: '#ecfeff',
+      //   borderRadius: 20,
+      //   marginBottom:7,
     },
     btnAgree: {
       width: 150,
@@ -716,13 +764,12 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: '#D9665F',
-  },
-  iconPlace: {
-    height:'100%',
-    // marginLeft:10,
-    marginRight:30,
-    paddingTop: 5
+    },
+    tradeBox: {
 
-},
+      flexDirection:'column',
+      marginTop:10,
+      marginBottom:3
+    },
   });
 export default TradeSetScreen;
