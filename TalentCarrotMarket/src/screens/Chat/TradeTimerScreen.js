@@ -37,6 +37,7 @@ let userId ;
 let sender;
 let receiver;
 let socket = io(`http://${HOST}:3002`);
+let nowDateString;
 
 const TradeTimerScreen = ({navigation, route}) =>{
 
@@ -48,6 +49,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
   const [endDateTime, setEndDateTime] = useState(endSet);
   const [endDateChange, setEndDateChange] = useState(false);
   const nowDate = Date.now();
+  nowDateString = Date.now().toString();
   const [diffTime, setDiffTime] = useState((endDateTime.getTime()- nowDate)/1000);
   const [isEndSuggest, setIsEndSuggest] = useState(false);
   const [isEnd, setIsEnd] = useState(false);
@@ -219,6 +221,9 @@ const TradeTimerScreen = ({navigation, route}) =>{
       receiver = user1;
     }
 
+    console.log("sender는 "+sender);
+    console.log("receiver는 "+receiver);
+
     //거래완료제안 통신
     try{
       const returnData = await requestTradeAPI.endSuggestTrade(tradeId,sender,receiver);
@@ -300,17 +305,19 @@ const TradeTimerScreen = ({navigation, route}) =>{
 
     let secretKey = smsKey.secretKey;
     let accessKey = smsKey.accessKey;
-    let serviceId = smsKey.serviceId;
+    let serviceId = encodeURIComponent(smsKey.serviceId);
     let phoneNumber = smsKey.phoneNumber;
 
     let signatureValue = makeSignature();
+
+    console.log("암호화된것은?"+signatureValue)
 
     console.log("신고된 주소 "+proLocate);
     console.log("확인 accesskey: "+accessKey);
     console.log("확인 secretkey: "+secretKey);
     console.log("확인 serviceId: "+serviceId);
     console.log("확인 phoneNumber: "+phoneNumber);
-    console.log("확인 timestamp: "+Date.now() + " 타입 : " + typeof Date.now().toString());
+    console.log("확인 timestamp: "+nowDateString + " 타입 : " + typeof(nowDateString));
 
     const body = {
       "type": 'SMS',
@@ -329,7 +336,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
     const options = {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
-        'x-ncp-apigw-timestamp': Date.now().toString(),
+        'x-ncp-apigw-timestamp': nowDateString,
         'x-ncp-iam-access-key': accessKey,
         'x-ncp-apigw-signature-v2': signatureValue,
       },
@@ -337,7 +344,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
 
 
     axios
-      .post(`https://sens.apigw.ntruss.com/sms/v2/services/${encodeURIComponent(serviceId)}/messages`, body, options)
+      .post(`https://sens.apigw.ntruss.com/sms/v2/services/${serviceId}/messages`, body, options)
       .then(async (res) => {
         // 성공 이벤트
         alert('거래 종료를 누르지 않아 자동으로 신고가 됩니다.')
@@ -568,14 +575,16 @@ const TradeTimerScreen = ({navigation, route}) =>{
 
 function makeSignature(){
 
-  let serviceId = smsKey.serviceId;
+  let serviceId = encodeURIComponent(smsKey.serviceId);
   var space = " ";				// one space
   var newLine = "\n";				// new line
   var method = "POST";				// method
-  var url = `/sms/v2/services/${encodeURIComponent(serviceId)}/messages`;	// url (include query string)
-  var timestamp = Date.now().toString();			// current timestamp (epoch)
+  var url = `/sms/v2/services/${serviceId}/messages`;	// url (include query string)
+  var timestamp = nowDateString;			// current timestamp (epoch)
   var accessKey = smsKey.accessKey;			// access key id (from portal or Sub Account)
   var secretKey = smsKey.secretKey;			// secret key (from portal or Sub Account)
+
+  console.log("확인 timestamp: "+timestamp + " 타입 : " + typeof(timestamp));
 
   var hmac = CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA256, secretKey);
   hmac.update(method);
