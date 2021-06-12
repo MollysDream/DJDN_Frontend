@@ -71,8 +71,8 @@ export async function getAdvertisementPost(userId) {
     if(adverData.data==null)
         return [];
 
-    let user_id = adverData.data.shopOwner;
-    await axi.post("/point/deductPoint",{user_id, amount});
+    //let user_id = adverData.data.shopOwner;
+    //await axi.post("/point/deductPoint",{user_id, amount});
 
     return adverData.data;
 }
