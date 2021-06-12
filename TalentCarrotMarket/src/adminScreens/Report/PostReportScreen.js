@@ -4,7 +4,7 @@ import {
     Text,
     StyleSheet,
     TouchableOpacity,
-    Button, Image, FlatList, ScrollView, Alert
+    Button, Image, FlatList, ScrollView, Alert, RefreshControl
 } from 'react-native';
 import {
     widthPercentageToDP as wp,
@@ -32,8 +32,11 @@ import {Picker} from "@react-native-picker/picker";
 const PostReportScreen = ({navigation}) => {
 
     const [reportData, setReportData] = useState([]);
+    const [refresh, setRefresh] = useState(false);
+
 
     async function getReportData(category){
+        setCategory(category);
         let data = await requestReportAPI.getPostOrUserReport(category, 0);
         setReportData(data);
     }
@@ -43,6 +46,16 @@ const PostReportScreen = ({navigation}) => {
         getReportData('');
     }, [rerender]);
 
+    const refreshPage = async() => {
+        console.log('페이지 새로고침');
+
+        setRefresh(true);
+
+        let data = await requestReportAPI.getPostOrUserReport(category, 0);
+        setReportData(data);
+        setRefresh(false);
+
+    }
 
     const returnReportFlatListItem = (item,index)=>{
         let time = getDate(item.date);
@@ -228,6 +241,7 @@ const PostReportScreen = ({navigation}) => {
                 keyExtractor={(item,index) => String(item._id)}
                 renderItem={({item,index})=>returnReportFlatListItem(item,index)}
                 extraData={rerender}
+                refreshControl={<RefreshControl refreshing={refresh} onRefresh={refreshPage} />}
             />
 
             {currentData == undefined?null:
