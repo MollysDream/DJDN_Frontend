@@ -5,7 +5,7 @@ import {
     StyleSheet,
     FlatList,
     TouchableOpacity,
-    Button, Image, TouchableHighlight, ScrollView
+    Button, Image, TouchableHighlight, ScrollView, RefreshControl
 } from 'react-native';
 import {
     widthPercentageToDP as wp,
@@ -21,9 +21,12 @@ import Icon2 from "react-native-vector-icons/MaterialIcons";
 
 import Modal from "react-native-modal";
 import Postcode from "@actbase/react-daum-postcode";
+import requestReportAPI from "../../requestReportAPI";
 
 function AdverStatusScreen(props,navigation){
     const [adverInfo, setAdverInfo] = useState("");
+    const [refresh, setRefresh] = useState(false);
+
 
     const select = props.data;
     const navigations = useNavigation();
@@ -41,6 +44,22 @@ function AdverStatusScreen(props,navigation){
     useEffect(() => {
         getadver();
     }, [isFocused]);
+
+    const refreshPage = async() => {
+        console.log('페이지 새로고침');
+
+        setRefresh(true);
+
+        if(currentLocation=='전체')
+            adver = await requestAdverAPI.getAdver();
+        else
+            adver = await requestAdverAPI.getAdverByAddressName(currentLocation);
+
+
+        setAdverInfo(adver);
+        setRefresh(false);
+
+    }
 
     function returnFlatListItem(item,index){
         let time = getDate(item.date);
@@ -137,7 +156,7 @@ function AdverStatusScreen(props,navigation){
                  //onEndReached={this.morePage}
                  onEndReachedThreshold={1}
                  //extraData ={rerender}
-                 //refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+                 refreshControl={<RefreshControl refreshing={refresh} onRefresh={refreshPage} />}
              />
 
              <Modal isVisible={filterModal}>

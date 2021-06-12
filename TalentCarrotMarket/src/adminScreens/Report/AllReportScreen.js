@@ -4,7 +4,7 @@ import {
     Text,
     StyleSheet,
     TouchableOpacity,
-    Button, Image, FlatList, ScrollView, Alert
+    Button, Image, FlatList, ScrollView, Alert, RefreshControl
 } from 'react-native';
 import {
     widthPercentageToDP as wp,
@@ -28,11 +28,13 @@ import { useNavigation } from '@react-navigation/native';
 
 import Modal from "react-native-modal";
 import request from "../../requestAPI";
+import requestAdverAPI from "../../requestAdverAPI";
 
 
 const AllReportScreen = ({navigation}) => {
 
     const [reportData, setReportData] = useState([]);
+    const [refresh, setRefresh] = useState(false);
 
     async function getReportData(){
         let data = await requestReportAPI.getAllReport();
@@ -44,6 +46,16 @@ const AllReportScreen = ({navigation}) => {
         getReportData();
     }, [rerender]);
 
+    const refreshPage = async() => {
+        console.log('페이지 새로고침');
+
+        setRefresh(true);
+
+        let data = await requestReportAPI.getAllReport();
+        setReportData(data);
+        setRefresh(false);
+
+    }
 
     const returnReportFlatListItem = (item,index)=>{
         let time = getDate(item.date);
@@ -225,6 +237,7 @@ const AllReportScreen = ({navigation}) => {
                 keyExtractor={(item,index) => String(item._id)}
                 renderItem={({item,index})=>returnReportFlatListItem(item,index)}
                 extraData={rerender}
+                refreshControl={<RefreshControl refreshing={refresh} onRefresh={refreshPage} />}
             />
 
             {currentData == undefined?null:
