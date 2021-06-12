@@ -76,6 +76,47 @@ const TradeSetScreen =({navigation,route})=>{
     // 화면 변경 시 데이터 불러옴
     const isFocused = useIsFocused();
 
+    //거래 삭제 시 적용
+    const [isDelete, setIsDelete] = useState(false);
+    
+    useEffect(()=>{
+      async function settingTrade() {
+        socket.emit('joinTradeSetRoom', chatRoom);
+        console.log("joinTradeSetRoom 실행됐다!! 방 번호 : " + chatRoom);
+      }
+
+      settingTrade();
+
+      socket.on('suggest trade to client', () => {
+        // console.log("제안 옴");
+        if(socketCome==true){
+          setSocketCome(false);
+        } else{
+          setSocketCome(true);
+        }
+        
+      });
+
+      socket.on('agree trade to client', () => {
+        if(socketCome==true){
+          setSocketCome(false);
+        } else{
+          setSocketCome(true);
+        }
+      });
+
+      socket.on('delete trade to client', () => {
+        // console.log("거래 삭제 옴")
+        setIsDelete(true);
+
+        if(socketCome==true){
+          setSocketCome(false);
+        } else{
+          setSocketCome(true);
+        }
+      });
+
+    },[])
 
     useEffect(()=>{
 
@@ -83,35 +124,29 @@ const TradeSetScreen =({navigation,route})=>{
 
       requestTradeAPI.getTrade(chatRoom)
         .then(returnData => {
-            if(returnData.data.message ){
-              // if(returnData.data.trade.complete==true){
-              //   alert("이미 종료된 거래입니다!")
-              //   navigation.navigate("chatch")
-              // }else{
-                const saveLongitude = returnData.data.trade.longitude;
-                const saveLatitude = returnData.data.trade.latitude;
+            if(returnData.data.message){
+              const saveLongitude = returnData.data.trade.longitude;
+              const saveLatitude = returnData.data.trade.latitude;
 
-                saveLocation = {latitude:saveLatitude, longitude:saveLongitude};
+              saveLocation = {latitude:saveLatitude, longitude:saveLongitude};
 
-                console.log("거래 정보는 "+returnData.data.trade);
-                setIsSuggest(true);
-                setIsSave(returnData.data.trade.isSave);
-                setProLocate(returnData.data.trade.location);
-                setStart(returnData.data.trade.startTime);
-                setEnd(returnData.data.trade.endTime);
-                setTradeId(returnData.data.trade._id);
+              console.log("거래 동의 상태는 "+returnData.data.trade.isSave);
+              setIsSuggest(true);
+              setIsSave(returnData.data.trade.isSave);
+              setProLocate(returnData.data.trade.location);
+              setStart(returnData.data.trade.startTime);
+              setEnd(returnData.data.trade.endTime);
+              setTradeId(returnData.data.trade._id);
 
-                console.log("가져온 거래 장소는 "+saveLocation.longtitude)
+              console.log("가져온 거래 장소는 "+saveLocation.longtitude)
 
-                if(returnData.data.trade.sender==userId){
-                  console.log("현재 접속자는 거래 제안자임 "+ returnData.data.trade.sender);
-                  sender=userId;
-                } else{
-                  console.log("현재 접속자는 거래 제안받은사람임 "+ returnData.data.trade.receiver);
-                  receiver=userId;
-                }
-              // }
-          
+              if(returnData.data.trade.sender==userId){
+                console.log("현재 접속자는 거래 제안자임 "+ returnData.data.trade.sender);
+                sender=userId;
+              } else{
+                console.log("현재 접속자는 거래 제안받은사람임 "+ returnData.data.trade.receiver);
+                receiver=userId;
+              }
 
           } else{
             console.log("거래가 존재하지 않습니다.");
@@ -121,50 +156,15 @@ const TradeSetScreen =({navigation,route})=>{
         .catch(err => {
           console.log(err);
         });
+      },[isFocused,socketCome])
 
-        socket.emit('joinTradeSetRoom', chatRoom);
-
-        socket.on('suggest trade to client', () => {
-          setSocketCome(true);
-        });
-
-        socket.on('agree trade to client', () => {
-          setSocketCome(true);
-        });
-
-        socket.on('delete trade to client', () => {
-          setSocketCome(true);
-        });
-      },[isFocused])
-
-    useEffect(()=>{
-
-      console.log("socket 실시간 통신 완료 "+socketCome)
-  
-      requestTradeAPI.getTrade(chatRoom)
-        .then(returnData => {
-          if(returnData.data.message){
-
-            console.log('동의 상태는 '+returnData.data.trade.isSave);
-  
-            setIsSuggest(true);
-            setIsSave(returnData.data.trade.isSave);
-            setProLocate(returnData.data.trade.location);
-            setStart(returnData.data.trade.startTime);
-            setEnd(returnData.data.trade.endTime);
-
-            setSocketCome(false);
-            
-          } else{
-            console.log("거래가 존재하지 않습니다.");
-            navigation.navigate('chatch');
-          }
-          })
-          //에러
-          .catch(err => {
-              console.log(err);
-          });
-      },[socketCome])
+      useEffect(()=>{
+        console.log("거래 삭제 진행"+isDelete)
+        if(isDelete==true){
+          navigation.navigate('chatch')
+        }
+        setIsDelete(false);
+      },[isDelete])
 
     // 거래 시간 설정
     const [startDate, setStartDate] = useState(new Date());
