@@ -3,9 +3,9 @@ import {HOST} from "./function";
 
 const axi = axios.create({baseURL: `http://${HOST}:3000`});
 
-export async function getRegister(email, password, name, nickname){
+export async function getRegister(email, password, name, nickname,phoneNumber){
     console.log('getRegister함수 호출됨');
-    const userData = await axi.post("/member/join", {email,password, name, nickname});
+    const userData = await axi.post("/member/join", {email,password, name, nickname,phoneNumber});
     return userData;
 }
 

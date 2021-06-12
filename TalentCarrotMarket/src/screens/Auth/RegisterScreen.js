@@ -19,22 +19,27 @@ import {
 import requestMemberAPI from "../../requestMemberAPI";
 import requestPointAPI from "../../requestPointAPI";
 
+import axios from "axios";
+
+let nowDateString;
+import smsKey from '../../smsKey';
+import Base64 from 'crypto-js/enc-base64';
+const CryptoJS =require ('crypto-js');
+
 const RegisterScreen = ({navigation}) => {
   const [userName, setUserName] = useState('');
   const [userId, setUserId] = useState('');
   const [userNickName, setUserNickName] = useState('');
   const [userPassword, setUserPassword] = useState('');
-  const [userNumber, setUserNumber] = useState('');
+  const [userPhone, setUserPhone] = useState('');
   const [userPasswordchk, setUserPasswordchk] = useState('');
   const [errortext2, setErrortext2] = useState('');
   const [isRegistraionSuccess, setIsRegistraionSuccess] = useState(false);
   const [isClick, setIsClick] = useState(false);
-
-  // const idInputRef = createRef();
-  // const passwordInputRef = createRef();
-  // const passwordchkInputRef = createRef();
-  // const nameInputRef = createRef();
-  // const nicknameInputRef = createRef();
+  const [isCheck, setIsCheck] = useState(false);
+  const [checkNumber, setCheckNumber] = useState();
+  const [certifyNumber, setCertifyNumber] = useState();
+  nowDateString = Date.now().toString();
 
   const handleSubmitButton = async () => {
     const regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
@@ -52,9 +57,10 @@ const RegisterScreen = ({navigation}) => {
       alert("이메일 형식에 맞게 입력해주세요.");
     }
     if (!userNickName) {
-      alert('닉네임을 선택해주세요');
+      alert('닉네임을 입력해주세요');
       return;
     }
+
 
     if (!userPassword) {
       alert('비밀번호를 입력해주세요');
@@ -69,9 +75,19 @@ const RegisterScreen = ({navigation}) => {
       return;
     }
 
+    if (!userPhone) {
+      alert('전화번호를 입력해주세요');
+      return;
+    }
+
+    if(isCheck==false){
+      alert('전화번호 인증을 완료해주세요')
+      return;
+    }
+
      try{
         //회원 가입
-          const returnData = await requestMemberAPI.getRegister(userId,userPassword,userName,userNickName);
+          const returnData = await requestMemberAPI.getRegister(userId,userPassword,userName,userNickName,userPhone);
           console.log(userId);
           await requestPointAPI.createPoint(userId); //email
           setErrortext2('');
@@ -145,23 +161,34 @@ const RegisterScreen = ({navigation}) => {
 
   async function sendSMS(){
 
-    console.log("신고된 주소 "+proLocate);
-    console.log("확인 accesskey: "+smsKey.accessKey);
-    console.log("확인 secretkey: "+smsKey.secretKey);
-    console.log("확인 serviceId: "+smsKey.serviceId);
-    console.log("확인 phoneNumber: "+smsKey.phoneNumber);
-    console.log("확인 timestamp: "+Date.now() + " 타입 : " + typeof Date.now().toString());
+    let secretKey = smsKey.secretKey;
+    let accessKey = smsKey.accessKey;
+    let serviceId = encodeURIComponent(smsKey.serviceId);
+    let phoneNumber = smsKey.phoneNumber;
+
+    let signatureValue = makeSignature();
+
+    console.log("암호화된것은?"+signatureValue)
+
+    console.log("확인 accesskey: "+accessKey);
+    console.log("확인 secretkey: "+secretKey);
+    console.log("확인 serviceId: "+serviceId);
+    console.log("확인 phoneNumber: "+phoneNumber);
+    console.log("확인 timestamp: "+nowDateString + " 타입 : " + typeof(nowDateString));
+
+    const certify = Math.floor(Math.random() * (999999 - 100000)) + 100000;
+    setCertifyNumber(certify.toString());
 
     const body = {
       "type": 'SMS',
       "contentType": 'COMM',
       "countryCode": '82',
-      "from": smsKey.phoneNumber, // 발신자 번호, 바꾸지 X
-      "content": `${proLocate} 주소에서 신고가 들어왔습니다.`,
+      "from": phoneNumber, // 발신자 번호, 바꾸지 X
+      "content": `다재다능 인증번호 ${certify}입니다.`,
       "messages": [
         {
-          "to": '01075301550', // 수신자 번호
-          "content":`${proLocate} 주소에서 신고가 들어왔습니다.`
+          "to": userPhone, // 수신자 번호
+          "content":`다재다능 인증번호 ${certify}입니다.`
         },
       ],
     };
@@ -169,18 +196,15 @@ const RegisterScreen = ({navigation}) => {
     const options = {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
-        'x-ncp-apigw-timestamp': Date.now().toString(),
-        'x-ncp-iam-access-key': smsKey.accessKey,
-        'x-ncp-apigw-signature-v2': makeSignature(),
+        'x-ncp-apigw-timestamp': nowDateString,
+        'x-ncp-iam-access-key': accessKey,
+        'x-ncp-apigw-signature-v2': signatureValue,
       },
     };
 
-
     axios
-      .post(`https://sens.apigw.ntruss.com/sms/v2/services/${encodeURIComponent(smsKey.serviceId)}/messages`, body, options)
+      .post(`https://sens.apigw.ntruss.com/sms/v2/services/${serviceId}/messages`, body, options)
       .then(async (res) => {
-        // 성공 이벤트
-        alert('거래 종료를 누르지 않아 자동으로 신고가 됩니다.')
         console.log(res);
       })
       .catch((err) => {
@@ -188,7 +212,17 @@ const RegisterScreen = ({navigation}) => {
       });
 
       setIsClick(true);
+  }
 
+  const checkSMS = () =>{
+    if(certifyNumber == checkNumber){
+      setIsCheck(true);
+      alert("인증이 완료되었습니다! 회원가입 버튼을 눌러 회원가입을 마무리하세요");
+    } else{
+      console.log("실제 인증번호 "+certifyNumber);
+      console.log("유저가 입력한 번호 "+checkNumber);
+      alert("인증번호가 틀렸습니다! 인증번호를 다시 요청하세요")
+    }
   }
 
   return (
@@ -244,26 +278,42 @@ const RegisterScreen = ({navigation}) => {
         />
         <TextInput
           style={styles.textFormBottom}
-          onChangeText={(userNickName) => setUserNickName(userNickName)}
+          onChangeText={(UserNickName) => setUserNickName(UserNickName)}
           placeholder={'닉네임을 입력해주세요'}
         />
       </View>
 
-      <View Style={styles.formArea3}>
-        <TextInput
+      <View style={{paddingBottom: 20}}>
+      </View>
+
+      {isClick==false?(
+        <View style={styles.formArea3}>
+          <TextInput
           style={styles.textFormAll}
           placeholder={'전화번호를 입력해주세요'}
-          onChangeText={(UserName) => setUserName(UserName)}
-        />
-        {isClick?(
-          <TouchableOpacity style={styles.btn} onPress={handleSubmitButton}>
-            <Text style={{color: 'white', fontSize: wp('4%')}}>인증번호 보내기</Text>
-          </TouchableOpacity>):
-          <TouchableOpacity style={styles.btn} onPress={handleSubmitButton}>
-            <Text style={{color: 'white', fontSize: wp('4%')}}>인증번호 확인</Text>
-          </TouchableOpacity>
-        }
-      </View>
+          onChangeText={(UserNumber) => setUserPhone(UserNumber)}
+          />
+          <View style={styles.btnArea}>
+            <TouchableOpacity style={styles.btnSMS} onPress={sendSMS}>
+              <Text style={{color: 'white', fontSize: wp('4%')}}>인증번호 전송</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        ):
+        <View style={styles.formArea3}>
+          <TextInput
+          style={styles.textFormAll}
+          placeholder={'인증번호를 입력해주세요'}
+          onChangeText={(CheckNumber) => setCheckNumber(CheckNumber)}
+          />
+          <View style={styles.btnArea}>
+            <TouchableOpacity style={styles.btnSMS} onPress={checkSMS}>
+              <Text style={{color: 'white', fontSize: wp('4%')}}>인증번호 체크</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      }
+  
 
       <View style={{paddingBottom: 20, justifyContent: 'center'}}>
         {errortext2 !== '' ? (
@@ -284,13 +334,16 @@ const RegisterScreen = ({navigation}) => {
 };
 
 function makeSignature(){
+  let serviceId = encodeURIComponent(smsKey.serviceId);
   var space = " ";				// one space
   var newLine = "\n";				// new line
   var method = "POST";				// method
-  var url = `/sms/v2/services/${encodeURIComponent(smsKey.serviceId)}/messages`;	// url (include query string)
-  var timestamp = Date.now().toString();			// current timestamp (epoch)
+  var url = `/sms/v2/services/${serviceId}/messages`;	// url (include query string)
+  var timestamp = nowDateString;			// current timestamp (epoch)
   var accessKey = smsKey.accessKey;			// access key id (from portal or Sub Account)
   var secretKey = smsKey.secretKey;			// secret key (from portal or Sub Account)
+
+  console.log("확인 timestamp: "+timestamp + " 타입 : " + typeof(timestamp));
 
   var hmac = CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA256, secretKey);
   hmac.update(method);
@@ -318,7 +371,7 @@ const styles = StyleSheet.create({
     paddingRight: wp(7),
   },
   topArea: {
-    flex: 5,
+    flex: 7,
     paddingTop: wp(2),
     alignItems: 'center',
   },
@@ -341,33 +394,26 @@ const styles = StyleSheet.create({
   TextValidation: {
     fontSize: wp('4%'),
     color: 'red',
-    // paddingTop: wp(5),
   },
 
   formArea: {
     flex: 3.5,
     justifyContent: 'center',
-    // paddingTop: 10,
-    // backgroundColor: 'red',
-    marginBottom: hp(-5),
+    marginBottom: hp(5),
   },
 
   formArea2: {
     flex: 1.5,
     justifyContent: 'center',
     alignItems: 'center',
-    // backgroundColor: 'red',
-    marginBottom: hp(-2),
-    // alignSelf: 'stretch',
+    marginBottom: hp(5),
   },
 
   formArea3: {
     flex: 1,
+    flexDirection: "row",
     justifyContent: 'center',
-    alignItems: 'center',
-    // backgroundColor: 'red',
-    marginBottom: hp(-2),
-    // alignSelf: 'stretch',
+    marginBottom: hp(3),
   },
 
   textFormTop: {
@@ -392,7 +438,6 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
     color:'black'
-
   },
   textFormBottom: {
     borderWidth: 2,
@@ -409,18 +454,23 @@ const styles = StyleSheet.create({
   textFormAll: {
     borderWidth: 2,
     borderTopWidth: 1,
+    borderBottomWidth: 1,
     borderColor: 'black',
-    borderBottomRightRadius: 7,
-    borderBottomLeftRadius: 7,
-    width: '100%',
+    width: '60%',
     height: hp(6),
     paddingLeft: 10,
-    paddingRight: 10,
+    marginRight: 30,
     color:'black'
   },
   btnArea: {
     height: hp(8),
-    // backgroundColor: 'orange',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingBottom: hp(1.5),
+  },
+  btnSMSArea: {
+    height: hp(8),
+    // marginLeft:3,
     justifyContent: 'center',
     alignItems: 'center',
     paddingBottom: hp(1.5),
@@ -433,9 +483,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'black',
   },
-  btnSNS: {
-
-  }
+  btnSMS: {
+    flex: 1,
+    width: '120%',
+    borderRadius: 7,
+    justifyContent: 'center',
+    alignItems: 'center',
+    // backgroundColor: 'black',
+    backgroundColor: '#4672B8',
+  },
 });
 
 export default RegisterScreen;

@@ -56,29 +56,29 @@ const LoginScreen = ({navigation}) => {
   // };
 
 
-  const _signIn = async () => {
-    try {
-      await GoogleSignin.hasPlayServices({
-        showPlayServicesUpdateDialog: true,
-      });
-      const userInfo = await GoogleSignin.signIn();
-      console.log('User Info --> ', userInfo);
-      setUserInfo(userInfo);
-    } catch (error) {
-      console.log('Message', JSON.stringify(error));
-      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        alert('User Cancelled the Login Flow');
-      } else if (error.code === statusCodes.IN_PROGRESS) {
-        alert('Signing In');
-      } else if (
-          error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE
-        ) {
-        alert('Play Services Not Available or Outdated');
-      } else {
-        alert(error.message);
-      }
-    }
-  };
+  // const _signIn = async () => {
+  //   try {
+  //     await GoogleSignin.hasPlayServices({
+  //       showPlayServicesUpdateDialog: true,
+  //     });
+  //     const userInfo = await GoogleSignin.signIn();
+  //     console.log('User Info --> ', userInfo);
+  //     setUserInfo(userInfo);
+  //   } catch (error) {
+  //     console.log('Message', JSON.stringify(error));
+  //     if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+  //       alert('User Cancelled the Login Flow');
+  //     } else if (error.code === statusCodes.IN_PROGRESS) {
+  //       alert('Signing In');
+  //     } else if (
+  //         error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE
+  //       ) {
+  //       alert('Play Services Not Available or Outdated');
+  //     } else {
+  //       alert(error.message);
+  //     }
+  //   }
+  // };
 
 
   //일반 로그인
@@ -187,12 +187,12 @@ const LoginScreen = ({navigation}) => {
               <Text style={(styles.Text, {color: 'white'})}>로그인</Text>
             </TouchableOpacity>
           </View>
-          <View style={styles.rowbtnArea}>
-            <View style={styles.btnArea2} >
+          {/* <View style={styles.rowbtnArea}> */}
+            <View style={styles.btnArea} >
               <TouchableOpacity style={styles.btn2} onPress={() => navigation.navigate('Register')}>
                 <Text style={(styles.Text, {color: 'white'})}>회원가입</Text>
               </TouchableOpacity>
-            </View>
+            {/* </View> */}
             {/*<View style={styles.btnArea2} >
               <GoogleSigninButton
               style={{ width: 220, height: 50 }}
@@ -278,20 +278,18 @@ const styles = StyleSheet.create({
   },
   btnArea: {
     height: hp(8),
-    // backgroundColor: 'orange',
     justifyContent: 'center',
     alignItems: 'center',
     paddingBottom: 15,
   },
-  rowbtnArea:{
-    flexDirection: "row",
-    justifyContent: 'center',
-  },
-  btnArea2: {
-    height: hp(8),
-    // backgroundColor: 'orange',
-    paddingBottom: hp(1.5),
-  },
+  // rowbtnArea:{
+  //   flexDirection: "row",
+  //   justifyContent: 'center',
+  // },
+  // btnArea2: {
+  //   height: hp(8),
+  //   paddingBottom: hp(1.5),
+  // },
   btn: {
     flex: 1,
     width: '100%',
@@ -302,8 +300,7 @@ const styles = StyleSheet.create({
   },
   btn2: {
     flex: 1,
-    width: 150,
-    height: 50,
+    width: '100%',
     borderRadius: 7,
     justifyContent: 'center',
     alignItems: 'center',
