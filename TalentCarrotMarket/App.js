@@ -151,6 +151,8 @@ const HomeStackScreen = () => {
 
         <HomeStack.Screen options={{title: "거래 타이머"}} name="tradeTimer" component={tradeTimerScreen} />
         <HomeStack.Screen options={{title: "사용자 평가"}} name="userRate" component={userRateScreen} />
+        <HomeStack.Screen options={{title: "사용자 프로필"}} name="chatUserProfile" component={chatUserProfileScreen} />
+
     </Stack.Navigator>
   );
 };
