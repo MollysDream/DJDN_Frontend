@@ -55,10 +55,12 @@ const EditProfileScreen = ({navigation, route}) => {
             return;
         }
 
+        let imageUrl = null;
         //ImagePicker을 이용한 경우
         if(deviceImage!=null)
             try{
-                let imageUrl = await request.postImageToS3(deviceImage,options);
+                console.log('이미지 피커 불림');
+                imageUrl = await request.postImageToS3(deviceImage,options);
 
                 console.log(imageUrl);
                 setEditImage(imageUrl);
@@ -67,7 +69,13 @@ const EditProfileScreen = ({navigation, route}) => {
             }
 
         try{
-            const result = await requestUserAPI.updateUserProfile(userId, editNickname, editImage);
+            if(deviceImage!=null){
+                const result = await requestUserAPI.updateUserProfile(userId, editNickname, imageUrl);
+            }
+            else{
+                const result = await requestUserAPI.updateUserProfile(userId, editNickname, editImage);
+            }
+
             Alert.alert("수정 완료", "프로필 수정이 완료되었습니다.",
                 [{ text: '확인', style: 'cancel',
                     onPress : ()=> {
