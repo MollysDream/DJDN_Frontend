@@ -82,7 +82,10 @@ const UserRateScreen = ({navigation, route}) => {
                   await requestAPI.updatePostTradeStatus(chatRoomData.postId, 2);
                       
                 alert('사용자 평가를 완료했습니다.')
-                navigation.navigate('chatch')
+
+                  navigation.pop(3);
+
+                /*navigation.navigate('chatch')*/
               }
                 else{
                   alert('사용자 평가를 실패하였습니다.')

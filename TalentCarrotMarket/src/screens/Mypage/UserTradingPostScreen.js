@@ -64,7 +64,7 @@ export default class UserTradingPostScreen extends Component{
 
         const userData = await requestUser.getUserData(item.user_id);
 
-        this.props.navigation.navigate('DetailPost',{detailPost: item, postImages: postImages, postOwner: userData});
+        this.props.navigation.navigate('TabFirst',{screen:'DetailPost',params:{detailPost: item, postImages: postImages, postOwner: userData}});
     }
 
 
