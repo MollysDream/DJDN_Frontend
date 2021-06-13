@@ -170,7 +170,7 @@ const TradeSetScreen =({navigation,route})=>{
     useEffect(()=>{
       console.log("거래 삭제 진행"+isDelete)
       if(isDelete===true){
-        navigation.pop(1);
+        navigation.pop(2);
       }
       setIsDelete(false);
     },[isDelete])
