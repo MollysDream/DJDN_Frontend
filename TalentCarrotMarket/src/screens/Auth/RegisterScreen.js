@@ -307,7 +307,7 @@ const RegisterScreen = ({navigation}) => {
           onChangeText={(CheckNumber) => setCheckNumber(CheckNumber)}
           />
           <View style={styles.btnArea}>
-            <TouchableOpacity style={styles.btnSMS} onPress={checkSMS}>
+            <TouchableOpacity style={styles.btnSMSCheck} onPress={checkSMS}>
               <Text style={{color: 'white', fontSize: wp('4%')}}>인증번호 체크</Text>
             </TouchableOpacity>
           </View>
@@ -492,6 +492,14 @@ const styles = StyleSheet.create({
     // backgroundColor: 'black',
     backgroundColor: '#4672B8',
   },
+  btnSMSCheck:{
+    flex: 1,
+    width: '120%',
+    borderRadius: 7,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ffc6c6'
+  }
 });
 
 export default RegisterScreen;
