@@ -151,12 +151,14 @@ const TradeTimerScreen = ({navigation, route}) =>{
           console.log("거래제안자 "+returnData.data.trade.sender)
           console.log("거래제안받는사람 "+returnData.data.trade.receiver)
 
-          if(returnData.data.trade.sender==userId){
+          if(returnData.data.trade.sender==user1){
             console.log("현재 접속자는 거래 제안자임 "+ returnData.data.trade.sender);
-            sender=userId;
+            sender=user1;
+            receiver=user2;
           } else{
             console.log("현재 접속자는 거래 제안받은사람임 "+ returnData.data.trade.receiver);
-            receiver=userId;
+            receiver=user1;
+            sender=user2;
           }
         } else{
           console.log("거래가 존재하지 않습니다.");
@@ -211,9 +213,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
 
     setIsEndSuggest(true);
 
-    let user= await AsyncStorage.getItem('user_id');
-
-    if(user1==user){
+    if(user1==userId){
       sender = user1;
       receiver = user2;
     } else{
