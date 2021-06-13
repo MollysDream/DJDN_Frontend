@@ -200,8 +200,8 @@ function ChatScreen(props) {
     return (
         <View style={styles.container}>
           <View style={styles.rowTopArea}>
-            <View>
-              <Text style={{fontSize:15, marginTop:5, color:'grey'}}>시계 아이콘을 눌러 거래를 제안해보세요!</Text>
+            <View style={{position:'absolute', right:50, backgroundColor:'#ffcaa1', borderRadius:20, padding:3}}>
+              <Text style={{fontSize:15, color:'black'}}>시계 아이콘을 눌러 거래를 제안해보세요!</Text>
             </View>
             <View style={styles.clockButtonContainer}>
               <IconButton
@@ -241,7 +241,6 @@ const styles = StyleSheet.create({
       // paddingLeft: wp(10),
       flexDirection: "row",
       alignItems: 'center',
-      backgroundColor:"white"
     },
     clockButtonContainer: {
         position: 'absolute',
