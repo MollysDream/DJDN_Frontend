@@ -4,7 +4,7 @@ import {
     Text,
     StyleSheet,
     TouchableOpacity,
-    Button, Image, TouchableWithoutFeedback, TouchableHighlight, ScrollView, Modal
+    Button, Image, TouchableHighlight, ScrollView, Modal
 } from 'react-native';
 import {Container, Content, Form, Header, Input, Item, Label, Left, Right, Textarea} from "native-base";
 import {

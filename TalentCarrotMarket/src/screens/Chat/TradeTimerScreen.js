@@ -5,7 +5,7 @@ import {
   View,
   Text,
   TouchableOpacity,
-  StyleSheet, Image, Button
+  StyleSheet, Image
 } from 'react-native';
 
 import axios from "axios";
@@ -79,7 +79,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
         console.log('user1은? '+user1)
         console.log('user2는? '+user2)
 
-      if (user1 == user){
+      if (user1 === user){
         console.log("user1이에요! "+ user1)
         console.log("user2아니에요! "+ user2)
         let userData = await requestUserAPI.getUserData(user2);
@@ -151,7 +151,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
           console.log("거래제안자 "+returnData.data.trade.sender)
           console.log("거래제안받는사람 "+returnData.data.trade.receiver)
 
-          if(returnData.data.trade.sender==user1){
+          if(returnData.data.trade.sender===user1){
             console.log("현재 접속자는 거래 제안자임 "+ returnData.data.trade.sender);
             sender=user1;
             receiver=user2;
@@ -173,7 +173,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
 
   useEffect(()=>{
     console.log("거래 삭제 진행"+isDelete)
-    if(isDelete==true){
+    if(isDelete===true){
       navigation.pop(2);
     }
     setIsDelete(false);
@@ -192,7 +192,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
        const returnData = await requestTradeAPI.updateTradeTime(tradeId,newEndSet);
 
        if (returnData.data.message) {
-        var compareDiffTime=(endDateTime.getTime()-nowDate)/1000;
+        let compareDiffTime=(endDateTime.getTime()-nowDate)/1000;
         console.log("차이는?? "+compareDiffTime);
         socket.emit("extend endTime",tradeId, endDateTime, userId );
 
@@ -213,7 +213,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
 
     setIsEndSuggest(true);
 
-    if(user1==userId){
+    if(user1===userId){
       sender = user1;
       receiver = user2;
     } else{
@@ -376,13 +376,13 @@ const TradeTimerScreen = ({navigation, route}) =>{
           />
         <View style={styles.btnList}>
           <View style={styles.rowArea}>
-            <View style={styles.btnArea,{paddingRight:wp('1')}}>
+            <View style={styles.btnArea}>
               <TouchableOpacity style={styles.btn} onPress={extendButton}>
                 <Text style={{color: 'white'}}>10분 연장</Text>
               </TouchableOpacity>
             </View>
 
-            <View style={styles.btnArea,{paddingLeft:wp('1')}}>
+            <View style={styles.btnArea}>
               <TouchableOpacity style={styles.btn} onPress={endSuggestButton}>
                 <Text style={{color: 'white'}}>거래종료</Text>
               </TouchableOpacity>
@@ -399,7 +399,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
 
   const senderView =
   <>
-    {isEnd==false?
+    {isEnd===false?
           (
             <>
               <View style={styles.helpMsg}>
@@ -448,7 +448,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
 
   const receiverView =
   <>
-    {isEnd==false?
+    {isEnd===false?
           (
             <>
               <View style={{paddingTop:hp(3)}}>
@@ -467,12 +467,12 @@ const TradeTimerScreen = ({navigation, route}) =>{
               </View>
 
               <View style={styles.rowArea}>
-                <View style={styles.btnArea,{paddingRight:wp(1)}}>
+                <View style={styles.btnArea}>
                   <TouchableOpacity style={styles.btn} onPress={endButton}>
                     <Text style={{color: 'white'}}>거래 종료확인</Text>
                   </TouchableOpacity>
                 </View>
-                <View style={styles.btnArea,{paddingLeft:wp(1)}}>
+                <View style={styles.btnArea}>
                   <TouchableOpacity style={styles.btnCancel2} onPress={cancelButton}>
                     <Text style={{color: 'white'}}>거래 취소하기</Text>
                   </TouchableOpacity>
@@ -520,7 +520,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
 
   const tradeEnd =
   <>
-    {userId==sender && userId!=receiver?(
+    {userId===sender && userId!==receiver?(
       <>{senderView}</>):
       <>{receiverView}</>
     }
@@ -561,7 +561,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
           }}
           />
 
-      {isEndSuggest==false?
+      {isEndSuggest===false?
       (<>{tradeEndSuggest}</>):
           <>{tradeEnd}</>}
 
@@ -576,17 +576,17 @@ const TradeTimerScreen = ({navigation, route}) =>{
 function makeSignature(){
 
   let serviceId = encodeURIComponent(smsKey.serviceId);
-  var space = " ";				// one space
-  var newLine = "\n";				// new line
-  var method = "POST";				// method
-  var url = `/sms/v2/services/${serviceId}/messages`;	// url (include query string)
-  var timestamp = nowDateString;			// current timestamp (epoch)
-  var accessKey = smsKey.accessKey;			// access key id (from portal or Sub Account)
-  var secretKey = smsKey.secretKey;			// secret key (from portal or Sub Account)
+  let space = " ";				// one space
+  let newLine = "\n";				// new line
+  let method = "POST";				// method
+  let url = `/sms/v2/services/${serviceId}/messages`;	// url (include query string)
+  let timestamp = nowDateString;			// current timestamp (epoch)
+  let accessKey = smsKey.accessKey;			// access key id (from portal or Sub Account)
+  let secretKey = smsKey.secretKey;			// secret key (from portal or Sub Account)
 
   console.log("확인 timestamp: "+timestamp + " 타입 : " + typeof(timestamp));
 
-  var hmac = CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA256, secretKey);
+  let hmac = CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA256, secretKey);
   hmac.update(method);
   hmac.update(space);
   hmac.update(url);
@@ -595,13 +595,13 @@ function makeSignature(){
   hmac.update(newLine);
   hmac.update(accessKey);
 
-  var hash = hmac.finalize();
-  var result = Base64.stringify(hash);
+  let hash = hmac.finalize();
+  let result = Base64.stringify(hash);
 
   console.log(result + " 타입 : " + typeof(result))
 
   return result;
-};
+}
 
 //타이머 설정용 시간
 const newFormatDate = (date)=>{
@@ -613,12 +613,12 @@ const newFormatDate = (date)=>{
 
 //str-->date
 function parse(str){
-  var newDd=str.split(/-| |:/);
-  var y = newDd[0];
-  var m = newDd[1];
-  var d= newDd[2];
-  var h = newDd[3];
-  var minute = newDd[4];
+  let newDd=str.split(/-| |:/);
+  let y = newDd[0];
+  let m = newDd[1];
+  let d= newDd[2];
+  let h = newDd[3];
+  let minute = newDd[4];
   return new Date(y,m-1,d,h,minute);
 }
 
@@ -662,6 +662,7 @@ const styles = StyleSheet.create({
     height: hp(8),
     justifyContent: 'center',
     alignItems: 'center',
+    paddingRight:wp('1')
   },
   btn: {
     width: 150,

@@ -10,7 +10,6 @@ import {
 } from 'react-native-responsive-screen';
 import request from "../../requestAPI";
 import {Container, Content, Form, Header, Input, Item, Label, Left, Right, Textarea} from "native-base";
-import requestUser from "../../requestUserAPI";
 import { SliderBox } from "react-native-image-slider-box";
 import AsyncStorage from "@react-native-community/async-storage";
 import {getDate, getPrice} from "../../function";
@@ -73,7 +72,7 @@ export default class DetailPostScreen extends Component{
 
         console.log('onChatPress 눌림! currentUserId : '+currentUserId,' postOwner : '+ this.state.postOwner._id);
 
-        if(postOwnerId == currentUserId){
+        if(postOwnerId === currentUserId){
             alert("자기가 만든 게시글에는 채팅이 불가능합니다.");
         }
 
@@ -94,7 +93,7 @@ export default class DetailPostScreen extends Component{
 
     render(){
         const item = this.state.detailPost;
-        var slice_date = item.date.split("T");
+        let slice_date = item.date.split("T");
         const postOwner = this.state.postOwner;
         const postOwnerId = this.state.postOwner._id;
         const currentUserId = this.state.currentUserId;
@@ -145,7 +144,7 @@ export default class DetailPostScreen extends Component{
 
                                 <View style={styles.btnArea1}>
                                     {
-                                        this.state.userId == this.state.postOwner._id || this.state.userId == '' ?
+                                        this.state.userId === this.state.postOwner._id || this.state.userId === '' ?
                                             null:
                                             <TouchableOpacity style={styles.btn1} onPress={()=>this.reportPost()}>
                                                 <Text>신고</Text>

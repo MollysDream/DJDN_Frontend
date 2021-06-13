@@ -1,4 +1,4 @@
-import React, {Component, useEffect} from 'react';
+import React, {Component} from 'react';
 import {
     StyleSheet,
     View,
@@ -6,7 +6,6 @@ import {
     Image,
     FlatList,
     TouchableOpacity,
-    Button,
     RefreshControl,
     TouchableHighlight, Alert
 } from 'react-native';
@@ -45,7 +44,7 @@ export default class HomeScreen extends Component{
             this.setState({userId:userId});
 
             let userAddressDataList = await requestAddressAPI.getUserAddress(userId);
-            if(userAddressDataList.address[0] == undefined){
+            if(userAddressDataList.address[0] === undefined){
                 Alert.alert("알림","동네 인증을 먼저 해주세요", [{ text: '확인', style: 'cancel' },
                     this.props.navigation.navigate('TabThird',{screen:'aroundSet'})
                 ])
@@ -144,7 +143,7 @@ export default class HomeScreen extends Component{
     }
 
 
-    returnFlatListItem(item,index){
+    returnFlatListItem(item){
         let time = getDate(item.date);
         let price = getPrice(item.price);
         let status = null
@@ -182,7 +181,7 @@ export default class HomeScreen extends Component{
                 status = '거래완료';
                 statusStyle = styles.status_complete
             }
-            if(item.user_id == this.state.userId){
+            if(item.user_id === this.state.userId){
                 mine = 'My';
                 mineStyle = styles.status_mine;
             }
