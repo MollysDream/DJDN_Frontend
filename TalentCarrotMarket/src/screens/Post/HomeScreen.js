@@ -189,12 +189,14 @@ export default class HomeScreen extends Component{
             return(
                 <TouchableHighlight onPress={() => this.goToDetailPostScreen(item)}>
                     <View style={styles.post}>
+
                         <Image style={styles.image} source={{ uri: item.image[0]}} />
+                        <View style={mineStyle}>
+                            <Text>{mine}</Text>
+                        </View>
                         <View>
                             <Text style={styles.postTitle}>{item.title}</Text>
-                            <View style={mineStyle}>
-                                <Text>{mine}</Text>
-                            </View>
+
                             <View style={statusStyle}>
                                 <Text>{status}</Text>
                             </View>
@@ -325,10 +327,10 @@ const styles = StyleSheet.create({
         borderRadius: 7
     },
     status_mine:{
-        backgroundColor:'#ffd6b3',
+        backgroundColor:'#ffb575',
         position:'absolute',
-        right:65,
-        top:3,
+        left:10,
+        top:10,
         padding:2,
         borderRadius: 7
 
