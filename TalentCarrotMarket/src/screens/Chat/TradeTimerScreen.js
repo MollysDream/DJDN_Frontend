@@ -174,7 +174,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
   useEffect(()=>{
     console.log("거래 삭제 진행"+isDelete)
     if(isDelete==true){
-      navigation.navigate('chatch')
+      navigation.pop(2);
     }
     setIsDelete(false);
   },[isDelete])
@@ -280,7 +280,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
 
       if (returnData.data.message) {
         alert('거래가 취소되어 거래를 다시 제안합니다.')
-        navigation.navigate('chatch')
+        navigation.pop(2);
       }
         else{
           alert('거래 취소 실패!')
@@ -293,7 +293,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
   }
 
   const msgSendButton = () =>{
-    navigation.navigate('chatch')
+    navigation.pop(2);
   }
 
   const checkUserProfile= () =>{

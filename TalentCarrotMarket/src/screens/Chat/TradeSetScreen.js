@@ -128,7 +128,7 @@ const TradeSetScreen =({navigation,route})=>{
             if(returnData.data.message){
               if(returnData.data.trade.complete==true){
                 alert("이미 종료된 거래입니다!")
-                navigation.navigate('chatch')
+                navigation.pop(1);
               } else{
                 const saveLongitude = returnData.data.trade.longitude;
                 const saveLatitude = returnData.data.trade.latitude;
@@ -171,7 +171,7 @@ const TradeSetScreen =({navigation,route})=>{
     useEffect(()=>{
       console.log("거래 삭제 진행"+isDelete)
       if(isDelete==true){
-        navigation.navigate('chatch')
+        navigation.pop(1);
       }
       setIsDelete(false);
     },[isDelete])
