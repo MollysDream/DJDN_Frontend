@@ -1,20 +1,18 @@
-import React, {Component, useState, useEffect} from 'react';
+import React, {useState} from 'react';
 
 import { Content, Container, Text, Form, Textarea } from 'native-base';
 import {
     StyleSheet,
     View,
     TouchableOpacity,
-    TouchableWithoutFeedback} from 'react-native';
+   } from 'react-native';
 
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import { Alert } from 'react-native';
-import AsyncStorage from "@react-native-community/async-storage";
 import DropDownPicker from 'react-native-dropdown-picker';
-import {PickerItem} from "react-native/Libraries/Components/Picker/Picker";
 import requestReportAPI from "../../requestReportAPI";
 import FlashMessage, {showMessage} from "react-native-flash-message";
 import {message} from "../../function";

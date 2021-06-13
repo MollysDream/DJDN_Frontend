@@ -1,4 +1,4 @@
-import React, {useState, createRef, Component} from 'react';
+import React, {Component} from 'react';
 import { Content, Container, Header, Left, Right, Title, Body, Item, Label, Text,
     Input, Form, Textarea } from 'native-base';
 import {
@@ -147,7 +147,7 @@ export default class MakePostScreen extends Component {
         try{
             const imageUrl: string[] = await Promise.all(this.state.imageTemp.map(async (file):Promise<string>=>{
                 let imageLocation = await request.postImageToS3(file,options);
-                return imageLocation
+                return imageLocation;
             }))
             this.setState({image:imageUrl});
 
@@ -185,7 +185,7 @@ export default class MakePostScreen extends Component {
           }).then(images => {
               const imageTemp = []
               images.map((i)=>{
-                const name = path.parse(i.path).base;  
+                const name = path.parse(i.path).base;
                   const file = {
                       uri: i.path,
                       name: name,
@@ -206,7 +206,7 @@ export default class MakePostScreen extends Component {
     returnFlatListItem(item,index){
         console.log(item)
         return(
-           
+
             <View style={styles.post}>
                 <Image source={{uri : item.uri}} />
 
@@ -271,23 +271,23 @@ export default class MakePostScreen extends Component {
                                         {
                                             this.state.countImage != 0 &&
                                             <Item  inlinelabel laststyle={{ marginTop: '5%' }} >
-                                  
+
                                                <FlatList
                                                data ={this.state.imageTemp}
                                                horizontal = {true}
                                                nestedScrollEnabled={true}
                                                keyExtractor={item => item.name}
                                                renderItem={({item}) => (
-                                                   
+
                                                 <Image style={styles.image} source={{uri: item.uri}} /> )}
-                                                />  
+                                                />
                                             </Item>
                                         }
 
                                         <Textarea rowSpan={8} placeholder="게시글 내용을 입력해주세요." autoCapitalize='none'
                                                   onChangeText={(text) => this.writePost(text, "text")}
                                                   style={styles.textAreaContainer} />
-                                        
+
                                     </Form>
                                 </Content>
                             </Container>
@@ -339,12 +339,12 @@ const styles = StyleSheet.create({
     imageArea : {
         marginVertical: '5%',
         marginLeft:'40%',
-     
+
     },
     imageTextArea : {
         marginVertical: '0%',
         marginLeft:'0%',
-     
+
     }
-   
+
 });

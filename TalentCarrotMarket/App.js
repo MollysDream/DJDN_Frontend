@@ -134,8 +134,8 @@ const HomeStackScreen = () => {
       <HomeStack.Screen options={{title: "검색 옵션"}} name="FilterOption" component={filterOptionScreen}/>
       <HomeStack.Screen options={{title: "게시글 정보"}} name="DetailPost" component={detailPostScreen}/>
       <HomeStack.Screen options={{title: "채팅"}} name="chat" component={chatScreen} />
-      <ChatStack.Screen options={{title: "게시글별 채팅리스트"}} name="게시글별 채팅리스트" component={chatListByPostScreen} />
-      <ChatStack.Screen options={{title: "채팅"}}  name="게시글별 채팅리스트 채팅방" component={chatListRoomScreen} />
+      <HomeStack.Screen options={{title: "게시글별 채팅리스트"}} name="게시글별 채팅리스트" component={chatListByPostScreen} />
+      <HomeStack.Screen options={{title: "채팅"}}  name="게시글별 채팅리스트 채팅방" component={chatListRoomScreen} />
 
       <HomeStack.Screen options={{title: "거래"}} name="tradeset" component={tradeSetScreen} />
 {/*
@@ -147,10 +147,10 @@ const HomeStackScreen = () => {
       <HomeStack.Screen options={{title: "사용자 프로필"}} name="사용자 프로필" component={userProfileScreen} />
 
       <HomeStack.Screen options={{title: "광고 정보"}} name="DetailAdvertisement" component={detailAdvertisementScreen} />
-      <SettingStack.Screen options={{title: "키워드"}} name="keywordScreen" component={keywordScreen}/>
+      <HomeStack.Screen options={{title: "키워드"}} name="keywordScreen" component={keywordScreen}/>
 
-        <ChatStack.Screen options={{title: "거래 타이머"}} name="tradeTimer" component={tradeTimerScreen} />
-        <ChatStack.Screen options={{title: "사용자 평가"}} name="userRate" component={userRateScreen} />
+        <HomeStack.Screen options={{title: "거래 타이머"}} name="tradeTimer" component={tradeTimerScreen} />
+        <HomeStack.Screen options={{title: "사용자 평가"}} name="userRate" component={userRateScreen} />
     </Stack.Navigator>
   );
 };

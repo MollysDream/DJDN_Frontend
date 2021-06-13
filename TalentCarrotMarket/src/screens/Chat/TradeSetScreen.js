@@ -22,7 +22,6 @@ import AsyncStorage from '@react-native-community/async-storage';
 import requestAddressAPI from "../../requestAddressAPI";
 import requestTradeAPI from "../../requestTradeAPI";
 
-import Icon from 'react-native-vector-icons/FontAwesome5';
 import requestAPI from "../../requestAPI";
 import requestChatAPI from "../../requestChatAPI";
 
@@ -81,7 +80,7 @@ const TradeSetScreen =({navigation,route})=>{
 
     //거래 삭제 시 적용
     const [isDelete, setIsDelete] = useState(false);
-    
+
     useEffect(()=>{
       async function settingTrade() {
         socket.emit('joinTradeSetRoom', chatRoom);
@@ -91,16 +90,16 @@ const TradeSetScreen =({navigation,route})=>{
       settingTrade();
 
       socket.on('suggest trade to client', () => {
-        if(socketCome==true){
+        if(socketCome===true){
           setSocketCome(false);
         } else{
           setSocketCome(true);
         }
-        
+
       });
 
       socket.on('agree trade to client', () => {
-        if(socketCome==true){
+        if(socketCome===true){
           setSocketCome(false);
         } else{
           setSocketCome(true);
@@ -110,7 +109,7 @@ const TradeSetScreen =({navigation,route})=>{
       socket.on('delete trade to client', () => {
         setIsDelete(true);
 
-        if(socketCome==true){
+        if(socketCome===true){
           setSocketCome(false);
         } else{
           setSocketCome(true);
@@ -126,9 +125,9 @@ const TradeSetScreen =({navigation,route})=>{
       requestTradeAPI.getTrade(chatRoom)
         .then(returnData => {
             if(returnData.data.message){
-              if(returnData.data.trade.complete==true){
+              if(returnData.data.trade.complete===true){
                 alert("이미 종료된 거래입니다!")
-                navigation.navigate('chatch')
+                navigation.pop(1);
               } else{
                 const saveLongitude = returnData.data.trade.longitude;
                 const saveLatitude = returnData.data.trade.latitude;
@@ -143,9 +142,9 @@ const TradeSetScreen =({navigation,route})=>{
                 setEnd(returnData.data.trade.endTime);
                 setTradeId(returnData.data.trade._id);
 
-                console.log("가져온 거래 장소는 "+saveLocation.longtitude)
+                // console.log("가져온 거래 장소는 "+saveLocation.longtitude)
 
-                if(returnData.data.trade.sender==user1){
+                if(returnData.data.trade.sender===user1){
                   console.log("현재 접속자는 거래 제안자임 "+ returnData.data.trade.sender);
                   sender=user1;
                   receiver=user2;
@@ -170,8 +169,8 @@ const TradeSetScreen =({navigation,route})=>{
 
     useEffect(()=>{
       console.log("거래 삭제 진행"+isDelete)
-      if(isDelete==true){
-        navigation.navigate('chatch')
+      if(isDelete===true){
+        navigation.pop(1);
       }
       setIsDelete(false);
     },[isDelete])
@@ -193,7 +192,7 @@ const TradeSetScreen =({navigation,route})=>{
       setShowEnd(true);
       setMode(currentMode);
     };
-  
+
     const showDatepicker = () => {
       showMode('date');
     };
@@ -201,17 +200,17 @@ const TradeSetScreen =({navigation,route})=>{
     const showEndDatepicker = () => {
       showEndMode('date');
     };
-    
-    
+
+
     const onChange = (event, selectedValue) =>{
       setShow(Platform.OS === 'ios');
-      if(mode == 'date'){
+      if(mode === 'date'){
         const currentDate = selectedValue || new Date();
         setStartDate(currentDate);
         setMode('time');
-        setShow(Platform.OS !== 'ios'); 
+        setShow(Platform.OS !== 'ios');
       }
-      else if(mode == 'time'){
+      else if(mode === 'time'){
         const selectedTime = selectedValue || new Date();
         setStartTime(selectedTime);
         setShow(Platform.OS === 'ios');
@@ -223,13 +222,13 @@ const TradeSetScreen =({navigation,route})=>{
 
     const onChangeEnd = (event, selectedValue) =>{
       setShowEnd(Platform.OS === 'ios');
-      if(mode == 'date'){
+      if(mode === 'date'){
         const currentDate = selectedValue || new Date();
         setEndDate(currentDate);
         setMode('time');
-        setShowEnd(Platform.OS !== 'ios'); 
+        setShowEnd(Platform.OS !== 'ios');
       }
-      else if(mode == 'time'){
+      else if(mode === 'time'){
         const selectedTime = selectedValue || new Date();
         setEndTime(selectedTime);
         setShow(Platform.OS === 'ios');
@@ -238,7 +237,7 @@ const TradeSetScreen =({navigation,route})=>{
         setEnd(endSet);
       }
     }
-    
+
     //처음 현재 주소 출력 (제안 시 필요)
     useEffect(() =>{
       Geolocation.getCurrentPosition(
@@ -276,9 +275,9 @@ const TradeSetScreen =({navigation,route})=>{
 
     },[locate, currentLocation])
 
-    
+
     const locationHandler = (e) => {
-      
+
       Alert.alert(
           "",
           "여기서 거래하실건가요??",
@@ -296,7 +295,7 @@ const TradeSetScreen =({navigation,route})=>{
                           console.log(err);
                       });
 
-              
+
                   console.log('onMapClick', JSON.stringify(e));
               }}
           ],
@@ -306,10 +305,10 @@ const TradeSetScreen =({navigation,route})=>{
 
     // 설정 완료 후, 제안 버튼
     const suggestButton = async() =>{
-      
+
       // let user= await AsyncStorage.getItem('user_id');
 
-      if(user1==userId){
+      if(user1===userId){
         sender = user1;
         receiver = user2;
         // setSender(user1);
@@ -329,18 +328,17 @@ const TradeSetScreen =({navigation,route})=>{
 
       console.log("sender는 "+sender);
       console.log("receiver는 "+receiver);
-      
+
       const entireLocate = locate + detailLocate;
       console.log("전체주소는 "+entireLocate)
 
       if(!detailLocate){
         alert('상세 주소를 입력해주세요');
-        return;
 
       } else{
         console.log('설정된 시작시간 ' + startTime);
         console.log('현재 접속자 ' + userId);
-        
+
         const startSet = formatDate(startDate,startTime);
         const endSet = formatDate(endDate,endTime);
 
@@ -352,7 +350,7 @@ const TradeSetScreen =({navigation,route})=>{
         try{
           //거래제안
           const nowDate = Date.now();
-          var endDiffTime=(endDateTime.getTime()-nowDate)/1000;
+          let endDiffTime=(endDateTime.getTime()-nowDate)/1000;
           // console.log("차이는?? "+endDiffTime)
           if(endDiffTime>0){
             const returnData = await requestTradeAPI.createTradeTime(startSet,endSet,entireLocate,sender,receiver,chatRoom,currentLocation.longitude,currentLocation.latitude);
@@ -371,7 +369,7 @@ const TradeSetScreen =({navigation,route})=>{
           } else{
             alert("거래 종료시간이 현재시간보다 빠릅니다! 재설정해주세요")
           }
-          
+
         } catch(err){
             console.log(err);
       }
@@ -385,7 +383,7 @@ const TradeSetScreen =({navigation,route})=>{
       try{
         //거래제안동의
          const returnData = await requestTradeAPI.agreeTrade(tradeId.toString());
-  
+
          if (returnData.data.message) {
           console.log("거래 동의 완료")
           setIsSave(true);
@@ -403,22 +401,22 @@ const TradeSetScreen =({navigation,route})=>{
 
     //남은 시간 확인 버튼
     const timeCheckButton = () =>{
-    
-      var sendEndDate = parse(end);
+
+      let sendEndDate = parse(end);
       console.log("저장된 시간은 "+sendEndDate)
 
       const startDateTime = parse(start);
 
       const nowDate = Date.now();
-      var startDiffTime=(nowDate-startDateTime.getTime())/1000;
+      let startDiffTime=(nowDate-startDateTime.getTime())/1000;
       console.log("시작 시간은? "+startDateTime)
       console.log("차이??"+startDiffTime);
 
-      var alarmTxt = "아직 시작 시간이 아닙니다!\n설정된 시작 시간은 "+start+" 입니다"
+      let alarmTxt = "아직 시작 시간이 아닙니다!\n설정된 시작 시간은 "+start+" 입니다"
       alarmTxt.replace(/\n/g,'<br/>');
 
       if(startDiffTime>0){
-        if(isSave==true){
+        if(isSave===true){
           navigation.navigate('tradeTimer',{
             tradeId: tradeId,
             endSet: sendEndDate,
@@ -427,16 +425,16 @@ const TradeSetScreen =({navigation,route})=>{
             user2: user2,
             chatRoom: chatRoom,
             chatRoomData: chatRoomData,
-          }) 
+          })
         } else{
           alert("아직 상대방이 동의하지 않았습니다!")
         }
-    
+
       } else{
         alert(alarmTxt)
       }
 }
-    
+
 
     //재제안 버튼
     const resuggestButton = async() =>{
@@ -449,7 +447,7 @@ const TradeSetScreen =({navigation,route})=>{
         //거래삭제
          const returnData = await requestTradeAPI.deleteTrade(tradeId);
          await requestAPI.updatePostTradeStatus(chatRoomData.postId, 0);
-  
+
          if (returnData.data.message) {
           alert('기존 거래를 삭제하고 다시 제안합니다.')
         } else {
@@ -464,8 +462,8 @@ const TradeSetScreen =({navigation,route})=>{
     // 거래 시간 및 장소 제안할 시 (isSuggest = false)
     const proposeTrade =
     <>
-    
-      <NaverMapView 
+
+      <NaverMapView
           style={{width: '100%', height: '55%'}}
           showsMyLocationButton={true}
           center={{...currentLocation, zoom:16}}
@@ -491,21 +489,21 @@ const TradeSetScreen =({navigation,route})=>{
             <TouchableOpacity style={styles.btnDate} onPress={showDatepicker} >
               <Text style={{color: 'black'}}>시작 날짜 및 시간 설정하세요 ⌚</Text>
             </TouchableOpacity>
-            {start!=''?
+            {start!==''?
             (<View style={styles.setTimeForm}>
-              <Text style={{fontSize: wp('4')}}>설정된 시작 시각:{start}</Text> 
+              <Text style={{fontSize: wp('4')}}>설정된 시작 시각:{start}</Text>
             </View>):null
             }
             <TouchableOpacity style={styles.btnDate} onPress={showEndDatepicker} >
               <Text style={{color: 'black'}}>종료 날짜 및 시간 설정하세요 ⌚</Text>
             </TouchableOpacity>
-            {end!=''?
+            {end!==''?
             (<View style={styles.setTimeForm}>
-              <Text style={{fontSize: wp('4')}}>설정된 종료 시각:{end}</Text> 
+              <Text style={{fontSize: wp('4')}}>설정된 종료 시각:{end}</Text>
             </View>):null
             }
           </View>
-        
+
           {show && (
             <DateTimePicker
               testID="dateTimePicker"
@@ -526,19 +524,19 @@ const TradeSetScreen =({navigation,route})=>{
               onChange={onChangeEnd}
             />)}
       </ScrollView>
-       
+
       <View style={styles.btnArea}>
         <TouchableOpacity style={styles.btnAgree} onPress={suggestButton}>
           <Text style={{color: 'white'}}>제안하기</Text>
         </TouchableOpacity>
       </View>
-    </>  
+    </>
 
     // 거래 시간 및 장소 제안 후 (isSuggest = true)
     const saveTrade =
     <>
     {saveLocation.latitude!=null&&saveLocation.longitude!=null?
-      (<NaverMapView 
+      (<NaverMapView
         style={{width: '100%', height: '55%'}}
         showsMyLocationButton={true}
         center={{...saveLocation, zoom:16}}
@@ -547,8 +545,8 @@ const TradeSetScreen =({navigation,route})=>{
         onMapClick={e => console.log('onMapClick', JSON.stringify(e))}>
           <Marker coordinate={saveLocation}/>
       </NaverMapView>):
-      
-      <NaverMapView 
+
+      <NaverMapView
       style={{width: '100%', height: '55%'}}
       showsMyLocationButton={true}
       center={{...currentLocation, zoom:16}}
@@ -558,7 +556,7 @@ const TradeSetScreen =({navigation,route})=>{
           <Marker coordinate={currentLocation}/>
       </NaverMapView>
       }
-    
+
         <ScrollView style={styles.tradeBox}>
           <View style={styles.tradeSetView} >
             {/* <Icon style={styles.iconPlace} name="hand-holding-usd"  size={30} color="#37CEFF" /> */}
@@ -572,38 +570,38 @@ const TradeSetScreen =({navigation,route})=>{
             <Text style={{fontSize: wp('4')}}>장소: {proLocate}</Text>
           </View>
         </ScrollView>
-    
-      
-      {isSuggest==true && isSave==false && userId!=sender?
-        (<View style={styles.rowbtnArea}> 
-          <View style={styles.btnArea,{paddingRight: wp('1')}}>
+
+
+      {isSuggest===true && isSave===false && userId!==sender?
+        (<View style={styles.rowbtnArea}>
+          <View style={styles.btnArea}>
               <TouchableOpacity style={styles.btnAgree} onPress={agreeButton}>
                 <Text style={{color:'white'}}>동의하기</Text>
               </TouchableOpacity>
             </View>
-          <View style={styles.btnArea,{paddingLeft: wp('1')}}>
+          <View style={styles.btnArea}>
             <TouchableOpacity style={styles.btnReSuggest} onPress={resuggestButton}>
               <Text style={{color:'white'}}>다시 제안하기</Text>
             </TouchableOpacity>
           </View>
         </View>
         ):
-        
-        <View style={styles.rowbtnArea}> 
-          <View style={styles.btnArea,{paddingRight: wp('1')}}>
+
+        <View style={styles.rowbtnArea}>
+          <View style={styles.btnArea}>
               <TouchableOpacity style={styles.btnAgree} onPress={timeCheckButton}>
                 <Text style={{color:'white'}}>남은 시간 확인</Text>
               </TouchableOpacity>
             </View>
-          <View style={styles.btnArea,{paddingLeft: wp('1')}}>
+          <View style={styles.btnArea}>
             <TouchableOpacity style={styles.btnReSuggest} onPress={resuggestButton}>
               <Text style={{color:'white'}}>다시 제안하기</Text>
             </TouchableOpacity>
           </View>
         </View>
-        
+
         }
-      
+
     </>
 
       return (
@@ -613,30 +611,29 @@ const TradeSetScreen =({navigation,route})=>{
               <Text style={{paddingBottom:15}}>지도 마커를 통해 거래 장소를 설정해주세요!</Text>
           </View>
 
-          {isSuggest == false ?(
+          {isSuggest === false ?(
             <View style={styles.bottomArea}>{proposeTrade}</View>
           ): <View style={styles.bottomArea}>{saveTrade}</View>}
         </View>
       );
-    
+
 }
 
 
 const formatDate = (date,time)=>{
-  const setDate= `${date.getFullYear()}-${date.getMonth() +
-    1}-${date.getDate()} ${time.getHours()}:${time.getMinutes()}`;
-  return setDate;
+  let setDateValue = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${time.getHours()}:${time.getMinutes()}`;
+  return setDateValue;
   };
 
 
 //str-->date
 function parse(str){
-  var newDd=str.split(/-| |:/);
-  var y = newDd[0];
-  var m = newDd[1];
-  var d= newDd[2];
-  var h = newDd[3];
-  var minute = newDd[4];
+  let newDd=str.split(/-| |:/);
+  let y = newDd[0];
+  let m = newDd[1];
+  let d= newDd[2];
+  let h = newDd[3];
+  let minute = newDd[4];
   return new Date(y,m-1,d,h,minute);
 }
 
@@ -683,7 +680,6 @@ const styles = StyleSheet.create({
       borderColor: 'black',
       borderBottomRightRadius: 7,
       borderBottomLeftRadius: 7,
-      width: '100%',
       height: hp(6),
       paddingLeft: 10,
       paddingRight: 10,
@@ -706,6 +702,7 @@ const styles = StyleSheet.create({
       height: hp(8),
       justifyContent: 'center',
       alignItems: 'center',
+      paddingRight: wp('1')
     },
     // btn: {
     //   width: 150,
