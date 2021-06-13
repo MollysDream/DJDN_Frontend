@@ -20,12 +20,13 @@ import AsyncStorage from "@react-native-community/async-storage";
 import requestUserAPI from "../../requestUserAPI";
 import requestAddressAPI from "../../requestAddressAPI";
 import requestAPI from "../../requestAPI";
-import {getDate, getPrice} from "../../function";
+import {getDate, getPrice, message} from "../../function";
 import {Content, Form, Textarea} from "native-base";
-import {Picker} from "@react-native-picker/picker";
 import requestReportAPI from "../../requestReportAPI";
 import FlashMessage, {showMessage} from "react-native-flash-message";
 import { Rating } from 'react-native-ratings';
+import DropDownPicker from 'react-native-dropdown-picker';
+
 
 const UserProfileScreen = ({navigation,route}) => {
 
@@ -128,7 +129,7 @@ const UserProfileScreen = ({navigation,route}) => {
 
         let post = await requestAPI.getUserPost(userId);
 
-        setPostData(postData.concat(post));
+        setPostData(post);
         setPostModal(!postModal);
         console.log("사용자 재능거래 내역 확인!!");
     }
@@ -183,9 +184,17 @@ const UserProfileScreen = ({navigation,route}) => {
     }
 
     //*************신고 함수*************
-
+    const [open, setOpen] = useState(false);
     const [reportModal, setReportModal] = useState(false);
-    const userCategoryList = ['비매너', '욕설', '성희롱', '채팅비매너', '기타'];
+    //const [userCategory, setUserCategory] = useState('');
+    const [userCategoryList, setUserCategoryList] = useState([
+        {label: '비매너', value: '비매너'},
+        {label: '욕설', value: '욕설'},
+        {label: '성희롱', value: '성희롱'},
+        {label: '채팅비매너', value: '채팅비매너'},
+        {label: '기타', value: '기타'}
+    ]);
+
     const [reportCategory, setReportCategory] = useState('');
 
     const [reportText, setReportText] = useState('');
@@ -202,11 +211,13 @@ const UserProfileScreen = ({navigation,route}) => {
 
         let categoryParam = reportCategory;
         if(reportCategory == ''){
-            showMessage({message:'사용자 신고 사유를 설정해주세요', type:'info'});
+            message('사용자 신고 사유를 설정해주세요')
+            //showMessage({message:'사용자 신고 사유를 설정해주세요', type:'warning'});
             return;
         }
         if(reportText.length === 0){
-            showMessage({message:'신고 상세 내용을 작성해주세요', type:'info'});
+            message('신고 상세 내용을 작성해주세요')
+            //showMessage({message:'신고 상세 내용을 작성해주세요', type:'warning'});
             return;
         }
 
@@ -326,7 +337,17 @@ const UserProfileScreen = ({navigation,route}) => {
 
 
                     <Form>
-                        <Picker
+                        <DropDownPicker
+                            placeholder={'사용자 신고 사유'}
+                            open={open}
+                            value={reportCategory}
+                            items={userCategoryList}
+                            setOpen={setOpen}
+                            setValue={setReportCategory}
+                            setItems={setUserCategoryList}
+                            textStyle={{fontSize:15}}
+                        />
+                        {/*<Picker
                             selectedValue={userCategoryList}
                             onValueChange={(value) => setReportCategory(value)}
                         >
@@ -337,7 +358,7 @@ const UserProfileScreen = ({navigation,route}) => {
                                 ))
 
                             }
-                        </Picker>
+                        </Picker>*/}
 
                         <Textarea rowSpan={8} placeholder="신고 상세 내용을 입력해주세요." autoCapitalize='none'
                                   onChangeText={(text) => writeText(text, "text")}
