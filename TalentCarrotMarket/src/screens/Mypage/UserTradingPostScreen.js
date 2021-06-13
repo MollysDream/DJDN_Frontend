@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
         alignSelf : "center",
         padding:20
     },
-    postTitle:{fontSize:18, fontWeight: "bold", width:250, height:80, paddingTop:9},
+    postTitle:{fontSize:18, fontWeight: "bold", width:200, height:80, paddingTop:9},
     postAddressTime: {fontSize:13, textAlign:'right', width:'30%', marginRight:10},
     postPrice: {width:'50%',fontSize:17 , color:"#0088ff" ,paddingTop: 9}
     ,

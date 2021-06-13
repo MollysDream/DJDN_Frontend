@@ -128,7 +128,7 @@ const UserProfileScreen = ({navigation,route}) => {
 
         let post = await requestAPI.getUserPost(userId);
 
-        setPostData(postData.concat(post));
+        setPostData(post);
         setPostModal(!postModal);
         console.log("사용자 재능거래 내역 확인!!");
     }
