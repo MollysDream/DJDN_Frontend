@@ -145,13 +145,15 @@ const TradeSetScreen =({navigation,route})=>{
 
                 console.log("가져온 거래 장소는 "+saveLocation.longtitude)
 
-                if(returnData.data.trade.sender==userId){
+                if(returnData.data.trade.sender==user1){
                   console.log("현재 접속자는 거래 제안자임 "+ returnData.data.trade.sender);
-                  sender=userId;
+                  sender=user1;
+                  receiver=user2;
                   // setSender(userId);
                 } else{
                   console.log("현재 접속자는 거래 제안받은사람임 "+ returnData.data.trade.receiver);
-                  receiver=userId;
+                  receiver=user1;
+                  sender=user2;
                   // setReceiver(userId);
                 }
 
@@ -215,7 +217,7 @@ const TradeSetScreen =({navigation,route})=>{
         setShow(Platform.OS === 'ios');
         setMode('date');
         const startSet = formatDate(startDate,startTime);
-        setStart(startSet)
+        setStart(startSet);
       }
     }
 
@@ -233,7 +235,7 @@ const TradeSetScreen =({navigation,route})=>{
         setShow(Platform.OS === 'ios');
         setMode('date');
         const endSet = formatDate(endDate,endTime);
-        setEnd(endSet)
+        setEnd(endSet);
       }
     }
     
@@ -318,6 +320,12 @@ const TradeSetScreen =({navigation,route})=>{
         // setSender(user2);
         // setReceiver(user1);
       }
+
+      const startSet = formatDate(startDate,startTime);
+      setStart(startSet);
+      const endSet = formatDate(endDate,endTime);
+      setEnd(endSet)
+
 
       console.log("sender는 "+sender);
       console.log("receiver는 "+receiver);
