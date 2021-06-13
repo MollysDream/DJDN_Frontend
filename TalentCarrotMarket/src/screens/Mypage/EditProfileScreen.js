@@ -109,13 +109,13 @@ const EditProfileScreen = ({navigation, route}) => {
         setDeviceImage(null);
 
         if(num==1){
-            setEditImage('https://mollysdreampostdata.s3.ap-northeast-2.amazonaws.com/%EC%95%84%EC%9D%B4%EC%BD%98/default-image.jpg')
+            setEditImage('https://mollysdreampostdata.s3.ap-northeast-2.amazonaws.com/---%ED%94%84%EB%A1%9C%ED%95%84+%EC%9D%B4%EB%AF%B8%EC%A7%80---/DefaultImage/default-image.jpg')
             setNum(2);
         }else if(num==2){
-            setEditImage('https://mollysdreampostdata.s3.ap-northeast-2.amazonaws.com/%EC%95%84%EC%9D%B4%EC%BD%98/default2.jpg')
+            setEditImage('https://mollysdreampostdata.s3.ap-northeast-2.amazonaws.com/---%ED%94%84%EB%A1%9C%ED%95%84+%EC%9D%B4%EB%AF%B8%EC%A7%80---/DefaultImage/default2.jpg')
             setNum(3);
         }else if(num==3){
-            setEditImage('https://mollysdreampostdata.s3.ap-northeast-2.amazonaws.com/%EC%95%84%EC%9D%B4%EC%BD%98/default3.jpg')
+            setEditImage('https://mollysdreampostdata.s3.ap-northeast-2.amazonaws.com/---%ED%94%84%EB%A1%9C%ED%95%84+%EC%9D%B4%EB%AF%B8%EC%A7%80---/DefaultImage/default3.jpg')
             setNum(1);
         }
     }
