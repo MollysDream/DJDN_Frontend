@@ -215,9 +215,11 @@ const TradeSetScreen =({navigation,route})=>{
         setStartTime(selectedTime);
         setShow(Platform.OS === 'ios');
         setMode('date');
+
+          const startSet = formatDate(startDate,selectedTime);
+          setStart(startSet);
       }
-      const startSet = formatDate(startDate,startTime);
-      setStart(startSet);
+
     }
 
     const onChangeEnd = (event, selectedValue) =>{
@@ -233,7 +235,7 @@ const TradeSetScreen =({navigation,route})=>{
         setEndTime(selectedTime);
         setShow(Platform.OS === 'ios');
         setMode('date');
-        const endSet = formatDate(endDate,endTime);
+        const endSet = formatDate(endDate,selectedTime);
         setEnd(endSet);
       }
     }

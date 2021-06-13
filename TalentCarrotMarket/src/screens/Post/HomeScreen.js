@@ -69,6 +69,8 @@ export default class HomeScreen extends Component{
     morePage = async() => {
         //console.log('더 불러와 제발!!');
         const postData = await request.getPost(this.state.page, this.state.userId);
+        if(postData.length==0)
+            return;
         const advertisementData = await requestAdverAPI.getAdvertisementPost(this.state.userId);
         this.setState({
             data: this.state.data.concat(postData).concat(advertisementData),
