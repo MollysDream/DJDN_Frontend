@@ -568,7 +568,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
       {/* <TouchableOpacity>
         <Button title={'SMS 보내기!'} onPress={autoReport}/>
       </TouchableOpacity> */}
-      <RemotePushController time={diffTime}/>
+      {/* <RemotePushController time={diffTime}/> */}
     </View>
     )
 }
@@ -630,7 +630,7 @@ const styles = StyleSheet.create({
   rowTopArea: {
     flex: 0.3,
     paddingTop: hp(7),
-    paddingLeft: wp(10),
+    paddingLeft: wp(3),
     flexDirection: "row",
     alignItems: 'center',
   },
