@@ -180,18 +180,23 @@ function ChatChRoomScreen(props) {
 
     return (
         <View style={styles.container}>
-            <View style={styles.clockButtonContainer}>
-                <IconButton
-                icon="clock"
-                size={36}
-                color="#6646ee"
-                onPress={()=>props.navigation
-                    .navigate('tradeset',{
-                        user1:postOwnerId,
-                        user2:host,
-                        chatRoom:chatroomId
-                    })}
-                />
+            {/* <View> */}
+                {/* <View>
+                    <Text>시계 아이콘을 눌러 거래를 제안해보세요!</Text>
+                </View> */}
+                <View style={styles.clockButtonContainer}>
+                    <IconButton
+                    icon="clock"
+                    size={36}
+                    color="#6646ee"
+                    onPress={()=>props.navigation
+                        .navigate('tradeset',{
+                            user1:postOwnerId,
+                            user2:host,
+                            chatRoom:chatroomId
+                        })}
+                    />
+                {/* </View> */}
             </View>
             <GiftedChat
                 messages={messages}

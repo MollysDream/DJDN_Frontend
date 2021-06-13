@@ -188,12 +188,12 @@ export default class DetailPostScreen extends Component{
                             </Item>
                             <View style={styles.btnArea2} >
                                 {
-                                    (postOwnerId !== currentUserId)?(<TouchableOpacity style={styles.btn2} onPress={() => this.props.navigation.navigate('chat',{postOwner,item})}>
+                                    (postOwnerId !== currentUserId)?(<TouchableOpacity style={styles.btn2} onPress={() => this.props.navigation.navigate('TabFourth',{screen:'chat',params:{postOwner:postOwner,item:item}})}>
                                         <Text style={(styles.Text, {color: 'white'})}>채팅</Text>
                                     </TouchableOpacity>):null
                                 }
                                 {
-                                    (postOwnerId === currentUserId)?(<TouchableOpacity style={styles.btn2} onPress={() => this.props.navigation.navigate('게시글별 채팅리스트',{postOwner,item})}>
+                                    (postOwnerId === currentUserId)?(<TouchableOpacity style={styles.btn2} onPress={() => this.props.navigation.navigate('TabFourth',{screen:'게시글별 채팅리스트',params:{postOwner:postOwner,item:item}})}>
                                         <Text style={(styles.Text, {color: 'white'})}>게시글별 채팅 보기</Text>
                                     </TouchableOpacity>):null
                                 }

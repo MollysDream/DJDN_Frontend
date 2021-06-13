@@ -133,7 +133,7 @@ const HomeStackScreen = () => {
       <HomeStack.Screen options={{title: "게시글 만들기"}} name="MakePost" component={makePostScreen}/>
       <HomeStack.Screen options={{title: "검색 옵션"}} name="FilterOption" component={filterOptionScreen}/>
       <HomeStack.Screen options={{title: "게시글 정보"}} name="DetailPost" component={detailPostScreen}/>
-      <HomeStack.Screen options={{title: "채팅"}} name="chat" component={chatScreen} />
+      {/* <HomeStack.Screen options={{title: "채팅"}} name="chat" component={chatScreen} /> */}
       <ChatStack.Screen options={{title: "게시글별 채팅리스트"}} name="게시글별 채팅리스트" component={chatListByPostScreen} />
       <ChatStack.Screen options={{title: "채팅"}}  name="게시글별 채팅리스트 채팅방" component={chatListRoomScreen} />
 

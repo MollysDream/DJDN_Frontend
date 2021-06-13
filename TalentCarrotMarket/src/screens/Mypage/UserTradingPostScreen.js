@@ -97,7 +97,7 @@ export default class UserTradingPostScreen extends Component{
 
         console.log('onChatPress 눌림! currentUserId : '+currentUserId,' postOwner : '+ postOwner._id);
 
-        this.props.navigation.navigate('chat',{postOwner,item})
+        this.props.navigation.navigate('TabFourth',{screen:'chat',params:{postOwner:postOwner,item:item}})
 
     }
 
