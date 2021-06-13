@@ -188,8 +188,8 @@ const ChatStackScreen = () => {
       <ChatStack.Screen options={{title: "사용자 평가"}} name="userRate" component={userRateScreen} />
       <ChatStack.Screen options={{title: "거래"}} name="tradeset" component={tradeSetScreen} />
       <ChatStack.Screen options={{title: "채팅"}} name="chatchroom" component={chatchroomScreen} />
-      <ChatStack.Screen options={{title: "사용자 프로필"}} name="사용자 프로필" component={chatUserProfileScreen} />
-      <ChatStack.Screen options={{title: "게시글 정보"}} name="DetailPost" component={chatDetailPostScreen}/>
+      <ChatStack.Screen options={{title: "사용자 프로필"}} name="chatUserProfile" component={chatUserProfileScreen} />
+      <ChatStack.Screen options={{title: "게시글 정보"}} name="chatDetailPost" component={chatDetailPostScreen}/>
  </Stack.Navigator>
   );
 };

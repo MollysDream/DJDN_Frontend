@@ -142,7 +142,7 @@ const ChatUserProfileScreen = ({navigation,route}) => {
             }
             postImages.push(temp);
         })
-        navigation.push('DetailPost',{detailPost: item, postImages: postImages, postOwner: userData});
+        navigation.push('chatDetailPost',{detailPost: item, postImages: postImages, postOwner: userData});
 
     }
 

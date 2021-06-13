@@ -108,7 +108,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
     socket.on('extend endTime to client', (endDateTime) => {
       let newEndTime = parse(endDateTime);
       console.log("프론트에서 받은 새 연장시간ㄴㄴㄴㄴㄴㄴ : " +  newEndTime);
-      // setDiffTime((newEndTime.getTime()- nowDate)/1000);   
+      // setDiffTime((newEndTime.getTime()- nowDate)/1000);
       setSocketCome(true);
     });
 
@@ -126,7 +126,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
       setSocketCome(true);
     });
   },[])
-  
+
 
 
   useEffect(()=>{
@@ -298,7 +298,7 @@ const TradeTimerScreen = ({navigation, route}) =>{
 
   const checkUserProfile= () =>{
     console.log("사용자 프로필 확인!!");
-    navigation.navigate('사용자 프로필',{userData:userData});
+    navigation.navigate('chatUserProfile',{userData:userData});
   }
 
   async function autoReport(){
