@@ -96,7 +96,15 @@ export default class FilterOptionScreen extends Component{
                 </View>
 
                 <View style={styles.content}>
-                    <Text style={styles.text}>필터</Text>
+                    <View style={{flexDirection:'row'}}>
+                        <View style={{width:'66.6%'}}>
+                            <Text style={[styles.text]}>정렬</Text>
+                        </View>
+                        <View style={{width:'33.3%'}}>
+                            <Text style={[styles.text]}>필터</Text>
+                        </View>
+                    </View>
+
                     <SwitchSelector
                         initial={this.state.sort}
                         options={options}
