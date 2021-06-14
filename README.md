@@ -41,7 +41,7 @@
 ```sh
 * npm >= 6.14.11
 * react-native-cli = 2.0.1
-* react-native = 0.64.0
+* react-native = 0.64.2
 
 ```
 
