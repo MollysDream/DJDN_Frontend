@@ -148,6 +148,7 @@ const HomeStackScreen = () => {
 
       <HomeStack.Screen options={{title: "광고 정보"}} name="DetailAdvertisement" component={detailAdvertisementScreen} />
       <HomeStack.Screen options={{title: "키워드"}} name="keywordScreen" component={keywordScreen}/>
+      <HomeStack.Screen options={{title: "게시글 정보"}} name="chatDetailPost" component={chatDetailPostScreen}/>
 
         <HomeStack.Screen options={{title: "거래 타이머"}} name="tradeTimer" component={tradeTimerScreen} />
         <HomeStack.Screen options={{title: "사용자 평가"}} name="userRate" component={userRateScreen} />
