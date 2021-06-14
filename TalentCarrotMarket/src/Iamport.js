@@ -48,7 +48,7 @@ export default function Iamport({navigation, route}) {
 		amount: amount,
 		buyer_name: userData.name,
 		buyer_tel: userPhoneNumber,
-		buyer_email: 'junyeoop@naver.com',
+		buyer_email: 'junyeoop@naver.com', //userData.email
 		// buyer_addr: '서울시 강남구 신사동 661-16',
 		// buyer_postcode: '06018',
 		app_scheme: 'example',
