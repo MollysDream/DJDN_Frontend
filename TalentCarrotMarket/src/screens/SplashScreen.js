@@ -16,7 +16,7 @@ import messaging from '@react-native-firebase/messaging';
 const SplashScreen = ({navigation}) => {
   //State for ActivityIndicator animation
   const [animating, setAnimating] = useState(true);
-  //AsyncStorage.clear();
+  // AsyncStorage.clear();
 
   useEffect(() => {
     setTimeout(async () => {
@@ -56,14 +56,14 @@ const SplashScreen = ({navigation}) => {
 
         if(admin === null){
           let autoUserData = await requestMemberAPI.autoLogin(userId,fcmToken);
-          
+
           if(autoUserData.data.message){
             console.log('자동 로그인 성공!')
             navigation.replace('MainTab');
           } else{
             console.log("자동 로그인에 실패하였습니다.");
           }
-          
+
         }else{
           let autoUserData = await requestMemberAPI.autoLogin(userId,fcmToken);
           if(autoUserData.data.message){
@@ -72,7 +72,7 @@ const SplashScreen = ({navigation}) => {
           } else{
             console.log("자동 로그인에 실패하였습니다.");
           }
-          
+
         }
 
       }
